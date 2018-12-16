@@ -1,39 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ...base import BooleanContext, const, has_event, listens
+from ...base import BooleanContext, const, in_range, has_event, listens
 from ..input_control_element import InputControlElement, MIDI_CC_TYPE
 from ..skin import Skin
-
-class ButtonValue(object):
-    u"""
-    Basic type for button values, so global constants are symbolically
-    different from integers.
-    """
-    midi_value = 0
-
-    def __init__(self, midi_value = None, *a, **k):
-        super(ButtonValue, self).__init__(*a, **k)
-        if midi_value is not None:
-            self.midi_value = midi_value
-
-    def __int__(self):
-        return self.midi_value
-
-    def __eq__(self, other):
-        try:
-            return id(self) == id(other) or self.midi_value == other
-        except NotImplementedError:
-            return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __nonzero__(self):
-        return self != OFF_VALUE
-
-
-ON_VALUE = ButtonValue(127)
-OFF_VALUE = ButtonValue(0)
+from .color import Color
 
 class DummyUndoStepHandler(object):
 
@@ -49,17 +19,8 @@ class ButtonElementMixin(object):
     Mixin for sending values to button-like control-elements elements.
     """
 
-    def set_light(self, is_turned_on):
-        if is_turned_on:
-            self.turn_on()
-        else:
-            self.turn_off()
-
-    def turn_on(self):
-        self.send_value(ON_VALUE)
-
-    def turn_off(self):
-        self.send_value(OFF_VALUE)
+    def set_light(self, value):
+        pass
 
 
 class ButtonElement(InputControlElement, ButtonElementMixin):
@@ -71,30 +32,48 @@ class ButtonElement(InputControlElement, ButtonElementMixin):
         is_momentary = const(True)
         is_pressed = const(False)
 
-    def __init__(self, is_momentary, msg_type, channel, identifier, skin = Skin(), undo_step_handler = DummyUndoStepHandler(), *a, **k):
+    class Colors:
+
+        class DefaultButton:
+            On = Color(127)
+            Off = Color(1)
+            Disabled = Color(0)
+
+    send_depends_on_forwarding = False
+    num_delayed_messages = 2
+
+    def __init__(self, is_momentary, msg_type, channel, identifier, is_rgb = False, skin = Skin(Colors), undo_step_handler = DummyUndoStepHandler(), *a, **k):
         super(ButtonElement, self).__init__(msg_type, channel, identifier, *a, **k)
-        self.__is_momentary = bool(is_momentary)
+        self.is_rgb = is_rgb
+        self._is_momentary = bool(is_momentary)
         self._last_received_value = -1
         self._undo_step_handler = undo_step_handler
         self._skin = skin
         self._drawing_via_skin = BooleanContext()
 
+    def reset(self):
+        self.set_light(u'DefaultButton.Disabled')
+        self.use_default_message()
+        self.suppress_script_forwarding = False
+
     def is_momentary(self):
         u""" returns true if the buttons sends a message on being released """
-        return self.__is_momentary
+        return self._is_momentary
 
     def message_map_mode(self):
         assert self.message_type() is MIDI_CC_TYPE
         return Live.MidiMap.MapMode.absolute
 
     def is_pressed(self):
-        return self.__is_momentary and int(self._last_received_value) > 0
+        return self._is_momentary and int(self._last_received_value) > 0
 
     def set_light(self, value):
         if hasattr(value, u'draw'):
             value.draw(self)
+        elif type(value) in (int, long) and in_range(value, 0, 128):
+            self.send_value(value)
         elif isinstance(value, bool):
-            super(ButtonElement, self).set_light(value)
+            self._set_skin_light(u'DefaultButton.On' if value else u'DefaultButton.Off')
         else:
             self._set_skin_light(value)
 

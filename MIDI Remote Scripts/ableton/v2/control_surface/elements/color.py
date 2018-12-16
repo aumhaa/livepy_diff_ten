@@ -92,3 +92,16 @@ class SelectedClipColorFactory(DynamicColorFactory):
 
     def instantiate(self, song):
         return SelectedClipColor(song_view=song.view, transformation=self._transform)
+
+
+class AnimatedColor(Color):
+    _channel = None
+
+    def __init__(self, color1 = None, color2 = None, *a, **k):
+        super(AnimatedColor, self).__init__(*a, **k)
+        self._color1 = color1
+        self._color2 = color2
+
+    def draw(self, interface):
+        interface.send_value(self._color1.midi_value)
+        interface.send_value(self._color2.midi_value, channel=self._channel)

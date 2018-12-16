@@ -5,7 +5,7 @@ from ableton.v2.control_surface import InputControlElement, MIDI_CC_TYPE, MIDI_N
 from ableton.v2.control_surface.elements import ButtonElement
 from . import sysex
 from .ringed_encoder import RingedEncoderElement
-from .skinable_sysex_element import SkinableSysexElement
+from .sysex_element import SkinableSysexElement
 
 @depends(skin=None)
 def create_button(identifier, name, channel = 0, skin = None):

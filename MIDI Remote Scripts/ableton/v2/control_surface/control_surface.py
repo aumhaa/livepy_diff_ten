@@ -258,8 +258,16 @@ class SimpleControlSurface(EventObject):
         relevant parts of the controller
         """
         with self.component_guard():
+            self.update_display_hook()
             with self._is_sending_scheduled_messages():
                 self._task_group.update(defaults.TIMER_DELAY)
+
+    def update_display_hook(self):
+        u"""
+        Override this method if there is something that should be updated at the
+        same rate of update_display.
+        """
+        pass
 
     @profile
     def receive_midi(self, midi_bytes):

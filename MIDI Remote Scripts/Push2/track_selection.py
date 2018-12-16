@@ -3,7 +3,7 @@ from functools import partial
 import Live
 from ableton.v2.base import EventObject, const, depends, flatten, nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid
 from ableton.v2.control_surface import find_instrument_devices
-from ableton.v2.control_surface.components import SessionRingComponent, right_align_return_tracks_track_assigner
+from ableton.v2.control_surface.components import SessionRingComponent, RightAlignTracksTrackAssigner
 from ableton.v2.control_surface.components.view_control import has_next_item, next_item, TrackScroller as TrackScrollerBase, ViewControlComponent as ViewControlComponentBase
 from .decoration import TrackDecoratorFactory
 from .item_lister_component import ItemProvider
@@ -116,6 +116,7 @@ class SessionRingTrackProvider(SessionRingComponent, ItemProvider):
         self._update_listeners()
         self._selected_track = self.register_disconnectable(SelectedMixerTrackProvider())
         self._on_selected_item_changed.subject = self._selected_track
+        self._track_assigner = RightAlignTracksTrackAssigner(song=self.song)
 
     def scroll_into_view(self, mixable):
         mixable_index = self.tracks_to_use().index(mixable)
@@ -141,7 +142,7 @@ class SessionRingTrackProvider(SessionRingComponent, ItemProvider):
 
     @property
     def items(self):
-        return right_align_return_tracks_track_assigner(self._song, self)
+        return self._track_assigner.tracks(self)
 
     def move(self, tracks, scenes):
         super(SessionRingTrackProvider, self).move(tracks, scenes)

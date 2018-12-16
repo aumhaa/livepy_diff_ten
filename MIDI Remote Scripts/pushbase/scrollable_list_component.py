@@ -42,8 +42,6 @@ class ScrollableListComponent(Component):
         self._select_button_slots.disconnect()
         self._select_buttons = buttons or []
         for b in self._select_buttons:
-            if b:
-                b.set_on_off_values(u'Option.Selected', u'Option.Unselected')
             self._select_button_slots.register_slot(b, self._on_select_value, u'value', extra_kws=dict(identify_sender=True))
 
         self.update()
@@ -142,9 +140,9 @@ class ScrollableListComponent(Component):
             if self._has_select_button(i):
                 if i < len(self.option_names):
                     if j == self.selected_option:
-                        self._select_buttons[i].turn_on()
+                        self._select_buttons[i].set_light(u'Option.Selected')
                     else:
-                        self._select_buttons[i].turn_off()
+                        self._select_buttons[i].set_light(u'Option.Unselected')
                 else:
                     self._select_buttons[i].set_light(u'Option.Unused')
 
@@ -168,8 +166,6 @@ class ScrollableListWithTogglesComponent(ScrollableListComponent):
     def set_state_buttons(self, state_buttons):
         state_buttons = state_buttons or [ None for _ in range(self.num_segments) ]
         for slot, button in zip(self._state_button_slots, state_buttons):
-            if button:
-                button.set_on_off_values(u'Option.On', u'Option.Off')
             slot.subject = button
 
         self._update_state_buttons()
@@ -214,18 +210,18 @@ class ScrollableListWithTogglesComponent(ScrollableListComponent):
         if buttons[0]:
             first_button, max_button = 0, len(buttons)
             if self._offset_index > 0:
-                buttons[0].turn_off()
+                buttons[0].set_light(u'Option.Off')
                 first_button = 1
             if self._offset_index < self._maximal_offset():
-                buttons[-1].turn_off()
+                buttons[-1].set_light(u'Option.Off')
                 max_button -= 1
             for state, button in zip(self._option_states[self._offset_index:], buttons[first_button:max_button]):
                 if button != None:
                     if state:
-                        button.turn_on()
+                        button.set_light(u'Option.On')
                     else:
-                        button.turn_off()
+                        button.set_light(u'Option.Off')
 
             for button in buttons[len(self._option_states):]:
                 if button != None:
-                    button.turn_off()
+                    button.set_light(u'Option.Off')

@@ -31,12 +31,6 @@ class DisplayDebugSettings(SerializableListenableProperties):
     show_lit_button = listenable_property.managed(False)
 
 
-class ProfilingSettings(SerializableListenableProperties):
-    show_qml_stats = listenable_property.managed(False)
-    show_usb_stats = listenable_property.managed(False)
-    show_realtime_ipc_stats = listenable_property.managed(False)
-
-
 class Settings(CompoundDisconnectable):
 
     def __init__(self, preferences = None, *a, **k):
@@ -46,7 +40,6 @@ class Settings(CompoundDisconnectable):
         self._pad_settings = self.register_disconnectable(preferences.setdefault(u'settings_pad_velocity_curve', PadVelocityCurveSettings()))
         self._hardware = self.register_disconnectable(preferences.setdefault(u'settings_hardware', HardwareSettings()))
         self._display_debug = self.register_disconnectable(preferences.setdefault(u'settings_display_debug', DisplayDebugSettings()))
-        self._profiling = self.register_disconnectable(preferences.setdefault(u'settings_profiling', ProfilingSettings()))
 
     @property
     def general(self):
@@ -63,10 +56,6 @@ class Settings(CompoundDisconnectable):
     @property
     def display_debug(self):
         return self._display_debug
-
-    @property
-    def profiling(self):
-        return self._profiling
 
 
 class GeneralSettingsComponent(Component):
@@ -133,19 +122,6 @@ class DisplayDebugSettingsComponent(Component):
         self.show_lit_button_button.connect_property(settings, u'show_lit_button')
 
 
-class ProfilingSettingsComponent(Component):
-    show_qml_stats_button = ToggleButtonControl()
-    show_usb_stats_button = ToggleButtonControl()
-    show_realtime_ipc_stats_button = ToggleButtonControl()
-
-    def __init__(self, settings = None, *a, **k):
-        assert settings is not None
-        super(ProfilingSettingsComponent, self).__init__(*a, **k)
-        self.show_qml_stats_button.connect_property(settings, u'show_qml_stats')
-        self.show_usb_stats_button.connect_property(settings, u'show_usb_stats')
-        self.show_realtime_ipc_stats_button.connect_property(settings, u'show_realtime_ipc_stats')
-
-
 class InfoComponent(Component):
     install_firmware_button = ButtonControl()
 
@@ -176,12 +152,10 @@ class SetupComponent(ModesComponent):
         self._info = self.register_component(InfoComponent(firmware_switcher=firmware_switcher, is_enabled=False))
         self._pad_settings = self.register_component(PadSettingsComponent(pad_settings=settings.pad_settings, is_enabled=False))
         self._display_debug = self.register_component(DisplayDebugSettingsComponent(settings=settings.display_debug, is_enabled=False))
-        self._profiling = self.register_component(ProfilingSettingsComponent(settings=settings.profiling, is_enabled=False))
         self.add_mode(u'Settings', [self._general, self._pad_settings])
         self.add_mode(u'Info', [self._info])
         if self.application.has_option(u'_Push2DeveloperMode'):
             self.add_mode(u'Display Debug', [self._display_debug])
-            self.add_mode(u'Profiling', [self._profiling])
         self.selected_mode = u'Settings'
         self.category_radio_buttons.control_count = len(self.modes)
         self.category_radio_buttons.checked_index = 0
@@ -205,10 +179,6 @@ class SetupComponent(ModesComponent):
     @property
     def display_debug(self):
         return self._display_debug
-
-    @property
-    def profiling(self):
-        return self._profiling
 
     @property
     def settings(self):

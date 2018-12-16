@@ -27,7 +27,7 @@ class IRigKeysIO(ControlSurface):
         self._record_button = ButtonElement(False, MIDI_CC_TYPE, 0, 119, name=u'Record_Button', skin=skin)
         self._record_stop_button = ButtonElement(False, MIDI_CC_TYPE, 0, 116, name=u'Record_Stop_Button', skin=skin)
         self._stop_button = ButtonElement(False, MIDI_CC_TYPE, 0, 117, name=u'Stop_Button', skin=skin)
-        self._pads = ButtonMatrixElement(rows=[[ ButtonElement(True, MIDI_NOTE_TYPE, PAD_CHANNEL, identifier, name=u'Pad_{}'.format(index)) for index, identifier in enumerate(PAD_IDS) ]])
+        self._pads = ButtonMatrixElement(rows=[[ ButtonElement(True, MIDI_NOTE_TYPE, PAD_CHANNEL, identifier, name=u'Pad_{}'.format(index), skin=skin) for index, identifier in enumerate(PAD_IDS) ]])
 
     def _create_mixer(self):
         self._session_ring = SelectedTrackFollowingSessionRingComponent(is_enabled=False, num_tracks=self._encoders.width(), num_scenes=self._encoders.height(), name=u'Session_Ring')

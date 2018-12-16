@@ -18,4 +18,4 @@ def create_instance(c_instance):
     from .push2 import Push2
     from .push2_model import Root, Sender
     root = Root(sender=Sender(message_sink=c_instance.send_model_update, process_connected=c_instance.process_connected))
-    return Push2(c_instance=c_instance, model=root)
+    return Push2(c_instance=c_instance, model=root, decoupled_parameter_list_change_notifications=True)

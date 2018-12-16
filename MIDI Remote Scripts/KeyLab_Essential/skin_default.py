@@ -27,5 +27,21 @@ class Colors:
         StopClipTriggered = Color(0)
         StoppedClip = Color(0)
 
+    class Automation:
+        On = Color(127)
+        Off = Color(0)
+
+    class View:
+        Session = Color(0)
+        Arranger = Color(127)
+
+    class Mixer:
+        MuteOn = Color(127)
+        MuteOff = Color(0)
+        SoloOn = Color(127)
+        SoloOff = Color(0)
+        ArmOn = Color(127)
+        ArmOff = Color(0)
+
 
 default_skin = Skin(Colors)

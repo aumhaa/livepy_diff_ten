@@ -131,7 +131,7 @@ class ChannelStripComponent(Component):
              self._arm_button,
              self._crossfade_toggle):
                 if button != None:
-                    button.turn_off()
+                    button.set_light(False)
 
         self.select_button.enabled = True if self._track else False
         self._update_track_name_data_source()
@@ -366,9 +366,9 @@ class ChannelStripComponent(Component):
         if self.is_enabled() and self._mute_button != None:
             if liveobj_valid(self._track) or self.empty_color == None:
                 if self._track in chain(self.song.tracks, self.song.return_tracks) and self._track.mute != self._invert_mute_feedback:
-                    self._mute_button.turn_on()
+                    self._mute_button.set_light(u'Mixer.MuteOff')
                 else:
-                    self._mute_button.turn_off()
+                    self._mute_button.set_light(u'Mixer.MuteOn')
             else:
                 self._mute_button.set_light(self.empty_color)
 
@@ -376,9 +376,9 @@ class ChannelStripComponent(Component):
         if self.is_enabled() and self._solo_button != None:
             if liveobj_valid(self._track) or self.empty_color == None:
                 if self._track in chain(self.song.tracks, self.song.return_tracks) and self._track.solo:
-                    self._solo_button.turn_on()
+                    self._solo_button.set_light(u'Mixer.SoloOn')
                 else:
-                    self._solo_button.turn_off()
+                    self._solo_button.set_light(u'Mixer.SoloOff')
             else:
                 self._solo_button.set_light(self.empty_color)
 
@@ -386,9 +386,9 @@ class ChannelStripComponent(Component):
         if self.is_enabled() and self._arm_button != None:
             if liveobj_valid(self._track) or self.empty_color == None:
                 if self._track in self.song.tracks and self._track.can_be_armed and self._track.arm:
-                    self._arm_button.turn_on()
+                    self._arm_button.set_light(u'Mixer.ArmOn')
                 else:
-                    self._arm_button.turn_off()
+                    self._arm_button.set_light(u'Mixer.ArmOff')
             else:
                 self._arm_button.set_light(self.empty_color)
 
@@ -399,9 +399,9 @@ class ChannelStripComponent(Component):
     def _on_cf_assign_changed(self):
         if self.is_enabled() and self._crossfade_toggle != None:
             if liveobj_valid(self._track) and self._track in chain(self.song.tracks, self.song.return_tracks) and self._track.mixer_device.crossfade_assign != 1:
-                self._crossfade_toggle.turn_on()
+                self._crossfade_toggle.set_light(True)
             else:
-                self._crossfade_toggle.turn_off()
+                self._crossfade_toggle.set_light(False)
 
     def _on_input_routing_changed(self):
         assert liveobj_valid(self._track)

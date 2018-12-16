@@ -90,8 +90,6 @@ class InstrumentPresetsComponent(DisplayingModesComponent):
         if buttons:
             for button, mode in zip(buttons, modes):
                 self.get_mode_button(mode).set_control_element(button)
-                if button:
-                    button.set_on_off_values(u'Scales.Selected', u'Scales.Unselected')
 
         else:
             for mode in modes:
@@ -270,18 +268,18 @@ class InstrumentScalesComponent(CompoundComponent):
         if self.is_enabled():
             for index, button in enumerate(self._key_center_buttons):
                 if button:
-                    button.set_on_off_values(u'Scales.Selected', u'Scales.Unselected')
-                    button.set_light(self._note_layout.root_note == ROOT_NOTES[index])
+                    color = u'Scales.Selected' if self._note_layout.root_note == ROOT_NOTES[index] else u'Scales.Unselected'
+                    button.set_light(color)
 
     def _update_absolute_relative_button(self):
         if self.is_enabled() and self._absolute_relative_button != None:
-            self._absolute_relative_button.set_on_off_values(u'Scales.FixedOn', u'Scales.FixedOff')
-            self._absolute_relative_button.set_light(self._note_layout.is_fixed)
+            color = u'Scales.FixedOn' if self._note_layout.is_fixed else u'Scales.FixedOff'
+            self._absolute_relative_button.set_light(color)
 
     def _update_diatonic_chromatic_button(self):
         if self.is_enabled() and self._diatonic_chromatic_button != None:
-            self._diatonic_chromatic_button.set_on_off_values(u'Scales.Diatonic', u'Scales.Chromatic')
-            self._diatonic_chromatic_button.set_light(self._note_layout.is_in_key)
+            color = u'Scales.Diatonic' if self._note_layout.is_in_key else u'Scales.Chromatic'
+            self._diatonic_chromatic_button.set_light(color)
 
     def _update_data_sources(self):
         key_index = list(ROOT_NOTES).index(self._note_layout.root_note)

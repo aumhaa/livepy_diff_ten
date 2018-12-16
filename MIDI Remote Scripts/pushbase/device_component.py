@@ -14,13 +14,15 @@ class DeviceComponent(ParameterProvider, CompoundComponent):
     _provided_parameters = tuple()
 
     @depends(device_provider=None)
-    def __init__(self, device_decorator_factory = None, banking_info = None, device_bank_registry = None, device_provider = None, *a, **k):
+    def __init__(self, device_decorator_factory = None, banking_info = None, device_bank_registry = None, device_provider = None, decoupled_parameter_list_change_notifications = False, *a, **k):
         self._bank = None
         self._banking_info = banking_info
         self._decorated_device = None
         self._decorator_factory = device_decorator_factory
         self._device_provider = device_provider
         self._device_bank_registry = device_bank_registry
+        self._parameters_dirty = True
+        self._decoupled_parameter_list_change_notifications = decoupled_parameter_list_change_notifications
         super(DeviceComponent, self).__init__(*a, **k)
         self._initialize_subcomponents()
         self.__on_provided_device_changed.subject = device_provider
@@ -49,8 +51,23 @@ class DeviceComponent(ParameterProvider, CompoundComponent):
             self._bank.index = bank
 
     def _update_parameters(self):
-        self._provided_parameters = self._get_provided_parameters()
-        self.notify_parameters()
+        self._parameters_dirty = True
+        if not self._decoupled_parameter_list_change_notifications:
+            self.update_and_notify_parameters()
+
+    def update_and_notify_parameters(self):
+        u"""
+        This should either be called by _update_parameters or as a public method
+        in the case that the parameter list change notifications are decoupled.
+        
+        For example, Push can potentially call this method every 100 ms when
+        notifications are decoupled, and changes to the parameter list will not
+        be notified immediately.
+        """
+        if self._parameters_dirty:
+            self._provided_parameters = self._get_provided_parameters()
+            self.notify_parameters()
+            self._parameters_dirty = False
 
     def _setup_bank(self, device, bank_factory = create_device_bank):
         if self._bank is not None:

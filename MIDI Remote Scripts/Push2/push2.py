@@ -124,8 +124,10 @@ class Push2(IdentifiableControlSurface, PushBase):
     RESEND_MODEL_DATA_TIMEOUT = 5.0
     DEFUNCT_EXTERNAL_PROCESS_RELAUNCH_TIMEOUT = 2.0
 
-    def __init__(self, c_instance = None, model = None, bank_definitions = None, *a, **k):
+    def __init__(self, c_instance = None, model = None, bank_definitions = None, decoupled_parameter_list_change_notifications = False, *a, **k):
         assert model is not None
+        self._device_component = None
+        self._decoupled_parameter_list_change_notifications = decoupled_parameter_list_change_notifications
         self._model = model
         self._real_time_mapper = c_instance.real_time_mapper
         self._clip_decorator_factory = ClipDecoratorFactory()
@@ -546,7 +548,7 @@ class Push2(IdentifiableControlSurface, PushBase):
 
     def _create_device_component(self):
         device_component_layer = Layer(parameter_touch_buttons=ButtonMatrixElement(rows=[self.elements.global_param_touch_buttons_raw]), shift_button=u'shift_button')
-        return DeviceComponentProvider(device_component_layer=device_component_layer, device_decorator_factory=self._device_decorator_factory, device_bank_registry=self._device_bank_registry, banking_info=self._banking_info, name=u'DeviceComponent', is_enabled=False, delete_button=self.elements.delete_button)
+        return DeviceComponentProvider(device_component_layer=device_component_layer, device_decorator_factory=self._device_decorator_factory, device_bank_registry=self._device_bank_registry, banking_info=self._banking_info, name=u'DeviceComponent', is_enabled=False, delete_button=self.elements.delete_button, decoupled_parameter_list_change_notifications=self._decoupled_parameter_list_change_notifications)
 
     def _create_device_parameter_component(self):
         return DeviceParameterComponent(parameter_provider=self._device_component, is_enabled=False, layer=Layer(parameter_controls=u'fine_grain_param_controls'))
@@ -743,7 +745,6 @@ class Push2(IdentifiableControlSurface, PushBase):
         setup.info.layer = Layer(install_firmware_button=u'track_state_buttons_raw[6]', priority=consts.SETUP_DIALOG_PRIORITY)
         setup.pad_settings.layer = Layer(sensitivity_encoder=u'parameter_controls_raw[4]', gain_encoder=u'parameter_controls_raw[5]', dynamics_encoder=u'parameter_controls_raw[6]', priority=consts.SETUP_DIALOG_PRIORITY)
         setup.display_debug.layer = Layer(show_row_spaces_button=u'track_state_buttons_raw[0]', show_row_margins_button=u'track_state_buttons_raw[1]', show_row_middle_button=u'track_state_buttons_raw[2]', show_button_spaces_button=u'track_state_buttons_raw[3]', show_unlit_button_button=u'track_state_buttons_raw[4]', show_lit_button_button=u'track_state_buttons_raw[5]', priority=consts.SETUP_DIALOG_PRIORITY)
-        setup.profiling.layer = Layer(show_qml_stats_button=u'track_state_buttons_raw[0]', show_usb_stats_button=u'track_state_buttons_raw[1]', show_realtime_ipc_stats_button=u'track_state_buttons_raw[2]', priority=consts.SETUP_DIALOG_PRIORITY)
         self._model.setupView = setup
         self._setup_enabler = EnablingModesComponent(component=setup, enabled_color=u'DefaultButton.On', disabled_color=u'DefaultButton.On')
         self._setup_enabler.layer = Layer(cycle_mode_button=u'setup_button')
@@ -829,3 +830,7 @@ class Push2(IdentifiableControlSurface, PushBase):
     def update(self):
         if self._initialized:
             super(Push2, self).update()
+
+    def update_display_hook(self):
+        if self._device_component and self._decoupled_parameter_list_change_notifications:
+            self._device_component.device_component.update_and_notify_parameters()

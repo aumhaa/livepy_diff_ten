@@ -30,7 +30,7 @@ class DeviceComponentProvider(ModesComponent):
     __events__ = (u'device',)
 
     @depends(device_provider=None)
-    def __init__(self, device_component_layer = None, device_decorator_factory = None, banking_info = None, device_bank_registry = None, device_provider = None, delete_button = None, *a, **k):
+    def __init__(self, device_component_layer = None, device_decorator_factory = None, banking_info = None, device_bank_registry = None, device_provider = None, delete_button = None, decoupled_parameter_list_change_notifications = False, *a, **k):
         super(DeviceComponentProvider, self).__init__(*a, **k)
         self._device_provider = device_provider
         self._visualisation_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'visualisation'))
@@ -38,7 +38,7 @@ class DeviceComponentProvider(ModesComponent):
         self.__on_visualisation_channel_changed.subject = self._visualisation_real_time_data
         self._device_component_modes = {}
         for mode_name, component_class in DEVICE_COMPONENT_MODES.iteritems():
-            self._device_component_modes[mode_name] = self.register_component(component_class(device_decorator_factory=device_decorator_factory, banking_info=banking_info, device_bank_registry=device_bank_registry, device_provider=device_provider, name=u'{}DeviceComponent'.format(mode_name), visualisation_real_time_data=self._visualisation_real_time_data, is_enabled=False, delete_button=delete_button))
+            self._device_component_modes[mode_name] = self.register_component(component_class(device_decorator_factory=device_decorator_factory, banking_info=banking_info, device_bank_registry=device_bank_registry, device_provider=device_provider, name=u'{}DeviceComponent'.format(mode_name), visualisation_real_time_data=self._visualisation_real_time_data, is_enabled=False, delete_button=delete_button, decoupled_parameter_list_change_notifications=decoupled_parameter_list_change_notifications))
 
         for mode_name, device_component in self._device_component_modes.iteritems():
             self.add_mode(mode_name, [device_component, (device_component, device_component_layer)])

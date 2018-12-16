@@ -224,7 +224,7 @@ class SessionComponent(CompoundComponent):
                     elif track.playing_slot_index >= 0:
                         value_to_send = self._stop_clip_value
                 if value_to_send == None:
-                    button.turn_off()
+                    button.set_light(False)
                 elif in_range(value_to_send, 0, 128):
                     button.send_value(value_to_send)
                 else:

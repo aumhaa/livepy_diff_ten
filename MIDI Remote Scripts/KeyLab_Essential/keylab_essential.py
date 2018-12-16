@@ -10,7 +10,6 @@ from .arrangement import ArrangementComponent
 from .control_element_utils import create_button, create_pad_led, create_ringed_encoder
 from .hardware_settings import HardwareSettingsComponent
 from .mixer import MixerComponent
-from .session import SessionComponent
 from .skin_default import default_skin
 from .transport import TransportComponent
 from .session import SessionComponent
@@ -18,6 +17,10 @@ from .undo import UndoComponent
 from .view_control import ViewControlComponent
 
 class KeyLabEssential(ControlSurface):
+    mixer_component_type = MixerComponent
+    session_component_type = SessionComponent
+    view_control_component_type = ViewControlComponent
+    hardware_settings_component_type = HardwareSettingsComponent
 
     def __init__(self, *a, **k):
         super(KeyLabEssential, self).__init__(*a, **k)
@@ -44,7 +47,7 @@ class KeyLabEssential(ControlSurface):
         self._hardware_settings.set_hardware_live_mode_enabled(True)
 
     def _create_controls(self):
-        self._hardware_live_mode_switch = SysexElement(send_message_generator=lambda b: sysex.LIVE_MODE_MESSAGE_HEADER + (b, sysex.END_BYTE), default_value=sysex.LIVE_MODE_OFF, name=u'Hardware_Live_Mode_Switch')
+        self._hardware_live_mode_switch = SysexElement(send_message_generator=lambda b: sysex.LIVE_MODE_MESSAGE_HEADER + (b, sysex.END_BYTE), default_value=sysex.OFF_VALUE, name=u'Hardware_Live_Mode_Switch')
         self._memory_preset_switch = SysexElement(send_message_generator=lambda b: sysex.MEMORY_PRESET_SWITCH_MESSAGE_HEADER + (b, sysex.END_BYTE), sysex_identifier=sysex.MEMORY_PRESET_SWITCH_MESSAGE_HEADER, name=u'Memory_Preset_Switch')
         self._memory_preset_select_mode_switch = SysexElement(sysex_identifier=sysex.MEMORY_PRESET_SELECT_MODE_MESSAGE_HEADER, name=u'Memory_Preset_Select_Mode')
         self._play_button = create_button(94, u'Play_Button')
@@ -72,7 +75,7 @@ class KeyLabEssential(ControlSurface):
         self._jogwheel = EncoderElement(MIDI_CC_TYPE, 0, 60, Live.MidiMap.MapMode.relative_smooth_signed_bit, name=u'Jogwheel')
 
     def _create_hardware_settings(self):
-        self._hardware_settings = HardwareSettingsComponent(is_enabled=False, layer=Layer(hardware_live_mode_switch=self._hardware_live_mode_switch, memory_preset_switch=self._memory_preset_switch, memory_preset_select_mode_switch=self._memory_preset_select_mode_switch), name=u'Hardware_Settings')
+        self._hardware_settings = self.hardware_settings_component_type(is_enabled=False, layer=Layer(hardware_live_mode_switch=self._hardware_live_mode_switch, memory_preset_switch=self._memory_preset_switch, memory_preset_select_mode_switch=self._memory_preset_select_mode_switch), name=u'Hardware_Settings')
         self._hardware_settings.set_enabled(True)
 
     def _create_transport(self):
@@ -87,7 +90,7 @@ class KeyLabEssential(ControlSurface):
     def _create_session(self):
         self._session_ring = SessionRingComponent(num_tracks=self._pads.width(), num_scenes=self._pads.height(), name=u'Session_Ring')
         self._session_ring.set_enabled(False)
-        self._session = SessionComponent(session_ring=self._session_ring, name=u'Session', is_enabled=False, layer=Layer(clip_launch_buttons=self._pads, clip_slot_leds=self._pad_leds))
+        self._session = self.session_component_type(session_ring=self._session_ring, name=u'Session', is_enabled=False, layer=Layer(clip_launch_buttons=self._pads, clip_slot_leds=self._pad_leds))
         self._session.set_enabled(True)
 
     def _create_navigation(self):
@@ -95,12 +98,12 @@ class KeyLabEssential(ControlSurface):
         self._session_navigation.set_enabled(True)
 
     def _create_mixer(self):
-        self._mixer = MixerComponent(tracks_provider=self._session_ring, is_enabled=False, layer=Layer(volume_controls=self._faders, pan_controls=self._encoders))
+        self._mixer = self.mixer_component_type(tracks_provider=self._session_ring, is_enabled=False, layer=Layer(volume_controls=self._faders, pan_controls=self._encoders))
         self._mixer.master_strip().set_volume_control(self._master_fader)
         self._mixer.set_enabled(True)
 
     def _create_view_control(self):
-        self._view_control = ViewControlComponent(is_enabled=False, layer=Layer(prev_track_button=self._left_arrow_button, next_track_button=self._right_arrow_button, scene_scroll_encoder=self._jogwheel), name=u'View_Control')
+        self._view_control = self.view_control_component_type(is_enabled=False, layer=Layer(prev_track_button=self._left_arrow_button, next_track_button=self._right_arrow_button, scene_scroll_encoder=self._jogwheel), name=u'View_Control')
         self._view_control.set_enabled(True)
 
     def _create_arrangement(self):
@@ -122,4 +125,8 @@ class KeyLabEssential(ControlSurface):
     @listens(u'daw_preset')
     def _on_memory_preset_changed_on_hardware(self, is_daw_preset_on):
         self._session.set_allow_update(is_daw_preset_on)
+        if is_daw_preset_on:
+            for control in self.controls:
+                control.clear_send_cache()
+
         self._session.set_enabled(is_daw_preset_on)

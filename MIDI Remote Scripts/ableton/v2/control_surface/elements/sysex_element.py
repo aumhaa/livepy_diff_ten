@@ -31,7 +31,7 @@ class SysexElement(InputControlElement):
         assert self._send_message_generator is not None
         message = self._send_message_generator(*arguments)
         assert midi.is_valid_sysex(message), u'Trying to send sysex message %r, which is not valid.' % map(hex, message)
-        self.send_midi(message)
+        self._do_send_value(message)
 
     def enquire_value(self):
         assert self._enquire_message is not None
@@ -40,3 +40,6 @@ class SysexElement(InputControlElement):
     def reset(self):
         if self._default_value is not None:
             self.send_value(self._default_value)
+
+    def _do_send_value(self, message):
+        self.send_midi(message)

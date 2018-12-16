@@ -551,18 +551,11 @@ class DisplayDebugSettingsModel(Binding):
     show_lit_button = view_property(bool, False)
 
 
-class ProfilingSettingsModel(Binding):
-    show_qml_stats = view_property(bool, False)
-    show_usb_stats = view_property(bool, False)
-    show_realtime_ipc_stats = view_property(bool, False)
-
-
 class SettingsModel(Binding):
     general = view_property(GeneralSettingsModel)
     pad_settings = view_property(PadSettingsModel)
     hardware = view_property(HardwareSettingsModel)
     display_debug = view_property(DisplayDebugSettingsModel)
-    profiling = view_property(ProfilingSettingsModel)
 
 
 class VelocityCurveModel(Binding):

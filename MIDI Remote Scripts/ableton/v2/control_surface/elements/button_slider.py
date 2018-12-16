@@ -57,9 +57,9 @@ class ButtonSliderElement(SliderElement):
             index_to_light = int((num_buttons - 1) * value / 127) if value > 0 else 0
             for index in xrange(num_buttons):
                 if index == index_to_light:
-                    self._buttons[index].turn_on()
+                    self._buttons[index].set_light(True)
                 else:
-                    self._buttons[index].turn_off()
+                    self._buttons[index].set_light(False)
 
             self._last_sent_value = value
 

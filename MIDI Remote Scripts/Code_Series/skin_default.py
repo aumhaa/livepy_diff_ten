@@ -13,6 +13,14 @@ class Colors:
         PlayOn = Color(127)
         PlayOff = Color(0)
 
+    class Mixer:
+        MuteOff = Color(127)
+        MuteOn = Color(0)
+        SoloOn = Color(127)
+        SoloOff = Color(0)
+        ArmOn = Color(127)
+        ArmOff = Color(0)
+
 
 def make_default_skin():
     return Skin(Colors)

@@ -47,20 +47,14 @@ class SpecialMixerComponent(components.MixerComponent):
 
     def set_track_select_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
-            if button:
-                button.set_on_off_values(u'Option.Selected', u'Option.Unselected')
             strip.set_select_button(button)
 
     def set_solo_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
-            if button:
-                button.set_on_off_values(u'Mixer.SoloOn', u'Mixer.SoloOff')
             strip.set_solo_button(button)
 
     def set_mute_buttons(self, buttons):
         for strip, button in izip_longest(self._channel_strips, buttons or []):
-            if button:
-                button.set_on_off_values(u'Mixer.MuteOff', u'Mixer.MuteOn')
             strip.set_mute_button(button)
 
     def set_track_names_display(self, display):

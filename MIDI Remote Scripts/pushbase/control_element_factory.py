@@ -1,12 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import depends
 from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, PrioritizedResource, midi
-from ableton.v2.control_surface.elements import SysexElement
-from .configurable_button_element import ConfigurableButtonElement
+from ableton.v2.control_surface.elements import ButtonElement, SysexElement
 
 @depends(skin=None)
 def create_button(note, name, skin = None, **k):
-    return ConfigurableButtonElement(True, MIDI_CC_TYPE, 0, note, name=name, skin=skin, **k)
+    return ButtonElement(True, MIDI_CC_TYPE, 0, note, name=name, skin=skin, **k)
 
 
 def create_modifier_button(note, name, **k):
@@ -15,7 +14,7 @@ def create_modifier_button(note, name, **k):
 
 @depends(skin=None)
 def create_note_button(note, name, skin = None, **k):
-    return ConfigurableButtonElement(True, MIDI_NOTE_TYPE, 0, note, skin=skin, name=name, **k)
+    return ButtonElement(True, MIDI_NOTE_TYPE, 0, note, skin=skin, name=name, **k)
 
 
 def make_send_message_generator(prefix):

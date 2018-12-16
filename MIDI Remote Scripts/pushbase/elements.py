@@ -3,7 +3,7 @@ from ableton.v2.base import depends, recursive_map
 from ableton.v2.control_surface import MIDI_NOTE_TYPE, PrioritizedResource
 from ableton.v2.control_surface.elements import ButtonMatrixElement, DoublePressElement, FineGrainWithModifierEncoderElement, FullVelocityElement, MultiElement, PlayheadElement, VelocityLevelsElement
 from . import consts
-from .configurable_button_element import PadButtonElement
+from .pad_button_element import PadButtonElement
 from .control_element_factory import create_button, create_modifier_button, create_note_button
 from .touch_encoder_element import TouchEncoderElement
 BASE_ENCODER_SENSITIVITY = 0.5
@@ -70,8 +70,7 @@ class Elements(object):
         def create_pad_button(pad_id, name, skin = None, **k):
             return PadButtonElement(pad_id, pad_sensitivity_update, True, MIDI_NOTE_TYPE, 0, (36 + pad_id), skin=skin, name=name, **k)
 
-        self.matrix_rows_raw = [ [ create_pad_button((7 - row) * 8 + column, str(column) + u'_Clip_' + str(row) + u'_Button', is_rgb=True, default_states={True: u'DefaultMatrix.On',
-         False: u'DefaultMatrix.Off'}) for column in xrange(8) ] for row in xrange(8) ]
+        self.matrix_rows_raw = [ [ create_pad_button((7 - row) * 8 + column, str(column) + u'_Clip_' + str(row) + u'_Button', is_rgb=True) for column in xrange(8) ] for row in xrange(8) ]
         double_press_rows = recursive_map(DoublePressElement, self.matrix_rows_raw)
         self.matrix = ButtonMatrixElement(name=u'Button_Matrix', rows=self.matrix_rows_raw)
         self.double_press_matrix = ButtonMatrixElement(name=u'Double_Press_Matrix', rows=double_press_rows)

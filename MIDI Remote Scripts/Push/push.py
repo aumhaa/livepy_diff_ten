@@ -433,6 +433,10 @@ class Push(PushBase):
     def _create_device_navigation(self):
         return DeviceNavigationComponent(device_bank_registry=self._device_bank_registry, banking_info=self._banking_info, is_enabled=False, session_ring=self._session_ring, layer=Layer(enter_button=u'in_button', exit_button=u'out_button', select_buttons=u'select_buttons', state_buttons=u'track_state_buttons', display_line=u'display_line4', _notification=self._notification.use_single_line(2)), info_layer=Layer(display_line1=u'display_line1', display_line2=u'display_line2', display_line3=u'display_line3', display_line4=u'display_line4', _notification=self._notification.use_full_display(2)), delete_handler=self._delete_component)
 
+    def _init_device(self):
+        super(Push, self)._init_device()
+        self._device_component.layer = Layer(shift_button=u'shift_button')
+
     @listens_group(u'value')
     def __on_main_mode_button_value(self, value, sender):
         if not value:

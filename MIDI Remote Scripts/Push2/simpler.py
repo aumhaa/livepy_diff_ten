@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-import re
 from ableton.v2.base import depends, find_if, listenable_property, listens, liveobj_valid
 from pushbase.decoration import NotifyingList, get_parameter_by_name
 from pushbase.internal_parameter import EnumWrappingParameter
