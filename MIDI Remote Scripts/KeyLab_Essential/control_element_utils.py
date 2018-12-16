@@ -2,10 +2,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import depends
 from ableton.v2.control_surface import InputControlElement, MIDI_CC_TYPE, MIDI_NOTE_TYPE
-from ableton.v2.control_surface.elements import ButtonElement
+from ableton.v2.control_surface.elements import ButtonElement, ColorSysexElement
 from . import sysex
 from .ringed_encoder import RingedEncoderElement
-from .sysex_element import SkinableSysexElement
 
 @depends(skin=None)
 def create_button(identifier, name, channel = 0, skin = None):
@@ -23,7 +22,7 @@ def create_pad_led(identifier, name, skin = None):
 
         return send_message_generator
 
-    return SkinableSysexElement(skin=skin, send_message_generator=make_send_value_generator(identifier), default_value=(0, 0, 0), name=name)
+    return ColorSysexElement(skin=skin, send_message_generator=make_send_value_generator(identifier), default_value=(0, 0, 0), optimized=True, name=name)
 
 
 def create_ringed_encoder(identifier, ring_element_identifier, name):

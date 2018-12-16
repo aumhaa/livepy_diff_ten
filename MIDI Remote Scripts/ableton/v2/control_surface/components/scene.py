@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip
 from ...base import listens, liveobj_valid, liveobj_changed
-from ..compound_component import CompoundComponent
+from ..component import Component
 from ..control import ButtonControl
 from .clip_slot import ClipSlotComponent, is_button_pressed, find_nearest_color
 
-class SceneComponent(CompoundComponent):
+class SceneComponent(Component):
     u"""
     Class representing a scene in Live
     """
@@ -24,7 +24,6 @@ class SceneComponent(CompoundComponent):
         for _ in range(session_ring.num_tracks):
             new_slot = self._create_clip_slot()
             self._clip_slots.append(new_slot)
-            self.register_components(new_slot)
 
         self._triggered_color = u'Session.SceneTriggered'
         self._scene_color = u'Session.Scene'
@@ -72,19 +71,16 @@ class SceneComponent(CompoundComponent):
 
     def update(self):
         super(SceneComponent, self).update()
-        if self._allow_updates:
-            if liveobj_valid(self._scene) and self.is_enabled():
-                clip_slots_to_use = self.build_clip_slot_list()
-                for slot_wrapper, clip_slot in izip(self._clip_slots, clip_slots_to_use):
-                    slot_wrapper.set_clip_slot(clip_slot)
+        if liveobj_valid(self._scene) and self.is_enabled():
+            clip_slots_to_use = self.build_clip_slot_list()
+            for slot_wrapper, clip_slot in izip(self._clip_slots, clip_slots_to_use):
+                slot_wrapper.set_clip_slot(clip_slot)
 
-            else:
-                for slot in self._clip_slots:
-                    slot.set_clip_slot(None)
-
-            self._update_launch_button()
         else:
-            self._update_requests += 1
+            for slot in self._clip_slots:
+                slot.set_clip_slot(None)
+
+        self._update_launch_button()
 
     def _determine_actual_track_offset(self, tracks):
         actual_track_offset = self._track_offset
@@ -194,4 +190,4 @@ class SceneComponent(CompoundComponent):
             self.launch_button.color = value_to_send
 
     def _create_clip_slot(self):
-        return self.clip_slot_component_type()
+        return self.clip_slot_component_type(parent=self)

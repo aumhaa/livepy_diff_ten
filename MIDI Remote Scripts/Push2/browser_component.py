@@ -4,7 +4,7 @@ from itertools import imap
 from math import ceil
 import Live
 from ableton.v2.base import BooleanContext, depends, index_if, lazy_attribute, listenable_property, listens, liveobj_changed, liveobj_valid, nop, task
-from ableton.v2.control_surface import Component, CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import control_list, ButtonControl, StepEncoderControl, ToggleButtonControl
 from pushbase.browser_util import filter_type_for_hotswap_target, get_selection_for_new_device
 from pushbase.consts import MessageBoxText
@@ -114,7 +114,7 @@ class CannotFocusListError(Exception):
     pass
 
 
-class BrowserComponent(CompoundComponent, Messenger):
+class BrowserComponent(Component, Messenger):
     __events__ = (u'loaded', u'close')
     NUM_ITEMS_PER_COLUMN = 6
     NUM_VISIBLE_BROWSER_LISTS = 7
@@ -160,7 +160,7 @@ class BrowserComponent(CompoundComponent, Messenger):
         self._delay_preview_list = BooleanContext()
         self._selection = selection
         self._main_modes_ref = main_modes_ref if main_modes_ref is not None else nop
-        self._load_neighbour_overlay = self.register_component(LoadNeighbourOverlayComponent(is_enabled=False))
+        self._load_neighbour_overlay = LoadNeighbourOverlayComponent(parent=self, is_enabled=False)
         self._content_filter_type = None
         self._content_hotswap_target = None
         self._preview_list_task = self._tasks.add(task.sequence(task.wait(self.REVEAL_PREVIEW_LIST_TIME), task.run(self._replace_preview_list_by_task))).kill()

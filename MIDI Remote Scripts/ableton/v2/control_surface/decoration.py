@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import ifilter
 import Live
 AutomationState = Live.DeviceParameter.AutomationState
-from ableton.v2.base import CompoundDisconnectable, EventObject, Proxy, clamp, find_if, listenable_property, listens, liveobj_valid
+from ..base import CompoundDisconnectable, EventObject, Proxy, clamp, find_if, listenable_property, listens, liveobj_valid
 from .internal_parameter import InternalParameter
 
 def get_parameter_by_name(decorator, name):

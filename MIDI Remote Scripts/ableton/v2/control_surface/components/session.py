@@ -2,10 +2,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from itertools import count
 from ...base import EventObject, in_range, product, listens, listens_group
-from ..compound_component import CompoundComponent
+from ..component import Component
 from .scene import SceneComponent
 
-class SessionComponent(CompoundComponent):
+class SessionComponent(Component):
     u"""
     Class encompassing several scenes to cover a defined section of
     Live's session. It handles starting and playing clips.
@@ -22,9 +22,10 @@ class SessionComponent(CompoundComponent):
         self._stop_track_clip_buttons = None
         self._stop_clip_triggered_value = u'Session.StopClipTriggered'
         self._stop_clip_value = u'Session.StopClip'
+        self._stop_clip_disabled_value = u'Session.StopClipDisabled'
         self._track_slots = self.register_disconnectable(EventObject())
-        self._selected_scene = self.register_component(self._create_scene())
-        self._scenes = self.register_components(*[ self._create_scene() for _ in xrange(self._session_ring.num_scenes) ])
+        self._selected_scene = self._create_scene()
+        self._scenes = [ self._create_scene() for _ in xrange(self._session_ring.num_scenes) ]
         if self._session_component_ends_initialisation:
             self._end_initialisation()
         if auto_name:
@@ -38,7 +39,7 @@ class SessionComponent(CompoundComponent):
         self._reassign_scenes_and_tracks()
 
     def _create_scene(self):
-        return self.scene_component_type(session_ring=self._session_ring)
+        return self.scene_component_type(parent=self, session_ring=self._session_ring)
 
     def scene(self, index):
         assert in_range(index, 0, len(self._scenes))
@@ -128,13 +129,10 @@ class SessionComponent(CompoundComponent):
 
     def update(self):
         super(SessionComponent, self).update()
-        if self._allow_updates:
-            if self.is_enabled():
-                self._update_stop_track_clip_buttons()
-                self._update_stop_all_clips_button()
-                self._reassign_scenes_and_tracks()
-        else:
-            self._update_requests += 1
+        if self.is_enabled():
+            self._update_stop_track_clip_buttons()
+            self._update_stop_all_clips_button()
+            self._reassign_scenes_and_tracks()
 
     def _update_stop_track_clip_buttons(self):
         if self.is_enabled():
@@ -223,6 +221,8 @@ class SessionComponent(CompoundComponent):
                         value_to_send = self._stop_clip_triggered_value
                     elif track.playing_slot_index >= 0:
                         value_to_send = self._stop_clip_value
+                    else:
+                        value_to_send = self._stop_clip_disabled_value
                 if value_to_send == None:
                     button.set_light(False)
                 elif in_range(value_to_send, 0, 128):

@@ -3,11 +3,10 @@ from itertools import chain
 from contextlib import contextmanager
 from MidiRemoteScript import MutableVector
 from ableton.v2.base import listens, listens_group, liveobj_valid, listenable_property, task
-from ableton.v2.control_surface import Component, CompoundComponent
-from ableton.v2.control_surface.control import ButtonControl, EncoderControl, ToggleButtonControl
+from ableton.v2.control_surface import Component, WrappingParameter
+from ableton.v2.control_surface.control import ButtonControl, EncoderControl, MappedSensitivitySettingControl, ToggleButtonControl
+from ableton.v2.control_surface.mode import ModesComponent
 from pushbase.clip_control_component import convert_beat_length_to_bars_beats_sixteenths, convert_beat_time_to_bars_beats_sixteenths, LoopSettingsControllerComponent as LoopSettingsControllerComponentBase, AudioClipSettingsControllerComponent as AudioClipSettingsControllerComponentBase, ONE_YEAR_AT_120BPM_IN_BEATS, WARP_MODE_NAMES
-from pushbase.internal_parameter import WrappingParameter
-from pushbase.mapped_control import MappedControl
 from pushbase.note_editor_component import DEFAULT_START_NOTE
 from .clip_decoration import ClipDecoratorFactory
 from .colors import COLOR_INDEX_TO_SCREEN_COLOR
@@ -84,9 +83,9 @@ class LoopSetting(WrappingParameter):
 
 class LoopSettingsControllerComponent(LoopSettingsControllerComponentBase):
     __events__ = (u'looping', u'loop_parameters', u'zoom', u'clip')
-    ZOOM_DEFAULT_SENSITIVITY = MappedControl.DEFAULT_SENSITIVITY
-    ZOOM_FINE_SENSITIVITY = MappedControl.FINE_SENSITIVITY
-    zoom_encoder = MappedControl()
+    ZOOM_DEFAULT_SENSITIVITY = MappedSensitivitySettingControl.DEFAULT_SENSITIVITY
+    ZOOM_FINE_SENSITIVITY = MappedSensitivitySettingControl.FINE_SENSITIVITY
+    zoom_encoder = MappedSensitivitySettingControl()
     zoom_touch_encoder = EncoderControl()
     loop_button = ToggleButtonControl(toggled_color=u'Clip.Option', untoggled_color=u'Clip.OptionDisabled')
     crop_button = ButtonControl(color=u'Clip.Action')
@@ -284,7 +283,7 @@ class WarpSetting(WrappingParameter):
         return self._property_host.available_warp_modes.index(getattr(self._property_host, self._source_property))
 
 
-class AudioClipSettingsControllerComponent(AudioClipSettingsControllerComponentBase, CompoundComponent):
+class AudioClipSettingsControllerComponent(AudioClipSettingsControllerComponentBase):
     __events__ = (u'audio_parameters', u'warping', u'gain')
 
     def __init__(self, *a, **k):
@@ -293,8 +292,8 @@ class AudioClipSettingsControllerComponent(AudioClipSettingsControllerComponentB
          PitchSetting(name=PARAMETERS_AUDIO[1], parent=self._audio_clip_model, source_property=u'pitch_coarse', min_value=-49.0, max_value=49.0, unit=u'st'),
          PitchSetting(name=PARAMETERS_AUDIO[2], parent=self._audio_clip_model, source_property=u'pitch_fine', min_value=-51.0, max_value=51.0, unit=u'ct'),
          GainSetting(name=PARAMETERS_AUDIO[3], parent=self._audio_clip_model, source_property=u'gain')]
-        self._playhead_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'playhead'))
-        self._waveform_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'waveform'))
+        self._playhead_real_time_data = RealTimeDataComponent(channel_type=u'playhead', parent=self)
+        self._waveform_real_time_data = RealTimeDataComponent(channel_type=u'waveform', parent=self)
         for parameter in self._audio_clip_parameters:
             self.register_disconnectable(parameter)
 
@@ -529,7 +528,7 @@ def get_static_view_data(matrix_mode_path):
     return _MATRIX_MODE_PATH_TO_DATA.get(matrix_mode_path, _DEFAULT_VIEW_DATA)
 
 
-class MidiClipControllerComponent(CompoundComponent):
+class MidiClipControllerComponent(Component):
     grid_window_focus = u'grid_window_start'
 
     def __init__(self, *a, **k):
@@ -546,7 +545,7 @@ class MidiClipControllerComponent(CompoundComponent):
         self._most_recent_page_index = 0
         self._most_recent_page_length = 1.0
         self._most_recent_editing_note_regions = []
-        self._visualisation_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'visualisation'))
+        self._visualisation_real_time_data = RealTimeDataComponent(channel_type=u'visualisation', parent=self)
         self.__on_visualisation_channel_changed.subject = self._visualisation_real_time_data
         self.__on_visualisation_attached.subject = self._visualisation_real_time_data
         self._instruments = []
@@ -687,7 +686,7 @@ class MidiClipControllerComponent(CompoundComponent):
 
     @listens(u'matrix_mode_path')
     def __on_matrix_mode_changed(self):
-        if self.is_enabled():
+        if self.is_enabled() and self._matrix_mode_watcher:
             static_view_data = self.get_static_view_data()
             if self.matrix_mode_path() == u'matrix_modes.note.instrument.sequence':
                 num_visible_keys = static_view_data[u'NumDisplayKeys']
@@ -842,22 +841,17 @@ class MidiClipControllerComponent(CompoundComponent):
             visualisation.set_view_data(view_data)
 
 
-class ClipControlComponent(CompoundComponent):
+class ClipControlComponent(Component):
     __events__ = (u'clip',)
 
-    def __init__(self, midi_loop_controller = None, audio_loop_controller = None, audio_clip_controller = None, midi_clip_controller = None, mode_selector = None, decorator_factory = None, *a, **k):
-        assert audio_loop_controller is not None
-        assert midi_loop_controller is not None
-        assert audio_clip_controller is not None
-        assert midi_clip_controller is not None
-        assert mode_selector is not None
+    def __init__(self, decorator_factory = None, *a, **k):
         super(ClipControlComponent, self).__init__(*a, **k)
         self._clip = None
-        self._midi_loop_controller = self.register_component(midi_loop_controller)
-        self._audio_loop_controller = self.register_component(audio_loop_controller)
-        self._audio_clip_controller = self.register_component(audio_clip_controller)
-        self._midi_clip_controller = self.register_component(midi_clip_controller)
-        self._mode_selector = self.register_component(mode_selector)
+        self.midi_loop_controller = LoopSettingsControllerComponent(parent=self)
+        self.audio_loop_controller = LoopSettingsControllerComponent(parent=self)
+        self.audio_clip_controller = AudioClipSettingsControllerComponent(parent=self)
+        self.midi_clip_controller = MidiClipControllerComponent(parent=self)
+        self.mode_selector = ModesComponent(parent=self)
         self._decorator_factory = decorator_factory or ClipDecoratorFactory()
         self.__on_selected_scene_changed.subject = self.song.view
         self.__on_selected_track_changed.subject = self.song.view
@@ -907,20 +901,20 @@ class ClipControlComponent(CompoundComponent):
                 audio_clip = clip
             else:
                 midi_clip = clip
-            self._audio_clip_controller.clip = audio_clip
-            self._audio_loop_controller.clip = self._decorate_clip(audio_clip)
+            self.audio_clip_controller.clip = audio_clip
+            self.audio_loop_controller.clip = self._decorate_clip(audio_clip)
             decorated_midi_clip = self._decorate_clip(midi_clip)
-            self._midi_clip_controller.clip = decorated_midi_clip
-            self._midi_loop_controller.clip = decorated_midi_clip
+            self.midi_clip_controller.clip = decorated_midi_clip
+            self.midi_loop_controller.clip = decorated_midi_clip
             self.__on_has_clip_changed.subject = self.song.view.highlighted_clip_slot
             self._clip = clip
             self.notify_clip()
 
     def _update_selected_mode(self, clip):
         if liveobj_valid(clip):
-            self._mode_selector.selected_mode = u'audio' if clip.is_audio_clip else u'midi'
+            self.mode_selector.selected_mode = u'audio' if clip.is_audio_clip else u'midi'
         else:
-            self._mode_selector.selected_mode = u'no_clip'
+            self.mode_selector.selected_mode = u'no_clip'
 
     @property
     def clip(self):

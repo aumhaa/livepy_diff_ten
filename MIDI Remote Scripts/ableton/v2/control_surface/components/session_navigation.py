@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import listens
-from ..compound_component import CompoundComponent
+from ..component import Component
 from .scroll import ScrollComponent, Scrollable
 
 class SessionRingScroller(Scrollable):
@@ -90,7 +90,7 @@ class SessionRingScenePager(SessionRingScroller):
         self._session_ring.set_offsets(self._session_ring.track_offset, self._session_ring.scene_offset + self.page_size)
 
 
-class SessionNavigationComponent(CompoundComponent):
+class SessionNavigationComponent(Component):
     u"""
     Allows moving the session ring using navigation controls.
     """
@@ -106,7 +106,10 @@ class SessionNavigationComponent(CompoundComponent):
         self.__on_offset_changed.subject = self._session_ring
         self.__on_tracks_changed.subject = self._session_ring
         self.__on_scene_list_changed.subject = self.song
-        self._vertical_banking, self._horizontal_banking, self._vertical_paginator, self._horizontal_paginator = self.register_components(ScrollComponent(self.scene_scroller_type(session_ring)), ScrollComponent(self.track_scroller_type(session_ring)), ScrollComponent(self.scene_pager_type(session_ring)), ScrollComponent(self.track_pager_type(session_ring)))
+        self._vertical_banking = ScrollComponent(self.scene_scroller_type(session_ring), parent=self)
+        self._horizontal_banking = ScrollComponent(self.track_scroller_type(session_ring), parent=self)
+        self._vertical_paginator = ScrollComponent(self.scene_pager_type(session_ring), parent=self)
+        self._horizontal_paginator = ScrollComponent(self.track_pager_type(session_ring), parent=self)
 
     @listens(u'offset')
     def __on_offset_changed(self, track_offset, _):

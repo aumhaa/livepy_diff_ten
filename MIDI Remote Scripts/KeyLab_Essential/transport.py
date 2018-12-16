@@ -7,7 +7,8 @@ class TransportComponent(TransportComponentBase):
 
     def __init__(self, *a, **k):
         super(TransportComponent, self).__init__(*a, **k)
-        self._punch_in_toggle, self._punch_out_toggle = self.register_components(ToggleComponent(u'punch_in', self.song), ToggleComponent(u'punch_out', self.song))
+        self._punch_in_toggle = ToggleComponent(u'punch_in', self.song, parent=self)
+        self._punch_out_toggle = ToggleComponent(u'punch_out', self.song, parent=self)
 
     def set_play_button(self, button):
         self.play_button.set_control_element(button)

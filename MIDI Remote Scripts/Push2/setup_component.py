@@ -148,10 +148,10 @@ class SetupComponent(ModesComponent):
         self._pad_curve_sender = pad_curve_sender
         has_option = self.application.has_option
         self.make_it_go_boom_button.enabled = not has_option(u'_Push2DeveloperMode') and has_option(u'_MakePush2GoBoom')
-        self._general = self.register_component(GeneralSettingsComponent(settings=settings.general, hardware_settings=settings.hardware, is_enabled=False))
-        self._info = self.register_component(InfoComponent(firmware_switcher=firmware_switcher, is_enabled=False))
-        self._pad_settings = self.register_component(PadSettingsComponent(pad_settings=settings.pad_settings, is_enabled=False))
-        self._display_debug = self.register_component(DisplayDebugSettingsComponent(settings=settings.display_debug, is_enabled=False))
+        self._general = GeneralSettingsComponent(parent=self, settings=settings.general, hardware_settings=settings.hardware, is_enabled=False)
+        self._info = InfoComponent(parent=self, firmware_switcher=firmware_switcher, is_enabled=False)
+        self._pad_settings = PadSettingsComponent(parent=self, pad_settings=settings.pad_settings, is_enabled=False)
+        self._display_debug = DisplayDebugSettingsComponent(parent=self, settings=settings.display_debug, is_enabled=False)
         self.add_mode(u'Settings', [self._general, self._pad_settings])
         self.add_mode(u'Info', [self._info])
         if self.application.has_option(u'_Push2DeveloperMode'):

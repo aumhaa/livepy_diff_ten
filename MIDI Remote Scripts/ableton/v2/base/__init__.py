@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from .isclose import isclose
 from .live_api_utils import liveobj_changed, liveobj_valid
 from .proxy import Proxy, ProxyBase
-from .event import Event, EventError, EventObject, has_event, listenable_property, listens, listens_group, MultiSlot, SerializableListenableProperties, Slot, SlotGroup
+from .event import Event, EventError, EventObject, has_event, listenable_property, listens, listens_group, MultiSlot, ObservablePropertyAlias, SerializableListenableProperties, Slot, SlotGroup
 from .signal import Signal
 from .dependency import DependencyError, depends, inject
 from .disconnectable import disconnectable, Disconnectable, CompoundDisconnectable
@@ -58,6 +58,7 @@ __all__ = (u'Bindable',
  u'negate',
  u'next',
  u'nop',
+ u'ObservablePropertyAlias',
  u'overlaymap',
  u'print_message',
  u'product',

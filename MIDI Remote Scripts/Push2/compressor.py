@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import depends, EventObject, listenable_property, listens, liveobj_valid, mixin
-from pushbase.decoration import LiveObjectDecorator, get_parameter_by_name
-from pushbase.internal_parameter import EnumWrappingParameter
+from ableton.v2.control_surface import EnumWrappingParameter, LiveObjectDecorator, get_parameter_by_name
 from .device_decoration import DeviceOnOffOption
 from .device_component import DeviceComponentWithTrackColorViewData
 from .routing import InputChannelRouter, InputChannelAndPositionRouter, InputTypeRouter, RoutingChannelList, RoutingChannelPositionList, RoutingMeterRealTimeChannelAssigner, RoutingTypeList
@@ -163,7 +162,7 @@ class CompressorDeviceComponent(DeviceComponentWithTrackColorViewData):
         self._input_channel_router, self._input_type_router = self.register_disconnectables([mixin(CompressorInputRouterMixin, InputChannelRouter)(song=self.song), mixin(CompressorInputRouterMixin, InputTypeRouter)(song=self.song)])
         self._input_router = self.register_disconnectable(InputChannelAndPositionRouter(input_channel_router=self._input_channel_router, input_type_router=self._input_type_router))
         self._type_list = self.register_disconnectable(RoutingTypeList(parent_task_group=self._tasks, router=self._input_type_router))
-        self._channel_list = self.register_disconnectable(RoutingChannelList(parent_task_group=self._tasks, rt_channel_assigner=self.register_component(RoutingMeterRealTimeChannelAssigner(real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data)), router=self._input_router))
+        self._channel_list = self.register_disconnectable(RoutingChannelList(parent_task_group=self._tasks, rt_channel_assigner=RoutingMeterRealTimeChannelAssigner(real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, parent=self), router=self._input_router))
         self._positions_list = self.register_disconnectable(RoutingChannelPositionList(input_channel_router=self._input_router))
 
     def _parameter_touched(self, parameter):

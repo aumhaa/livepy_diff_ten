@@ -22,6 +22,7 @@ class Colors:
         NoScene = Rgb.BLACK
         StopClipTriggered = Rgb.RED_PULSE
         StopClip = Rgb.RED
+        StopClipDisabled = Rgb.BLACK
         ClipEmpty = Rgb.BLACK
 
     class DrumGroup:

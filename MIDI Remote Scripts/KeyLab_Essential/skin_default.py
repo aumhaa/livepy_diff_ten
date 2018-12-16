@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface import Skin
-from ableton.v2.control_surface.elements import Color
-from .sysex_rgb_color import SysexRGBColor
+from ableton.v2.control_surface.elements import Color, SysexRGBColor
 
 class Colors:
 
@@ -25,6 +24,7 @@ class Colors:
         ClipEmpty = SysexRGBColor((0, 0, 0))
         StopClip = Color(0)
         StopClipTriggered = Color(0)
+        StopClipDisabled = Color(0)
         StoppedClip = Color(0)
 
     class Automation:

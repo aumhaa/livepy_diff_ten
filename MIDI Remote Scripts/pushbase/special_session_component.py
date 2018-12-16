@@ -182,8 +182,8 @@ class SpecialSessionComponent(SessionComponent):
             super(SpecialSessionComponent, self).__init__(*a, **k)
         self._slot_launch_button = None
         self._duplicate_button = None
-        self._duplicate = self.register_component(DuplicateSceneComponent(self._session_ring))
-        self._duplicate_enabler = self.register_component(EnablingModesComponent(component=self._duplicate))
+        self._duplicate = DuplicateSceneComponent(self._session_ring, parent=self)
+        self._duplicate_enabler = EnablingModesComponent(parent=self, component=self._duplicate)
         self._end_initialisation()
 
     duplicate_layer = forward_property(u'_duplicate')(u'layer')

@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from ...base.dependency import depends
 from ..input_control_element import InputControlElement, MIDI_SYSEX_TYPE
+from ..skin import Skin
 from .. import midi
 
 class SysexElement(InputControlElement):
@@ -21,11 +23,12 @@ class SysexElement(InputControlElement):
     a value when resetting the element (default).
     """
 
-    def __init__(self, send_message_generator = None, enquire_message = None, default_value = None, *a, **k):
+    def __init__(self, send_message_generator = None, enquire_message = None, default_value = None, optimized = False, *a, **k):
         super(SysexElement, self).__init__(msg_type=MIDI_SYSEX_TYPE, *a, **k)
         self._send_message_generator = send_message_generator
         self._enquire_message = enquire_message
         self._default_value = default_value
+        self._optimized = optimized
 
     def send_value(self, *arguments):
         assert self._send_message_generator is not None
@@ -42,4 +45,30 @@ class SysexElement(InputControlElement):
             self.send_value(self._default_value)
 
     def _do_send_value(self, message):
-        self.send_midi(message)
+        if self._optimized:
+            if message != self._last_sent_message and self.send_midi(message):
+                self._last_sent_message = message
+        else:
+            self.send_midi(message)
+
+    @property
+    def _last_sent_value(self):
+        if self._last_sent_message:
+            return self._last_sent_message
+        return -1
+
+
+class ColorSysexElement(SysexElement):
+
+    @depends(skin=None)
+    def __init__(self, skin = None, *a, **k):
+        super(ColorSysexElement, self).__init__(*a, **k)
+        self._skin = skin
+
+    def set_light(self, value):
+        color = None
+        if hasattr(value, u'draw'):
+            color = value
+        else:
+            color = self._skin[value]
+        color.draw(self)

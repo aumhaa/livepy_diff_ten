@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 import Live
 from ...base import in_range, clamp, listens, task
-from ..compound_component import CompoundComponent
+from ..component import Component
 from ..control import ToggleButtonControl, ButtonControl
 from .toggle import ToggleComponent
 TEMPO_TOP = 200.0
@@ -10,7 +10,7 @@ TEMPO_BOTTOM = 60.0
 TEMPO_FINE_RANGE = 2.56
 SEEK_SPEED = 10.0
 
-class TransportComponent(CompoundComponent):
+class TransportComponent(Component):
     u"""
     Class encapsulating all functions in Live's transport section.
     """
@@ -31,7 +31,15 @@ class TransportComponent(CompoundComponent):
         self._end_undo_step_task = self._tasks.add(task.sequence(task.wait(1.5), task.run(self.song.end_undo_step)))
         self._end_undo_step_task.kill()
         song = self.song
-        self._loop_toggle, self._punch_in_toggle, self._punch_out_toggle, self._record_toggle, self._nudge_down_toggle, self._nudge_up_toggle, self._metronome_toggle, self._arrangement_overdub_toggle, self._overdub_toggle = self.register_components(ToggleComponent(u'loop', song), ToggleComponent(u'punch_in', song, is_momentary=True), ToggleComponent(u'punch_out', song, is_momentary=True), ToggleComponent(u'record_mode', song), ToggleComponent(u'nudge_down', song, is_momentary=True), ToggleComponent(u'nudge_up', song, is_momentary=True), ToggleComponent(u'metronome', song), ToggleComponent(u'arrangement_overdub', song), ToggleComponent(u'overdub', song))
+        self._loop_toggle = ToggleComponent(u'loop', song, parent=self)
+        self._punch_in_toggle = ToggleComponent(u'punch_in', song, is_momentary=True, parent=self)
+        self._punch_out_toggle = ToggleComponent(u'punch_out', song, is_momentary=True, parent=self)
+        self._record_toggle = ToggleComponent(u'record_mode', song, parent=self)
+        self._nudge_down_toggle = ToggleComponent(u'nudge_down', song, is_momentary=True, parent=self)
+        self._nudge_up_toggle = ToggleComponent(u'nudge_up', song, is_momentary=True, parent=self)
+        self._metronome_toggle = ToggleComponent(u'metronome', song, parent=self)
+        self._arrangement_overdub_toggle = ToggleComponent(u'arrangement_overdub', song, parent=self)
+        self._overdub_toggle = ToggleComponent(u'overdub', song, parent=self)
         self.__on_is_playing_changed.subject = song
         self.__on_is_playing_changed()
 

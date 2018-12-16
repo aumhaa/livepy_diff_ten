@@ -1,9 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import clamp, listenable_property, listens, liveobj_valid
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component, EnumWrappingParameter, InternalParameterBase, ParameterInfo, ParameterProvider
 from ableton.v2.control_surface.control import StepEncoderControl
-from pushbase.internal_parameter import InternalParameterBase, EnumWrappingParameter
-from pushbase.parameter_provider import ParameterInfo, ParameterProvider
 from .parameter_mapping_sensitivities import parameter_mapping_sensitivity, fine_grain_parameter_mapping_sensitivity
 from .device_view_component import DeviceViewConnector
 NO_CHOKE_GROUP = u'None'
@@ -93,7 +91,7 @@ class DrumPadTransposeParameter(EnumWrappingParameter):
         self.notify_value()
 
 
-class DrumPadParameterComponent(CompoundComponent, ParameterProvider):
+class DrumPadParameterComponent(Component, ParameterProvider):
     choke_encoder = StepEncoderControl(num_steps=10)
     transpose_encoder = StepEncoderControl(num_steps=10)
 
@@ -106,7 +104,7 @@ class DrumPadParameterComponent(CompoundComponent, ParameterProvider):
         self.choke_param = ChokeParameter()
         self.transpose_param = DrumPadTransposeParameter(parent=self)
         self.register_disconnectables([self.choke_param, self.transpose_param])
-        self._view_connector = self.register_component(DeviceViewConnector(device_component=device_component, parameter_provider=self, view=view_model.deviceParameterView))
+        self._view_connector = DeviceViewConnector(parent=self, device_component=device_component, parameter_provider=self, view=view_model.deviceParameterView)
 
     def parameters_for_pad(self):
         if not self.has_filled_pad:

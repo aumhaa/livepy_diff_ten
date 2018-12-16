@@ -105,3 +105,10 @@ class AnimatedColor(Color):
     def draw(self, interface):
         interface.send_value(self._color1.midi_value)
         interface.send_value(self._color2.midi_value, channel=self._channel)
+
+
+class SysexRGBColor(Color):
+
+    def __init__(self, midi_value = None, *a, **k):
+        assert isinstance(midi_value, tuple) and len(midi_value) == 3
+        super(SysexRGBColor, self).__init__(midi_value, *a, **k)

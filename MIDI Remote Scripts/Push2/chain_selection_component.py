@@ -1,8 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import count
 from ableton.v2.base import listens, listens_group, liveobj_valid
+from ableton.v2.control_surface.components import ItemProvider
 from .colors import DISPLAY_BUTTON_SHADE_LEVEL, IndexedColor
-from .item_lister_component import ItemListerComponent, ItemProvider
+from .item_lister import ItemListerComponent
 
 class ChainProvider(ItemProvider):
 

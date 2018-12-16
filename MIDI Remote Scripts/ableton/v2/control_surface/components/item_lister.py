@@ -1,17 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip
-from ableton.v2.base import forward_property, listenable_property, listens, EventObject
-from ableton.v2.control_surface import Component, CompoundComponent
-from ableton.v2.control_surface.control import control_list, ButtonControl
+from ...base import forward_property, listenable_property, listens, EventObject
+from .. import Component
+from ..control import control_list, ButtonControl
 
 class SimpleItemSlot(EventObject):
 
-    def __init__(self, item = None, name = u'', nesting_level = -1, icon = u'', *a, **k):
+    def __init__(self, item = None, name = u'', nesting_level = -1, *a, **k):
         super(SimpleItemSlot, self).__init__(*a, **k)
         self._item = item
         self._name = name
         self._nesting_level = nesting_level
-        self._icon = icon
         self.__on_name_changed.subject = self._item if getattr(self._item, u'name_has_listener', None) else None
         self.__on_color_index_changed.subject = self._item if getattr(self._item, u'color_index_has_listener', None) else None
 
@@ -26,10 +25,6 @@ class SimpleItemSlot(EventObject):
     @property
     def nesting_level(self):
         return self._nesting_level
-
-    @property
-    def icon(self):
-        return self._icon
 
     @listenable_property
     def color_index(self):
@@ -80,7 +75,7 @@ class ItemProvider(EventObject):
         return None
 
 
-class ItemListerComponentBase(CompoundComponent):
+class ItemListerComponentBase(Component):
     __events__ = (u'items',)
 
     def __init__(self, item_provider = ItemProvider(), num_visible_items = 8, *a, **k):
@@ -136,27 +131,19 @@ class ItemListerComponentBase(CompoundComponent):
             self.disconnect_disconnectable(item)
 
         self._adjust_offset()
+        self._items = map(self.register_disconnectable, self._create_slots())
+        self.notify_items()
+
+    def _create_slots(self):
         items = self._item_provider.items[self.item_offset:]
         num_slots = min(self._num_visible_items, len(items))
-
-        def create_slot(index, item, nesting_level):
-            slot = None
-            if index == 0 and self.can_scroll_left():
-                slot = SimpleItemSlot(icon=u'page_left.svg')
-                slot.is_scrolling_indicator = True
-            elif index == num_slots - 1 and self.can_scroll_right():
-                slot = SimpleItemSlot(icon=u'page_right.svg')
-                slot.is_scrolling_indicator = True
-            else:
-                slot = ItemSlot(item=item, nesting_level=nesting_level)
-                slot.is_scrolling_indicator = False
-            return slot
-
         new_items = []
         if num_slots > 0:
-            new_items = [ create_slot(index, *item) for index, item in enumerate(items[:num_slots]) if item[0] != None ]
-        self._items = map(self.register_disconnectable, new_items)
-        self.notify_items()
+            new_items = [ self._create_slot(index, *item) for index, item in enumerate(items[:num_slots]) if item[0] != None ]
+        return new_items
+
+    def _create_slot(self, index, item, nesting_level):
+        return ItemSlot(item=item, nesting_level=nesting_level)
 
     @listens(u'items')
     def __on_items_changed(self):
@@ -172,11 +159,11 @@ class ScrollComponent(Component):
         self.notify_scroll()
 
 
-class ScrollOverlayComponent(CompoundComponent):
+class ScrollOverlayComponent(Component):
 
     def __init__(self, *a, **k):
         super(ScrollOverlayComponent, self).__init__(*a, **k)
-        self._scroll_left_component, self._scroll_right_component = self.register_components(ScrollComponent(is_enabled=False), ScrollComponent(is_enabled=False))
+        self._scroll_left_component, self._scroll_right_component = self.add_children(ScrollComponent(is_enabled=False), ScrollComponent(is_enabled=False))
         self.__on_scroll_left.subject = self._scroll_left_component
         self.__on_scroll_right.subject = self._scroll_right_component
 
@@ -220,7 +207,7 @@ class ItemListerComponent(ItemListerComponentBase):
 
     def __init__(self, *a, **k):
         super(ItemListerComponent, self).__init__(*a, **k)
-        self._scroll_overlay = self.register_component(ScrollOverlayComponent(is_enabled=True))
+        self._scroll_overlay = self.add_children(ScrollOverlayComponent(is_enabled=True))
         self._scroll_overlay.can_scroll_left = self.can_scroll_left
         self._scroll_overlay.can_scroll_right = self.can_scroll_right
         self._scroll_overlay.scroll_left = self.scroll_left

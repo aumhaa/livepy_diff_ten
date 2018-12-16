@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ...base import depends, in_range, liveobj_valid
-from ..compound_component import CompoundComponent
+from ..component import Component
 from .scroll import ScrollComponent, Scrollable
 NavDirection = Live.Application.Application.View.NavDirection
 VIEWS = (u'Browser', u'Arranger', u'Session', u'Detail', u'Detail/Clip', u'Detail/DeviceChain')
@@ -31,7 +31,7 @@ class _DeltaSongScroller(Scrollable):
         return self._can_scroll(1)
 
 
-def tracks_to_use(song):
+def all_tracks(song):
     return list(tuple(song.visible_tracks) + tuple(song.return_tracks) + (song.master_track,))
 
 
@@ -50,11 +50,11 @@ class BasicTrackScroller(_DeltaSongScroller):
 
     def _do_scroll(self, delta):
         song = self._song
-        tracks = tracks_to_use(song)
+        tracks = all_tracks(song)
         song.view.selected_track = next_item(tracks, song.view.selected_track, delta)
 
     def _can_scroll(self, delta):
-        tracks = tracks_to_use(self._song)
+        tracks = all_tracks(self._song)
         try:
             return has_next_item(tracks, self._song.view.selected_track, delta)
         except ValueError:
@@ -105,7 +105,7 @@ class SceneListScroller(BasicSceneScroller):
         self._song.view.selected_scene.fire(force_legato=True, can_select_scene_on_launch=False)
 
 
-class ViewControlComponent(CompoundComponent):
+class ViewControlComponent(Component):
     u"""
     Component that can toggle the device chain- and clip view of the
     selected track
@@ -113,7 +113,9 @@ class ViewControlComponent(CompoundComponent):
 
     def __init__(self, *a, **k):
         super(ViewControlComponent, self).__init__(*a, **k)
-        self._scroll_tracks, self._scroll_scene_list, self._scroll_scenes = self.register_components(ScrollComponent(self._create_track_scroller()), ScrollComponent(SceneListScroller()), ScrollComponent(self._create_scene_scroller()))
+        self._scroll_tracks = ScrollComponent(self._create_track_scroller(), parent=self)
+        self._scroll_scene_list = ScrollComponent(SceneListScroller(), parent=self)
+        self._scroll_scenes = ScrollComponent(self._create_scene_scroller(), parent=self)
         song = self.song
         view = song.view
         self.register_slot(song, self._scroll_tracks.update, u'visible_tracks')

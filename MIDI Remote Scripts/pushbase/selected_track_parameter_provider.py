@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import depends, listens, liveobj_valid
+from ableton.v2.control_surface import ParameterProvider
 from .mixer_utils import is_set_to_split_stereo
-from .parameter_provider import ParameterProvider
 SEND_PARAMETER_NAMES = (u'Send A', u'Send B', u'Send C', u'Send D', u'Send E', u'Send F', u'Send G', u'Send H', u'Send I', u'Send J', u'Send K', u'Send L')
 
 def toggle_arm(track_to_arm, song, exclusive = False):

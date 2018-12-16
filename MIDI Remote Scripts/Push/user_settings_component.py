@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import count
 from ableton.v2.base import forward_property, listens_group
-from ableton.v2.control_surface import Component, CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl
 from ableton.v2.control_surface.elements import DisplayDataSource
 from pushbase.user_component import UserComponentBase
@@ -66,14 +66,14 @@ class UserSettingsComponent(Component):
             self._update_display()
 
 
-class UserComponent(UserComponentBase, CompoundComponent):
+class UserComponent(UserComponentBase):
     action_button = ButtonControl(**consts.SIDE_BUTTON_COLORS)
     settings_layer = forward_property(u'_settings')(u'layer')
     settings = forward_property(u'_settings')(u'settings')
 
     def __init__(self, *a, **k):
         super(UserComponent, self).__init__(*a, **k)
-        self._settings = self.register_component(UserSettingsComponent())
+        self._settings = UserSettingsComponent(parent=self)
         self._settings.set_enabled(False)
 
     @action_button.pressed_delayed

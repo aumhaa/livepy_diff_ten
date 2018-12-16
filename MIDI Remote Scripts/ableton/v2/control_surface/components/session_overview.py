@@ -55,11 +55,8 @@ class SessionOverviewComponent(Component):
 
     def update(self):
         super(SessionOverviewComponent, self).update()
-        if self._allow_updates:
-            if self.is_enabled():
-                self._update_matrix_buttons()
-        else:
-            self._update_requests += 1
+        if self.is_enabled():
+            self._update_matrix_buttons()
 
     def _update_matrix_buttons(self):
         if self._buttons != None:

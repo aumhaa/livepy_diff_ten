@@ -4,10 +4,9 @@ from functools import partial
 import re
 from MidiRemoteScript import MutableVector
 from ableton.v2.base import EventError, const, listenable_property, listens, liveobj_valid
-from ableton.v2.control_surface import DeviceProvider as DeviceProviderBase
+from ableton.v2.control_surface import DeviceProvider as DeviceProviderBase, ParameterInfo
+from ableton.v2.control_surface.components import DeviceComponent as DeviceComponentBase
 from ableton.v2.control_surface.control import control_list, ButtonControl
-from pushbase.device_component import DeviceComponent as DeviceComponentBase
-from pushbase.parameter_provider import ParameterInfo
 from pushbase.song_utils import find_parent_track
 from .colors import COLOR_INDEX_TO_SCREEN_COLOR
 from .device_parameter_bank_with_options import create_device_bank_with_options, OPTIONS_PER_BANK

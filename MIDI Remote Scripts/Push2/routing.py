@@ -4,7 +4,7 @@ from itertools import imap, izip
 import Live
 from ableton.v2.base import EventObject, MultiSlot, const, depends, find_if, listenable_property, listens, listens_group, liveobj_valid, nop, task
 from ableton.v2.base.util import index_if
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.mode import ModesComponent, SetAttributeMode
 from ableton.v2.control_surface.control import ListIndexEncoderControl, ListValueEncoderControl, control_list
 from pushbase.song_utils import is_return_track
@@ -15,7 +15,7 @@ NO_INPUT_TARGET_ID = u'No Input'
 AUDIO_CHANNEL_POSITION_POSTFIXES = [u'Pre FX', u'Post FX', u'Post Mixer']
 MIDI_CHANNEL_POSITION_POSTFIXES = AUDIO_CHANNEL_POSITION_POSTFIXES[:2]
 
-class RoutingMeterRealTimeChannelAssigner(CompoundComponent):
+class RoutingMeterRealTimeChannelAssigner(Component):
     list_index_to_pool_index_mapping = listenable_property.managed({})
 
     def __init__(self, real_time_mapper = None, register_real_time_data = nop, sliding_window_size = None, *a, **k):
@@ -27,7 +27,7 @@ class RoutingMeterRealTimeChannelAssigner(CompoundComponent):
         self._half_window_size = sliding_window_size // 2
         self._routing_channels = []
         self._selected_index = -1
-        self.real_time_channels = self.register_components(*[ RealTimeDataComponent(channel_type=u'meter', real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data) for _ in xrange(sliding_window_size) ])
+        self.real_time_channels = [ RealTimeDataComponent(parent=self, channel_type=u'meter', real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data) for _ in xrange(sliding_window_size) ]
 
     def disconnect(self):
         super(RoutingMeterRealTimeChannelAssigner, self).disconnect()

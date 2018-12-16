@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import has_event, NamedTuple, listenable_property, listens, listens_group, liveobj_valid, nop
-from ableton.v2.control_surface import Component
+from ableton.v2.control_surface import BANK_MAIN_KEY, Component
+from ableton.v2.control_surface.components import ItemProvider
 from ableton.v2.control_surface.control import control_list, ButtonControl
-from pushbase.banking_util import MAIN_KEY
-from .item_lister_component import ItemListerComponent, ItemProvider
+from .item_lister import ItemListerComponent
 
 class BankProvider(ItemProvider):
 
@@ -75,7 +75,7 @@ class BankProvider(ItemProvider):
         num_banks = len(original_bank_names)
         if num_banks > 0:
             return original_bank_names
-        return [MAIN_KEY]
+        return [BANK_MAIN_KEY]
 
 
 class EditModeOptionsComponent(Component):
@@ -159,7 +159,7 @@ class BankSelectionComponent(ItemListerComponent):
     def __init__(self, bank_registry = None, banking_info = None, device_options_provider = None, *a, **k):
         self._bank_provider = BankProvider(bank_registry=bank_registry, banking_info=banking_info)
         super(BankSelectionComponent, self).__init__(item_provider=self._bank_provider, *a, **k)
-        self._options = self.register_component(EditModeOptionsComponent(back_callback=self.notify_back, device_options_provider=device_options_provider))
+        self._options = EditModeOptionsComponent(back_callback=self.notify_back, device_options_provider=device_options_provider, parent=self)
         self.register_disconnectable(self._bank_provider)
 
     def _on_select_button_pressed(self, button):

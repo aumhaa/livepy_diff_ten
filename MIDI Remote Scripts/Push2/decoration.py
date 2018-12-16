@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import find_if, liveobj_changed, liveobj_valid
-from pushbase.decoration import DecoratorFactory
+from ableton.v2.control_surface import DecoratorFactory
 
 def find_decorated_object(proxied_object, decorator_factory):
     decorated_obj = None

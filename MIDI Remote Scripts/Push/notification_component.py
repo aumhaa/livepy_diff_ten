@@ -3,7 +3,7 @@ import re
 from functools import partial
 from weakref import ref
 from ableton.v2.base import forward_property, maybe, task
-from ableton.v2.control_surface import CompoundComponent, CompoundElement, ControlElement, Layer, get_element
+from ableton.v2.control_surface import Component, CompoundElement, ControlElement, Layer, get_element
 from ableton.v2.control_surface.elements import adjust_string
 from pushbase.consts import DISPLAY_LENGTH, MESSAGE_BOX_PRIORITY
 from pushbase.message_box_component import FORMAT_SPECIFIER_WITH_MARKUP_PATTERN, MessageBoxComponent, Notification
@@ -101,7 +101,7 @@ class _TokenControlElement(ControlElement):
         pass
 
 
-class NotificationComponent(CompoundComponent):
+class NotificationComponent(Component):
     u"""
     Displays notifications to the user for a given amount of time. A notification time
     of -1 creates an infinite duration notification.
@@ -122,7 +122,7 @@ class NotificationComponent(CompoundComponent):
         self._display_lines = get_element(display_lines)
         self._token_control = _TokenControlElement()
         self._align_text_fn = self._default_align_text_fn
-        self._message_box = self.register_component(MessageBoxComponent())
+        self._message_box = MessageBoxComponent(parent=self)
         self._message_box.set_enabled(False)
         self._default_notification_time = default_notification_time
         self._blinking_time = blinking_time

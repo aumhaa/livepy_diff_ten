@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ...base import EventObject, find_if, listens, liveobj_valid
-from ..compound_component import CompoundComponent
+from ..component import Component
 from ..control import ToggleButtonControl, ButtonControl
 
 def track_fired_slot(track):
@@ -26,7 +26,7 @@ def track_will_record(track):
     return fired_slot and fired_slot.will_record_on_start
 
 
-class SessionRecordingComponent(CompoundComponent):
+class SessionRecordingComponent(Component):
     u"""
     Orchestrates the session recording (clip slot based) workflow.
     """

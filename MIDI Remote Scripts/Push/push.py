@@ -3,16 +3,17 @@ from functools import partial
 import logging
 from copy import copy
 from ableton.v2.base import task, nop, listens, listens_group, mixin, get_slice
-from ableton.v2.control_surface import BackgroundLayer, Layer
+from ableton.v2.control_surface import BackgroundLayer, DeviceDecoratorFactory, Layer
+from ableton.v2.control_surface.default_bank_definitions import BANK_DEFINITIONS
 from ableton.v2.control_surface.defaults import TIMER_DELAY
 from ableton.v2.control_surface.elements import ComboElement, NullFullVelocity, NullPlayhead, NullVelocityLevels
 from ableton.v2.control_surface.mode import AddLayerMode, EnablingModesComponent, LazyEnablingMode, ModesComponent
 from pushbase import consts
 from pushbase.actions import SelectComponent, StopClipComponent
+from pushbase.automation_component import AutomationComponent
 from pushbase.colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
 from pushbase.browser_modes import BrowserHotswapMode
 from pushbase.control_element_factory import create_sysex_element
-from pushbase.device_decorator_factory import DeviceDecoratorFactory
 from pushbase.note_editor_component import NoteEditorComponent
 from pushbase.note_settings_component import NoteSettingsComponent
 from pushbase.pad_sensitivity import PadUpdateComponent
@@ -24,7 +25,6 @@ from pushbase.special_session_component import SpecialSessionComponent
 from .actions import CreateDeviceComponent, CreateDefaultTrackComponent, CreateInstrumentTrackComponent
 from .browser_component import BrowserComponent
 from .browser_model_factory import make_browser_model
-from .custom_bank_definitions import BANK_DEFINITIONS
 from .device_component import DeviceComponent
 from .device_navigation_component import DeviceNavigationComponent
 from .drum_group_component import DrumGroupComponent
@@ -64,6 +64,9 @@ class Push(PushBase):
     bank_definitions = BANK_DEFINITIONS
     note_editor_class = NoteEditorComponent
     sliced_simpler_class = SlicedSimplerComponent
+    quantization_settings_class = QuantizationSettingsComponent
+    note_settings_component_class = NoteSettingsComponent
+    automation_component_class = AutomationComponent
 
     def __init__(self, *a, **k):
         super(Push, self).__init__(*a, **k)
@@ -113,7 +116,7 @@ class Push(PushBase):
         self._update_pad_params()
 
     def _init_selector(self):
-        self._selector = SelectComponent(name=u'Selector', is_root=True)
+        self._selector = SelectComponent(name=u'Selector')
         self._selector.layer = Layer(select_button=u'select_button')
         self._selector.selection_display_layer = Layer(display_line=u'display_line3', priority=consts.DIALOG_PRIORITY)
 
@@ -122,7 +125,7 @@ class Push(PushBase):
         identity_control = create_sysex_element(sysex.IDENTITY_PREFIX, sysex.IDENTITY_ENQUIRY)
         dongle_control = create_sysex_element(sysex.DONGLE_PREFIX, dongle_message)
         presentation_control = create_sysex_element(sysex.DONGLE_PREFIX, sysex.make_presentation_message(self.application))
-        self._handshake = HandshakeComponent(identity_control=identity_control, dongle_control=dongle_control, presentation_control=presentation_control, dongle=dongle, is_root=True)
+        self._handshake = HandshakeComponent(identity_control=identity_control, dongle_control=dongle_control, presentation_control=presentation_control, dongle=dongle)
         self._on_handshake_success.subject = self._handshake
         self._on_handshake_failure.subject = self._handshake
         self._start_handshake_task = self._tasks.add(task.sequence(task.wait(HANDSHAKE_DELAY), task.run(self._start_handshake)))
@@ -141,7 +144,7 @@ class Push(PushBase):
         self.elements.playhead_element.proxied_object = self._c_instance.playhead
         self.elements.velocity_levels_element.proxied_object = self._c_instance.velocity_levels
         self.elements.full_velocity_element.proxied_object = self._c_instance.full_velocity
-        self._note_repeat.set_note_repeat(self._c_instance.note_repeat)
+        self._note_repeat_enabler.set_note_repeat(self._c_instance.note_repeat)
         for control in self.controls:
             receive_value_backup = getattr(control, u'_receive_value_backup', nop)
             if receive_value_backup != nop:
@@ -176,7 +179,7 @@ class Push(PushBase):
         self.elements.velocity_levels_element.proxied_object = NullVelocityLevels()
         self._c_instance.full_velocity.enabled = False
         self.elements.full_velocity_element.proxied_object = NullFullVelocity()
-        self._note_repeat.set_note_repeat(None)
+        self._note_repeat_enabler.set_note_repeat(None)
         for control in self.controls:
             receive_value_backup = getattr(control, u'receive_value', nop)
             send_midi_backup = getattr(control, u'send_midi', nop)
@@ -208,7 +211,7 @@ class Push(PushBase):
         return Layer(display=u'display_line2', _notification=self._notification.use_full_display(1))
 
     def _create_notification_component(self):
-        return NotificationComponent(display_lines=u'display_lines', is_root=True, is_enabled=True)
+        return NotificationComponent(display_lines=u'display_lines', is_enabled=True)
 
     def _create_message_box_layer(self):
         return Layer(display_line1=u'display_line1', display_line2=u'display_line2', display_line3=u'display_line3', display_line4=u'display_line4', cancel_button=u'select_buttons_raw[-1]', priority=consts.MESSAGE_BOX_PRIORITY)
@@ -314,8 +317,8 @@ class Push(PushBase):
     def _create_drum_component(self):
         return DrumGroupComponent(name=u'Drum_Group', is_enabled=False, quantizer=self._quantize, selector=self._selector)
 
-    def _init_note_settings_component(self):
-        self._note_settings_component = NoteSettingsComponent(grid_resolution=self._grid_resolution, is_enabled=False, layer=Layer(top_display_line=u'display_line1', bottom_display_line=u'display_line2', info_display_line=u'display_line3', clear_display_line=u'display_line4', full_velocity_button=u'accent_button', priority=consts.MOMENTARY_DIALOG_PRIORITY))
+    def _create_note_settings_component_layer(self):
+        return Layer(top_display_line=u'display_line1', bottom_display_line=u'display_line2', info_display_line=u'display_line3', clear_display_line=u'display_line4', full_velocity_button=u'accent_button', priority=consts.MOMENTARY_DIALOG_PRIORITY)
 
     def _create_note_editor_track_automation_layer(self):
         return super(Push, self)._create_note_editor_track_automation_layer() + Layer(name_display_line=u'display_line1', graphic_display_line=u'display_line2', value_display_line=u'display_line3', priority=consts.MOMENTARY_DIALOG_PRIORITY)
@@ -324,24 +327,24 @@ class Push(PushBase):
         return super(Push, self)._create_note_editor_device_automation_layer() + Layer(name_display_line=u'display_line1', value_display_line=u'display_line2', graphic_display_line=u'display_line3', priority=consts.MOMENTARY_DIALOG_PRIORITY)
 
     def _init_stop_clips_action(self):
-        self._stop_clips = StopClipComponent(session_ring=self._session_ring, name=u'Stop_Clip', is_root=True)
+        self._stop_clips = StopClipComponent(session_ring=self._session_ring, name=u'Stop_Clip')
         self._stop_clips.layer = Layer(stop_all_clips_button=self._with_shift(u'global_track_stop_button'))
         self._stop_track_clips_layer = Layer(stop_track_clips_buttons=u'track_state_buttons')
 
     def _init_quantize_actions(self):
-        self._quantize_settings = QuantizationSettingsComponent(is_enabled=False, layer=(BackgroundLayer(u'global_param_controls', u'select_buttons', u'track_state_buttons', priority=consts.MOMENTARY_DIALOG_PRIORITY), Layer(swing_amount_encoder=u'parameter_controls_raw[0]', quantize_to_encoder=u'parameter_controls_raw[1]', quantize_amount_encoder=u'parameter_controls_raw[2]', record_quantization_encoder=u'parameter_controls_raw[7]', record_quantization_toggle_button=u'track_state_buttons_raw[7]', display_line1=u'display_line1', display_line2=u'display_line2', display_line3=u'display_line3', display_line4=u'display_line4', priority=consts.MOMENTARY_DIALOG_PRIORITY)))
-        self._quantize = self._for_non_frozen_tracks(QuantizationComponent(name=u'Selected_Clip_Quantize', settings=self._quantize_settings, is_enabled=False, layer=Layer(action_button=u'quantize_button')), is_root=True)
+        self._quantize = self._for_non_frozen_tracks(QuantizationComponent(name=u'Selected_Clip_Quantize', settings_class=self.quantization_settings_class, is_enabled=False, layer=Layer(action_button=u'quantize_button')))
+        self._quantize.settings.layer = (BackgroundLayer(u'global_param_controls', u'select_buttons', u'track_state_buttons', priority=consts.MOMENTARY_DIALOG_PRIORITY), Layer(swing_amount_encoder=u'parameter_controls_raw[0]', quantize_to_encoder=u'parameter_controls_raw[1]', quantize_amount_encoder=u'parameter_controls_raw[2]', record_quantization_encoder=u'parameter_controls_raw[7]', record_quantization_toggle_button=u'track_state_buttons_raw[7]', display_line1=u'display_line1', display_line2=u'display_line2', display_line3=u'display_line3', display_line4=u'display_line4', priority=consts.MOMENTARY_DIALOG_PRIORITY))
 
     def _init_fixed_length(self):
         super(Push, self)._init_fixed_length()
-        self._fixed_length_settings_component.layer = (BackgroundLayer(self.elements.track_state_buttons.submatrix[:7, :], u'display_line1', u'display_line2', priority=consts.MOMENTARY_DIALOG_PRIORITY), Layer(length_option_buttons=u'select_buttons', label_display_line=u'display_line3', option_display_line=u'display_line4', legato_launch_toggle_button=u'track_state_buttons_raw[7]', _notification=self._notification.use_single_line(1), priority=consts.MOMENTARY_DIALOG_PRIORITY))
+        self._fixed_length.settings_component.layer = (BackgroundLayer(self.elements.track_state_buttons.submatrix[:7, :], u'display_line1', u'display_line2', priority=consts.MOMENTARY_DIALOG_PRIORITY), Layer(length_option_buttons=u'select_buttons', label_display_line=u'display_line3', option_display_line=u'display_line4', legato_launch_toggle_button=u'track_state_buttons_raw[7]', _notification=self._notification.use_single_line(1), priority=consts.MOMENTARY_DIALOG_PRIORITY))
 
     def _create_note_repeat_layer(self):
         return super(Push, self)._create_note_repeat_layer() + Layer(pad_parameters=self._pad_parameter_control, priority=consts.DIALOG_PRIORITY)
 
     def _create_user_component(self):
         sysex_control = create_sysex_element(sysex.MODE_CHANGE)
-        user = UserComponent(value_control=sysex_control, is_root=True)
+        user = UserComponent(value_control=sysex_control)
         user.layer = Layer(action_button=u'user_button')
         user.settings_layer = Layer(display_line1=u'display_line1', display_line2=u'display_line2', display_line3=u'display_line3', display_line4=u'display_line4', encoders=u'global_param_controls')
         user.settings_layer.priority = consts.DIALOG_PRIORITY
@@ -401,7 +404,7 @@ class Push(PushBase):
         return Layer(track_select_buttons=u'select_buttons', selected_track_name_display=u'display_line3', track_names_display=u'display_line4')
 
     def _init_mixer(self):
-        self._mixer = SpecialMixerComponent(tracks_provider=self._session_ring, is_root=True)
+        self._mixer = SpecialMixerComponent(tracks_provider=self._session_ring)
         self._mixer.set_enabled(False)
         self._mixer.name = u'Mixer'
         self._mixer_layer = self._create_mixer_layer()
@@ -460,7 +463,7 @@ class Push(PushBase):
         all_pad_sysex_control = create_sysex_element(sysex.ALL_PADS_SENSITIVITY_PREFIX)
         pad_sysex_control = create_sysex_element(sysex.PAD_SENSITIVITY_PREFIX)
         sensitivity_sender = pad_parameter_sender(all_pad_sysex_control, pad_sysex_control)
-        self._pad_sensitivity_update = PadUpdateComponent(all_pads=range(64), parameter_sender=sensitivity_sender, default_profile=action_pad_sensitivity, update_delay=TIMER_DELAY, is_root=True)
+        self._pad_sensitivity_update = PadUpdateComponent(all_pads=range(64), parameter_sender=sensitivity_sender, default_profile=action_pad_sensitivity, update_delay=TIMER_DELAY)
 
     def _init_global_pad_parameters(self):
         self._pad_parameter_control = self._with_firmware_version(1, 16, create_sysex_element(sysex.PAD_PARAMETER_PREFIX, default_value=sysex.make_pad_parameter_message()))

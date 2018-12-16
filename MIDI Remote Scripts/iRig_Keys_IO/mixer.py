@@ -10,7 +10,7 @@ class MixerComponent(MixerComponentBase):
 
     def __init__(self, *a, **k):
         super(MixerComponent, self).__init__(*a, **k)
-        self._track_scrolling = self.register_component(ScrollComponent())
+        self._track_scrolling = ScrollComponent(parent=self)
         self._track_scrolling.can_scroll_up = self._can_select_prev_track
         self._track_scrolling.can_scroll_down = self._can_select_next_track
         self._track_scrolling.scroll_up = self._select_prev_track

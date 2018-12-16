@@ -1,17 +1,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listenable_property, listens
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from .real_time_channel import RealTimeDataComponent
 COUNT_IN_DURATION_IN_BARS = (0, 1, 2, 4)
 
-class TransportState(CompoundComponent):
+class TransportState(Component):
     count_in_duration = listenable_property.managed(0)
 
     def __init__(self, song = None, *a, **kw):
         super(TransportState, self).__init__(*a, **kw)
         self._song = song
         self.__on_is_playing_changed.subject = song
-        self._count_in_time_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'count-in'))
+        self._count_in_time_real_time_data = RealTimeDataComponent(parent=self, channel_type=u'count-in')
         self.__on_count_in_duration_changed.subject = song
         self.__on_is_counting_in_changed.subject = song
         self.__on_signature_numerator_changed.subject = song

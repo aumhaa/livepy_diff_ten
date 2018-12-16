@@ -655,7 +655,9 @@ class ClipControlComponent(ModesComponent):
 
     def __init__(self, loop_layer = None, audio_layer = None, clip_name_layer = None, *a, **k):
         super(ClipControlComponent, self).__init__(*a, **k)
-        self._audio_clip_settings, self._loop_settings, self._clip_name = self.register_components(AudioClipSettingsComponent(is_enabled=False, layer=audio_layer), LoopSettingsComponent(is_enabled=False, layer=loop_layer), ClipNameComponent(is_enabled=False, layer=clip_name_layer))
+        self._audio_clip_settings = AudioClipSettingsComponent(parent=self, is_enabled=False, layer=audio_layer)
+        self._loop_settings = LoopSettingsComponent(parent=self, is_enabled=False, layer=loop_layer)
+        self._clip_name = ClipNameComponent(parent=self, is_enabled=False, layer=clip_name_layer)
         self.add_mode(u'no_clip', (self._clip_name,))
         self.add_mode(u'midi', (self._loop_settings, self._clip_name))
         self.add_mode(u'audio', (self._loop_settings, self._audio_clip_settings, self._clip_name))

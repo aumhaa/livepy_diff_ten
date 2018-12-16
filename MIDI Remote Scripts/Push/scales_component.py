@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import EventObject, forward_property, listens, listens_group, recursive_map
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.mode import ModesComponent
 from ableton.v2.control_surface.control import ButtonControl
 from ableton.v2.control_surface.elements import DisplayDataSource, adjust_string_crop
@@ -98,7 +98,7 @@ class InstrumentPresetsComponent(DisplayingModesComponent):
         self.update()
 
 
-class InstrumentScalesComponent(CompoundComponent):
+class InstrumentScalesComponent(Component):
     presets_toggle_button = ButtonControl(color=u'DefaultButton.Off', pressed_color=u'DefaultButton.On')
 
     def __init__(self, note_layout = None, *a, **k):
@@ -115,9 +115,9 @@ class InstrumentScalesComponent(CompoundComponent):
         self._info_sources = map(DisplayDataSource, (u'Scale selection:', u'', u''))
         self._line_sources = recursive_map(DisplayDataSource, ((u'', u'', u'', u'', u'', u'', u''), (u'', u'', u'', u'', u'', u'', u'')))
         self._scale_sources = map(partial(DisplayDataSource, adjust_string_fn=adjust_string_crop), (u'', u'', u'', u''))
-        self._presets = self.register_component(InstrumentPresetsComponent(self._note_layout, is_enabled=False))
+        self._presets = InstrumentPresetsComponent(self._note_layout, is_enabled=False, parent=self)
         self._presets.selected_mode = u'scale_p4_vertical'
-        self._scale_list = self.register_component(ListComponent(data_sources=self._scale_sources))
+        self._scale_list = ListComponent(parent=self, data_sources=self._scale_sources)
         self._scale_list.scrollable_list.fixed_offset = 1
         self._scale_list.scrollable_list.assign_items(SCALES)
         self._scale_list.scrollable_list.select_item_index_with_offset(list(SCALES).index(self._note_layout.scale), 1)

@@ -3,18 +3,16 @@ from contextlib import contextmanager
 from functools import partial
 from itertools import imap
 from ableton.v2.base import clamp, const, inject, listens, listens_group, liveobj_valid, NamedTuple, nop
-from ableton.v2.control_surface import BackgroundLayer, ClipCreator, ControlSurface, DeviceBankRegistry, PercussionInstrumentFinder, Layer, midi
+from ableton.v2.control_surface import BackgroundLayer, BankingInfo, ClipCreator, ControlSurface, DeviceBankRegistry, PercussionInstrumentFinder, Layer, midi
 from ableton.v2.control_surface.components import BackgroundComponent, ModifierBackgroundComponent, SessionNavigationComponent, SessionRingComponent, SessionOverviewComponent, ViewControlComponent
 from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement, ChoosingElement, ComboElement, DoublePressContext, MultiElement, OptionalElement, to_midi_value
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, LazyEnablingMode, ReenterBehaviour, ModesComponent
 from .actions import CaptureAndInsertSceneComponent, DeleteAndReturnToDefaultComponent, DeleteComponent, DeleteSelectedClipComponent, DeleteSelectedSceneComponent, DuplicateDetailClipComponent, DuplicateLoopComponent, UndoRedoComponent
-from .auto_arm_component import AutoArmComponent
-from .automation_component import AutomationComponent
-from .banking_util import BankingInfo
+from .auto_arm_component import RestoringAutoArmComponent
 from .clip_control_component import ClipControlComponent
 from .device_parameter_component import DeviceParameterComponent
 from .grid_resolution import GridResolution
-from .fixed_length import FixedLengthComponent, FixedLengthSettingComponent, FixedLengthSetting, DEFAULT_LENGTH_OPTION_INDEX
+from .fixed_length import FixedLengthComponent, FixedLengthSetting, DEFAULT_LENGTH_OPTION_INDEX
 from .instrument_component import NoteLayout, SelectedNotesInstrumentComponent
 from .loop_selector_component import LoopSelectorComponent
 from .matrix_maps import FEEDBACK_CHANNELS
@@ -23,7 +21,7 @@ from .message_box_component import DialogComponent, InfoComponent
 from .messenger_mode_component import MessengerModesComponent
 from .note_editor_component import DEFAULT_VELOCITY_RANGE_THRESHOLDS, get_all_notes, remove_all_notes
 from .note_layout_switcher import NoteLayoutSwitcher
-from .note_repeat_component import NoteRepeatComponent, NoteRepeatEnabler
+from .note_repeat_component import NoteRepeatEnabler
 from .note_settings_component import NoteEditorSettingsComponent
 from .selection import PushSelection
 from .select_playing_clip_component import SelectPlayingClipComponent
@@ -134,8 +132,6 @@ class PushBase(ControlSurface):
         self._init_grid_resolution()
         self._init_drum_component()
         self._init_slicing_component()
-        self._init_automation_component()
-        self._init_note_settings_component()
         self._init_note_editor_settings_component()
         self._init_drum_step_sequencer()
         self._init_slicing_step_sequencer()
@@ -191,12 +187,12 @@ class PushBase(ControlSurface):
         raise NotImplementedError
 
     def _init_background(self):
-        self._background = BackgroundComponent(is_root=True)
+        self._background = BackgroundComponent()
         self._background.layer = self._create_background_layer()
         self._matrix_background = BackgroundComponent()
         self._matrix_background.set_enabled(False)
         self._matrix_background.layer = Layer(matrix=u'matrix')
-        self._mod_background = ModifierBackgroundComponent(is_root=True)
+        self._mod_background = ModifierBackgroundComponent()
         self._mod_background.layer = Layer(shift_button=u'shift_button', select_button=u'select_button', delete_button=u'delete_button', duplicate_button=u'duplicate_button', quantize_button=u'quantize_button')
 
     def _create_background_layer(self):
@@ -214,7 +210,7 @@ class PushBase(ControlSurface):
         strip_controller.set_enabled(False)
         strip_controller.layer = Layer(touch_strip=u'touch_strip_control')
         strip_controller.layer.priority = consts.DIALOG_PRIORITY
-        self._strip_connection = TouchStripEncoderConnection(strip_controller, self.elements.touch_strip_tap, is_root=True)
+        self._strip_connection = TouchStripEncoderConnection(strip_controller, self.elements.touch_strip_tap)
         self.elements.tempo_control.set_observer(self._strip_connection)
         self.elements.swing_control.set_observer(self._strip_connection)
         self.elements.master_volume_control.set_observer(self._strip_connection)
@@ -291,7 +287,7 @@ class PushBase(ControlSurface):
         return drum_modes
 
     def _init_matrix_modes(self):
-        self._auto_arm = AutoArmComponent(name=u'Auto_Arm')
+        self._auto_arm = RestoringAutoArmComponent(name=u'Auto_Arm')
         self._auto_arm.can_auto_arm_track = self._can_auto_arm_track
         self._auto_arm.layer = Layer(_notification=self._notification.use_single_line(2))
         self._select_playing_clip = SelectPlayingClipComponent(name=u'Select_Playing_Clip', playing_clip_above_layer=Layer(action_button=u'nav_up_button'), playing_clip_below_layer=Layer(action_button=u'nav_down_button'))
@@ -310,7 +306,7 @@ class PushBase(ControlSurface):
         self._register_matrix_mode(u'disabled', parent_path=[u'matrix_modes', u'note'])
         self._note_modes.selected_mode = u'disabled'
         self._note_modes.set_enabled(False)
-        self._matrix_modes = ModesComponent(name=u'Matrix_Modes', is_root=True)
+        self._matrix_modes = ModesComponent(name=u'Matrix_Modes')
         self._register_matrix_mode(u'matrix_modes', self._matrix_modes)
         self._matrix_modes.add_mode(u'session', self._create_session_mode())
         self._register_matrix_mode(u'session', parent_path=[u'matrix_modes'])
@@ -423,7 +419,7 @@ class PushBase(ControlSurface):
         raise NotImplementedError
 
     def _init_session_ring(self):
-        self._session_ring = SessionRingComponent(num_tracks=NUM_TRACKS, num_scenes=NUM_SCENES, tracks_to_use=partial(tracks_to_use_from_song, self.song), is_enabled=True, is_root=True)
+        self._session_ring = SessionRingComponent(num_tracks=NUM_TRACKS, num_scenes=NUM_SCENES, tracks_to_use=partial(tracks_to_use_from_song, self.song), is_enabled=True)
 
     def _init_session(self):
         self._session_mode = LazyEnablingMode(self._create_session)
@@ -458,7 +454,7 @@ class PushBase(ControlSurface):
         self._track_note_editor_mode = partial(configure_note_editor_settings, self._track_parameter_provider, u'track')
         self._device_note_editor_mode = partial(configure_note_editor_settings, self._device_component, u'device')
         self._enable_stop_mute_solo_as_modifiers = AddLayerMode(self._mod_background, Layer(stop=u'global_track_stop_button', mute=u'global_mute_button', solo=u'global_solo_button'))
-        self._main_modes = ModesComponent(is_root=True)
+        self._main_modes = ModesComponent()
         self._create_main_mixer_modes()
         self._main_modes.add_mode(u'clip', self._create_clip_mode())
         self._main_modes.add_mode(u'device', self._create_device_mode(), behaviour=ReenterBehaviour(self._device_navigation.back_to_top))
@@ -491,7 +487,7 @@ class PushBase(ControlSurface):
         return Layer(parameter_controls=u'fine_grain_param_controls')
 
     def _create_device_component(self):
-        return self.device_component_class(device_decorator_factory=self._device_decorator_factory, device_bank_registry=self._device_bank_registry, banking_info=self._banking_info, name=u'DeviceComponent', is_enabled=True, is_root=True)
+        return self.device_component_class(device_decorator_factory=self._device_decorator_factory, device_bank_registry=self._device_bank_registry, banking_info=self._banking_info, name=u'DeviceComponent', is_enabled=True)
 
     def _create_device_parameter_component(self):
         return DeviceParameterComponent(parameter_provider=self._device_component, is_enabled=False, layer=self._create_device_parameter_layer())
@@ -520,14 +516,13 @@ class PushBase(ControlSurface):
         self.__on_fixed_length_enabled_changed.subject = self._fixed_length_setting
         self.__on_fixed_length_selected_index_changed.subject = self._fixed_length_setting
         self.__on_fixed_length_legato_launch_changed.subject = self._fixed_length_setting
-        self._fixed_length_settings_component = FixedLengthSettingComponent(fixed_length_setting=self._fixed_length_setting, is_enabled=False)
-        self._fixed_length = FixedLengthComponent(settings_component=self._fixed_length_settings_component, fixed_length_setting=self._fixed_length_setting)
+        self._fixed_length = FixedLengthComponent(fixed_length_setting=self._fixed_length_setting)
         self._fixed_length.layer = Layer(fixed_length_toggle_button=u'fixed_length_button')
         length, _ = self._fixed_length_setting.get_selected_length(self.song)
         self._clip_creator.fixed_length = length
 
     def _create_session_recording(self):
-        return FixedLengthSessionRecordingComponent(fixed_length_setting=self._fixed_length_setting, clip_creator=self._clip_creator, view_controller=self._view_control, name=u'Session_Recording', is_root=True)
+        return FixedLengthSessionRecordingComponent(fixed_length_setting=self._fixed_length_setting, clip_creator=self._clip_creator, view_controller=self._view_control, name=u'Session_Recording')
 
     @listens(u'focused_document_view')
     def __on_session_visible_changed(self):
@@ -548,7 +543,7 @@ class PushBase(ControlSurface):
         self._session_recording_session_layer = Layer(record_button=u'record_button', arrangement_record_button=self._with_shift(u'record_button'), new_button=OptionalElement(new_button, self._settings[u'workflow'], False), scene_list_new_button=OptionalElement(new_button, self._settings[u'workflow'], True)) + session_recording_base_layer
         self.__on_session_visible_changed.subject = self.application.view
         self.__on_session_visible_changed()
-        self._transport = TransportComponent(name=u'Transport', is_root=True)
+        self._transport = TransportComponent(name=u'Transport')
         self._transport.layer = Layer(play_button=u'play_button', stop_button=self._with_shift(u'play_button'), tap_tempo_button=u'tap_tempo_button', metronome_button=u'metronome_button')
 
     def _create_clip_control(self):
@@ -566,14 +561,9 @@ class PushBase(ControlSurface):
     def _init_grid_resolution(self):
         self._grid_resolution = self.register_disconnectable(GridResolution())
 
-    def _init_note_settings_component(self):
-        raise NotImplementedError
-
-    def _init_automation_component(self):
-        self._automation_component = AutomationComponent()
-
     def _init_note_editor_settings_component(self):
-        self._note_editor_settings_component = NoteEditorSettingsComponent(note_settings_component=self._note_settings_component, automation_component=self._automation_component, initial_encoder_layer=Layer(initial_encoders=u'global_param_controls', priority=consts.MOMENTARY_DIALOG_PRIORITY), encoder_layer=Layer(encoders=u'global_param_controls', priority=consts.MOMENTARY_DIALOG_PRIORITY))
+        self._note_editor_settings_component = NoteEditorSettingsComponent(note_settings_component_class=self.note_settings_component_class, automation_component_class=self.automation_component_class, grid_resolution=self._grid_resolution, initial_encoder_layer=Layer(initial_encoders=u'global_param_controls', priority=consts.MOMENTARY_DIALOG_PRIORITY), encoder_layer=Layer(encoders=u'global_param_controls', priority=consts.MOMENTARY_DIALOG_PRIORITY))
+        self._note_editor_settings_component.settings.layer = self._create_note_settings_component_layer()
         self._note_editor_settings_component.mode_selector_layer = self._create_note_editor_mode_selector_layer()
         self._note_editor_settings.append(NamedTuple(component=self._note_editor_settings_component, track_automation_layer=self._create_note_editor_track_automation_layer(), device_automation_layer=self._create_note_editor_track_automation_layer()))
 
@@ -592,6 +582,9 @@ class PushBase(ControlSurface):
 
     def _create_note_editor_mode_selector_layer(self):
         return Layer(select_buttons=u'select_buttons', state_buttons=u'track_state_buttons', priority=consts.MOMENTARY_DIALOG_PRIORITY)
+
+    def _create_note_settings_component_layer(self):
+        raise NotImplementedError
 
     def _create_note_editor_track_automation_layer(self):
         return Layer(priority=consts.MOMENTARY_DIALOG_PRIORITY)
@@ -676,13 +669,10 @@ class PushBase(ControlSurface):
         self._slicing_component.layer = Layer(scroll_page_up_button=u'octave_up_button', scroll_page_down_button=u'octave_down_button', scroll_up_button=self._with_shift(u'octave_up_button'), scroll_down_button=self._with_shift(u'octave_down_button'), delete_button=u'delete_button', select_button=u'select_button', quantize_button=u'quantize_button', accent_button=u'accent_button', full_velocity=u'full_velocity_element')
 
     def _init_note_repeat(self):
-        self._note_repeat = NoteRepeatComponent(name=u'Note_Repeat')
-        self._note_repeat.set_enabled(False)
-        self._note_repeat.set_note_repeat(self._c_instance.note_repeat)
-        self._note_repeat.layer = self._create_note_repeat_layer()
-        self._note_repeat_enabler = NoteRepeatEnabler(note_repeat_component=self._note_repeat)
+        self._note_repeat_enabler = NoteRepeatEnabler(note_repeat=self._c_instance.note_repeat)
         self._note_repeat_enabler.set_enabled(False)
         self._note_repeat_enabler.layer = Layer(repeat_button=u'repeat_button')
+        self._note_repeat_enabler.note_repeat_component.layer = self._create_note_repeat_layer()
 
     def _create_note_repeat_layer(self):
         return Layer(aftertouch_control=u'aftertouch_control', select_buttons=u'side_buttons', priority=consts.DIALOG_PRIORITY)
@@ -700,7 +690,7 @@ class PushBase(ControlSurface):
         raise RuntimeError
 
     def _init_message_box(self):
-        self._dialog = DialogComponent(is_enabled=True, is_root=True)
+        self._dialog = DialogComponent(is_enabled=True)
         self._dialog.message_box_layer = (self._create_message_box_background_layer(), self._create_message_box_layer())
 
     def _for_non_frozen_tracks(self, component, **k):
@@ -710,14 +700,14 @@ class PushBase(ControlSurface):
         return component
 
     def _init_undo_redo_actions(self):
-        self._undo_redo = UndoRedoComponent(name=u'Undo_Redo', is_root=True)
+        self._undo_redo = UndoRedoComponent(name=u'Undo_Redo')
         self._undo_redo.layer = Layer(undo_button=u'undo_button', redo_button=self._with_shift(u'undo_button'))
 
     def _init_stop_clips_action(self):
         pass
 
     def _create_capture_and_insert_scene_component(self):
-        return CaptureAndInsertSceneComponent(name=u'Capture_And_Insert_Scene', is_root=True)
+        return CaptureAndInsertSceneComponent(name=u'Capture_And_Insert_Scene')
 
     def _init_duplicate_actions(self):
         capture_element = ChoosingElement(self._settings[u'workflow'], u'duplicate_button', self._with_shift(u'duplicate_button'))
@@ -725,33 +715,33 @@ class PushBase(ControlSurface):
         self._capture_and_insert_scene.set_enabled(True)
         self._capture_and_insert_scene.layer = Layer(action_button=capture_element)
         duplicate_element = OptionalElement(u'duplicate_button', self._settings[u'workflow'], False)
-        self._duplicate_detail_clip = DuplicateDetailClipComponent(name=u'Duplicate_Detail_Clip', is_root=True)
+        self._duplicate_detail_clip = DuplicateDetailClipComponent(name=u'Duplicate_Detail_Clip')
         self._duplicate_detail_clip.set_enabled(True)
         self._duplicate_detail_clip.layer = Layer(action_button=duplicate_element)
-        self._duplicate_loop = self._for_non_frozen_tracks(DuplicateLoopComponent(name=u'Duplicate_Loop', layer=Layer(action_button=u'double_button'), is_enabled=False), is_root=True)
+        self._duplicate_loop = self._for_non_frozen_tracks(DuplicateLoopComponent(name=u'Duplicate_Loop', layer=Layer(action_button=u'double_button'), is_enabled=False))
 
     def _init_delete_actions(self):
-        self._delete_component = DeleteComponent(name=u'Deleter', is_root=True)
+        self._delete_component = DeleteComponent(name=u'Deleter')
         self._delete_component.layer = Layer(delete_button=u'delete_button')
-        self._delete_default_component = DeleteAndReturnToDefaultComponent(name=u'DeleteAndDefault', is_root=True)
+        self._delete_default_component = DeleteAndReturnToDefaultComponent(name=u'DeleteAndDefault')
         self._delete_default_component.layer = Layer(delete_button=u'delete_button')
-        self._delete_clip = DeleteSelectedClipComponent(name=u'Selected_Clip_Deleter', is_root=True)
+        self._delete_clip = DeleteSelectedClipComponent(name=u'Selected_Clip_Deleter')
         self._delete_clip.layer = Layer(action_button=u'delete_button')
-        self._delete_scene = DeleteSelectedSceneComponent(name=u'Selected_Scene_Deleter', is_root=True)
+        self._delete_scene = DeleteSelectedSceneComponent(name=u'Selected_Scene_Deleter')
         self._delete_scene.layer = Layer(action_button=self._with_shift(u'delete_button'))
 
     def _init_quantize_actions(self):
         raise NotImplementedError
 
     def _init_value_components(self):
-        self._swing_amount = ValueComponent(u'swing_amount', self.song, display_label=u'Swing Amount:', display_format=u'%d%%', model_transform=lambda x: clamp(x / 200.0, 0.0, 0.5), view_transform=lambda x: x * 200.0, encoder_factor=100.0, encoder_touch_delay=TEMPO_SWING_TOUCH_DELAY, is_root=True)
+        self._swing_amount = ValueComponent(u'swing_amount', self.song, display_label=u'Swing Amount:', display_format=u'%d%%', model_transform=lambda x: clamp(x / 200.0, 0.0, 0.5), view_transform=lambda x: x * 200.0, encoder_factor=100.0, encoder_touch_delay=TEMPO_SWING_TOUCH_DELAY)
         self._swing_amount.layer = Layer(encoder=u'swing_control')
         tempo_param = self.song.master_track.mixer_device.song_tempo
-        self._tempo = ValueComponent(u'tempo', self.song, display_label=u'Tempo:', display_format=u'%0.2f BPM', encoder_factor=128.0, encoder_touch_delay=TEMPO_SWING_TOUCH_DELAY, model_transform=lambda x: clamp(x, tempo_param.min, tempo_param.max), is_root=True)
+        self._tempo = ValueComponent(u'tempo', self.song, display_label=u'Tempo:', display_format=u'%0.2f BPM', encoder_factor=128.0, encoder_touch_delay=TEMPO_SWING_TOUCH_DELAY, model_transform=lambda x: clamp(x, tempo_param.min, tempo_param.max))
         self._tempo.layer = Layer(encoder=u'tempo_control', shift_button=u'shift_button')
-        self._master_vol = ParameterValueComponent(self.song.master_track.mixer_device.volume, display_label=u'Master Volume:', display_seg_start=3, name=u'Master_Volume_Display', is_root=True)
+        self._master_vol = ParameterValueComponent(self.song.master_track.mixer_device.volume, display_label=u'Master Volume:', display_seg_start=3, name=u'Master_Volume_Display')
         self._master_vol.layer = Layer(encoder=u'master_volume_control')
-        self._master_cue_vol = ParameterValueComponent(self.song.master_track.mixer_device.cue_volume, display_label=u'Cue Volume:', display_seg_start=3, name=u'Cue_Volume_Display', is_root=True)
+        self._master_cue_vol = ParameterValueComponent(self.song.master_track.mixer_device.cue_volume, display_label=u'Cue Volume:', display_seg_start=3, name=u'Cue_Volume_Display')
         self._master_cue_vol.layer = Layer(encoder=self._with_shift(u'master_volume_control'))
 
     def mxd_grab_control_priority(self):

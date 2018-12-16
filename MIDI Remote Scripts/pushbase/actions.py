@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip, count
 import Live
 from ableton.v2.base import forward_property, listens, listens_group, liveobj_changed, liveobj_valid
-from ableton.v2.control_surface import Component, CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import control_list, ButtonControl
 from ableton.v2.control_surface.elements import DisplayDataSource
 from .action_with_options_component import ActionWithSettingsComponent
@@ -216,7 +216,7 @@ def select_scene_and_get_name(scene, song):
     return scene_name
 
 
-class SelectComponent(CompoundComponent):
+class SelectComponent(Component):
     u"""
     This component handles selection of objects.
     """
@@ -225,7 +225,7 @@ class SelectComponent(CompoundComponent):
     def __init__(self, *a, **k):
         super(SelectComponent, self).__init__(*a, **k)
         self._selected_clip = None
-        self._selection_display = self.register_component(SelectionDisplayComponent())
+        self._selection_display = SelectionDisplayComponent(parent=self)
         self._selection_display.set_enabled(False)
 
     selection_display_layer = forward_property(u'_selection_display')(u'layer')

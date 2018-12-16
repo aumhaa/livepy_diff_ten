@@ -8,11 +8,11 @@ import Live
 import MidiRemoteScript
 from ableton.v2.base import const, inject, listens, listens_group, task, OutermostOnlyContext, EventObject, NamedTuple
 from ableton.v2.control_surface import BackgroundLayer, Component, IdentifiableControlSurface, Layer, get_element, find_instrument_meeting_requirement
+from ableton.v2.control_surface.components import DeviceParameterComponent
 from ableton.v2.control_surface.defaults import TIMER_DELAY
 from ableton.v2.control_surface.elements import ButtonMatrixElement, ComboElement, SysexElement
 from ableton.v2.control_surface.mode import EnablingModesComponent, LayerMode, ModesComponent, LazyEnablingMode, ReenterBehaviour, SetAttributeMode
 from pushbase.actions import select_clip_and_get_name_from_slot, select_scene_and_get_name
-from pushbase.device_parameter_component import DeviceParameterComponentBase as DeviceParameterComponent
 from pushbase.pad_sensitivity import PadUpdateComponent
 from pushbase.quantization_component import QUANTIZATION_NAMES_UNICODE, QuantizationComponent, QuantizationSettingsComponent
 from pushbase.selection import PushSelection
@@ -33,15 +33,13 @@ from .mute_solo_stop import MuteSoloStopClipComponent
 from .device_component import Push2DeviceProvider
 from .device_component_provider import DeviceComponentProvider
 from .device_view_component import DeviceViewComponent
-from .device_navigation import is_empty_rack, DeviceNavigationComponent, MoveDeviceComponent
+from .device_navigation import is_empty_rack, DeviceNavigationComponent
 from .drum_group_component import DrumGroupComponent
 from .drum_pad_parameter_component import DrumPadParameterComponent
-from .chain_selection_component import ChainSelectionComponent
-from .clip_control import AudioClipSettingsControllerComponent, ClipControlComponent, LoopSettingsControllerComponent, MatrixModeWatcherComponent, MidiClipControllerComponent, register_matrix_mode
+from .clip_control import ClipControlComponent, MatrixModeWatcherComponent, register_matrix_mode
 from .clip_decoration import ClipDecoratorFactory
 from .colors import COLOR_TABLE
 from .convert import ConvertComponent, ConvertEnabler
-from .bank_selection_component import BankSelectionComponent
 from .firmware import FirmwareCollector, FirmwareUpdateComponent, FirmwareSwitcher, FirmwareVersion
 from .hardware_settings_component import HardwareSettingsComponent
 from .master_track import MasterTrackComponent
@@ -121,6 +119,9 @@ class Push2(IdentifiableControlSurface, PushBase):
     bank_definitions = BANK_DEFINITIONS
     note_editor_class = Push2NoteEditorComponent
     sliced_simpler_class = Push2SlicedSimplerComponent
+    quantization_settings_class = QuantizationSettingsComponent
+    note_settings_component_class = NoteSettingsComponent
+    automation_component_class = AutomationComponent
     RESEND_MODEL_DATA_TIMEOUT = 5.0
     DEFUNCT_EXTERNAL_PROCESS_RELAUNCH_TIMEOUT = 2.0
 
@@ -224,11 +225,11 @@ class Push2(IdentifiableControlSurface, PushBase):
         return self.register_disconnectable(make_default_skin())
 
     def _create_injector(self):
-        return inject(double_press_context=const(self._double_press_context), expect_dialog=const(self.expect_dialog), show_notification=const(self.show_notification), commit_model_changes=const(self._model.commit_changes), register_real_time_data=const(self.register_real_time_data), percussion_instrument_finder=const(self._percussion_instrument_finder), selection=lambda : PushSelection(application=self.application, device_component=self._device_component, navigation_component=self._device_navigation), external_regions_of_interest_creator=lambda : self._midi_clip_controller.external_regions_of_interest_creator, external_focusable_object_descriptions=lambda : self._midi_clip_controller.external_focusable_object_descriptions)
+        return inject(double_press_context=const(self._double_press_context), expect_dialog=const(self.expect_dialog), show_notification=const(self.show_notification), commit_model_changes=const(self._model.commit_changes), register_real_time_data=const(self.register_real_time_data), percussion_instrument_finder=const(self._percussion_instrument_finder), selection=lambda : PushSelection(application=self.application, device_component=self._device_component, navigation_component=self._device_navigation), external_regions_of_interest_creator=lambda : self._clip_control.midi_clip_controller.external_regions_of_interest_creator, external_focusable_object_descriptions=lambda : self._clip_control.midi_clip_controller.external_focusable_object_descriptions)
 
     def _create_components(self):
         self._init_dialog_modes()
-        self._init_midi_clip_component()
+        self._init_clip_control()
         super(Push2, self)._create_components()
         self._init_browser()
         self._init_session_ring_selection_linking()
@@ -247,7 +248,7 @@ class Push2(IdentifiableControlSurface, PushBase):
                 self._model.commit_changes()
 
     def _create_notification_component(self):
-        notification = NotificationComponent(is_root=True)
+        notification = NotificationComponent()
         self._model.notificationView = notification
         return notification
 
@@ -260,6 +261,9 @@ class Push2(IdentifiableControlSurface, PushBase):
     def _create_message_box_layer(self):
         return Layer(cancel_button=u'track_state_buttons_raw[0]', priority=consts.MESSAGE_BOX_PRIORITY)
 
+    def _create_note_settings_component_layer(self):
+        return Layer(full_velocity_button=u'accent_button', priority=consts.MOMENTARY_DIALOG_PRIORITY)
+
     def _init_message_box(self):
         super(Push2, self)._init_message_box()
         self._model.liveDialogView = self._dialog._message_box
@@ -271,24 +275,18 @@ class Push2(IdentifiableControlSurface, PushBase):
         self._model.convertView = convert
         return convert
 
-    def _init_note_settings_component(self):
-        self._note_settings_component = NoteSettingsComponent(grid_resolution=self._grid_resolution, is_enabled=False, layer=Layer(full_velocity_button=u'accent_button', priority=consts.MOMENTARY_DIALOG_PRIORITY))
-        self._model.noteSettingsView = self._note_settings_component
-
     def _select_note_mode(self):
         super(Push2, self)._select_note_mode()
-        self._note_settings_component.set_color_mode(u'drum_pad' if self._note_modes.selected_mode == u'drums' else u'clip')
+        self._note_editor_settings_component.settings.set_color_mode(u'drum_pad' if self._note_modes.selected_mode == u'drums' else u'clip')
 
     def _init_note_editor_settings_component(self):
         super(Push2, self)._init_note_editor_settings_component()
         self._model.stepSettingsView = self._note_editor_settings_component.step_settings
-
-    def _init_automation_component(self):
-        self._automation_component = AutomationComponent()
-        self._model.stepAutomationSettingsView = self._automation_component
+        self._model.noteSettingsView = self._note_editor_settings_component.settings
+        self._model.stepAutomationSettingsView = self._note_editor_settings_component.automation
 
     def _init_convert_enabler(self):
-        self._convert_enabler = ConvertEnabler(is_root=True, is_enabled=True, enter_dialog_mode=self._enter_dialog_mode, exit_dialog_mode=self._exit_dialog_mode)
+        self._convert_enabler = ConvertEnabler(is_enabled=True, enter_dialog_mode=self._enter_dialog_mode, exit_dialog_mode=self._exit_dialog_mode)
         self._convert_enabler.layer = Layer(convert_toggle_button=u'convert_button')
 
     def _register_matrix_mode(self, name, modes_component = None, parent_path = None):
@@ -321,30 +319,6 @@ class Push2(IdentifiableControlSurface, PushBase):
          self.elements.browse_mode_button,
          self.elements.create_device_button,
          self.elements.create_track_button])
-        self._midi_clip_controller.set_matrix_mode_watcher(self._matrix_mode_watcher)
-        instrument_components = (self._drum_component,
-         self._instrument.instrument,
-         self._selected_note_instrument,
-         self._slicing_component)
-        for instrument_component in instrument_components:
-            self._midi_clip_controller.add_instrument_component(instrument_component)
-
-        paginators = (self._drum_step_sequencer.paginator,
-         self._instrument.paginator,
-         self._split_melodic_sequencer.paginator,
-         self._slicing_step_sequencer.paginator)
-        for paginator in paginators:
-            self._midi_clip_controller.add_paginator(paginator)
-
-        sequencers = (self._drum_step_sequencer,
-         self._instrument,
-         self._slicing_step_sequencer,
-         self._split_melodic_sequencer)
-        for sequencer in sequencers:
-            self._midi_clip_controller.add_sequencer(sequencer)
-
-        self._midi_clip_controller.set_note_settings_component(self._note_settings_component)
-        self._midi_clip_controller.set_note_editor_settings_component(self._note_editor_settings_component)
 
     @listens_group(u'value')
     def __on_main_mode_button_value(self, value, sender):
@@ -356,10 +330,10 @@ class Push2(IdentifiableControlSurface, PushBase):
         self._setup_enabler.selected_mode = u'disabled'
 
     def _create_capture_and_insert_scene_component(self):
-        return CaptureAndInsertSceneComponent(name=u'Capture_And_Insert_Scene', decorator_factory=self._clip_decorator_factory, is_root=True)
+        return CaptureAndInsertSceneComponent(name=u'Capture_And_Insert_Scene', decorator_factory=self._clip_decorator_factory)
 
     def _init_mute_solo_stop(self):
-        self._mute_solo_stop = MuteSoloStopClipComponent(is_root=True, item_provider=self._session_ring, track_list_component=self._track_list_component, cancellation_action_performers=[self._device_navigation, self._drum_component] + self._note_editor_settings_component.editors, solo_track_button=u'global_solo_button', mute_track_button=u'global_mute_button', stop_clips_button=u'global_track_stop_button')
+        self._mute_solo_stop = MuteSoloStopClipComponent(item_provider=self._session_ring, track_list_component=self._track_list_component, cancellation_action_performers=[self._device_navigation, self._drum_component] + self._note_editor_settings_component.editors, solo_track_button=u'global_solo_button', mute_track_button=u'global_mute_button', stop_clips_button=u'global_track_stop_button')
         self._mute_solo_stop.layer = Layer(stop_all_clips_button=self._with_shift(u'global_track_stop_button'))
         self._master_selector = MasterTrackComponent(tracks_provider=self._session_ring, is_enabled=False, layer=Layer(toggle_button=u'master_select_button'))
         self._master_selector.set_enabled(True)
@@ -461,7 +435,7 @@ class Push2(IdentifiableControlSurface, PushBase):
             selected_pad = self._device_navigation.item_provider.selected_item
             self._drum_pad_parameter_component.drum_pad = selected_pad
         self._device_or_pad_parameter_chooser.selected_mode = new_mode
-        self._automation_component.set_drum_pad_selected(self._device_navigation.is_drum_pad_selected)
+        self._note_editor_settings_component.automation.set_drum_pad_selected(self._device_navigation.is_drum_pad_selected)
 
     def _init_browser(self):
         self._browser_component_mode = BrowserComponentMode(weakref.ref(self._model), self._create_browser)
@@ -530,7 +504,7 @@ class Push2(IdentifiableControlSurface, PushBase):
 
     def _on_selected_track_changed(self):
         if self._initialized:
-            with self._changing_track_context(self._midi_clip_controller.changing_track()):
+            with self._changing_track_context(self._clip_control.midi_clip_controller.changing_track()):
                 super(Push2, self)._on_selected_track_changed()
             self._close_browse_mode()
             self._determine_mix_mode()
@@ -554,16 +528,16 @@ class Push2(IdentifiableControlSurface, PushBase):
         return DeviceParameterComponent(parameter_provider=self._device_component, is_enabled=False, layer=Layer(parameter_controls=u'fine_grain_param_controls'))
 
     def _create_device_navigation(self):
-        self._chain_selection = ChainSelectionComponent(is_enabled=False, layer=Layer(select_buttons=u'select_buttons', priority=consts.DIALOG_PRIORITY))
-        self._chain_selection.scroll_left_layer = Layer(button=u'select_buttons_raw[0]', priority=consts.DIALOG_PRIORITY)
-        self._chain_selection.scroll_right_layer = Layer(button=u'select_buttons_raw[-1]', priority=consts.DIALOG_PRIORITY)
-        self._bank_selection = BankSelectionComponent(bank_registry=self._device_bank_registry, banking_info=self._banking_info, device_options_provider=self._device_component, is_enabled=False, layer=Layer(option_buttons=u'track_state_buttons', select_buttons=u'select_buttons', priority=consts.DIALOG_PRIORITY))
-        self._bank_selection.scroll_left_layer = Layer(button=u'select_buttons_raw[0]', priority=consts.DIALOG_PRIORITY)
-        self._bank_selection.scroll_right_layer = Layer(button=u'select_buttons_raw[-1]', priority=consts.DIALOG_PRIORITY)
-        move_device = MoveDeviceComponent(is_enabled=False, layer=Layer(move_encoders=u'global_param_controls'))
-        device_navigation = DeviceNavigationComponent(name=u'DeviceNavigation', device_bank_registry=self._device_bank_registry, banking_info=self._banking_info, device_component=self._device_component, delete_handler=self._delete_component, chain_selection=self._chain_selection, bank_selection=self._bank_selection, move_device=move_device, track_list_component=self._track_list_component, is_enabled=False, layer=Layer(select_buttons=u'track_state_buttons'))
+        device_navigation = DeviceNavigationComponent(name=u'DeviceNavigation', device_bank_registry=self._device_bank_registry, banking_info=self._banking_info, device_component=self._device_component, delete_handler=self._delete_component, track_list_component=self._track_list_component, is_enabled=False, layer=Layer(select_buttons=u'track_state_buttons'))
         device_navigation.scroll_left_layer = Layer(button=u'track_state_buttons_raw[0]')
         device_navigation.scroll_right_layer = Layer(button=u'track_state_buttons_raw[-1]')
+        device_navigation.move_device.layer = Layer(move_encoders=u'global_param_controls')
+        device_navigation.chain_selection.layer = Layer(select_buttons=u'select_buttons', priority=consts.DIALOG_PRIORITY)
+        device_navigation.chain_selection.scroll_left_layer = Layer(button=u'select_buttons_raw[0]', priority=consts.DIALOG_PRIORITY)
+        device_navigation.chain_selection.scroll_right_layer = Layer(button=u'select_buttons_raw[-1]', priority=consts.DIALOG_PRIORITY)
+        device_navigation.bank_selection.layer = Layer(option_buttons=u'track_state_buttons', select_buttons=u'select_buttons', priority=consts.DIALOG_PRIORITY)
+        device_navigation.bank_selection.scroll_left_layer = Layer(button=u'select_buttons_raw[0]', priority=consts.DIALOG_PRIORITY)
+        device_navigation.bank_selection.scroll_right_layer = Layer(button=u'select_buttons_raw[-1]', priority=consts.DIALOG_PRIORITY)
         self.__on_drum_pad_selection_changed.subject = device_navigation
         self.device_provider.allow_update_callback = lambda : device_navigation.device_selection_update_allowed
         return device_navigation
@@ -572,30 +546,22 @@ class Push2(IdentifiableControlSurface, PushBase):
         super(Push2, self)._init_device()
         self._device_view = DeviceViewComponent(name=u'DeviceView', device_component=self._device_component, view_model=self._model, is_enabled=False)
         self._model.devicelistView = self._device_navigation
-        self._model.chainListView = self._chain_selection
-        self._model.parameterBankListView = self._bank_selection
-        self._model.editModeOptionsView = self._bank_selection.options
-
-    def _init_matrix_modes(self):
-        super(Push2, self)._init_matrix_modes()
-        self._midi_clip_controller.add_mute_during_track_change_component(self._drum_modes)
-
-    def _init_instrument(self):
-        super(Push2, self)._init_instrument()
-        self._midi_clip_controller.add_mute_during_track_change_component(self._instrument)
+        self._model.chainListView = self._device_navigation.chain_selection
+        self._model.parameterBankListView = self._device_navigation.bank_selection
+        self._model.editModeOptionsView = self._device_navigation.bank_selection.options
 
     def _create_view_control_component(self):
         return ViewControlComponent(name=u'View_Control', tracks_provider=self._session_ring)
 
     def _init_session_ring(self):
-        self._session_ring = SessionRingTrackProvider(name=u'Session_Ring', num_tracks=NUM_TRACKS, num_scenes=NUM_SCENES, is_enabled=True, is_root=True)
+        self._session_ring = SessionRingTrackProvider(name=u'Session_Ring', num_tracks=NUM_TRACKS, num_scenes=NUM_SCENES, is_enabled=True)
 
     def _init_session_ring_selection_linking(self):
         self._sessionring_link = self.register_disconnectable(SessionRingSelectionLinking(session_ring=self._session_ring, selection_changed_notifier=self._view_control))
 
     def _init_track_list(self):
-        self._clip_phase_enabler = Component(is_enabled=False)
-        self._track_list_component = TrackListComponent(tracks_provider=self._session_ring, trigger_recording_on_release_callback=self._session_recording.set_trigger_recording_on_release, color_chooser=self._create_color_chooser(), clip_phase_enabler=self._clip_phase_enabler, is_enabled=False, is_root=True, layer=Layer(track_action_buttons=u'select_buttons', lock_override_button=u'select_button', delete_button=u'delete_button', duplicate_button=u'duplicate_button', arm_button=u'record_button', select_color_button=u'shift_button'))
+        self._track_list_component = TrackListComponent(tracks_provider=self._session_ring, trigger_recording_on_release_callback=self._session_recording.set_trigger_recording_on_release, color_chooser=self._create_color_chooser(), is_enabled=False, layer=Layer(track_action_buttons=u'select_buttons', lock_override_button=u'select_button', delete_button=u'delete_button', duplicate_button=u'duplicate_button', arm_button=u'record_button', select_color_button=u'shift_button'))
+        self._clip_phase_enabler = self._track_list_component.clip_phase_enabler
         self._track_list_component.set_enabled(True)
         self._model.tracklistView = self._track_list_component
 
@@ -627,7 +593,7 @@ class Push2(IdentifiableControlSurface, PushBase):
         self._main_modes.add_mode(u'mix', [self._mix_modes, SetAttributeMode(obj=self._note_editor_settings_component, attribute=u'parameter_provider', value=self._track_parameter_provider), self._clip_phase_enabler], behaviour=MixModeBehaviour())
 
     def _init_dialog_modes(self):
-        self._dialog_modes = ModesComponent(is_root=True)
+        self._dialog_modes = ModesComponent()
         self._dialog_modes.add_mode(u'convert', LazyEnablingMode(self._create_convert))
         self.__dialog_mode_button_value.replace_subjects([self.elements.scale_presets_button, self.elements.convert_button])
 
@@ -654,42 +620,60 @@ class Push2(IdentifiableControlSurface, PushBase):
         super(Push2, self)._init_scales()
 
     def _create_scales_enabler(self):
-        return ScalesEnabler(enter_dialog_mode=self._enter_dialog_mode, exit_dialog_mode=self._exit_dialog_mode, is_enabled=False, is_root=True, layer=Layer(toggle_button=u'scale_presets_button'))
+        return ScalesEnabler(enter_dialog_mode=self._enter_dialog_mode, exit_dialog_mode=self._exit_dialog_mode, is_enabled=False, layer=Layer(toggle_button=u'scale_presets_button'))
 
-    def _init_midi_clip_component(self):
-        self._midi_clip_controller = MidiClipControllerComponent(is_enabled=False)
-        self._midi_clip_controller.set_drum_rack_finder(self._percussion_instrument_finder)
+    def _init_clip_control(self):
+        self._clip_control = ClipControlComponent(decorator_factory=self._clip_decorator_factory, is_enabled=False)
 
     def _create_clip_mode(self):
         base_loop_layer = Layer(shift_button=u'shift_button', loop_button=u'track_state_buttons_raw[1]', crop_button=u'track_state_buttons_raw[2]')
-        self._midi_loop_controller = LoopSettingsControllerComponent(is_enabled=False)
-        self._audio_loop_controller = LoopSettingsControllerComponent(is_enabled=False)
-        self._model.audioLoopSettingsView = self._audio_loop_controller
-        self._model.midiLoopSettingsView = self._midi_loop_controller
         audio_clip_layer = Layer(warp_mode_encoder=u'parameter_controls_raw[5]', transpose_encoder=u'parameter_controls_raw[6]', detune_encoder=self._with_shift(u'parameter_controls_raw[6]'), gain_encoder=u'parameter_controls_raw[7]', shift_button=u'shift_button')
-        audio_clip_controller = AudioClipSettingsControllerComponent(is_enabled=False)
-        self._model.audioClipSettingsView = audio_clip_controller
-        self._model.midiClipSettingsView = self._midi_clip_controller
-        clip_control_mode_selector = ModesComponent(is_enabled=False)
-        clip_control_mode_selector.add_mode(u'midi', [make_freeze_aware(self._midi_loop_controller, base_loop_layer + Layer(encoders=self.elements.global_param_controls.submatrix[1:4, :], zoom_encoder=u'fine_grain_param_controls_raw[0]')), self._midi_clip_controller])
-        clip_control_mode_selector.add_mode(u'audio', [make_freeze_aware(self._audio_loop_controller, base_loop_layer + Layer(encoders=self.elements.global_param_controls.submatrix[1:4, :], zoom_encoder=u'fine_grain_param_controls_raw[0]')), make_freeze_aware(audio_clip_controller, audio_clip_layer)])
-        clip_control_mode_selector.add_mode(u'no_clip', [])
-        clip_control_mode_selector.selected_mode = u'no_clip'
-        clip_control = ClipControlComponent(midi_loop_controller=self._midi_loop_controller, audio_loop_controller=self._audio_loop_controller, audio_clip_controller=audio_clip_controller, midi_clip_controller=self._midi_clip_controller, mode_selector=clip_control_mode_selector, decorator_factory=self._clip_decorator_factory, is_enabled=False)
-        return [partial(self._view_control.show_view, u'Detail/Clip'),
-         clip_control_mode_selector,
-         clip_control,
-         self._clip_phase_enabler]
+        self._clip_control.mode_selector.add_mode(u'midi', [make_freeze_aware(self._clip_control.midi_loop_controller, base_loop_layer + Layer(encoders=self.elements.global_param_controls.submatrix[1:4, :], zoom_encoder=u'fine_grain_param_controls_raw[0]')), self._clip_control.midi_clip_controller])
+        self._clip_control.mode_selector.add_mode(u'audio', [make_freeze_aware(self._clip_control.audio_loop_controller, base_loop_layer + Layer(encoders=self.elements.global_param_controls.submatrix[1:4, :], zoom_encoder=u'fine_grain_param_controls_raw[0]')), make_freeze_aware(self._clip_control.audio_clip_controller, audio_clip_layer)])
+        self._clip_control.mode_selector.add_mode(u'no_clip', [])
+        self._clip_control.mode_selector.selected_mode = u'no_clip'
+        self._model.midiLoopSettingsView = self._clip_control.midi_loop_controller
+        self._model.audioLoopSettingsView = self._clip_control.audio_loop_controller
+        self._model.audioClipSettingsView = self._clip_control.audio_clip_controller
+        self._model.midiClipSettingsView = self._clip_control.midi_clip_controller
+        self._clip_control.midi_clip_controller.set_drum_rack_finder(self._percussion_instrument_finder)
+        self._clip_control.midi_clip_controller.set_matrix_mode_watcher(self._matrix_mode_watcher)
+        instrument_components = (self._drum_component,
+         self._instrument.instrument,
+         self._selected_note_instrument,
+         self._slicing_component)
+        for instrument_component in instrument_components:
+            self._clip_control.midi_clip_controller.add_instrument_component(instrument_component)
+
+        paginators = (self._drum_step_sequencer.paginator,
+         self._instrument.paginator,
+         self._split_melodic_sequencer.paginator,
+         self._slicing_step_sequencer.paginator)
+        for paginator in paginators:
+            self._clip_control.midi_clip_controller.add_paginator(paginator)
+
+        sequencers = (self._drum_step_sequencer,
+         self._instrument,
+         self._slicing_step_sequencer,
+         self._split_melodic_sequencer)
+        for sequencer in sequencers:
+            self._clip_control.midi_clip_controller.add_sequencer(sequencer)
+
+        self._clip_control.midi_clip_controller.set_note_settings_component(self._note_editor_settings_component.settings)
+        self._clip_control.midi_clip_controller.set_note_editor_settings_component(self._note_editor_settings_component)
+        self._clip_control.midi_clip_controller.add_mute_during_track_change_component(self._drum_modes)
+        self._clip_control.midi_clip_controller.add_mute_during_track_change_component(self._instrument)
+        return [partial(self._view_control.show_view, u'Detail/Clip'), self._clip_control, self._clip_phase_enabler]
 
     def _init_quantize_actions(self):
-        self._quantize_settings = QuantizationSettingsComponent(name=u'Quantization_Settings', quantization_names=QUANTIZATION_NAMES_UNICODE, is_enabled=False, layer=make_dialog_layer(swing_amount_encoder=u'parameter_controls_raw[0]', quantize_to_encoder=u'parameter_controls_raw[1]', quantize_amount_encoder=u'parameter_controls_raw[2]', record_quantization_encoder=u'parameter_controls_raw[4]', record_quantization_toggle_button=u'track_state_buttons_raw[4]', priority=consts.MOMENTARY_DIALOG_PRIORITY))
-        self._model.quantizeSettingsView = self._quantize_settings
-        self._quantize = self._for_non_frozen_tracks(QuantizationComponent(name=u'Selected_Clip_Quantize', settings=self._quantize_settings, is_enabled=False, layer=Layer(action_button=u'quantize_button')), is_root=True)
+        self._quantize = self._for_non_frozen_tracks(QuantizationComponent(name=u'Selected_Clip_Quantize', quantization_names=QUANTIZATION_NAMES_UNICODE, settings_class=self.quantization_settings_class, is_enabled=False, layer=Layer(action_button=u'quantize_button')))
+        self._quantize.settings.layer = make_dialog_layer(swing_amount_encoder=u'parameter_controls_raw[0]', quantize_to_encoder=u'parameter_controls_raw[1]', quantize_amount_encoder=u'parameter_controls_raw[2]', record_quantization_encoder=u'parameter_controls_raw[4]', record_quantization_toggle_button=u'track_state_buttons_raw[4]', priority=consts.MOMENTARY_DIALOG_PRIORITY)
+        self._model.quantizeSettingsView = self._quantize.settings
 
     def _init_fixed_length(self):
         super(Push2, self)._init_fixed_length()
-        self._fixed_length_settings_component.layer = make_dialog_layer(length_option_buttons=u'select_buttons', fixed_length_toggle_button=u'track_state_buttons_raw[0]', legato_launch_toggle_button=u'track_state_buttons_raw[7]', priority=consts.MOMENTARY_DIALOG_PRIORITY)
-        self._model.fixedLengthSelectorView = self._fixed_length_settings_component
+        self._fixed_length.settings_component.layer = make_dialog_layer(length_option_buttons=u'select_buttons', fixed_length_toggle_button=u'track_state_buttons_raw[0]', legato_launch_toggle_button=u'track_state_buttons_raw[7]', priority=consts.MOMENTARY_DIALOG_PRIORITY)
+        self._model.fixedLengthSelectorView = self._fixed_length.settings_component
         self._model.fixedLengthSettings = self._fixed_length_setting
 
     def _init_value_components(self):
@@ -724,7 +708,7 @@ class Push2(IdentifiableControlSurface, PushBase):
     def _create_user_component(self):
         self._user_mode_ui_blocker = Component(is_enabled=False, layer=self._create_message_box_background_layer())
         sysex_control = SysexElement(send_message_generator=sysex.make_mode_switch_messsage, sysex_identifier=sysex.make_message_identifier(sysex.MODE_SWITCH_MESSAGE_ID))
-        user = UserComponent(value_control=sysex_control, is_enabled=True, is_root=True)
+        user = UserComponent(value_control=sysex_control, is_enabled=True)
         return user
 
     def _create_settings(self):
@@ -781,7 +765,7 @@ class Push2(IdentifiableControlSurface, PushBase):
         pad_sysex_control = SysexElement(sysex.make_pad_setting_message)
         aftertouch_enabled_control = SysexElement(send_message_generator=sysex.make_mono_aftertouch_enabled_message)
         sensitivity_sender = pad_parameter_sender(all_pad_sysex_control, pad_sysex_control, aftertouch_enabled_control)
-        self._pad_sensitivity_update = PadUpdateComponent(all_pads=range(64), parameter_sender=sensitivity_sender, default_profile=PadSettings(sensitivity=default_profile, aftertouch_enabled=MONO_AFTERTOUCH_ENABLED), update_delay=TIMER_DELAY, is_root=True)
+        self._pad_sensitivity_update = PadUpdateComponent(all_pads=range(64), parameter_sender=sensitivity_sender, default_profile=PadSettings(sensitivity=default_profile, aftertouch_enabled=MONO_AFTERTOUCH_ENABLED), update_delay=TIMER_DELAY)
         self._pad_sensitivity_update.set_profile(u'drums', PadSettings(sensitivity=playing_profile, aftertouch_enabled=MONO_AFTERTOUCH_ENABLED))
         self._pad_sensitivity_update.set_profile(u'instrument', PadSettings(sensitivity=playing_profile, aftertouch_enabled=MONO_AFTERTOUCH_ENABLED))
         self._pad_sensitivity_update.set_profile(u'loop', PadSettings(sensitivity=loop_selector_profile, aftertouch_enabled=MONO_AFTERTOUCH_DISABLED))

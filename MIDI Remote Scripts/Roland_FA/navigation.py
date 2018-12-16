@@ -6,4 +6,4 @@ class SessionNavigationComponent(SessionNavigationComponentBase):
 
     def __init__(self, *a, **k):
         super(SessionNavigationComponent, self).__init__(*a, **k)
-        self._horizontal_paginator = self.register_component(ScrollComponent(self.track_pager_type(self._session_ring)))
+        self._horizontal_paginator = ScrollComponent(self.track_pager_type(self._session_ring), parent=self)

@@ -118,9 +118,9 @@ class TrackListComponent(ModesComponent, Messenger):
         self._button_feedback_provider = mixable_button_color
         self._color_chooser = color_chooser
         self._track_selected_when_pressed = [False] * self.track_action_buttons.control_count
-        self._playheads_real_time_data = [ self.register_component(RealTimeDataComponent(channel_type=u'playhead', is_enabled=False)) for _ in xrange(8) ]
-        self._clip_phase_enabler = clip_phase_enabler or self.register_component(Component())
-        self.__on_clip_phase_enabler_changed.subject = self._clip_phase_enabler
+        self._playheads_real_time_data = [ RealTimeDataComponent(parent=self, channel_type=u'playhead', is_enabled=False) for _ in xrange(8) ]
+        self.clip_phase_enabler = Component(parent=self)
+        self.__on_clip_phase_enabler_changed.subject = self.clip_phase_enabler
         self._setup_action_mode(u'select', handler=self._select_mixable)
         self._setup_action_mode(u'lock_override', handler=self._select_mixable)
         self._setup_action_mode(u'delete', handler=self._delete_mixable)
@@ -341,7 +341,7 @@ class TrackListComponent(ModesComponent, Messenger):
 
     def _update_realtime_channels_ability(self):
         for playhead in self._playheads_real_time_data:
-            playhead.set_enabled(self.is_enabled() and self._clip_phase_enabler.is_enabled())
+            playhead.set_enabled(self.is_enabled() and self.clip_phase_enabler.is_enabled())
 
     def on_enabled_changed(self):
         super(TrackListComponent, self).on_enabled_changed()

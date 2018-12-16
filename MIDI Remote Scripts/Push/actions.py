@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import depends, listens, task
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.mode import SetAttributeMode, ModesComponent
 from pushbase.consts import MessageBoxText
 from pushbase.device_chain_utils import is_empty_drum_pad
@@ -9,12 +9,12 @@ from pushbase.browser_modes import BrowserAddEffectMode
 from pushbase.action_with_options_component import OptionsComponent
 from pushbase.message_box_component import Messenger
 
-class CreateDefaultTrackComponent(CompoundComponent, Messenger):
+class CreateDefaultTrackComponent(Component, Messenger):
 
     @depends(selection=None)
     def __init__(self, selection = None, *a, **k):
         super(CreateDefaultTrackComponent, self).__init__(*a, **k)
-        self.options = self.register_component(OptionsComponent())
+        self.options = OptionsComponent(parent=self)
         self.options.selected_option = None
         self.options.option_names = (u'Audio', u'Midi', u'Return')
         self.options.labels = (u'Create track:', u'', u'', u'')
@@ -48,13 +48,13 @@ class CreateDefaultTrackComponent(CompoundComponent, Messenger):
         self.options.selected_option = None
 
 
-class CreateInstrumentTrackComponent(CompoundComponent, Messenger):
+class CreateInstrumentTrackComponent(Component, Messenger):
 
     @depends(selection=None)
     def __init__(self, selection = None, browser_mode = None, browser_component = None, browser_hotswap_mode = None, *a, **k):
         super(CreateInstrumentTrackComponent, self).__init__(*a, **k)
         self._selection = selection
-        self._with_browser_modes = self.register_component(ModesComponent())
+        self._with_browser_modes = ModesComponent(parent=self)
         self._with_browser_modes.add_mode(u'create', [self._prepare_browser,
          SetAttributeMode(self.application.browser, u'filter_type', Live.Browser.FilterType.instrument_hotswap),
          SetAttributeMode(browser_component, u'do_load_item', self._do_browser_load_item),
@@ -85,14 +85,14 @@ class CreateInstrumentTrackComponent(CompoundComponent, Messenger):
         self._with_browser_modes.selected_mode = u'hotswap'
 
 
-class CreateDeviceComponent(CompoundComponent):
+class CreateDeviceComponent(Component):
 
     @depends(selection=None)
     def __init__(self, selection = None, browser_component = None, browser_mode = None, browser_hotswap_mode = None, insert_left = False, *a, **k):
         super(CreateDeviceComponent, self).__init__(*a, **k)
         self._selection = selection
         self._add_effect_mode = BrowserAddEffectMode(selection=selection, browser=self.application.browser, application_view=self.application.view, insert_left=insert_left)
-        self._create_device_modes = self.register_component(ModesComponent())
+        self._create_device_modes = ModesComponent(parent=self)
         self._create_device_modes.add_mode(u'create', [SetAttributeMode(browser_component, u'do_load_item', self._do_browser_load_item),
          self._add_effect_mode,
          browser_mode,

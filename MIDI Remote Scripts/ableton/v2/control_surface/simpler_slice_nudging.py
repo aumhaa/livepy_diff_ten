@@ -1,10 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from contextlib import contextmanager
 import Live
-from ableton.v2.base import EventObject, find_if, liveobj_valid, clamp, listens
-from .device_chain_utils import is_simpler
+from ..base import EventObject, find_if, liveobj_valid, clamp, listens
 CENTERED_NUDGE_VALUE = 0.5
 MINIMUM_SLICE_DISTANCE = 2
+
+def is_simpler(device):
+    return device and device.class_name == u'OriginalSimpler'
+
 
 class SimplerSliceNudging(EventObject):
     _simpler = None

@@ -2,10 +2,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import ifilter
 from Live import DeviceParameter
 from ableton.v2.base import liveobj_valid, listenable_property, listens
+from ableton.v2.control_surface import InternalParameterBase, ParameterInfo, PitchParameter
 from pushbase.automation_component import AutomationComponent as AutomationComponentBase
-from pushbase.decoration import PitchParameter
-from pushbase.internal_parameter import InternalParameterBase
-from pushbase.parameter_provider import ParameterInfo
 
 class StepAutomationParameter(InternalParameterBase):
 

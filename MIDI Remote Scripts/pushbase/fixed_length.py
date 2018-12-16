@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 import Live
 from ableton.v2.base import EventObject, listens, listenable_property, task
-from ableton.v2.control_surface import CompoundComponent, Component
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import RadioButtonControl, TextDisplayControl, ToggleButtonControl, ButtonControl, control_list
 from . import consts
 from .message_box_component import Messenger
@@ -61,15 +61,14 @@ class FixedLengthSettingComponent(Component):
             self.option_display_line[index] = prefix + option_name
 
 
-class FixedLengthComponent(CompoundComponent, Messenger):
+class FixedLengthComponent(Component, Messenger):
     fixed_length_toggle_button = ButtonControl()
 
-    def __init__(self, settings_component = None, fixed_length_setting = None, *a, **k):
-        assert settings_component is not None
+    def __init__(self, fixed_length_setting = None, *a, **k):
         assert fixed_length_setting is not None
         super(FixedLengthComponent, self).__init__(*a, **k)
         self._fixed_length_setting = fixed_length_setting
-        self._settings_component = self.register_component(settings_component)
+        self.settings_component = FixedLengthSettingComponent(fixed_length_setting=self._fixed_length_setting, parent=self, is_enabled=False)
         self._length_press_state = None
         self.__on_setting_enabled_changes.subject = fixed_length_setting
         self.__on_setting_enabled_changes(fixed_length_setting.enabled)
@@ -84,11 +83,11 @@ class FixedLengthComponent(CompoundComponent, Messenger):
 
     @fixed_length_toggle_button.pressed_delayed
     def fixed_length_toggle_button(self, button):
-        self._settings_component.set_enabled(True)
+        self.settings_component.set_enabled(True)
 
     @fixed_length_toggle_button.released_delayed
     def fixed_length_toggle_button(self, button):
-        self._settings_component.set_enabled(False)
+        self.settings_component.set_enabled(False)
         self._set_loop()
 
     @fixed_length_toggle_button.pressed

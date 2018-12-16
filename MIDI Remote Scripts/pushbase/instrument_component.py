@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from contextlib import contextmanager
 from itertools import ifilter
 from ableton.v2.base import EventObject, index_if, listenable_property, listens, liveobj_valid, find_if, task
-from ableton.v2.control_surface import CompoundComponent, defaults
+from ableton.v2.control_surface import defaults
 from ableton.v2.control_surface.control import ButtonControl, control_matrix, PlayableControl
 from ableton.v2.control_surface.components import PlayableComponent, Slideable, SlideComponent
 from . import consts
@@ -95,7 +95,7 @@ class NoteLayout(EventObject):
         return find_if(lambda scale: scale.name == name, SCALES) or DEFAULT_SCALE
 
 
-class InstrumentComponent(PlayableComponent, CompoundComponent, Slideable, Messenger):
+class InstrumentComponent(PlayableComponent, Slideable, Messenger):
     u"""
     Class that sets up the button matrix as a piano, using different
     selectable layouts for the notes.
@@ -118,8 +118,8 @@ class InstrumentComponent(PlayableComponent, CompoundComponent, Slideable, Messe
         self._show_notifications = True
         self.__on_detail_clip_changed.subject = self.song.view
         self.__on_detail_clip_changed()
-        self._slider = self.register_component(SlideComponent(self))
-        self._touch_slider = self.register_component(SlideableTouchStripComponent(self))
+        self._slider = SlideComponent(slideable=self, parent=self)
+        self._touch_slider = SlideableTouchStripComponent(touch_slideable=self, parent=self)
         for event in (u'scale', u'root_note', u'is_in_key', u'is_fixed', u'is_horizontal', u'interval'):
             self.register_slot(self._note_layout, self._on_note_layout_changed, event)
 

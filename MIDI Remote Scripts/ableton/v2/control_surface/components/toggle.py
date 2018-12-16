@@ -54,9 +54,6 @@ class ToggleComponent(Component):
         self.__on_button_value.subject = button
         self._update_button()
 
-    def on_enabled_changed(self):
-        self.update()
-
     def update(self):
         super(ToggleComponent, self).update()
         self._update_button()

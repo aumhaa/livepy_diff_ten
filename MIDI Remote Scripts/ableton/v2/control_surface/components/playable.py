@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import listenable_property
-from ..compound_component import CompoundComponent
+from ..component import Component
 from ..control import PlayableControl, ButtonControl, control_matrix
 from . import AccentComponent
 
@@ -10,7 +10,7 @@ def apply_to_list(original_list, operation, item):
     return list_copy
 
 
-class PlayableComponent(CompoundComponent):
+class PlayableComponent(Component):
     matrix = control_matrix(PlayableControl)
     select_button = ButtonControl()
     pressed_pads = listenable_property.managed([])
@@ -18,7 +18,7 @@ class PlayableComponent(CompoundComponent):
     def __init__(self, *a, **k):
         super(PlayableComponent, self).__init__(*a, **k)
         self._takeover_pads = False
-        self._accent_component = self.register_component(AccentComponent())
+        self._accent_component = AccentComponent(parent=self)
 
     def set_accent_button(self, button):
         self._accent_component.accent_button.set_control_element(button)

@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from math import ceil
 from copy import deepcopy
-from ableton.v2.base import liveobj_valid
+from ..base import liveobj_valid
 MX_MAIN_BANK_INDEX = -1
 BANK_FORMAT = u'Bank %d'
-PARAMETERS_KEY = u'Parameters'
-MAIN_KEY = u'Main'
+BANK_PARAMETERS_KEY = u'Parameters'
+BANK_MAIN_KEY = u'Main'
 
 def has_bank_count(device):
     if liveobj_valid(device):
@@ -27,7 +27,7 @@ def has_main_bank(device, definitions):
             return False
 
     else:
-        return MAIN_KEY in definitions.get(device.class_name, {})
+        return BANK_MAIN_KEY in definitions.get(device.class_name, {})
 
 
 def has_bank_names(device, definitions):
@@ -77,7 +77,7 @@ def device_bank_names(device, bank_size = 8, definitions = None):
             offset = int(has_main_bank(device, definitions))
             names = [ device.get_bank_name(index - offset) for index in xrange(device_bank_count(device, definitions=definitions)) ]
             if has_main_bank(device, definitions) and not names[0]:
-                names[0] = MAIN_KEY
+                names[0] = BANK_MAIN_KEY
         else:
             bank_count = device_bank_count(device, bank_size=bank_size, definitions=definitions)
             names = [ BANK_FORMAT % (index + 1) for index in xrange(bank_count) ]

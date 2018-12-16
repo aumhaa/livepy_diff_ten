@@ -5,7 +5,7 @@ import string
 import re
 import Live
 from ableton.v2.base import find_if, clamp, nop, memoize, listens, listens_group, task
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, ToggleButtonControl
 from ableton.v2.control_surface.elements import DisplayDataSource
 from pushbase import consts
@@ -59,7 +59,7 @@ def full_strip(string):
     return string.strip(u' ')
 
 
-class BrowserComponent(CompoundComponent):
+class BrowserComponent(Component):
     u"""
     Component for controlling the Live library browser.  It has 4
     browsing columns that are controlled by encoders and state
@@ -84,7 +84,7 @@ class BrowserComponent(CompoundComponent):
         self._data_sources = map(DisplayDataSource, (u'',) * num_data_sources)
         self._last_loaded_item = None
         self._default_item_formatter = DefaultItemFormatter()
-        self._list_components = self.register_components(*[ ListComponent() for _ in xrange(self.NUM_COLUMNS) ])
+        self._list_components = [ ListComponent(parent=self) for _ in xrange(self.NUM_COLUMNS) ]
         for i, component in enumerate(self._list_components):
             component.do_trigger_action = lambda item: self._do_load_item(item)
             component.last_action_item = lambda : self._last_loaded_item

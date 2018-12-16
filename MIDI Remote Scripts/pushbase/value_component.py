@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listenable_property, listens
-from ableton.v2.control_surface import CompoundComponent, Component, ParameterSlot
+from ableton.v2.control_surface import Component, ParameterSlot
 from ableton.v2.control_surface.control import EncoderControl, ButtonControl
 from ableton.v2.control_surface.elements import DisplayDataSource
 from . import consts
@@ -57,7 +57,7 @@ class ValueDisplayComponentBase(Component):
             self._graphic_data_source.set_display_string(self.get_graphic_string())
 
 
-class ValueComponentBase(CompoundComponent):
+class ValueComponentBase(Component):
     u"""
     Component to control one continuous property with a infinite
     touch-sensitive encoder. You can optionally give it a display and
@@ -74,7 +74,7 @@ class ValueComponentBase(CompoundComponent):
         encoder.released = ValueComponentBase.__on_encoder_released
         encoder.value = ValueComponentBase.__on_encoder_value
         self.add_control(u'encoder', encoder)
-        self._display = self.register_component(self.create_display_component(display_label=display_label, display_seg_start=display_seg_start))
+        self._display = self.create_display_component(display_label=display_label, display_seg_start=display_seg_start)
         self._display.set_enabled(False)
 
     @property
@@ -144,7 +144,7 @@ class ValueComponent(ValueComponentBase):
     encoder_factor = 1.0
 
     def create_display_component(self, *a, **k):
-        return ValueDisplayComponent(property_name=self._property_name, subject=self._subject, display_format=self._display_format, view_transform=(lambda x: self.view_transform(x)), graphic_transform=(lambda x: self.graphic_transform(x)), *a, **k)
+        return ValueDisplayComponent(parent=self, property_name=self._property_name, subject=self._subject, display_format=self._display_format, view_transform=(lambda x: self.view_transform(x)), graphic_transform=(lambda x: self.graphic_transform(x)), *a, **k)
 
     def __init__(self, property_name = None, subject = None, display_format = u'%f', model_transform = None, view_transform = None, graphic_transform = None, encoder_factor = None, *a, **k):
         self._property_name = property_name

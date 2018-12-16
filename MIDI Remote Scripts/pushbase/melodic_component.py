@@ -23,17 +23,19 @@ class MelodicComponent(MessengerModesComponent):
         super(MelodicComponent, self).__init__(*a, **k)
         self._matrices = None
         self._grid_resolution = grid_resolution
-        self.instrument, self._step_duplicator, self._accent_component = self.register_components(InstrumentComponent(note_layout=note_layout), StepDuplicatorComponent(), AccentComponent())
-        self._note_editors = self.register_components(*[ note_editor_class(clip_creator=clip_creator, grid_resolution=self._grid_resolution, velocity_range_thresholds=velocity_range_thresholds, is_enabled=False) for _ in xrange(NUM_NOTE_EDITORS) ])
+        self.instrument = InstrumentComponent(parent=self, note_layout=note_layout)
+        self._step_duplicator = StepDuplicatorComponent(parent=self)
+        self._accent_component = AccentComponent(parent=self)
+        self._note_editors = [ note_editor_class(parent=self, clip_creator=clip_creator, grid_resolution=self._grid_resolution, velocity_range_thresholds=velocity_range_thresholds, is_enabled=False) for _ in xrange(NUM_NOTE_EDITORS) ]
         for editor in self._note_editors:
             note_editor_settings.add_editor(editor)
             editor.set_step_duplicator(self._step_duplicator)
 
-        self.paginator = self.register_component(NoteEditorPaginator(self._note_editors))
-        self._loop_selector = self.register_component(LoopSelectorComponent(clip_creator=clip_creator, paginator=self.paginator, is_enabled=False, default_size=8))
+        self.paginator = NoteEditorPaginator(self._note_editors, parent=self)
+        self._loop_selector = LoopSelectorComponent(parent=self, clip_creator=clip_creator, paginator=self.paginator, is_enabled=False, default_size=8)
         self._playhead = None
-        self._playhead_component = self.register_component(PlayheadComponent(grid_resolution=grid_resolution, paginator=self.paginator, follower=self._loop_selector, feedback_channels=PLAYHEAD_FEEDBACK_CHANNELS, is_enabled=False))
-        self._play_modes = self.register_component(MessengerModesComponent(muted=True, is_enabled=False))
+        self._playhead_component = PlayheadComponent(parent=self, grid_resolution=grid_resolution, paginator=self.paginator, follower=self._loop_selector, feedback_channels=PLAYHEAD_FEEDBACK_CHANNELS, is_enabled=False)
+        self._play_modes = MessengerModesComponent(muted=True, is_enabled=False, parent=self)
         self._play_modes.add_mode(u'play', [LayerMode(self.instrument, instrument_play_layer), pitch_mod_touch_strip_mode], default_mode=u'play', alternative_mode=u'play_loop')
         self._play_modes.add_mode(u'play_loop', [LayerMode(self.instrument, instrument_play_layer),
          self._loop_selector,
@@ -43,7 +45,7 @@ class MelodicComponent(MessengerModesComponent):
          pitch_mod_touch_strip_mode], message=consts.MessageBoxText.ALTERNATE_PLAY_LOOP, default_mode=u'play', alternative_mode=u'play_loop')
         self._play_modes.selected_mode = u'play'
         self.add_mode(u'play', self._play_modes, message=MessageBoxText.LAYOUT_MELODIC_PLAYING)
-        self._sequence_modes = self.register_component(MessengerModesComponent(muted=True, is_enabled=False))
+        self._sequence_modes = MessengerModesComponent(muted=True, is_enabled=False, parent=self)
         self._sequence_modes.add_mode(u'sequence', [LayerMode(self.instrument, instrument_sequence_layer),
          note_editor_settings,
          self._loop_selector,

@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import EventObject, const, inject, listenable_property, listens, liveobj_valid
-from pushbase.decoration import LiveObjectDecorator, get_parameter_by_name
-from pushbase.internal_parameter import InternalParameter
+from ableton.v2.control_surface import InternalParameter, LiveObjectDecorator, get_parameter_by_name
 from .device_options import DeviceSwitchOption, DeviceOnOffOption
 from .timeline_navigation import Region, SimplerWaveformNavigation
 

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain, starmap
 from ableton.v2.base import forward_property, listenable_property, listens, liveobj_valid
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.components import AccentComponent
 from ableton.v2.control_surface.elements import to_midi_value
 from .loop_selector_component import LoopSelectorComponent
@@ -10,7 +10,7 @@ from .note_editor_paginator import NoteEditorPaginator
 from .matrix_maps import PLAYHEAD_FEEDBACK_CHANNELS
 from .step_duplicator import StepDuplicatorComponent
 
-class StepSeqComponent(CompoundComponent):
+class StepSeqComponent(Component):
     u"""
     This component represents one of the sequencing mechanisms for Push, which has one
     NoteEditorComponent associated with a single pitch. The component mostly manages
@@ -25,10 +25,11 @@ class StepSeqComponent(CompoundComponent):
         assert instrument_component is not None
         assert note_editor_component is not None
         self._grid_resolution = grid_resolution
-        self._note_editor, self._loop_selector = self.register_components(note_editor_component, LoopSelectorComponent(clip_creator=clip_creator, default_size=16))
+        self._note_editor = note_editor_component
+        self._loop_selector = LoopSelectorComponent(parent=self, clip_creator=clip_creator, default_size=16)
         self._instrument = instrument_component
-        self.paginator = self.register_component(NoteEditorPaginator([self._note_editor]))
-        self._step_duplicator = self.register_component(StepDuplicatorComponent())
+        self.paginator = NoteEditorPaginator([self._note_editor], parent=self)
+        self._step_duplicator = StepDuplicatorComponent(parent=self)
         self._note_editor.set_step_duplicator(self._step_duplicator)
         self._loop_selector.set_step_duplicator(self._step_duplicator)
         self._loop_selector.set_paginator(self.paginator)
@@ -42,14 +43,14 @@ class StepSeqComponent(CompoundComponent):
         self._on_modify_all_notes_changed.subject = self._note_editor
         self._detail_clip = None
         self._playhead = None
-        self._playhead_component = self.register_component(PlayheadComponent(grid_resolution=grid_resolution, paginator=self.paginator, follower=self._loop_selector, notes=chain(*starmap(range, ((92, 100),
+        self._playhead_component = PlayheadComponent(parent=self, grid_resolution=grid_resolution, paginator=self.paginator, follower=self._loop_selector, notes=chain(*starmap(range, ((92, 100),
          (84, 92),
          (76, 84),
          (68, 76)))), triplet_notes=chain(*starmap(range, ((92, 98),
          (84, 90),
          (76, 82),
-         (68, 74)))), feedback_channels=PLAYHEAD_FEEDBACK_CHANNELS))
-        self._accent_component = self.register_component(AccentComponent())
+         (68, 74)))), feedback_channels=PLAYHEAD_FEEDBACK_CHANNELS)
+        self._accent_component = AccentComponent(parent=self)
         self.__on_accent_mode_changed.subject = self._accent_component
         self._skin = skin
         self._playhead_color = u'NoteEditor.Playhead'

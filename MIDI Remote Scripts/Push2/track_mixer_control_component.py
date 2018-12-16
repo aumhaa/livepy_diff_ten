@@ -1,17 +1,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import clamp, depends, listens, liveobj_valid
-from ableton.v2.control_surface import CompoundComponent
-from ableton.v2.control_surface.control import control_list, ButtonControl
-from pushbase.mapped_control import MappedControl
+from ableton.v2.control_surface import Component
+from ableton.v2.control_surface.components import SimpleItemSlot
+from ableton.v2.control_surface.control import control_list, ButtonControl, MappedSensitivitySettingControl
 from pushbase.mixer_utils import has_pan_mode, is_set_to_split_stereo
+from .item_lister import IconItemSlot
 from .real_time_channel import RealTimeDataComponent
-from .item_lister_component import SimpleItemSlot
 from .mixer_control_component import assign_parameters
 
-class TrackMixerControlComponent(CompoundComponent):
+class TrackMixerControlComponent(Component):
     __events__ = (u'parameters', u'scroll_offset', u'items')
     BUTTON_SKIN = dict(color=u'TrackControlView.ButtonOff', pressed_color=u'TrackControlView.ButtonOn', disabled_color=u'TrackControlView.ButtonDisabled')
-    controls = control_list(MappedControl)
+    controls = control_list(MappedSensitivitySettingControl)
     scroll_right_button = ButtonControl(**BUTTON_SKIN)
     scroll_left_button = ButtonControl(**BUTTON_SKIN)
 
@@ -22,7 +22,7 @@ class TrackMixerControlComponent(CompoundComponent):
         super(TrackMixerControlComponent, self).__init__(*a, **k)
         self._tracks_provider = tracks_provider
         self._on_return_tracks_changed.subject = self.song
-        self.real_time_meter_channel = self.register_component(RealTimeDataComponent(real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, channel_type=u'meter'))
+        self.real_time_meter_channel = RealTimeDataComponent(parent=self, real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, channel_type=u'meter')
         self._scroll_offset = 0
         self._items = []
         self._number_return_tracks = self._number_sends()
@@ -131,9 +131,9 @@ class TrackMixerControlComponent(CompoundComponent):
         return self._items
 
     def _update_view_slots(self):
-        self._items = [ SimpleItemSlot() for _ in xrange(6) ]
-        self._items.append(SimpleItemSlot(icon=u'page_left.svg' if self.scroll_left_button.enabled else u''))
-        self._items.append(SimpleItemSlot(icon=u'page_right.svg' if self.scroll_right_button.enabled else u''))
+        self._items = [ IconItemSlot() for _ in xrange(6) ]
+        self._items.append(IconItemSlot(icon=u'page_left.svg' if self.scroll_left_button.enabled else u''))
+        self._items.append(IconItemSlot(icon=u'page_right.svg' if self.scroll_right_button.enabled else u''))
         self.notify_items()
 
     def _scroll_controls(self, delta):

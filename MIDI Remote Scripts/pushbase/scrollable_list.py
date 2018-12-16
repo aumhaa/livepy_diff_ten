@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import BooleanContext, EventObject, clamp, forward_property, in_range, index_if, listens, task
-from ableton.v2.control_surface import CompoundComponent, defaults
+from ableton.v2.control_surface import Component, defaults
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl, control_list
 from ableton.v2.control_surface.components import ScrollComponent, Scrollable
 from . import consts
@@ -239,7 +239,7 @@ class DefaultItemFormatter(object):
         return display_string
 
 
-class ListComponent(CompoundComponent):
+class ListComponent(Component):
     u"""
     Component that handles a ScrollableList.  If an action button is
     passed, it can handle an ActionList.
@@ -259,8 +259,8 @@ class ListComponent(CompoundComponent):
         self._activation_task = task.Task()
         self._action_on_scroll_task = task.Task()
         self._scrollable_list = None
-        self._scroller = self.register_component(ScrollComponent())
-        self._pager = self.register_component(ScrollComponent())
+        self._scroller = ScrollComponent(parent=self)
+        self._pager = ScrollComponent(parent=self)
         self.last_action_item = lambda : self._last_action_item
         self.item_formatter = DefaultItemFormatter()
         for c in (self._scroller, self._pager):
@@ -300,7 +300,7 @@ class ListComponent(CompoundComponent):
                 self._scroller.scrollable = ScrollComponent.default_scrollable
                 self._scroller.scrollable = ScrollComponent.default_pager
             self._on_selected_item_changed.subject = new_list
-            self.update_all()
+            self.update()
 
     scrollable_list = property(_get_scrollable_list, _set_scrollable_list)
 

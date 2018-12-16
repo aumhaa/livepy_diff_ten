@@ -1,10 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import depends, find_if, listenable_property, listens, liveobj_valid
-from pushbase.decoration import NotifyingList, get_parameter_by_name
-from pushbase.internal_parameter import EnumWrappingParameter
+from ableton.v2.control_surface import EnumWrappingParameter, NotifyingList, SimplerDeviceDecorator as SimplerDeviceDecoratorBase, get_parameter_by_name
 from pushbase.message_box_component import Messenger
-from pushbase.simpler_decoration import SimplerDeviceDecorator as SimplerDeviceDecoratorBase
 from .device_component import DeviceComponentWithTrackColorViewData, extend_with_envelope_features_for_parameter, make_vector
 from .device_decoration import DeviceSwitchOption, SimplerPositions, WaveformNavigationParameter
 from .device_options import DeviceTriggerOption, DeviceOnOffOption
@@ -223,8 +221,8 @@ class SimplerDeviceComponent(DeviceComponentWithTrackColorViewData):
 
     def __init__(self, *a, **k):
         super(SimplerDeviceComponent, self).__init__(*a, **k)
-        self._playhead_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'playhead'))
-        self._waveform_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'waveform'))
+        self._playhead_real_time_data = RealTimeDataComponent(parent=self, channel_type=u'playhead')
+        self._waveform_real_time_data = RealTimeDataComponent(parent=self, channel_type=u'waveform')
         self.__on_playhead_channel_changed.subject = self._playhead_real_time_data
         self.__on_waveform_channel_changed.subject = self._waveform_real_time_data
 

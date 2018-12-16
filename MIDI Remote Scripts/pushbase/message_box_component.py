@@ -3,7 +3,7 @@ import re
 from itertools import izip_longest
 from ableton.v2.base import forward_property, const, nop, listens, listenable_property
 from ableton.v2.base.dependency import dependency
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.elements import DisplayDataSource
 from ableton.v2.control_surface.components import BackgroundComponent
 from .consts import DISPLAY_LENGTH, MessageBoxText
@@ -121,7 +121,7 @@ class MessageBoxComponent(BackgroundComponent):
         self._update_display()
 
 
-class DialogComponent(CompoundComponent):
+class DialogComponent(Component):
     u"""
     Handles representing modal dialogs from the application.  The
     script can also request dialogs.
@@ -129,8 +129,7 @@ class DialogComponent(CompoundComponent):
 
     def __init__(self, *a, **k):
         super(DialogComponent, self).__init__(*a, **k)
-        self._message_box = self.register_component(MessageBoxComponent())
-        self._message_box.set_enabled(False)
+        self._message_box = MessageBoxComponent(parent=self, is_enabled=False)
         self._next_message = None
         self._on_open_dialog_count.subject = self.application
         self._on_message_cancel.subject = self._message_box

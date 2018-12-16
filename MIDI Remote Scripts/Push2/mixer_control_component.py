@@ -5,14 +5,14 @@ from itertools import izip, izip_longest
 from math import ceil
 import Live
 from ableton.v2.base import clamp, depends, listens, listens_group, liveobj_valid, NamedTuple
-from ableton.v2.control_surface.control import control_list, ButtonControl
+from ableton.v2.control_surface.components import SimpleItemSlot
+from ableton.v2.control_surface.control import control_list, ButtonControl, MappedSensitivitySettingControl
 from ableton.v2.control_surface.mode import ModesComponent
-from pushbase.mapped_control import MappedControl
 from pushbase.internal_parameter import ConstantParameter
 from pushbase.mixer_utils import has_pan_mode, is_set_to_split_stereo
 from pushbase.song_utils import find_parent_track
+from .item_lister import IconItemSlot
 from .real_time_channel import RealTimeDataComponent
-from .item_lister_component import SimpleItemSlot
 MIXER_SECTIONS = (u'Volumes', u'Pans')
 SEND_SECTIONS = [u'A Sends',
  u'B Sends',
@@ -50,7 +50,7 @@ def assign_parameters(controls, parameters):
 
 class MixerControlComponent(ModesComponent):
     __events__ = (u'items', u'selected_item')
-    controls = control_list(MappedControl)
+    controls = control_list(MappedSensitivitySettingControl)
     cycle_sends_button = ButtonControl(color=u'DefaultButton.Off')
 
     @staticmethod
@@ -178,10 +178,10 @@ class MixerControlComponent(ModesComponent):
             position = max(self._send_offset, 0)
             pos_range = min(self.number_sends - position, SEND_LIST_LENGTH)
             mixer_section_names = list(MIXER_SECTIONS) + SEND_SECTIONS[position:position + pos_range]
-            self._mixer_sections = [ SimpleItemSlot(name=name) for name in mixer_section_names ]
+            self._mixer_sections = [ IconItemSlot(name=name) for name in mixer_section_names ]
             if self.number_sends > SEND_LIST_LENGTH:
-                self._mixer_sections.extend([SimpleItemSlot()] * (8 - len(self._mixer_sections)))
-                self._mixer_sections[7] = SimpleItemSlot(icon=u'page_right.svg')
+                self._mixer_sections.extend([IconItemSlot()] * (8 - len(self._mixer_sections)))
+                self._mixer_sections[7] = IconItemSlot(icon=u'page_right.svg')
             self.notify_items()
             if self.selected_mode in SEND_MODE_NAMES:
                 index = SEND_MODE_NAMES.index(self.selected_mode)

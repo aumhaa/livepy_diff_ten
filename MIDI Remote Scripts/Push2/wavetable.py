@@ -4,12 +4,9 @@ import Live
 AutomationState = Live.DeviceParameter.AutomationState
 ModulationSource = Live.WavetableDevice.ModulationSource
 from ableton.v2.base import const, find_if, listens, listenable_property, liveobj_valid
-from ableton.v2.control_surface import Layer
+from ableton.v2.control_surface import EnumWrappingParameter, InternalParameter, InternalParameterBase, Layer, PitchParameter, WavetableDeviceDecorator as WavetableDeviceDecoratorBase, WavetableEnvelopeType, WavetableFilterType, WavetableLfoType, WavetableOscillatorType, get_parameter_by_name
 from pushbase.actions import DeleteAndReturnToDefaultComponent
 from pushbase.consts import MessageBoxText
-from pushbase.decoration import PitchParameter, get_parameter_by_name
-from pushbase.internal_parameter import EnumWrappingParameter, InternalParameter, InternalParameterBase
-from pushbase.wavetable_decoration import WavetableDeviceDecorator as WavetableDeviceDecoratorBase, WavetableEnvelopeType, WavetableFilterType, WavetableLfoType, WavetableOscillatorType
 from .device_decoration import IndexProvider, ModMatrixParameter
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData, extend_with_envelope_features_for_parameter, make_vector
 from .device_options import DeviceTriggerOption, DeviceSwitchOption, DeviceOnOffOption
@@ -228,7 +225,7 @@ class WavetableDeviceComponent(DeviceComponentWithTrackColorViewData):
     def __init__(self, *a, **k):
         super(WavetableDeviceComponent, self).__init__(*a, **k)
         self._bank_before_mod_matrix = 0
-        self._delete_default_component = self.register_component(WavetableDeleteComponent(name=u'DeleteAndDefault'))
+        self._delete_default_component = WavetableDeleteComponent(parent=self, name=u'DeleteAndDefault')
         self._delete_default_component.layer = Layer(delete_button=self._delete_button)
 
     def _parameter_touched(self, parameter):

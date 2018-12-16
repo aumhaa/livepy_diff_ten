@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens, task
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl
 from .action_with_options_component import OptionsComponent
 
@@ -28,24 +28,24 @@ class DummyNoteRepeat(object):
     enabled = False
 
 
-class NoteRepeatComponent(CompoundComponent):
+class NoteRepeatComponent(Component):
     u"""
     Component for setting up the note repeat
     """
 
-    def __init__(self, *a, **k):
+    def __init__(self, note_repeat = None, *a, **k):
         super(NoteRepeatComponent, self).__init__(*a, **k)
         self._aftertouch = None
         self._last_record_quantization = None
         self._note_repeat = None
-        self._options = self.register_component(OptionsComponent())
+        self._options = OptionsComponent(parent=self)
         self._options.selected_color = u'NoteRepeat.RateSelected'
         self._options.unselected_color = u'NoteRepeat.RateUnselected'
         self._options.option_names = map(str, range(8))
         self._options.selected_option = DEFAULT_INDEX
         self._on_selected_option_changed.subject = self._options
         self.__on_selected_track_changed.subject = self.song.view
-        self.set_note_repeat(None)
+        self.set_note_repeat(note_repeat)
 
     def update(self):
         super(NoteRepeatComponent, self).update()
@@ -119,15 +119,17 @@ class NoteRepeatComponent(CompoundComponent):
         self._note_repeat.enabled = self.is_enabled()
 
 
-class NoteRepeatEnabler(CompoundComponent):
+class NoteRepeatEnabler(Component):
     repeat_button = ButtonControl()
 
-    def __init__(self, note_repeat_component = None, *a, **k):
-        assert note_repeat_component is not None
+    def __init__(self, note_repeat = None, *a, **k):
         super(NoteRepeatEnabler, self).__init__(*a, **k)
-        self._note_repeat_component = self.register_component(note_repeat_component)
+        self.note_repeat_component = NoteRepeatComponent(note_repeat=note_repeat, name=u'Note_Repeat', parent=self, is_enabled=False)
         self.__on_selected_track_changed.subject = self.song.view
         self._restore_note_repeat_enabled_state()
+
+    def set_note_repeat(self, note_repeat):
+        self.note_repeat_component.set_note_repeat(note_repeat)
 
     @repeat_button.pressed
     def repeat_button(self, button):
@@ -143,11 +145,11 @@ class NoteRepeatEnabler(CompoundComponent):
         self.repeat_button.enabled = not self.song.view.selected_track.has_audio_input
 
     def _toggle_note_repeat(self):
-        is_enabled = not self._note_repeat_component.is_enabled()
+        is_enabled = not self.note_repeat_component.is_enabled()
         self._set_note_repeat_enabled(is_enabled)
 
     def _set_note_repeat_enabled(self, is_enabled):
-        self._note_repeat_component.set_enabled(is_enabled)
+        self.note_repeat_component.set_enabled(is_enabled)
         self.song.view.selected_track.set_data(u'push-note-repeat-enabled', is_enabled)
         self.repeat_button.color = u'DefaultButton.Alert' if is_enabled else u'DefaultButton.On'
 

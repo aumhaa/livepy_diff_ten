@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import EventObject, find_if, listens, listens_group, listenable_property, liveobj_valid, clamp
-from .banking_util import PARAMETERS_KEY, MAIN_KEY, BANK_FORMAT, all_parameters
+from ..base import EventObject, find_if, listens, listens_group, listenable_property, liveobj_valid, clamp
+from .banking_util import BANK_FORMAT, BANK_MAIN_KEY, BANK_PARAMETERS_KEY, all_parameters
 
 class DeviceParameterBank(EventObject):
 
@@ -84,7 +84,7 @@ class DescribedDeviceParameterBank(DeviceParameterBank):
         self._update_parameters()
 
     def _current_parameter_slots(self):
-        return self._definition.value_by_index(self.index).get(PARAMETERS_KEY) or tuple()
+        return self._definition.value_by_index(self.index).get(BANK_PARAMETERS_KEY) or tuple()
 
     def _content_slots(self):
         return self._current_parameter_slots()
@@ -123,7 +123,7 @@ class MaxDeviceParameterBank(DeviceParameterBank):
 
     def _calc_name(self):
         if self.bank_count() == 0:
-            return MAIN_KEY
+            return BANK_MAIN_KEY
         mx_index = self.index - int(self._banking_info.has_main_bank(self._device))
         provided_name = self.device.get_bank_name(mx_index)
         if len(provided_name) > 0:

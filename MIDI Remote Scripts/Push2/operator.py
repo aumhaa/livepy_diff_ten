@@ -2,8 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from collections import namedtuple
 import re
 from ableton.v2.base import const, EventObject, listenable_property, listens, liveobj_valid
-from pushbase.decoration import LiveObjectDecorator, NotifyingList, get_parameter_by_name
-from pushbase.internal_parameter import EnumWrappingParameter
+from ableton.v2.control_surface import EnumWrappingParameter, LiveObjectDecorator, NotifyingList, get_parameter_by_name
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData, extend_with_envelope_features_for_parameter, make_vector
 from .device_decoration import DeviceSwitchOption
 from .visualisation_settings import VisualisationGuides

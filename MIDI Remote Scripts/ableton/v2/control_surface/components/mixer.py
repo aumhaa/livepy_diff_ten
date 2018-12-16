@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip, izip_longest
 from ...base import clamp, listens, liveobj_valid
-from ..compound_component import CompoundComponent
+from ..component import Component
 from .channel_strip import ChannelStripComponent, release_control
 
 class TrackAssigner(object):
@@ -49,7 +49,7 @@ class RightAlignTracksTrackAssigner(TrackAssigner):
         return track_list
 
 
-class MixerComponent(CompoundComponent):
+class MixerComponent(Component):
     u""" Class encompassing several channel strips to form a mixer """
 
     def __init__(self, tracks_provider = None, track_assigner = None, auto_name = False, invert_mute_feedback = False, *a, **k):
@@ -67,15 +67,12 @@ class MixerComponent(CompoundComponent):
         for index in range(self._provider.num_tracks):
             strip = self._create_strip()
             self._channel_strips.append(strip)
-            self.register_components(self._channel_strips[index])
             if invert_mute_feedback:
                 strip.set_invert_mute_feedback(True)
 
         self._master_strip = self._create_master_strip()
-        self.register_components(self._master_strip)
         self._master_strip.set_track(self.song.master_track)
         self._selected_strip = self._create_strip()
-        self.register_components(self._selected_strip)
         self.__on_selected_track_changed.subject = self.song.view
         self.__on_selected_track_changed()
         self._reassign_tracks()
@@ -173,9 +170,6 @@ class MixerComponent(CompoundComponent):
     def __on_offset_changed(self, *a):
         self._reassign_tracks()
 
-    def on_enabled_changed(self):
-        self.update()
-
     @listens(u'visible_tracks')
     def __on_track_list_changed(self):
         self._reassign_tracks()
@@ -209,18 +203,15 @@ class MixerComponent(CompoundComponent):
 
     def update(self):
         super(MixerComponent, self).update()
-        if self._allow_updates:
-            master_track = self.song.master_track
-            if self.is_enabled():
-                if self._prehear_volume_control != None:
-                    self._prehear_volume_control.connect_to(master_track.mixer_device.cue_volume)
-                if self._crossfader_control != None:
-                    self._crossfader_control.connect_to(master_track.mixer_device.crossfader)
-            else:
-                release_control(self._prehear_volume_control)
-                release_control(self._crossfader_control)
+        master_track = self.song.master_track
+        if self.is_enabled():
+            if self._prehear_volume_control != None:
+                self._prehear_volume_control.connect_to(master_track.mixer_device.cue_volume)
+            if self._crossfader_control != None:
+                self._crossfader_control.connect_to(master_track.mixer_device.crossfader)
         else:
-            self._update_requests += 1
+            release_control(self._prehear_volume_control)
+            release_control(self._crossfader_control)
 
     def _reassign_tracks(self):
         tracks = self._track_assigner.tracks(self._provider)
@@ -228,7 +219,7 @@ class MixerComponent(CompoundComponent):
             channel_strip.set_track(track)
 
     def _create_strip(self):
-        return ChannelStripComponent()
+        return ChannelStripComponent(parent=self)
 
     def _create_master_strip(self):
         return self._create_strip()

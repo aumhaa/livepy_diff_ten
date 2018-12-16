@@ -3,14 +3,14 @@ from functools import partial
 from contextlib import contextmanager
 import Live.DrumPad
 from ableton.v2.base import BooleanContext, const, depends, disconnectable, inject, in_range, listens, liveobj_valid, NamedTuple
-from ableton.v2.control_surface import CompoundComponent
+from ableton.v2.control_surface import Component
 from pushbase import consts
 from pushbase.device_chain_utils import is_first_device_on_pad
 from pushbase.message_box_component import MessageBoxComponent
 from pushbase.scrollable_list_component import ScrollableListWithTogglesComponent
 from .navigation_node import make_navigation_node
 
-class DeviceNavigationComponent(CompoundComponent):
+class DeviceNavigationComponent(Component):
     u"""
     Component that displays an overview of the devices in the current
     track and navigates in its hierarchy.
@@ -21,12 +21,12 @@ class DeviceNavigationComponent(CompoundComponent):
         self._make_navigation_node = partial(make_navigation_node, session_ring=session_ring, device_bank_registry=device_bank_registry, banking_info=banking_info)
         self._delete_handler = delete_handler
         self._updating_children = BooleanContext()
-        self._device_list = self.register_component(ScrollableListWithTogglesComponent())
+        self._device_list = ScrollableListWithTogglesComponent(parent=self)
         self._on_selection_clicked_in_controller.subject = self._device_list
         self._on_selection_changed_in_controller.subject = self._device_list
         self._on_state_changed_in_controller.subject = self._device_list
         self._current_node = None
-        self._message_box = self.register_component(MessageBoxComponent(layer=info_layer, is_enabled=False))
+        self._message_box = MessageBoxComponent(parent=self, layer=info_layer, is_enabled=False)
         self._message_box.text = consts.MessageBoxText.EMPTY_DEVICE_CHAIN
         self._selected_track = None
         self._on_selected_track_changed.subject = self.song.view

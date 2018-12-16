@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from ableton.v2.base import in_range, clamp, task
-from ableton.v2.control_surface import CompoundComponent, Component, defaults
+from ableton.v2.control_surface import Component, defaults
 from ableton.v2.control_surface.elements import DisplayDataSource
 from ableton.v2.control_surface.control import ButtonControl, control_list
 from . import consts
 
-class ActionWithSettingsComponent(CompoundComponent):
+class ActionWithSettingsComponent(Component):
     action_button = ButtonControl(**consts.SIDE_BUTTON_COLORS)
     SETTINGS_DELAY = defaults.MOMENTARY_DELAY
 
@@ -153,7 +153,7 @@ class ActionWithOptionsComponent(ActionWithSettingsComponent):
 
     def __init__(self, num_options = 8, *a, **k):
         super(ActionWithOptionsComponent, self).__init__(*a, **k)
-        self._options = self.register_component(OptionsComponent(num_options=num_options))
+        self._options = OptionsComponent(parent=self, num_options=num_options)
         self._options.set_enabled(False)
 
     @property

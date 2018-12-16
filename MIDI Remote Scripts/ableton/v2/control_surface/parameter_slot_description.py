@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import find_if, listenable_property, listens_group, liveobj_valid, EventObject
+from ..base import find_if, listenable_property, listens_group, liveobj_valid, EventObject
 RESULTING_NAME_KEY = u'ResultingName'
 DISPLAY_NAME_KEY = u'DisplayName'
 CONDITION_NAME_KEY = u'ConditionName'

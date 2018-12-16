@@ -5,22 +5,20 @@ from functools import partial
 from multipledispatch import dispatch
 import Live
 from ableton.v2.base import find_if, first, index_if, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, EventObject, SlotGroup, task
-from ableton.v2.control_surface import device_to_appoint
+from ableton.v2.control_surface import DecoratorFactory, device_to_appoint
+from ableton.v2.control_surface.components import DeviceNavigationComponent as DeviceNavigationComponentBase, FlattenedDeviceChain, ItemSlot, ItemProvider, is_empty_rack, nested_device_parent
 from ableton.v2.control_surface.control import control_list, StepEncoderControl
-from ableton.v2.control_surface.mode import Component, ModesComponent
-from pushbase.decoration import DecoratorFactory
+from ableton.v2.control_surface.mode import Component, ModesComponent, NullModes
 from pushbase.device_chain_utils import is_first_device_on_pad
+from .bank_selection_component import BankSelectionComponent
+from .chain_selection_component import ChainSelectionComponent
 from .colors import DISPLAY_BUTTON_SHADE_LEVEL, IndexedColor
 from .device_util import is_drum_pad, find_chain_or_track
-from .item_lister_component import ItemListerComponent, ItemProvider
+from .item_lister import IconItemSlot, ItemListerComponent
 
 def find_drum_pad(items):
     elements = imap(lambda i: i.item, items)
     return find_if(lambda e: is_drum_pad(e), elements)
-
-
-def is_empty_rack(rack):
-    return rack.can_have_chains and len(rack.chains) == 0
 
 
 @dispatch(Live.DrumPad.DrumPad)
@@ -41,11 +39,6 @@ def is_on(device):
     return bool(device.parameters[0].value)
 
 
-def nested_device_parent(device):
-    if device.can_have_chains and device.view.is_showing_chain_devices and not device.view.is_collapsed:
-        return device.view.selected_chain
-
-
 def collect_devices(track_or_chain, nesting_level = 0):
     chain_devices = track_or_chain.devices if liveobj_valid(track_or_chain) else []
     devices = []
@@ -62,72 +55,6 @@ def delete_device(device):
     device_parent = device.canonical_parent
     device_index = list(device_parent.devices).index(device)
     device_parent.delete_device(device_index)
-
-
-class FlattenedDeviceChain(ItemProvider):
-
-    def __init__(self, *a, **k):
-        super(FlattenedDeviceChain, self).__init__(*a, **k)
-        self._device_parent = None
-        self._devices = []
-        self._selected_item = None
-
-        def make_slot_group(event):
-            slot_group = SlotGroup(self._update_devices, event)
-            return self.register_disconnectable(slot_group)
-
-        self._devices_changed = make_slot_group(u'devices')
-        self._selected_chain_changed = make_slot_group(u'selected_chain')
-        self._selected_pad_changed = make_slot_group(u'selected_drum_pad')
-        self._collapsed_state_changed = make_slot_group(u'is_collapsed')
-        self._chain_devices_visibility_changed = make_slot_group(u'is_showing_chain_devices')
-
-    @property
-    def items(self):
-        return self._devices
-
-    def _get_selected_item(self):
-        return self._selected_item
-
-    def _set_selected_item(self, device):
-        if liveobj_changed(self._selected_item, device):
-            self._selected_item = device
-            self.notify_selected_item()
-
-    selected_item = property(_get_selected_item, _set_selected_item)
-
-    @property
-    def has_invalid_selection(self):
-        return not liveobj_valid(self._selected_item)
-
-    def set_device_parent(self, parent):
-        self._device_parent = parent
-        self._update_devices()
-
-    def _update_devices(self, *_):
-        self._devices = collect_devices(self._device_parent)
-        self._update_listeners()
-        self.notify_items()
-
-    def _update_listeners(self):
-
-        def get_rack_views(racks):
-            return map(lambda x: first(x).view, racks)
-
-        racks = filter(lambda x: getattr(first(x), u'can_have_chains', False), self._devices)
-        rack_views = get_rack_views(racks)
-        device_parents = chain(imap(lambda x: x.selected_chain, rack_views), [self._device_parent])
-
-        def is_empty_pad_drum_rack(item):
-            rack = first(item)
-            return rack.can_have_drum_pads and rack.view.selected_drum_pad and len(rack.view.selected_drum_pad.chains) == 0
-
-        empty_pad_drum_rack_views = get_rack_views(ifilter(is_empty_pad_drum_rack, racks))
-        self._devices_changed.replace_subjects(device_parents)
-        self._selected_chain_changed.replace_subjects(rack_views)
-        self._collapsed_state_changed.replace_subjects(rack_views)
-        self._chain_devices_visibility_changed.replace_subjects(rack_views)
-        self._selected_pad_changed.replace_subjects(empty_pad_drum_rack_views)
 
 
 def drum_rack_for_pad(drum_pad):
@@ -249,42 +176,37 @@ class MoveDeviceComponent(Component):
             self.song.move_device(self._device, chain, len(chain.devices) if move_to_end else 0)
 
 
-class DeviceNavigationComponent(ItemListerComponent):
+class DeviceNavigationComponent(DeviceNavigationComponentBase):
     __events__ = (u'drum_pad_selection', u'mute_solo_stop_cancel_action_performed')
 
-    def __init__(self, device_bank_registry = None, banking_info = None, device_component = None, delete_handler = None, chain_selection = None, bank_selection = None, move_device = None, track_list_component = None, *a, **k):
+    def __init__(self, device_bank_registry = None, banking_info = None, delete_handler = None, track_list_component = None, *a, **k):
+        assert banking_info is not None
         assert device_bank_registry is not None
-        assert device_component is not None
-        assert chain_selection is not None
-        assert bank_selection is not None
-        assert move_device is not None
         assert track_list_component is not None
-        self._flattened_chain = FlattenedDeviceChain()
-        super(DeviceNavigationComponent, self).__init__(item_provider=self._flattened_chain, *a, **k)
+        self._flattened_chain = FlattenedDeviceChain(collect_devices)
         self._track_decorator = DecoratorFactory()
-        self._device_component = device_component
-        self.__on_device_changed.subject = device_component
-        self._device_bank_registry = device_bank_registry
+        self._modes = NullModes()
+        self.move_device = None
+        super(DeviceNavigationComponent, self).__init__(item_provider=self._flattened_chain, *a, **k)
         self._delete_handler = delete_handler
-        self._chain_selection = self.register_component(chain_selection)
-        self._bank_selection = self.register_component(bank_selection)
-        self._move_device = self.register_component(move_device)
+        self.chain_selection = ChainSelectionComponent(parent=self, is_enabled=False)
+        self.bank_selection = BankSelectionComponent(bank_registry=device_bank_registry, banking_info=banking_info, device_options_provider=self._device_component, is_enabled=False, parent=self)
+        self.move_device = MoveDeviceComponent(parent=self, is_enabled=False)
         self._last_pressed_button_index = -1
         self._selected_on_previous_press = None
-        self._modes = self.register_component(ModesComponent())
-        self._modes.add_mode(u'default', [partial(self._chain_selection.set_parent, None), partial(self._bank_selection.set_device, None)])
-        self._modes.add_mode(u'chain_selection', [self._chain_selection])
-        self._modes.add_mode(u'bank_selection', [self._bank_selection])
+        self._modes = ModesComponent(parent=self)
+        self._modes.add_mode(u'default', [partial(self.chain_selection.set_parent, None), partial(self.bank_selection.set_device, None)])
+        self._modes.add_mode(u'chain_selection', [self.chain_selection])
+        self._modes.add_mode(u'bank_selection', [self.bank_selection])
         self._modes.selected_mode = u'default'
         self.register_disconnectable(self._flattened_chain)
         self.__on_items_changed.subject = self
-        self.__on_bank_selection_closed.subject = self._bank_selection
-        self._on_selected_track_changed()
-        self._on_selected_track_changed.subject = self.song.view
+        self.__on_bank_selection_closed.subject = self.bank_selection
+        self._update_selected_track()
         self._track_list = track_list_component
         watcher = self.register_disconnectable(DeviceChainStateWatcher(device_navigation=self))
         self.__on_device_item_state_changed.subject = watcher
-        self.__on_device_changed()
+        self._update_device()
         self._update_button_colors()
 
     @property
@@ -349,9 +271,24 @@ class DeviceNavigationComponent(ItemListerComponent):
             self._show_selected_item()
         self.notify_drum_pad_selection()
 
+    def _create_slot(self, index, item, nesting_level):
+        items = self._item_provider.items[self.item_offset:]
+        num_slots = min(self._num_visible_items, len(items))
+        slot = None
+        if index == 0 and self.can_scroll_left():
+            slot = IconItemSlot(icon=u'page_left.svg')
+            slot.is_scrolling_indicator = True
+        elif index == num_slots - 1 and self.can_scroll_right():
+            slot = IconItemSlot(icon=u'page_right.svg')
+            slot.is_scrolling_indicator = True
+        else:
+            slot = ItemSlot(item=item, nesting_level=nesting_level)
+            slot.is_scrolling_indicator = False
+        return slot
+
     @listenable_property
     def moving(self):
-        return self._move_device.is_enabled()
+        return self.move_device.is_enabled()
 
     @property
     def device_selection_update_allowed(self):
@@ -372,29 +309,18 @@ class DeviceNavigationComponent(ItemListerComponent):
             return u'ItemNavigation.ItemNotSelected'
 
     def _begin_move_device(self, device):
-        if not self._move_device.is_enabled() and device.type != Live.Device.DeviceType.instrument:
-            self._move_device.set_device(device)
-            self._move_device.set_enabled(True)
+        if not self.move_device.is_enabled() and device.type != Live.Device.DeviceType.instrument:
+            self.move_device.set_device(device)
+            self.move_device.set_enabled(True)
             self._scroll_overlay.set_enabled(False)
             self.notify_moving()
 
     def _end_move_device(self):
-        if self._move_device.is_enabled():
-            self._move_device.set_device(None)
-            self._move_device.set_enabled(False)
+        if self.move_device and self.move_device.is_enabled():
+            self.move_device.set_device(None)
+            self.move_device.set_enabled(False)
             self._scroll_overlay.set_enabled(True)
             self.notify_moving()
-
-    def _show_selected_item(self):
-        selected_item = self.item_provider.selected_item
-        if selected_item is not None:
-            items = self.item_provider.items
-            if len(items) > self._num_visible_items:
-                selected_index = index_if(lambda i: i[0] == selected_item, items)
-                if selected_index >= self._num_visible_items + self.item_offset - 1 and selected_index < len(items) - 1:
-                    self.item_offset = selected_index - self._num_visible_items + 2
-                elif selected_index > 0 and selected_index <= self.item_offset:
-                    self.item_offset = selected_index - 1
 
     def request_drum_pad_selection(self):
         self._current_track().drum_pad_selected = True
@@ -425,8 +351,7 @@ class DeviceNavigationComponent(ItemListerComponent):
     def _current_drum_pad(self):
         return find_drum_pad(self.items)
 
-    @listens(u'selected_track')
-    def _on_selected_track_changed(self):
+    def _update_selected_track(self):
         self._selected_track = self.song.view.selected_track
         selected_track = self._current_track()
         self.reset_offset()
@@ -451,11 +376,6 @@ class DeviceNavigationComponent(ItemListerComponent):
     def selected_object(self):
         selected_item = self.item_provider.selected_item
         return getattr(selected_item, u'proxied_object', selected_item)
-
-    def _select_item(self, device_or_pad):
-        if device_or_pad:
-            self._do_select_item(device_or_pad)
-        self._update_item_provider(device_or_pad)
 
     @dispatch(Live.DrumPad.DrumPad)
     def _do_select_item(self, pad):
@@ -496,7 +416,7 @@ class DeviceNavigationComponent(ItemListerComponent):
             if not device.can_have_drum_pads:
                 self._toggle(device)
         else:
-            self._bank_selection.set_device(device)
+            self.bank_selection.set_device(device)
             self._modes.selected_mode = u'bank_selection'
 
     @dispatch(Live.DrumPad.DrumPad)
@@ -518,15 +438,14 @@ class DeviceNavigationComponent(ItemListerComponent):
 
     def _show_chains(self, device):
         if device.can_have_chains:
-            self._chain_selection.set_parent(device)
+            self.chain_selection.set_parent(device)
             self._modes.selected_mode = u'chain_selection'
 
     @listens(u'back')
     def __on_bank_selection_closed(self):
         self._modes.selected_mode = u'default'
 
-    @listens(u'device')
-    def __on_device_changed(self):
+    def _update_device(self):
         if not self._should_select_drum_pad() and not self._is_drum_rack_selected():
             self._modes.selected_mode = u'default'
             self._update_item_provider(self._device_component.device())

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import clamp, listens, EventObject
-from ..compound_component import CompoundComponent
+from ..component import Component
 from .scroll import ScrollComponent, Scrollable
 
 class Slideable(EventObject):
@@ -41,13 +41,14 @@ class Slideable(EventObject):
         raise NotImplementedError
 
 
-class SlideComponent(CompoundComponent, Scrollable):
+class SlideComponent(Component, Scrollable):
 
     def __init__(self, slideable = None, *a, **k):
         super(SlideComponent, self).__init__(*a, **k)
         slideable = slideable or self
         self._slideable = slideable
-        self._position_scroll, self._page_scroll = self.register_components(ScrollComponent(), ScrollComponent())
+        self._position_scroll = ScrollComponent(parent=self)
+        self._page_scroll = ScrollComponent(parent=self)
         self._position_scroll.scrollable = self
         self._page_scroll.can_scroll_up = self.can_scroll_page_up
         self._page_scroll.can_scroll_down = self.can_scroll_page_down

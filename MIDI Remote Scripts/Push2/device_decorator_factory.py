@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from pushbase.device_decorator_factory import DeviceDecoratorFactory as DeviceDecoratorFactoryBase
+from ableton.v2.control_surface import DeviceDecoratorFactory as DeviceDecoratorFactoryBase
 from .auto_filter import AutoFilterDeviceDecorator
 from .compressor import CompressorDeviceDecorator
 from .device_decoration import SamplerDeviceDecorator, PedalDeviceDecorator, DrumBussDeviceDecorator, UtilityDeviceDecorator

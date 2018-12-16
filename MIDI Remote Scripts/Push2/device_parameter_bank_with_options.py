@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listenable_property, liveobj_valid, find_if
-from pushbase.device_parameter_bank import create_device_bank, DescribedDeviceParameterBank
+from ableton.v2.control_surface import create_device_bank, DescribedDeviceParameterBank
 from .custom_bank_definitions import OPTIONS_KEY, VIEW_DESCRIPTION_KEY
 OPTIONS_PER_BANK = 7
 

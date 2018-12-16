@@ -552,12 +552,6 @@ class SimpleControlSurface(EventObject):
         return True
 
     def _install_mapping(self, midi_map_handle, control, parameter, feedback_delay, feedback_map):
-        assert self._in_build_midi_map
-        assert control is not None and liveobj_valid(parameter)
-        assert isinstance(parameter, Live.DeviceParameter.DeviceParameter)
-        assert isinstance(control, InputControlElement)
-        assert isinstance(feedback_delay, int)
-        assert isinstance(feedback_map, tuple)
         success = False
         feedback_rule = None
         if control.message_type() == MIDI_NOTE_TYPE:

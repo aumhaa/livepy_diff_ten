@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import listenable_property, listens, listens_group, liveobj_valid, EventObject, MultiSlot
-from ableton.v2.control_surface import Component, CompoundComponent, Layer
+from ableton.v2.control_surface import Component, Layer
 from ableton.v2.control_surface.control import ButtonControl
 from pushbase.message_box_component import Messenger
 from .track_list import toggle_mixable_mute, toggle_mixable_solo
@@ -120,7 +120,7 @@ class GlobalMixerActionComponent(Component):
             self.action_button.color = self._default_color_indicator.color if self._default_color_indicator else u'DefaultButton.On'
 
 
-class MuteSoloStopClipComponent(CompoundComponent, Messenger):
+class MuteSoloStopClipComponent(Component, Messenger):
     MESSAGE_FOR_MODE = {u'mute': u'Mute: %s',
      u'solo': u'Solo: %s',
      u'stop': u'Stop Clips: %s'}
@@ -130,11 +130,11 @@ class MuteSoloStopClipComponent(CompoundComponent, Messenger):
         super(MuteSoloStopClipComponent, self).__init__(*a, **k)
         self._currently_locked_button_handler = None
         self._track_list = track_list_component
-        self._solo_button_handler = self.register_component(GlobalMixerActionComponent(track_list_component=track_list_component, mode=u'solo', mode_active_color=u'Mixer.SoloOn', mode_locked_color=u'Mixer.LockedSoloMode', default_color_indicator=TrackStateColorIndicator(item_provider=item_provider, track_property=u'solo', property_active_color=u'Mixer.SoloOn', song=self.song), immediate_action=lambda : toggle_mixable_solo(item_provider.selected_item, self.song)))
+        self._solo_button_handler = GlobalMixerActionComponent(parent=self, track_list_component=track_list_component, mode=u'solo', mode_active_color=u'Mixer.SoloOn', mode_locked_color=u'Mixer.LockedSoloMode', default_color_indicator=TrackStateColorIndicator(item_provider=item_provider, track_property=u'solo', property_active_color=u'Mixer.SoloOn', song=self.song), immediate_action=lambda : toggle_mixable_solo(item_provider.selected_item, self.song))
         self._solo_button_handler.layer = Layer(action_button=solo_track_button)
-        self._mute_button_handler = self.register_component(GlobalMixerActionComponent(track_list_component=track_list_component, mode=u'mute', mode_active_color=u'Mixer.MuteOff', mode_locked_color=u'Mixer.LockedMuteMode', default_color_indicator=TrackStateColorIndicator(item_provider=item_provider, track_property=u'mute', property_active_color=u'Mixer.MuteOff', song=self.song), immediate_action=lambda : toggle_mixable_mute(item_provider.selected_item, self.song)))
+        self._mute_button_handler = GlobalMixerActionComponent(parent=self, track_list_component=track_list_component, mode=u'mute', mode_active_color=u'Mixer.MuteOff', mode_locked_color=u'Mixer.LockedMuteMode', default_color_indicator=TrackStateColorIndicator(item_provider=item_provider, track_property=u'mute', property_active_color=u'Mixer.MuteOff', song=self.song), immediate_action=lambda : toggle_mixable_mute(item_provider.selected_item, self.song))
         self._mute_button_handler.layer = Layer(action_button=mute_track_button)
-        self._stop_button_handler = self.register_component(GlobalMixerActionComponent(track_list_component=track_list_component, mode=u'stop', immediate_action=partial(stop_clip_in_selected_track, self.song), mode_locked_color=u'StopClips.LockedStopMode'))
+        self._stop_button_handler = GlobalMixerActionComponent(parent=self, track_list_component=track_list_component, mode=u'stop', immediate_action=partial(stop_clip_in_selected_track, self.song), mode_locked_color=u'StopClips.LockedStopMode')
         self._stop_button_handler.layer = Layer(action_button=stop_clips_button)
         self.__on_mute_solo_stop_cancel_action_performed.replace_subjects([track_list_component] + cancellation_action_performers)
         button_handlers = (self._mute_button_handler, self._solo_button_handler, self._stop_button_handler)

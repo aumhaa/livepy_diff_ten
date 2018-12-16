@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
-from .decoration import DecoratorFactory
+from ableton.v2.control_surface import DecoratorFactory
 from .simpler_decoration import SimplerDeviceDecorator
 from .wavetable_decoration import WavetableDeviceDecorator
 

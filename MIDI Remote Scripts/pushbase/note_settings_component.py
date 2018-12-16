@@ -283,20 +283,20 @@ class NoteEditorSettingsComponent(ModesComponent):
     initial_encoders = control_list(EncoderControl)
     encoders = control_list(EncoderControl)
 
-    def __init__(self, note_settings_component = None, automation_component = None, initial_encoder_layer = None, encoder_layer = None, *a, **k):
+    def __init__(self, note_settings_component_class = None, automation_component_class = None, grid_resolution = None, initial_encoder_layer = None, encoder_layer = None, *a, **k):
         super(NoteEditorSettingsComponent, self).__init__(*a, **k)
         assert encoder_layer
-        self.settings = self.register_component(note_settings_component)
-        self.settings.set_enabled(False)
-        self._automation = self.register_component(automation_component)
-        self._automation.set_enabled(False)
-        self._mode_selector = self.register_component(ModeSelector(is_enabled=False))
+        assert note_settings_component_class is not None
+        assert automation_component_class is not None
+        self.settings = note_settings_component_class(grid_resolution=grid_resolution, parent=self, is_enabled=False)
+        self.automation = automation_component_class(parent=self, is_enabled=False)
+        self._mode_selector = ModeSelector(parent=self, is_enabled=False)
         self._visible_detail_view = u'Detail/DeviceChain'
         self._show_settings_task = self._tasks.add(task.sequence(task.wait(defaults.MOMENTARY_DELAY), task.run(self._show_settings))).kill()
         self._update_infos_task = self._tasks.add(task.run(self._update_note_infos)).kill()
-        self._settings_modes = self.register_component(ModesComponent())
+        self._settings_modes = ModesComponent(parent=self)
         self._settings_modes.set_enabled(False)
-        self._settings_modes.add_mode(u'automation', [self._automation,
+        self._settings_modes.add_mode(u'automation', [self.automation,
          self._mode_selector,
          partial(self._set_envelope_view_visible, True),
          partial(show_clip_view, self.application)])
@@ -317,7 +317,7 @@ class NoteEditorSettingsComponent(ModesComponent):
         self.__on_full_velocity_changed.subject = self.settings
         self.__on_setting_changed.subject = self.settings
 
-    automation_layer = forward_property(u'_automation')(u'layer')
+    automation_layer = forward_property(u'automation')(u'layer')
     mode_selector_layer = forward_property(u'_mode_selector')(u'layer')
     selected_setting = forward_property(u'_settings_modes')(u'selected_mode')
 
@@ -346,26 +346,26 @@ class NoteEditorSettingsComponent(ModesComponent):
     def set_encoders(self, encoders):
         self.encoders.set_control_element(encoders)
         self.settings.set_encoder_controls(encoders)
-        self._automation.set_parameter_controls(encoders)
+        self.automation.set_parameter_controls(encoders)
 
     @property
     def parameter_provider(self):
-        self._automation.parameter_provider
+        self.automation.parameter_provider
 
     @parameter_provider.setter
     def parameter_provider(self, value):
-        self._automation.parameter_provider = value
+        self.automation.parameter_provider = value
 
     @listens(u'selected_mode')
     def __on_selected_setting_mode_changed(self, mode):
         if mode == u'automation':
-            self._automation.selected_time = self._active_note_regions()
+            self.automation.selected_time = self._active_note_regions()
 
     def update_view_state_based_on_selected_setting(self, setting):
         if self.selected_mode == u'enabled' and self.is_touched or setting is None:
             self._set_settings_view_enabled(False)
         elif self._is_step_held():
-            if self.selected_setting == u'automation' and self._automation.can_automate_parameters or self.selected_setting == u'note_settings':
+            if self.selected_setting == u'automation' and self.automation.can_automate_parameters or self.selected_setting == u'note_settings':
                 self._show_settings()
 
     @listens(u'full_velocity')
@@ -395,7 +395,7 @@ class NoteEditorSettingsComponent(ModesComponent):
                 clip.view.hide_envelope()
 
     def _set_settings_view_enabled(self, should_show_view):
-        really_show_view = should_show_view and self._automation.can_automate_parameters if self.selected_setting == u'automation' else should_show_view
+        really_show_view = should_show_view and self.automation.can_automate_parameters if self.selected_setting == u'automation' else should_show_view
         if really_show_view:
             if self.selected_mode == u'disabled':
                 self.selected_mode = u'about_to_show'
@@ -410,7 +410,7 @@ class NoteEditorSettingsComponent(ModesComponent):
     def _on_active_note_regions_changed(self, _):
         if self.is_enabled():
             all_steps = self._active_note_regions()
-            self._automation.selected_time = all_steps
+            self.automation.selected_time = all_steps
             self._update_note_infos()
             self._set_settings_view_enabled(len(all_steps) > 0 and self.selected_setting != None or self.is_touched)
 
@@ -424,7 +424,7 @@ class NoteEditorSettingsComponent(ModesComponent):
 
     @listens(u'detail_clip')
     def _on_detail_clip_changed(self):
-        self._automation.clip = self.song.view.detail_clip if self.is_enabled() else None
+        self.automation.clip = self.song.view.detail_clip if self.is_enabled() else None
 
     @listens(u'selected_track')
     def _on_selected_track_changed(self):

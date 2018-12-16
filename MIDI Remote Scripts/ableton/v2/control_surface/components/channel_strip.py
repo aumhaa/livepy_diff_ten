@@ -44,8 +44,8 @@ class ChannelStripComponent(Component):
     empty_color = None
     select_button = ButtonControl()
 
-    def __init__(self):
-        Component.__init__(self)
+    def __init__(self, *a, **k):
+        super(ChannelStripComponent, self).__init__(self, *a, **k)
         ChannelStripComponent._active_instances.append(self)
         self._track = None
         self._send_controls = []
@@ -209,9 +209,6 @@ class ChannelStripComponent(Component):
             self._invert_mute_feedback = invert_feedback
             self.update()
 
-    def on_enabled_changed(self):
-        self.update()
-
     @listens(u'selected_track')
     def __on_selected_track_changed(self):
         if liveobj_valid(self._track) or self.empty_color == None:
@@ -261,22 +258,19 @@ class ChannelStripComponent(Component):
 
     def update(self):
         super(ChannelStripComponent, self).update()
-        if self._allow_updates:
-            if self.is_enabled():
-                self._empty_control_slots.disconnect()
-                if liveobj_valid(self._track):
-                    self._connect_parameters()
-                else:
-                    self._disconnect_parameters()
-                self.__on_selected_track_changed()
-                self._on_mute_changed()
-                self._on_solo_changed()
-                self._on_arm_changed()
-                self._on_cf_assign_changed()
+        if self.is_enabled():
+            self._empty_control_slots.disconnect()
+            if liveobj_valid(self._track):
+                self._connect_parameters()
             else:
                 self._disconnect_parameters()
+            self.__on_selected_track_changed()
+            self._on_mute_changed()
+            self._on_solo_changed()
+            self._on_arm_changed()
+            self._on_cf_assign_changed()
         else:
-            self._update_requests += 1
+            self._disconnect_parameters()
 
     @select_button.pressed
     def select_button(self, button):

@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from pushbase.parameter_provider import is_parameter_quantized
+from ableton.v2.control_surface import is_parameter_quantized
 DEFAULT_SENSITIVITY_KEY = u'normal_sensitivity'
 FINE_GRAINED_SENSITIVITY_KEY = u'fine_grained_sensitivity'
 CONTINUOUS_MAPPING_SENSITIVITY = 1.0

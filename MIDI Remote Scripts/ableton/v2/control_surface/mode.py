@@ -6,7 +6,6 @@ from ..base import depends, infinite_context_manager, listens, is_contextmanager
 from . import defaults
 from .layer import Layer, CompoundLayer
 from .resource import StackingResource
-from .compound_component import CompoundComponent
 from .component import Component
 from .control import control_color, ButtonControl, ButtonControlBase
 
@@ -382,7 +381,11 @@ class _ModeEntry(NamedTuple):
     listens = None
 
 
-class ModesComponent(CompoundComponent):
+class NullModes(object):
+    selected_mode = None
+
+
+class ModesComponent(Component):
     u"""
     A ModesComponent handles the selection of different modes of the
     component. It improves the ModeSelectorComponent in several ways:

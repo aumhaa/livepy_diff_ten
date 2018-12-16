@@ -2,8 +2,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from math import ceil, floor
 import Live
-from ableton.v2.base import clamp, liveobj_valid, listenable_property, listens, sign, EventObject
-from ableton.v2.base.collection import IndexedDict
+from ..base import clamp, liveobj_valid, listenable_property, listens, sign, EventObject
+from ..base.collection import IndexedDict
 from .decoration import LiveObjectDecorator
 from .internal_parameter import EnumWrappingParameter, RelativeInternalParameter, to_percentage_display, WrappingParameter
 BoolWrappingParameter = partial(WrappingParameter, to_property_value=lambda integer, _simpler: bool(integer), from_property_value=lambda boolean, _simpler: int(boolean), value_items=[u'Off', u'On'], display_value_conversion=lambda val: (u'On' if val else u'Off'))

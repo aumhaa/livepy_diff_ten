@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
+from ableton.v2.control_surface import ParameterInfo
+from ableton.v2.control_surface.components import DeviceComponent as DeviceComponentBase
 from ableton.v2.control_surface.control import ButtonControl
-from pushbase.device_component import DeviceComponent as DeviceComponentBase
-from pushbase.parameter_provider import ParameterInfo
 from .parameter_mapping_sensitivities import parameter_mapping_sensitivity, fine_grain_parameter_mapping_sensitivity
 
 def is_wavetable(device):

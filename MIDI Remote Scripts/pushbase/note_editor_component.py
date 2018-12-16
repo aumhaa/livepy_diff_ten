@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from functools import cmp_to_key, partial
 from itertools import chain, imap, product
 from ableton.v2.base import clamp, first, index_if, in_range, listens, listenable_property, liveobj_changed, liveobj_valid, sign, EventObject, task
-from ableton.v2.control_surface import CompoundComponent, defaults
+from ableton.v2.control_surface import Component, defaults
 from ableton.v2.control_surface.control import ButtonControl, control_matrix, PlayableControl
 from .loop_selector_component import create_clip_in_selected_slot
 from .matrix_maps import PLAYHEAD_FEEDBACK_CHANNELS
@@ -145,7 +145,7 @@ def remove_single_note(clip, time, notes, length):
     clip.remove_notes(time, notes[0], length, 1)
 
 
-class NoteEditorComponent(CompoundComponent):
+class NoteEditorComponent(Component):
     __events__ = (u'page_length', u'active_note_regions', u'active_steps', u'notes_changed', u'modify_all_notes')
     matrix = control_matrix(PadControl, channel=PLAYHEAD_FEEDBACK_CHANNELS[0], sensitivity_profile=u'loop', mode=PlayableControl.Mode.listenable)
     mute_button = ButtonControl(color=u'DefaultButton.Transparent')

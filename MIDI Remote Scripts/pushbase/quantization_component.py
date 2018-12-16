@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import clamp, listenable_property, listens
-from ableton.v2.control_surface import Component, CompoundComponent
+from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl, StepEncoderControl, ToggleButtonControl
 from .consts import MessageBoxText, SIDE_BUTTON_COLORS
 from .message_box_component import Messenger
@@ -105,36 +105,35 @@ class QuantizationSettingsComponent(Component):
         self.song.midi_recording_quantization = index if self.record_quantization_toggle_button.is_toggled else RecordingQuantization.rec_q_no_q
 
 
-class QuantizationComponent(CompoundComponent, Messenger):
+class QuantizationComponent(Component, Messenger):
     action_button = ButtonControl(**SIDE_BUTTON_COLORS)
 
-    def __init__(self, settings = None, *a, **k):
-        assert settings is not None
+    def __init__(self, settings_class = None, quantization_names = QUANTIZATION_NAMES, *a, **k):
+        assert settings_class is not None
         super(QuantizationComponent, self).__init__(*a, **k)
-        self._settings = self.register_component(settings)
-        self._settings.set_enabled(False)
+        self.settings = settings_class(name=u'Quantization_Settings', quantization_names=quantization_names, is_enabled=False, parent=self)
         self._cancel_quantize = False
 
     def quantize_pitch(self, note, source = None):
         clip = self.song.view.detail_clip
         if clip:
-            clip.quantize_pitch(note, self._settings.quantize_to, self._settings.quantize_amount)
-            self.show_notification(MessageBoxText.QUANTIZE_CLIP_PITCH % dict(source=source, amount=quantize_amount_to_string(self._settings.quantize_amount), to=self._settings.selected_quantization_name))
+            clip.quantize_pitch(note, self.settings.quantize_to, self.settings.quantize_amount)
+            self.show_notification(MessageBoxText.QUANTIZE_CLIP_PITCH % dict(source=source, amount=quantize_amount_to_string(self.settings.quantize_amount), to=self.settings.selected_quantization_name))
         self._cancel_quantize = True
 
     @action_button.pressed_delayed
     def action_button(self, button):
-        self._settings.set_enabled(True)
+        self.settings.set_enabled(True)
 
     @action_button.released_delayed
     def hide_settings(self, button):
-        self._settings.set_enabled(False)
+        self.settings.set_enabled(False)
         self._cancel_quantize = False
 
     @action_button.released_immediately
     def action_button(self, button):
         clip = self.song.view.detail_clip
         if clip and not self._cancel_quantize:
-            clip.quantize(self._settings.quantize_to, self._settings.quantize_amount)
-            self.show_notification(MessageBoxText.QUANTIZE_CLIP % dict(amount=quantize_amount_to_string(self._settings.quantize_amount), to=self._settings.selected_quantization_name))
+            clip.quantize(self.settings.quantize_to, self.settings.quantize_amount)
+            self.show_notification(MessageBoxText.QUANTIZE_CLIP % dict(amount=quantize_amount_to_string(self.settings.quantize_amount), to=self.settings.selected_quantization_name))
         self._cancel_quantize = False

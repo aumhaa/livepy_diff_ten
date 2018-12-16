@@ -1,13 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 import Live
-from ableton.v2.base import EventObject, const, depends, flatten, nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid
+from ableton.v2.base import EventObject, ObservablePropertyAlias, const, depends, flatten, nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid
 from ableton.v2.control_surface import find_instrument_devices
-from ableton.v2.control_surface.components import SessionRingComponent, RightAlignTracksTrackAssigner
+from ableton.v2.control_surface.components import ItemProvider, SessionRingComponent, RightAlignTracksTrackAssigner
 from ableton.v2.control_surface.components.view_control import has_next_item, next_item, TrackScroller as TrackScrollerBase, ViewControlComponent as ViewControlComponentBase
 from .decoration import TrackDecoratorFactory
-from .item_lister_component import ItemProvider
-from .observable_property_alias import ObservablePropertyAlias
 
 def get_chains_recursive(track_or_chain):
     instruments = list(find_instrument_devices(track_or_chain))
@@ -248,7 +246,7 @@ class TrackScroller(TrackScrollerBase, EventObject):
 
 
 class ViewControlComponent(ViewControlComponentBase):
-    __events__ = (u'selection_changed',)
+    __events__ = (u'selection_scrolled',)
 
     @depends(tracks_provider=None)
     def __init__(self, tracks_provider = None, *a, **k):
@@ -259,7 +257,7 @@ class ViewControlComponent(ViewControlComponentBase):
 
     def _create_track_scroller(self):
         scroller = TrackScroller(tracks_provider=self._track_provider)
-        self.register_disconnectable(ObservablePropertyAlias(self, property_host=scroller, property_name=u'scrolled', alias_name=u'selection_changed'))
+        self.register_disconnectable(ObservablePropertyAlias(self, property_host=scroller, property_name=u'scrolled', alias_name=u'selection_scrolled'))
         return scroller
 
     @listens(u'items')
