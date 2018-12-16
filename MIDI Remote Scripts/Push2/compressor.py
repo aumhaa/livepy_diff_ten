@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import depends, EventObject, listenable_property, listens, liveobj_valid, mixin
-from pushbase.decoration import LiveObjectDecorator
+from pushbase.decoration import LiveObjectDecorator, get_parameter_by_name
 from pushbase.internal_parameter import EnumWrappingParameter
-from .device_decoration import DeviceOnOffOption, get_parameter_by_name
+from .device_decoration import DeviceOnOffOption
 from .device_component import DeviceComponentWithTrackColorViewData
 from .routing import InputChannelRouter, InputChannelAndPositionRouter, InputTypeRouter, RoutingChannelList, RoutingChannelPositionList, RoutingMeterRealTimeChannelAssigner, RoutingTypeList
 from .visualisation_settings import VisualisationGuides

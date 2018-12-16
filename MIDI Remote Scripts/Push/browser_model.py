@@ -6,6 +6,7 @@ import Live
 from ableton.v2.base import first, nop, find_if, index_if, in_range, lazy_attribute, BooleanContext, EventObject
 from pushbase.scrollable_list import ActionList, ActionListItem
 from pushbase.browser_util import filter_type_for_hotswap_target
+from .special_physical_display import SpecialPhysicalDisplay
 
 def filter_type_for_browser(browser):
     filter_type = filter_type_for_hotswap_target(browser.hotswap_target)
@@ -43,11 +44,22 @@ class BrowserListItem(ActionListItem):
     u"""
     List item representing a browser element
     """
+    URI_TO_NAME_FALLBACK = {u'query:Synths': u'Instruments',
+     u'query:Drums': u'Drums',
+     u'query:UserLibrary': u'User Library',
+     u'query:Plugins': u'Plug-ins'}
 
     def __str__(self):
-        if self.content:
-            return os.path.splitext(self.content.name)[0]
-        return u''
+        return self._item_name
+
+    @lazy_attribute
+    def _item_name(self):
+        item_name = os.path.splitext(self.content.name)[0] if self.content else u''
+        can_be_displayed = SpecialPhysicalDisplay.can_be_translated(SpecialPhysicalDisplay.ascii_translations, item_name)
+        if not can_be_displayed:
+            uri = getattr(self.content, u'uri', u'')
+            return self.URI_TO_NAME_FALLBACK.get(uri, item_name)
+        return item_name
 
     def action(self):
         if self.container and self.container.browser:

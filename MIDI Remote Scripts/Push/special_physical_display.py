@@ -7,7 +7,7 @@ class SpecialPhysicalDisplay(PhysicalDisplayElement):
     u"""
     Special physical display subclass that handles custom and special characters
     """
-    _ascii_translations = {u'\x00': 0,
+    ascii_translations = {u'\x00': 0,
      u'\x01': 1,
      u'\x02': 2,
      u'\x03': 3,

@@ -3,9 +3,9 @@ from itertools import ifilter
 from Live import DeviceParameter
 from ableton.v2.base import liveobj_valid, listenable_property, listens
 from pushbase.automation_component import AutomationComponent as AutomationComponentBase
+from pushbase.decoration import PitchParameter
 from pushbase.internal_parameter import InternalParameterBase
 from pushbase.parameter_provider import ParameterInfo
-from .device_decoration import PitchParameter
 
 class StepAutomationParameter(InternalParameterBase):
 

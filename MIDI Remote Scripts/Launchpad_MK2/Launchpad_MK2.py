@@ -10,7 +10,7 @@ from _Framework.ModesComponent import ImmediateBehaviour, LayerMode, AddLayerMod
 from _Framework.InputControlElement import MIDI_CC_TYPE
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
 from .Skin import make_default_skin
-from .Colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
+from .Colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
 from .ModeUtils import NotifyingModesComponent, SkinableBehaviourMixin, EnablingReenterBehaviour
 from .ControlElementUtils import make_button, with_modifier, FilteringMultiElement
 from .SliderElement import SliderElement
@@ -158,7 +158,7 @@ class Launchpad_MK2(IdentifiableControlSurface, OptimizedControlSurface):
 
     def _create_session(self):
         self._session = SessionComponent(is_enabled=False, num_tracks=self._session_matrix.width(), num_scenes=self._session_matrix.height(), enable_skinning=True, name=u'Session', is_root=True, layer=Layer(track_bank_left_button=self._left_button, track_bank_right_button=self._right_button, scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button))
-        self._session.set_rgb_mode(CLIP_COLOR_TABLE, RGB_COLOR_TABLE)
+        self._session.set_rgb_mode(LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE)
         self._session_layer_mode = AddLayerMode(self._session, Layer(clip_launch_buttons=self._session_matrix, scene_launch_buttons=self._scene_launch_matrix))
         self._session_zoom = SessionZoomingComponent(self._session, is_enabled=False, enable_skinning=True, layer=Layer(nav_up_button=with_modifier(self._session_button_single, self._up_button), nav_down_button=with_modifier(self._session_button_single, self._down_button), nav_left_button=with_modifier(self._session_button_single, self._left_button), nav_right_button=with_modifier(self._session_button_single, self._right_button), button_matrix=self._session_zoom_matrix))
         self._stop_clip_layer_mode = AddLayerMode(self._session, Layer(stop_track_clip_buttons=self._stop_clip_buttons, stop_all_clips_button=self._stop_button))

@@ -173,11 +173,3 @@ class SimplerDeviceDecorator(EventObject, LiveObjectDecorator):
     @listens(u'playback_mode')
     def __on_playback_mode_changed(self):
         self.notify_current_playback_mode()
-
-
-class SimplerDecoratorFactory(DecoratorFactory):
-    _decorator = SimplerDeviceDecorator
-
-    @classmethod
-    def _should_be_decorated(cls, device):
-        return liveobj_valid(device) and device.class_name == u'OriginalSimpler'

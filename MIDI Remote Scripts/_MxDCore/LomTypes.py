@@ -577,7 +577,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                                         MFLProperty(u'unison_voice_count'),
                                         MFLProperty(u'visible_modulation_target_names')])}
 HIDDEN_TYPE_PROPERTIES = {Live.Sample.Sample: (u'slices',)}
-EXTRA_CS_FUNCTIONS = (u'get_control_names', u'get_control', u'grab_control', u'release_control')
+EXTRA_CS_FUNCTIONS = (u'get_control_names', u'get_control', u'grab_control', u'release_control', u'send_midi', u'send_receive_sysex', u'grab_midi', u'release_midi')
 ENUM_TYPES = (Live.Song.Quantization,
  Live.Song.RecordingQuantization,
  Live.Song.CaptureMode,

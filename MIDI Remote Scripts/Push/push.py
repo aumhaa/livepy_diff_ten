@@ -9,16 +9,16 @@ from ableton.v2.control_surface.elements import ComboElement, NullFullVelocity, 
 from ableton.v2.control_surface.mode import AddLayerMode, EnablingModesComponent, LazyEnablingMode, ModesComponent
 from pushbase import consts
 from pushbase.actions import SelectComponent, StopClipComponent
-from pushbase.colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
+from pushbase.colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
 from pushbase.browser_modes import BrowserHotswapMode
 from pushbase.control_element_factory import create_sysex_element
+from pushbase.device_decorator_factory import DeviceDecoratorFactory
 from pushbase.note_editor_component import NoteEditorComponent
 from pushbase.note_settings_component import NoteSettingsComponent
 from pushbase.pad_sensitivity import PadUpdateComponent
 from pushbase.push_base import PushBase
 from pushbase.quantization_component import QuantizationComponent
 from pushbase.sysex import LIVE_MODE
-from pushbase.simpler_decoration import SimplerDecoratorFactory
 from pushbase.sliced_simpler_component import SlicedSimplerComponent
 from pushbase.special_session_component import SpecialSessionComponent
 from .actions import CreateDeviceComponent, CreateDefaultTrackComponent, CreateInstrumentTrackComponent
@@ -105,7 +105,7 @@ class Push(PushBase):
         return settings
 
     def _create_device_decorator_factory(self):
-        return SimplerDecoratorFactory()
+        return DeviceDecoratorFactory()
 
     def _init_settings(self):
         super(Push, self)._init_settings()
@@ -367,7 +367,7 @@ class Push(PushBase):
         return Layer(button_matrix=u'shifted_matrix')
 
     def _set_session_skin(self, session):
-        session.set_rgb_mode(CLIP_COLOR_TABLE, RGB_COLOR_TABLE, clip_slots_only=True)
+        session.set_rgb_mode(LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE, clip_slots_only=True)
 
     def _on_selected_track_changed(self):
         super(Push, self)._on_selected_track_changed()

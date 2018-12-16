@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 from contextlib import contextmanager
 from MidiRemoteScript import MutableVector
-from ableton.v2.base import listens, listens_group, liveobj_valid, listenable_property
+from ableton.v2.base import listens, listens_group, liveobj_valid, listenable_property, task
 from ableton.v2.control_surface import Component, CompoundComponent
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl, ToggleButtonControl
 from pushbase.clip_control_component import convert_beat_length_to_bars_beats_sixteenths, convert_beat_time_to_bars_beats_sixteenths, LoopSettingsControllerComponent as LoopSettingsControllerComponentBase, AudioClipSettingsControllerComponent as AudioClipSettingsControllerComponentBase, ONE_YEAR_AT_120BPM_IN_BEATS, WARP_MODE_NAMES
@@ -534,6 +534,7 @@ class MidiClipControllerComponent(CompoundComponent):
 
     def __init__(self, *a, **k):
         super(MidiClipControllerComponent, self).__init__(*a, **k)
+        self._configure_vis_task = self._tasks.add(task.sequence(task.delay(1), task.run(self._configure_visualisation))).kill()
         self._clip = None
         self._matrix_mode_watcher = None
         self._most_recent_base_note = DEFAULT_START_NOTE
@@ -639,6 +640,9 @@ class MidiClipControllerComponent(CompoundComponent):
         if liveobj_valid(self.clip) and self.get_static_view_data()[u'ShowGridWindow']:
             self.clip.timeline_navigation.change_object(self.grid_window_focus)
 
+    def _configure_visualisation_delayed(self):
+        self._configure_vis_task.restart()
+
     @listens(u'instrument')
     def __on_drum_rack_changed(self):
         self._drum_pad_color_notifier.set_drum_group(self._drum_rack_finder.drum_group)
@@ -712,13 +716,13 @@ class MidiClipControllerComponent(CompoundComponent):
     def __on_editable_pitches_changed(self, sequencer):
         self._most_recent_editable_pitches = sequencer.editable_pitches
         if self.is_enabled():
-            self._configure_visualisation()
+            self._configure_visualisation_delayed()
 
     @listens_group(u'row_start_times')
     def __on_row_start_times_changed(self, sequencer):
         if sequencer.is_enabled():
             self._most_recent_row_start_times = sequencer.row_start_times
-            self._configure_visualisation()
+            self._configure_visualisation_delayed()
 
     @listens_group(u'step_length')
     def __on_step_length_changed(self, sequencer):
@@ -766,12 +770,7 @@ class MidiClipControllerComponent(CompoundComponent):
         yield
         self.mute_components_during_track_change(False)
 
-    def _update_grid_window_pitch_range(self, view_data):
-        view_data[u'MinGridWindowPitch'] = self._most_recent_editable_pitches[0]
-        view_data[u'MaxGridWindowPitch'] = self._most_recent_editable_pitches[-1]
-        view_data[u'GridWindowPitches'] = make_vector(self._most_recent_editable_pitches)
-
-    def _update_minimum_pitch(self, view_data):
+    def _update_minimum_pitch(self):
         if self.matrix_mode_path() == u'matrix_modes.note.instrument.sequence':
             num_visible_keys = self.get_static_view_data()[u'NumDisplayKeys']
             lower = self._most_recent_editable_pitches[0]
@@ -786,57 +785,60 @@ class MidiClipControllerComponent(CompoundComponent):
                 if upper + window_size > base_note + num_visible_keys:
                     base_note = upper + window_size - num_visible_keys
             self._loose_follow_base_note = max(0, min(127 - num_visible_keys, base_note))
-            view_data[u'MinPitch'] = self._loose_follow_base_note
-        else:
-            view_data[u'MinPitch'] = self._most_recent_base_note
+            return self._loose_follow_base_note
+        return self._most_recent_base_note
 
-    def _update_maximum_sequenceable_pitch(self, view_data):
+    def _update_maximum_sequenceable_pitch(self):
         if self.matrix_mode_path() == u'matrix_modes.note.instrument.sequence':
-            view_data[u'MaxSequenceablePitch'] = self._most_recent_editable_pitches[-1]
-        else:
-            view_data[u'MaxSequenceablePitch'] = self._most_recent_max_note
+            return self._most_recent_editable_pitches[-1]
+        return self._most_recent_max_note
 
-    def _update_minimum_sequenceable_pitch(self, view_data):
-        view_data[u'MinSequenceablePitch'] = self._most_recent_editable_pitches[0] if self.matrix_mode_path() == u'matrix_modes.note.instrument.sequence' else self._most_recent_base_note
+    def _update_minimum_sequenceable_pitch(self):
+        if self.matrix_mode_path() == u'matrix_modes.note.instrument.sequence':
+            return self._most_recent_editable_pitches[0]
+        return self._most_recent_base_note
 
-    def _update_note_colors(self, view_data):
+    def _update_note_colors(self):
         matrix_mode = self.matrix_mode_path()
         in_correct_mode = matrix_mode is not None and matrix_mode.startswith(u'matrix_modes.note.drums') or matrix_mode == u'matrix_modes.session'
         note_colors = self._drum_pad_color_notifier.note_colors if in_correct_mode and self._drum_pad_color_notifier.has_drum_group else []
-        view_data[u'NoteColors'] = make_color_vector(note_colors)
+        return make_color_vector(note_colors)
 
     def _configure_visualisation(self):
         visualisation = self._visualisation_real_time_data.device_visualisation()
         if liveobj_valid(visualisation) and liveobj_valid(self.clip) and self._real_time_data_attached:
-            view_data = visualisation.get_view_data()
             color = COLOR_INDEX_TO_SCREEN_COLOR[self.clip.color_index]
-            view_data[u'ClipColor'] = color.as_remote_script_color()
-            view_data[u'PageIndex'] = self._most_recent_page_index
-            view_data[u'PageLength'] = float(self._most_recent_page_length)
-            view_data[u'RowStartTimes'] = make_vector(self._most_recent_row_start_times)
-            view_data[u'StepLength'] = float(self._most_recent_step_length)
-            self._update_grid_window_pitch_range(view_data)
-            self._update_minimum_pitch(view_data)
-            self._update_maximum_sequenceable_pitch(view_data)
-            self._update_minimum_sequenceable_pitch(view_data)
-            self._update_note_colors(view_data)
-            view_data[u'IsRecording'] = liveobj_valid(self.clip) and self.clip.is_recording and not self.clip.is_overdubbing
-            if hasattr(self.clip, u'zoom'):
-                visible_region = self.clip.zoom.visible_region
-                view_data[u'DisplayStartTime'] = float(visible_region.start)
-                view_data[u'DisplayEndTime'] = float(visible_region.end)
-            if hasattr(self.clip, u'timeline_navigation'):
-                focus_marker = self.clip.timeline_navigation.focus_marker
-                view_data[u'FocusMarkerName'] = focus_marker.name
-                view_data[u'FocusMarkerPosition'] = focus_marker.position
-                view_data[u'ShowFocus'] = self.clip.timeline_navigation.show_focus
-            view_data[u'NoteSettingsMode'] = self._note_settings_component is not None and self._note_settings_component.is_enabled()
-            view_data[u'NoteSettingsTouched'] = self._note_editor_settings_component is not None and self._note_editor_settings_component.is_enabled() and self._note_editor_settings_component.is_touched
-            view_data[u'EditingNotePitches'] = make_vector([ pitch for pitch, (start, end) in self._most_recent_editing_note_regions ])
-            view_data[u'EditingNoteStarts'] = make_vector([ float(start) for pitch, (start, end) in self._most_recent_editing_note_regions ])
-            view_data[u'EditingNoteEnds'] = make_vector([ float(end) for pitch, (start, end) in self._most_recent_editing_note_regions ])
+            visible_region = self.clip.zoom.visible_region
+            focus_marker = self.clip.timeline_navigation.focus_marker
+            new_data = {u'ClipColor': color.as_remote_script_color(),
+             u'PageIndex': self._most_recent_page_index,
+             u'PageLength': float(self._most_recent_page_length),
+             u'RowStartTimes': make_vector(self._most_recent_row_start_times),
+             u'StepLength': float(self._most_recent_step_length),
+             u'MinGridWindowPitch': self._most_recent_editable_pitches[0],
+             u'MaxGridWindowPitch': self._most_recent_editable_pitches[-1],
+             u'GridWindowPitches': make_vector(self._most_recent_editable_pitches),
+             u'MinPitch': self._update_minimum_pitch(),
+             u'MaxSequenceablePitch': self._update_maximum_sequenceable_pitch(),
+             u'MinSequenceablePitch': self._update_minimum_sequenceable_pitch(),
+             u'NoteColors': self._update_note_colors(),
+             u'IsRecording': liveobj_valid(self.clip) and self.clip.is_recording and not self.clip.is_overdubbing,
+             u'NoteSettingsMode': self._note_settings_component is not None and self._note_settings_component.is_enabled(),
+             u'NoteSettingsTouched': self._note_editor_settings_component is not None and self._note_editor_settings_component.is_enabled() and self._note_editor_settings_component.is_touched,
+             u'EditingNotePitches': make_vector([ pitch for pitch, (start, end) in self._most_recent_editing_note_regions ]),
+             u'EditingNoteStarts': make_vector([ float(start) for pitch, (start, end) in self._most_recent_editing_note_regions ]),
+             u'EditingNoteEnds': make_vector([ float(end) for pitch, (start, end) in self._most_recent_editing_note_regions ]),
+             u'DisplayStartTime': float(visible_region.start),
+             u'DisplayEndTime': float(visible_region.end),
+             u'FocusMarkerName': focus_marker.name,
+             u'FocusMarkerPosition': focus_marker.position,
+             u'ShowFocus': self.clip.timeline_navigation.show_focus}
+            view_data = visualisation.get_view_data()
             if self._matrix_mode_watcher is not None:
                 self._add_items_to_view_data(view_data)
+            for key, value in new_data.iteritems():
+                view_data[key] = value
+
             visualisation.set_view_data(view_data)
 
 

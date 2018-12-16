@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import re
 from ableton.v2.base import EventObject, liveobj_valid, listens
-from pushbase.decoration import LiveObjectDecorator
+from pushbase.decoration import LiveObjectDecorator, get_parameter_by_name
 from pushbase.internal_parameter import EnumWrappingParameter
 from pushbase.simpler_decoration import BoolWrappingParameter
 from .device_component import DeviceComponentWithTrackColorViewData
-from .device_decoration import DeviceSwitchOption, get_parameter_by_name
+from .device_decoration import DeviceSwitchOption
 
 class Eq8DeviceDecorator(EventObject, LiveObjectDecorator):
     available_band_indices = range(1, 9)

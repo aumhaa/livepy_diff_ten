@@ -137,6 +137,25 @@ TNS_BANKS = (TNS_BANK1,
  TNS_BANK8)
 TNS_BOBS = (TNS_BOB,)
 TNS_BNK_NAMES = (u'Excitator and String', u'Damper', u'Termination and Pickup', u'Body', u'Vibrato', u'Filter', u'Envelope and LFO', u'Global')
+WVT_BANK1 = (u'Osc 1 Transp', u'Osc 1 Detune', u'Osc 1 Pos', u'Osc 1 Effect 1', u'Osc 1 Effect 2', u'Osc 1 Pan', u'Osc 1 Gain', u'Osc 1 On')
+WVT_BANK2 = (u'Osc 2 Transp', u'Osc 2 Detune', u'Osc 2 Pos', u'Osc 2 Effect 1', u'Osc 2 Effect 2', u'Osc 2 Pan', u'Osc 2 Gain', u'Osc 2 On')
+WVT_BANK3 = (u'Filter 1 On', u'Filter 1 Freq', u'Filter 1 Res', u'Filter 1 Drive', u'Filter 1 Type', u'Filter 1 Slope', u'Filter 1 LP/HP', u'Filter 1 BP/NO/Morph')
+WVT_BANK4 = (u'Filter 2 On', u'Filter 2 Freq', u'Filter 2 Res', u'Filter 2 Drive', u'Filter 2 Type', u'Filter 2 Slope', u'Filter 2 LP/HP', u'Filter 2 BP/NO/Morph')
+WVT_BANK5 = (u'Amp Attack', u'Amp Decay', u'Amp Sustain', u'Amp Release', u'Amp A Slope', u'Amp D Slope', u'Amp R Slope', u'Amp Loop Mode')
+WVT_BANK6 = (u'Env 2 Attack', u'Env 2 Decay', u'Env 2 Sustain', u'Env 2 Release', u'Env 3 Attack', u'Env 3 Decay', u'Env 3 Sustain', u'Env 3 Release')
+WVT_BANK7 = (u'LFO 1 Amount', u'LFO 1 Rate', u'LFO 1 S. Rate', u'LFO 1 Sync', u'LFO 2 Amount', u'LFO 2 Rate', u'LFO 2 S. Rate', u'LFO 2 Sync')
+WVT_BANK8 = (u'Time', u'Global Mod Amount', u'Unison Amount', u'Transpose', u'Glide', u'Sub Gain', u'Sub Transpose', u'Volume')
+WVT_BOB = (u'Osc 1 Pos', u'Osc 1 Transp', u'Osc 2 Pos', u'Osc 2 Transp', u'Filter 1 Freq', u'Filter 1 Res', u'Global Mod Amount', u'Volume')
+WVT_BANKS = (WVT_BANK1,
+ WVT_BANK2,
+ WVT_BANK3,
+ WVT_BANK4,
+ WVT_BANK4,
+ WVT_BANK5,
+ WVT_BANK6,
+ WVT_BANK7)
+WVT_BOBS = (WVT_BOB,)
+WVT_BANK_NAMES = (u'Oscillator 1', u'Oscillator 2', u'Filter 1', u'Filter 2', u'Amp Envelope', u'Envelope 2/3', u'LFO 1/2', u'Global')
 ARP_BANK1 = (u'Style', u'Groove', u'Offset', u'Synced Rate', u'Retrigger Mode', u'Ret. Interval', u'Repeats', u'Gate')
 ARP_BANK2 = (u'Tranpose Mode', u'Tranpose Key', u'Transp. Steps', u'Transp. Dist.', u'Velocity Decay', u'Velocity Target', u'Velocity On', u'Vel. Retrigger')
 ARP_BOB = (u'Synced Rate', u'Free Rate', u'Transp. Steps', u'Transp. Dist.', u'Gate', u'Tranpose Key', u'Velocity Decay', u'Velocity Target')
@@ -205,9 +224,34 @@ CRP_BOB = (u'Brightness', u'Resonance Type', u'Material', u'Inharmonics', u'Deca
 CRP_BANKS = (CRP_BANK1, CRP_BANK2, CRP_BANK3)
 CRP_BOBS = (CRP_BOB,)
 CRP_BNK_NAMES = (u'Amount', u'Body', u'Tune')
+DRB_BANK1 = (u'Drive', u'Drive Type', u'Transients', u'Crunch', u'Boom Freq', u'Boom Amt', u'Boom Decay', u'Boom Audition')
+DRB_BANK2 = (u'Trim', u'Output Gain', u'Dry/Wet', u'Compressor On', u'Damping Freq', u'', u'', u'')
+DRB_BOB = (u'Drive', u'Drive Type', u'Crunch', u'Boom Amt', u'Trim', u'Damping Freq', u'Output Gain', u'Dry/Wet')
+DRB_BANKS = (DRB_BANK1, DRB_BANK2)
+DRB_BOBS = (DRB_BOB,)
+DRB_BANK_NAMES = (u'Drive', u'Gain')
 DTB_BANK1 = (u'Drive', u'Bias', u'Envelope', u'Tone', u'Attack', u'Release', u'Output', u'Dry/Wet')
 DTB_BANKS = (DTB_BANK1,)
 DTB_BOBS = (DTB_BANK1,)
+ECH_BANK1 = (u'L Division', u'R Division', u'L Sync Mode', u'R Sync Mode', u'L 16th', u'R 16th', u'L Sync', u'R Sync')
+ECH_BANK2 = (u'L Time', u'R Time', u'L Offset', u'R Offset', u'Link', u'Channel Mode')
+ECH_BANK3 = (u'Gate On', u'Gate Thr', u'Gate Release', u'Duck On', u'Duck Thr', u'Duck Release', u'Env Mix')
+ECH_BANK4 = (u'Noise On', u'Noise Amt', u'Noise Mrph', u'Wobble On', u'Wobble Amt', u'Wobble Mrph', u'Repitch')
+ECH_BANK5 = (u'Feedback', u'Feedback Inv', u'Input Gain', u'Output Gain', u'Clip Dry', u'Dry Wet')
+ECH_BANK6 = (u'Filter On', u'HP Freq', u'HP Res', u'LP Freq', u'LP Res')
+ECH_BANK7 = (u'Reverb Level', u'Reverb Decay', u'Reverb Loc', u'Stereo Width')
+ECH_BANK8 = (u'Mod Wave', u'Mod Sync', u'Mod Rate', u'Mod Freq', u'Mod Phase', u'Dly < Mod', u'Flt < Mod', u'Mod 4x')
+ECH_BOB = (u'L Division', u'R Division', u'L Time', u'R Time', u'Input Gain', u'Feedback', u'Stereo Width', u'Dry Wet')
+ECH_BANKS = (ECH_BANK1,
+ ECH_BANK2,
+ ECH_BANK3,
+ ECH_BANK4,
+ ECH_BANK5,
+ ECH_BANK6,
+ ECH_BANK7,
+ ECH_BANK8)
+ECH_BOBS = (ECH_BOB,)
+ECH_BANK_NAMES = (u'Sync', u'Time', u'Gate/Ducking', u'Noise/Wobble', u'Gain', u'Filter', u'Reverb', u'Modulation')
 EQ8_BANK1 = (u'1 Filter On A', u'2 Filter On A', u'3 Filter On A', u'4 Filter On A', u'5 Filter On A', u'6 Filter On A', u'7 Filter On A', u'8 Filter On A')
 EQ8_BANK2 = (u'1 Frequency A', u'2 Frequency A', u'3 Frequency A', u'4 Frequency A', u'5 Frequency A', u'6 Frequency A', u'7 Frequency A', u'8 Frequency A')
 EQ8_BANK3 = (u'1 Gain A', u'2 Gain A', u'3 Gain A', u'4 Gain A', u'5 Gain A', u'6 Gain A', u'7 Gain A', u'8 Gain A')
@@ -282,6 +326,11 @@ MBD_BNK_NAMES = (u'Global', u'Low Band', u'Mid Band', u'High Band', u'Split Freq
 OVR_BANK1 = (u'Filter Freq', u'Filter Width', u'Drive', u'Tone', u'Preserve Dynamics', u'', u'', u'Dry/Wet')
 OVR_BANKS = (OVR_BANK1,)
 OVR_BOBS = (OVR_BANK1,)
+PDL_BANK1 = (u'Type', u'Gain', u'Output', u'Bass', u'Mid', u'Treble', u'Sub', u'Dry/Wet')
+PDL_BANK2 = (u'Mid Freq', u'', u'', u'', u'', u'', u'', u'')
+PDL_BANKS = (PDL_BANK1, PDL_BANK2)
+PDL_BOBS = (PDL_BANK1,)
+PDL_BANK_NAMES = (u'General', u'Eq')
 PHS_BANK1 = (u'Poles', u'Color', u'Dry/Wet', u'Frequency', u'Env. Modulation', u'Env. Attack', u'Env. Release', u'Feedback')
 PHS_BANK2 = (u'LFO Amount', u'LFO Frequency', u'LFO Phase', u'LFO Sync', u'LFO Offset', u'LFO Sync Rate', u'LFO Spin', u'LFO Waveform')
 PHS_BOB = (u'Frequency', u'Feedback', u'Poles', u'Env. Modulation', u'Color', u'LFO Amount', u'LFO Frequency', u'Dry/Wet')
@@ -380,7 +429,11 @@ DEVICE_DICT = {u'AudioEffectGroupDevice': RCK_BANKS,
  u'Vocoder': VOC_BANKS,
  u'Amp': AMP_BANKS,
  u'Cabinet': CAB_BANKS,
- u'GlueCompressor': GLU_BANKS}
+ u'GlueCompressor': GLU_BANKS,
+ u'Pedal': PDL_BANKS,
+ u'DrumBuss': DRB_BANKS,
+ u'Echo': ECH_BANKS,
+ u'InstrumentVector': WVT_BANKS}
 DEVICE_BOB_DICT = {u'AudioEffectGroupDevice': RCK_BOBS,
  u'MidiEffectGroupDevice': RCK_BOBS,
  u'InstrumentGroupDevice': RCK_BOBS,
@@ -430,7 +483,11 @@ DEVICE_BOB_DICT = {u'AudioEffectGroupDevice': RCK_BOBS,
  u'Vocoder': VOC_BOBS,
  u'Amp': AMP_BOBS,
  u'Cabinet': CAB_BOBS,
- u'GlueCompressor': GLU_BOBS}
+ u'GlueCompressor': GLU_BOBS,
+ u'Pedal': PDL_BOBS,
+ u'DrumBuss': DRB_BOBS,
+ u'Echo': ECH_BOBS,
+ u'InstrumentVector': WVT_BOBS}
 BANK_NAME_DICT = {u'AudioEffectGroupDevice': RCK_BNK_NAMES,
  u'MidiEffectGroupDevice': RCK_BNK_NAMES,
  u'InstrumentGroupDevice': RCK_BNK_NAMES,
@@ -461,7 +518,11 @@ BANK_NAME_DICT = {u'AudioEffectGroupDevice': RCK_BNK_NAMES,
  u'Amp': AMP_BNK_NAMES,
  u'GlueCompressor': GLU_BNK_NAMES,
  u'AutoFilter': AFL_BNK_NAMES,
- u'StereoGain': UTL_BNK_NAMES}
+ u'StereoGain': UTL_BNK_NAMES,
+ u'DrumBuss': DRB_BANK_NAMES,
+ u'Echo': ECH_BANK_NAMES,
+ u'Pedal': PDL_BANK_NAMES,
+ u'InstrumentVector': WVT_BANK_NAMES}
 MAX_DEVICES = (u'MxDeviceInstrument', u'MxDeviceAudioEffect', u'MxDeviceMidiEffect')
 
 def device_parameters_to_map(device):

@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from collections import namedtuple
 from functools import partial
+import re
 from MidiRemoteScript import MutableVector
 from ableton.v2.base import EventError, const, listenable_property, listens, liveobj_valid
 from ableton.v2.control_surface import DeviceProvider as DeviceProviderBase
@@ -231,28 +232,34 @@ class DeviceComponentWithTrackColorViewData(GenericDeviceComponent):
                 self._update_visualisation_view_data({u'TrackColor': track_color})
 
 
-def get_parameter_name_to_envelope_features_map(envelope_prefixes):
+ENVELOPE_FEATURES_FOR_PARAMETER = {u'Attack': set([u'AttackLine', u'AttackNode', u'DecayLine']),
+ u'Decay': set([u'DecayLine', u'DecayNode', u'SustainLine']),
+ u'Sustain': set([u'DecayLine',
+              u'DecayNode',
+              u'SustainLine',
+              u'SustainNode',
+              u'ReleaseLine']),
+ u'Release': set([u'ReleaseLine', u'ReleaseNode']),
+ u'Init': set([u'InitNode', u'AttackLine']),
+ u'Initial': set([u'InitNode', u'AttackLine']),
+ u'Peak': set([u'AttackLine', u'AttackNode', u'DecayLine']),
+ u'End': set([u'ReleaseLine', u'ReleaseNode']),
+ u'Final': set([u'ReleaseLine', u'ReleaseNode']),
+ u'A Slope': set([u'AttackLine']),
+ u'D Slope': set([u'DecayLine']),
+ u'R Slope': set([u'ReleaseLine']),
+ u'Fade In': set([u'FadeInLine', u'FadeInNode', u'SustainLine']),
+ u'Fade Out': set([u'FadeOutLine', u'FadeOutNode'])}
 
-    def parameter_names_for_feature(feature_name):
-        return [ (prefix + u' ' + feature_name if prefix is not u'' else feature_name) for prefix in envelope_prefixes ]
+def normalize_envelope_parameter_name(parameter_name, envelope_prefixes):
+    find_envelope_prefix = re.compile(u'^({}) '.format(u'|'.join(envelope_prefixes)))
+    return re.sub(find_envelope_prefix, u'', parameter_name)
 
-    feature_parameter_names = {u'InitNode': parameter_names_for_feature(u'Init'),
-     u'AttackLine': parameter_names_for_feature(u'Init') + parameter_names_for_feature(u'Attack') + parameter_names_for_feature(u'Peak') + parameter_names_for_feature(u'A. Slope'),
-     u'FadeInLine': parameter_names_for_feature(u'Fade In'),
-     u'AttackNode': parameter_names_for_feature(u'Attack') + parameter_names_for_feature(u'Peak'),
-     u'FadeInNode': parameter_names_for_feature(u'Fade In'),
-     u'DecayLine': parameter_names_for_feature(u'Attack') + parameter_names_for_feature(u'Peak') + parameter_names_for_feature(u'Decay') + parameter_names_for_feature(u'Sustain') + parameter_names_for_feature(u'D. Slope'),
-     u'DecayNode': parameter_names_for_feature(u'Decay') + parameter_names_for_feature(u'Sustain'),
-     u'SustainLine': parameter_names_for_feature(u'Decay') + parameter_names_for_feature(u'Sustain') + parameter_names_for_feature(u'Fade In'),
-     u'SustainNode': parameter_names_for_feature(u'Sustain'),
-     u'ReleaseLine': parameter_names_for_feature(u'Sustain') + parameter_names_for_feature(u'Release') + parameter_names_for_feature(u'End') + parameter_names_for_feature(u'R. Slope'),
-     u'FadeOutLine': parameter_names_for_feature(u'Fade Out'),
-     u'ReleaseNode': parameter_names_for_feature(u'Release') + parameter_names_for_feature(u'End'),
-     u'FadeOutNode': parameter_names_for_feature(u'Fade Out')}
-    parameter_name_features = {}
-    for feature_name, parameter_names in feature_parameter_names.iteritems():
-        for parameter_name in parameter_names:
-            parameter_feature_set = parameter_name_features.setdefault(parameter_name, set())
-            parameter_feature_set.add(feature_name)
 
-    return parameter_name_features
+def extend_with_envelope_features_for_parameter(features, parameter, envelope_prefixes):
+    if liveobj_valid(parameter):
+        normalized_name = normalize_envelope_parameter_name(parameter.name, envelope_prefixes)
+        try:
+            features |= ENVELOPE_FEATURES_FOR_PARAMETER[normalized_name]
+        except KeyError:
+            pass

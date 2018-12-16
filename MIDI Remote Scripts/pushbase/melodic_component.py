@@ -166,10 +166,8 @@ class MelodicComponent(MessengerModesComponent):
 
     @listenable_property
     def editable_pitches(self):
-        if self.sequence_modes.selected_mode == u'sequence':
-            return [ editor.editing_notes[0] for editor in self._note_editors if len(editor.editing_notes) > 0 ]
-        else:
-            return [ editor.editing_notes[0] for editor in self._note_editors[0:7] if len(editor.editing_notes) > 0 ]
+        note_editor_range = self._note_editors if self.sequence_modes.selected_mode == u'sequence' else self._note_editors[0:7]
+        return [ editor.editing_notes[0] for editor in note_editor_range if len(editor.editing_notes) > 0 ]
 
     @listenable_property
     def step_length(self):

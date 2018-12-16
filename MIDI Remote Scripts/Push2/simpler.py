@@ -1,11 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
+import re
 from ableton.v2.base import depends, find_if, listenable_property, listens, liveobj_valid
+from pushbase.decoration import NotifyingList, get_parameter_by_name
 from pushbase.internal_parameter import EnumWrappingParameter
 from pushbase.message_box_component import Messenger
 from pushbase.simpler_decoration import SimplerDeviceDecorator as SimplerDeviceDecoratorBase
-from .device_component import DeviceComponentWithTrackColorViewData, get_parameter_name_to_envelope_features_map, make_vector
-from .device_decoration import DeviceSwitchOption, get_parameter_by_name, NotifyingList, SimplerPositions, WaveformNavigationParameter
+from .device_component import DeviceComponentWithTrackColorViewData, extend_with_envelope_features_for_parameter, make_vector
+from .device_decoration import DeviceSwitchOption, SimplerPositions, WaveformNavigationParameter
 from .device_options import DeviceTriggerOption, DeviceOnOffOption
 from .real_time_channel import RealTimeDataComponent
 from .visualisation_settings import VisualisationGuides
@@ -215,14 +217,13 @@ class SimplerDeviceDecorator(SimplerDeviceDecoratorBase, Messenger):
 class SimplerDeviceComponent(DeviceComponentWithTrackColorViewData):
     ZOOM_SENSITIVE_PARAMETERS = (u'S Start', u'S Length', u'Start', u'End', u'Nudge')
     PARAMETERS_RELATIVE_TO_ACTIVE_AREA = (u'S Start', u'S Length')
+    ENVELOPE_PREFIXES = [u'Ve',
+     u'Fe',
+     u'Pe',
+     u'']
 
     def __init__(self, *a, **k):
         super(SimplerDeviceComponent, self).__init__(*a, **k)
-        envelope_prefixes = [u'Ve',
-         u'Fe',
-         u'Pe',
-         u'']
-        self._parameter_to_envelope_features = get_parameter_name_to_envelope_features_map(envelope_prefixes)
         self._playhead_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'playhead'))
         self._waveform_real_time_data = self.register_component(RealTimeDataComponent(channel_type=u'waveform'))
         self.__on_playhead_channel_changed.subject = self._playhead_real_time_data
@@ -381,14 +382,12 @@ class SimplerDeviceComponent(DeviceComponentWithTrackColorViewData):
          u'FadeInLine',
          u'FadeOutLine'])
         for parameter in self.parameters:
-            if parameter.name in self._parameter_to_envelope_features:
-                shown_features |= self._parameter_to_envelope_features[parameter.name]
+            extend_with_envelope_features_for_parameter(shown_features, parameter, self.ENVELOPE_PREFIXES)
 
         touched_parameters = [ self.parameters[button.index] for button in self.parameter_touch_buttons if button.is_pressed ]
         focused_features = set()
         for parameter in touched_parameters:
-            if parameter.name in self._parameter_to_envelope_features:
-                focused_features |= self._parameter_to_envelope_features[parameter.name]
+            extend_with_envelope_features_for_parameter(focused_features, parameter, self.ENVELOPE_PREFIXES)
 
         return {u'EnvelopeVisible': self._envelope_visible,
          u'EnvelopeName': [u'Volume', u'Filter', u'Pitch'][self.selected_envelope_type],

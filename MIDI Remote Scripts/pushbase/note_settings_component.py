@@ -447,7 +447,7 @@ class NoteEditorSettingsComponent(ModesComponent):
 
     @encoders.released
     def encoders(self, encoder):
-        if not self.is_touched and not self._is_step_held():
+        if not self.is_touched and not self._is_step_held() and not self._is_edit_all_notes_active():
             self._hide_settings()
         if self._can_notify_is_touched(encoder):
             self.notify_is_touched()
@@ -460,6 +460,9 @@ class NoteEditorSettingsComponent(ModesComponent):
         if self.is_enabled():
             return self._settings_modes.selected_mode != u'note_settings' or encoder.index >= self.encoders.control_count - self.settings.number_of_settings
         return False
+
+    def _is_edit_all_notes_active(self):
+        return find_if(lambda e: e.modify_all_notes_enabled, self._editors) != None
 
     def _notify_modification(self):
         for editor in self._editors:
@@ -480,8 +483,7 @@ class NoteEditorSettingsComponent(ModesComponent):
             for i in xrange(4):
                 self.settings.set_min_max(i, min_max_values[i] if min_max_values else None)
 
-            edit_all_notes_active = find_if(lambda e: e.modify_all_notes_enabled, self._editors) != None
-            self.settings.set_info_message(u'Tweak to add note' if not edit_all_notes_active and not min_max_values else u'')
+            self.settings.set_info_message(u'Tweak to add note' if not self._is_edit_all_notes_active() and not min_max_values else u'')
 
     def _show_settings(self):
         if self.selected_mode != u'enabled':

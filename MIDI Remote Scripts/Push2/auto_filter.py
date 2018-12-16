@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import EventObject, listens, liveobj_valid
-from pushbase.decoration import LiveObjectDecorator
-from .device_decoration import DeviceSwitchOption, get_parameter_by_name
+from pushbase.decoration import LiveObjectDecorator, get_parameter_by_name
+from .device_decoration import DeviceSwitchOption
 from .device_component import DeviceComponentWithTrackColorViewData
 from .visualisation_settings import VisualisationGuides
 

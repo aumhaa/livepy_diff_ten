@@ -11,7 +11,7 @@ from _Framework.ModesComponent import ModesComponent, LayerMode, AddLayerMode, R
 from _Framework.InputControlElement import MIDI_NOTE_TYPE, MIDI_CC_TYPE
 from _Framework.ComboElement import ComboElement
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
-from .Colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
+from .Colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
 from .SkinDefault import make_default_skin
 from .SpecialMidiMap import SpecialMidiMap, make_button, make_multi_button, make_slider
 from .BackgroundComponent import ModifierBackgroundComponent, BackgroundComponent
@@ -192,7 +192,7 @@ class Launchpad_Pro(IdentifiableControlSurface, OptimizedControlSurface):
     def _create_session(self):
         self._session = SessionComponent(NUM_TRACKS, NUM_SCENES, auto_name=True, is_enabled=False, enable_skinning=True, layer=Layer(track_bank_left_button=self._midimap[u'Arrow_Left_Button'], track_bank_right_button=self._midimap[u'Arrow_Right_Button'], scene_bank_up_button=self._midimap[u'Arrow_Up_Button'], scene_bank_down_button=self._midimap[u'Arrow_Down_Button']))
         self._session.set_enabled(True)
-        self._session.set_rgb_mode(CLIP_COLOR_TABLE, RGB_COLOR_TABLE)
+        self._session.set_rgb_mode(LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE)
         SpecialClipSlotComponent.quantization_component = self._actions_component
         for scene_index in xrange(NUM_SCENES):
             scene = self._session.scene(scene_index)

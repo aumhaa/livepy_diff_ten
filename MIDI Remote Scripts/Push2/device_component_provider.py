@@ -7,14 +7,14 @@ from .echo import EchoDeviceComponent
 from .eq8 import Eq8DeviceComponent
 from .operator import OperatorDeviceComponent
 from .simpler import SimplerDeviceComponent
-from .wavetable import InstrumentVectorDeviceComponent
+from .wavetable import WavetableDeviceComponent
 from .device_component import GenericDeviceComponent
 from .real_time_channel import RealTimeDataComponent
 DEVICE_COMPONENT_MODES = {u'Generic': GenericDeviceComponent,
  u'OriginalSimpler': SimplerDeviceComponent,
  u'Eq8': Eq8DeviceComponent,
  u'Compressor2': CompressorDeviceComponent,
- u'InstrumentVector': InstrumentVectorDeviceComponent,
+ u'InstrumentVector': WavetableDeviceComponent,
  u'Operator': OperatorDeviceComponent,
  u'Echo': EchoDeviceComponent,
  u'AutoFilter': AutoFilterDeviceComponent}
@@ -46,6 +46,7 @@ class DeviceComponentProvider(ModesComponent):
         self.selected_mode = u'Generic'
         self.__on_provided_device_changed.subject = device_provider
         self.__on_provided_device_changed()
+        self.__on_selected_track_changed.subject = self.song.view
 
     def set_device(self, device):
         self._device_provider.device = device
@@ -107,6 +108,10 @@ class DeviceComponentProvider(ModesComponent):
 
     @listens(u'attached')
     def __on_visualisation_attached(self):
+        self.device_component.initialize_visualisation_view_data()
+
+    @listens(u'selected_track')
+    def __on_selected_track_changed(self):
         self.device_component.initialize_visualisation_view_data()
 
     @listens(u'channel_id')

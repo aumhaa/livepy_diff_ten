@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import EventObject
-from pushbase.decoration import LiveObjectDecorator
+from pushbase.decoration import LiveObjectDecorator, NotifyingList, get_parameter_by_name
 from pushbase.internal_parameter import EnumWrappingParameter
-from .device_decoration import DeviceOnOffOption, DeviceSwitchOption, get_parameter_by_name, NotifyingList
+from .device_decoration import DeviceOnOffOption, DeviceSwitchOption
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData
 from .visualisation_settings import VisualisationGuides
 

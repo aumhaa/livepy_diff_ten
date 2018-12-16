@@ -8,7 +8,7 @@ from ableton.v2.control_surface.elements import ButtonMatrixElement, EncoderElem
 from ableton.v2.control_surface.midi import CC_STATUS
 from ableton.v2.control_surface.mode import LayerMode
 from .button import ButtonElement
-from .colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE, Rgb
+from .colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE, Rgb
 from .mode import ModesComponent
 from .element_translator import ElementTranslator
 from .skin import skin
@@ -76,7 +76,7 @@ class Blocks(ControlSurface):
     def _create_session(self):
         self._session_ring = SessionRingComponent(num_tracks=NUM_TRACKS, num_scenes=NUM_SCENES, is_enabled=False, name=u'Session_Ring')
         self._session = SessionComponent(session_ring=self._session_ring, name=u'Session')
-        self._session.set_rgb_mode(CLIP_COLOR_TABLE, RGB_COLOR_TABLE)
+        self._session.set_rgb_mode(LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE)
 
     def _create_navigation(self):
         self._session_navigation = SessionNavigationComponent(session_ring=self._session_ring, name=u'Session_Navigation')

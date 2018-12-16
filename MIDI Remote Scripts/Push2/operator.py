@@ -1,10 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from collections import namedtuple
+import re
 from ableton.v2.base import const, EventObject, listenable_property, listens, liveobj_valid
-from pushbase.decoration import LiveObjectDecorator
+from pushbase.decoration import LiveObjectDecorator, NotifyingList, get_parameter_by_name
 from pushbase.internal_parameter import EnumWrappingParameter
-from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData, get_parameter_name_to_envelope_features_map, make_vector
-from .device_decoration import DeviceSwitchOption, get_parameter_by_name, NotifyingList
+from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData, extend_with_envelope_features_for_parameter, make_vector
+from .device_decoration import DeviceSwitchOption
 from .visualisation_settings import VisualisationGuides
 BankConfiguration = namedtuple(u'BankConfiguration', [u'name_function', u'button_range'])
 
@@ -75,6 +76,13 @@ class OperatorDeviceComponent(DeviceComponentWithTrackColorViewData):
     FILTER_PARAMETER_NAMES = [u'Filter Type', u'Filter Freq', u'Filter Res']
     FILTER_BANK = 2
     LARGE_PARAMETERS_LIST = [False] * 8
+    ENVELOPE_PREFIXES = [u'Ae',
+     u'Be',
+     u'Ce',
+     u'De',
+     u'Fe',
+     u'Le',
+     u'Pe']
 
     def __init__(self, *a, **k):
         super(OperatorDeviceComponent, self).__init__(*a, **k)
@@ -83,14 +91,6 @@ class OperatorDeviceComponent(DeviceComponentWithTrackColorViewData):
          3: BankConfiguration(const(u'Filter Env.'), ButtonRange(2, 5)),
          6: BankConfiguration(const(u'LFO'), ButtonRange(2, 5)),
          8: BankConfiguration(const(u'Pitch'), ButtonRange(2, 5))}
-        envelope_prefixes = [u'Ae',
-         u'Be',
-         u'Ce',
-         u'De',
-         u'Fe',
-         u'Le',
-         u'Pe']
-        self._parameter_name_features = get_parameter_name_to_envelope_features_map(envelope_prefixes)
 
     def _parameter_touched(self, parameter):
         self._update_visualisation_view_data(self._envelope_visualisation_data())
@@ -129,18 +129,12 @@ class OperatorDeviceComponent(DeviceComponentWithTrackColorViewData):
          u'DecayLine',
          u'SustainLine',
          u'ReleaseLine'])
-        for parameter in self.parameters:
-            if liveobj_valid(parameter.parameter):
-                name = parameter.parameter.name
-                if name in self._parameter_name_features:
-                    shown_features |= self._parameter_name_features[name]
+        for parameter_info in self.parameters:
+            extend_with_envelope_features_for_parameter(shown_features, parameter_info.parameter, self.ENVELOPE_PREFIXES)
 
         focused_features = set()
-        for parameter in touched_parameters:
-            if liveobj_valid(parameter.parameter):
-                name = parameter.parameter.name
-                if name in self._parameter_name_features:
-                    focused_features |= self._parameter_name_features[name]
+        for parameter_info in touched_parameters:
+            extend_with_envelope_features_for_parameter(focused_features, parameter_info.parameter, self.ENVELOPE_PREFIXES)
 
         return {u'EnvelopeName': config.name_function(),
          u'EnvelopeLeft': VisualisationGuides.light_left_x(config.button_range.left_index),

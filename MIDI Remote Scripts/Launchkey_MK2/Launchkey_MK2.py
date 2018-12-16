@@ -13,7 +13,7 @@ from _Framework.BackgroundComponent import BackgroundComponent
 from _Framework.TransportComponent import TransportComponent
 from Launchkey.SessionNavigationComponent import SessionNavigationComponent
 from .Skin import make_skin
-from .Colors import RGB_COLOR_TABLE, CLIP_COLOR_TABLE
+from .Colors import RGB_COLOR_TABLE, LIVE_COLORS_TO_MIDI_VALUES
 from .ControlElementUtils import make_button, make_encoder, make_slider
 from .ModeUtils import MomentaryBehaviour, SkinableBehaviourMixin, DisablingModesComponent
 from .SessionComponent import SessionComponent
@@ -78,7 +78,7 @@ class Launchkey_MK2(OptimizedControlSurface):
 
     def _create_session(self):
         self._session = SessionComponent(name=u'Session', is_enabled=False, num_tracks=self._top_pad_row.width(), num_scenes=self._top_pad_row.height(), enable_skinning=True, layer=Layer(clip_launch_buttons=self._top_pad_row, scene_launch_buttons=ButtonMatrixElement(rows=[[self._top_launch_button]]), stop_track_clip_buttons=self._bottom_pad_row, stop_all_clips_button=self._bottom_launch_button))
-        self._session.set_rgb_mode(CLIP_COLOR_TABLE, RGB_COLOR_TABLE)
+        self._session.set_rgb_mode(LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE)
         self._session.set_mixer(self._mixer)
         self._session.set_enabled(True)
 

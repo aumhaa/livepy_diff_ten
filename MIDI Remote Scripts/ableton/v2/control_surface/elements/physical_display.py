@@ -133,7 +133,7 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
     u"""
     A physical character based display control element.
     """
-    _ascii_translations = {u'0': 48,
+    ascii_translations = {u'0': 48,
      u'1': 49,
      u'2': 50,
      u'3': 51,
@@ -227,7 +227,7 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
     def __init__(self, *a, **k):
         self._central_resource = _DisplayCentralResource(root_display=self, on_received_callback=self._on_central_resource_received, on_lost_callback=self._on_central_resource_lost)
         super(PhysicalDisplayElement, self).__init__(resource_type=self.nested_display_resource_factory(self), *a, **k)
-        self._translation_table = self._ascii_translations
+        self._translation_table = self.ascii_translations
         self._message_header = None
         self._message_tail = None
         self._message_clear_all = None
@@ -333,6 +333,11 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
 
     def _translate_string(self, string):
         return map(self._translate_char, string)
+
+    @staticmethod
+    def can_be_translated(translation_table, string):
+        keys = translation_table.keys()
+        return any([ char in keys for char in string ])
 
     def _build_display_message(self, display):
         message_string = display.display_string
