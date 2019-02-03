@@ -56,7 +56,7 @@ PARAMETER_SENSITIVITIES = {u'UltraAnalog': {u'OSC1 Octave': {DEFAULT_SENSITIVITY
                       u'Filt < Vel': {DEFAULT_SENSITIVITY_KEY: 0.5},
                       u'Filt < Key': {DEFAULT_SENSITIVITY_KEY: 0.5},
                       u'Filt < LFO': {DEFAULT_SENSITIVITY_KEY: 0.5},
-                      u'FE < ENV': {DEFAULT_SENSITIVITY_KEY: 0.5},
+                      u'Fe < Env': {DEFAULT_SENSITIVITY_KEY: 0.5},
                       u'LR < Key': {DEFAULT_SENSITIVITY_KEY: 0.5},
                       u'Vol < LFO': {DEFAULT_SENSITIVITY_KEY: 0.5},
                       u'Pan < RND': {DEFAULT_SENSITIVITY_KEY: 0.5},

@@ -12,8 +12,6 @@ class SelectionLinkedSessionRingComponent(SessionRingComponent):
     @listens(u'selected_track')
     def __on_selected_track_changed(self):
         selected_track = self.song.view.selected_track
-        if selected_track == self.song.master_track:
-            return
         if selected_track not in self.controlled_tracks():
             all_tracks = list(self.tracks_to_use())
             self.track_offset = all_tracks.index(selected_track)

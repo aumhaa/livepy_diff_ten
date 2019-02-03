@@ -4,11 +4,12 @@ from functools import partial
 import Live
 from ableton.v2.base import const, inject, liveobj_valid, listens
 from ableton.v2.control_surface import BankingInfo, ControlSurface, DeviceBankRegistry, DeviceDecoratorFactory, InputControlElement, Layer, MIDI_CC_TYPE, PercussionInstrumentFinder
-from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, DrumGroupComponent, RightAlignTracksTrackAssigner, SessionRecordingComponent, SessionRingComponent
+from ableton.v2.control_surface.components import AutoArmComponent, DrumGroupComponent, RightAlignTracksTrackAssigner, SessionRecordingComponent, SessionRingComponent
 from ableton.v2.control_surface.default_bank_definitions import BANK_DEFINITIONS
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, ModesComponent, NullModes, ReenterBehaviour, SetAttributeMode
 from . import sysex
 from .actions import ActionsComponent
+from .background import BackgroundComponent
 from .clip_actions import ClipActionsComponent
 from .colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE, Rgb
 from .device import DeviceComponent
@@ -68,6 +69,10 @@ class SLMkIII(ControlSurface):
         self.__on_record_mode_changed.subject = self.song
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])
         self._set_feedback_velocity()
+
+    def disconnect(self):
+        self._auto_arm.set_enabled(False)
+        super(SLMkIII, self).disconnect()
 
     def port_settings_changed(self):
         self._switch_display_layout(sysex.KNOB_SCREEN_LAYOUT_BYTE, force=True)

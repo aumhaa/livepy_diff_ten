@@ -2,20 +2,28 @@ from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens, liveobj_valid
 from ableton.v2.control_surface.components import ChannelStripComponent as ChannelStripComponentBase
 from ableton.v2.control_surface.elements import DisplayDataSource
-from .send_value_control import SendValueControl
+from .control import SendValueControl
 from .sysex import DEFAULT_TRACK_TYPE_VALUE, EMPTY_TRACK_TYPE_VALUE, MASTER_TRACK_TYPE_VALUE
 
 class ChannelStripComponent(ChannelStripComponentBase):
     track_type_display = SendValueControl()
+    track_selection_display = SendValueControl()
     track_mute_display = SendValueControl()
     track_solo_display = SendValueControl()
-    track_selection_display = SendValueControl()
 
     def __init__(self, *a, **k):
         super(ChannelStripComponent, self).__init__(*a, **k)
         self._track_volume_data_source = DisplayDataSource()
         self._track_panning_data_source = DisplayDataSource()
         self.__on_selected_track_changed.subject = self.song.view
+
+    @property
+    def track_volume_data_source(self):
+        return self._track_volume_data_source
+
+    @property
+    def track_panning_data_source(self):
+        return self._track_panning_data_source
 
     def set_track(self, track):
         super(ChannelStripComponent, self).set_track(track)
@@ -25,14 +33,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
         self._update_track_volume_data_source()
         self._update_track_panning_data_source()
         self._update_track_type_display()
-
-    @property
-    def track_volume_data_source(self):
-        return self._track_volume_data_source
-
-    @property
-    def track_panning_data_source(self):
-        return self._track_panning_data_source
 
     def _on_mute_changed(self):
         self.track_mute_display.value = int(self._track.mute) if liveobj_valid(self._track) and self._track != self.song.master_track else 0

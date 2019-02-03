@@ -7,4 +7,4 @@ class BackgroundComponent(BackgroundComponentBase):
     def _clear_control(self, name, control):
         super(BackgroundComponent, self)._clear_control(name, control)
         if control:
-            self._control_slots[name] = self.register_slot(control, lambda *a, **k: nop(control, *a, **k), u'value')
+            self._control_slots[name] = self.register_slot(control, nop, u'value')

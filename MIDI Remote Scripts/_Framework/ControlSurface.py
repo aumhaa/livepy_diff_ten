@@ -68,7 +68,7 @@ class ControlSurface(Subject, SlotManager):
         if publish_self:
             publish_control_surface(self)
         self._c_instance = c_instance
-        self.log_message(u'Initialising...')
+        self.log_message(u'Initializing...')
         self._pad_translations = None
         self._suggested_input_port = str(u'')
         self._suggested_output_port = str(u'')
@@ -183,12 +183,12 @@ class ControlSurface(Subject, SlotManager):
 
     def suggest_input_port(self):
         u""" Live -> Script: Live can ask for the name of the script's
-        prefered input port"""
+        preferred input port"""
         return self._suggested_input_port
 
     def suggest_output_port(self):
         u""" Live -> Script: Live can ask for the name of the script's
-        prefered output port"""
+        preferred output port"""
         return self._suggested_output_port
 
     def suggest_map_mode(self, cc_no, channel):
@@ -496,7 +496,7 @@ class ControlSurface(Subject, SlotManager):
     def component_guard(self):
         u"""
         Context manager that guards user code.  This prevents
-        unnecesary updating and enables several optimisations.  Should
+        unnecessary updating and enables several optimisations.  Should
         be used to guard calls to components or control elements.
         """
         if not self._in_component_guard:

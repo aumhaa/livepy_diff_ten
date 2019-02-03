@@ -27,6 +27,10 @@ class MixerComponent(MixerComponentBase):
         for strip, display in izip_longest(self._channel_strips, displays or []):
             strip.track_type_display.set_control_element(display)
 
+    def set_track_selection_displays(self, displays):
+        for strip, display in izip_longest(self._channel_strips, displays or []):
+            strip.track_selection_display.set_control_element(display)
+
     def set_track_mute_displays(self, displays):
         for strip, display in izip_longest(self._channel_strips, displays or []):
             strip.track_mute_display.set_control_element(display)
@@ -34,10 +38,6 @@ class MixerComponent(MixerComponentBase):
     def set_track_solo_displays(self, displays):
         for strip, display in izip_longest(self._channel_strips, displays or []):
             strip.track_solo_display.set_control_element(display)
-
-    def set_track_selection_displays(self, displays):
-        for strip, display in izip_longest(self._channel_strips, displays or []):
-            strip.track_selection_display.set_control_element(display)
 
     def _create_strip(self):
         return ChannelStripComponent(parent=self)

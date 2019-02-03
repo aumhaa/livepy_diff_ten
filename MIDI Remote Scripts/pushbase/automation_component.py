@@ -77,10 +77,12 @@ class AutomationComponent(DeviceParameterComponent):
         return parameter.str_for_value(self.parameter_to_value(parameter))
 
     def parameter_to_value(self, parameter):
-        if self._clip and len(self.selected_time) > 0:
+        if self._clip and len(self.selected_time) > 0 and liveobj_valid(parameter):
             envelope = self._clip.automation_envelope(parameter)
             if liveobj_valid(envelope):
                 return self._value_at_time(envelope, self.selected_time[0])
+            else:
+                return parameter.value
         return 0.0
 
     def _value_at_time(self, envelope, time_range):
@@ -100,6 +102,8 @@ class AutomationComponent(DeviceParameterComponent):
         if self._can_edit_clip_envelope(index):
             param = self._parameter_for_index(parameters, index)
             envelope = self._clip.automation_envelope(param)
+            if not liveobj_valid(envelope):
+                envelope = self._clip.create_automation_envelope(param)
             if liveobj_valid(envelope):
                 if param.automation_state == AutomationState.overridden:
                     param.re_enable_automation()
@@ -117,12 +121,24 @@ class AutomationComponent(DeviceParameterComponent):
             self._update_parameter_floats()
 
     def _update_parameter_floats(self):
+        self._parameter_floats = []
         if self._clip and self.is_enabled():
             parameters = self.parameters
-            envelopes = [ (self._clip.automation_envelope(self._parameter_for_index(parameters, index)) if param != None else None) for index, param in enumerate(parameters) ]
-            self._parameter_floats = [ [ (self._value_at_time(envelope, step) if envelope != None else 0.0) for envelope in envelopes ] for step in self.selected_time ]
-        else:
-            self._parameter_floats = []
+            for step in self.selected_time:
+                step_parameter_floats = []
+                for index, param in enumerate(parameters):
+                    if param is None:
+                        value = 0.0
+                    else:
+                        parameter = self._parameter_for_index(parameters, index)
+                        envelope = self._clip.automation_envelope(parameter)
+                        if liveobj_valid(envelope):
+                            value = self._value_at_time(envelope, step)
+                        else:
+                            value = parameter.value
+                    step_parameter_floats.append(value)
+
+                self._parameter_floats.append(step_parameter_floats)
 
     def _insert_step(self, time_range, time_index, param_index, envelope, value):
         param = self._parameter_for_index(self.parameters, param_index)

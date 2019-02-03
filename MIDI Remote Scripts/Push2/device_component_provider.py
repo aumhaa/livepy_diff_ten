@@ -28,10 +28,12 @@ class DeviceComponentProvider(ModesComponent):
     handle behavior specific to the given device.
     """
     __events__ = (u'device',)
+    DEFAULT_SHRINK_PARAMETERS = [False] * 8
 
     @depends(device_provider=None)
     def __init__(self, device_component_layer = None, device_decorator_factory = None, banking_info = None, device_bank_registry = None, device_provider = None, delete_button = None, decoupled_parameter_list_change_notifications = False, *a, **k):
         super(DeviceComponentProvider, self).__init__(*a, **k)
+        self._is_drum_pad_selected = False
         self._device_provider = device_provider
         self._visualisation_real_time_data = RealTimeDataComponent(channel_type=u'visualisation', parent=self)
         self.__on_visualisation_attached.subject = self._visualisation_real_time_data
@@ -63,6 +65,12 @@ class DeviceComponentProvider(ModesComponent):
         self.notify_shrink_parameters()
         self._visualisation_real_time_data.set_data(device)
 
+    def set_drum_pad_selected(self, is_selected):
+        if self._is_drum_pad_selected != is_selected:
+            self._is_drum_pad_selected = is_selected
+            self.notify_shrink_parameters()
+            self.notify_visualisation_real_time_channel_id()
+
     @property
     def device_component(self):
         return self._device_component_modes[self.selected_mode or u'Generic']
@@ -73,7 +81,9 @@ class DeviceComponentProvider(ModesComponent):
 
     @listenable_property
     def shrink_parameters(self):
-        return self.device_component.shrink_parameters
+        if not self._is_drum_pad_selected:
+            return self.device_component.shrink_parameters
+        return self.DEFAULT_SHRINK_PARAMETERS
 
     @listenable_property
     def options(self):
@@ -120,7 +130,7 @@ class DeviceComponentProvider(ModesComponent):
 
     @listenable_property
     def visualisation_real_time_channel_id(self):
-        if self.device_component.visualisation_visible:
+        if self.device_component.visualisation_visible and not self._is_drum_pad_selected:
             return self._visualisation_real_time_data.channel_id
 
     @listens(u'visualisation_visible')

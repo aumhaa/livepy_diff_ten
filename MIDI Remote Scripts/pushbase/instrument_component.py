@@ -25,6 +25,8 @@ class NoteLayout(EventObject):
         self._is_fixed = self._preferences.setdefault(u'is_fixed', False)
         self._interval = self._song.get_data(u'push-note-layout-interval', 3)
         self._is_horizontal = self._song.get_data(u'push-note-layout-horizontal', True)
+        self.__on_root_note_changed.subject = self._song
+        self.__on_scale_name_changed.subject = self._song
 
     @property
     def notes(self):
@@ -37,7 +39,6 @@ class NoteLayout(EventObject):
     @root_note.setter
     def root_note(self, root_note):
         self._song.root_note = root_note
-        self.notify_root_note(root_note)
 
     @listenable_property
     def scale(self):
@@ -93,6 +94,15 @@ class NoteLayout(EventObject):
 
     def _get_scale_from_name(self, name):
         return find_if(lambda scale: scale.name == name, SCALES) or DEFAULT_SCALE
+
+    @listens(u'root_note')
+    def __on_root_note_changed(self):
+        self.notify_root_note(self._song.root_note)
+
+    @listens(u'scale_name')
+    def __on_scale_name_changed(self):
+        self._scale = self._get_scale_from_name(self._song.scale_name)
+        self.notify_scale(self._scale)
 
 
 class InstrumentComponent(PlayableComponent, Slideable, Messenger):

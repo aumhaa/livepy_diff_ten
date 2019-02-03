@@ -3,6 +3,7 @@ from itertools import izip, count
 import Live
 from ableton.v2.base import forward_property, listens, listens_group, liveobj_changed, liveobj_valid
 from ableton.v2.control_surface import Component
+from ableton.v2.control_surface.components import UndoRedoComponent as UndoRedoComponentBase
 from ableton.v2.control_surface.control import control_list, ButtonControl
 from ableton.v2.control_surface.elements import DisplayDataSource
 from .action_with_options_component import ActionWithSettingsComponent
@@ -421,18 +422,14 @@ class StopClipComponent(Component):
         button.track = track
 
 
-class UndoRedoComponent(Component, Messenger):
-    undo_button = ButtonControl()
-    redo_button = ButtonControl()
+class UndoRedoComponent(UndoRedoComponentBase, Messenger):
 
-    @undo_button.pressed
-    def undo_button(self, button):
+    def _undo(self):
+        super(UndoRedoComponent, self)._undo()
         if self.song.can_undo:
-            self.song.undo()
             self.show_notification(MessageBoxText.UNDO)
 
-    @redo_button.pressed
-    def redo_button(self, button):
+    def _redo(self):
+        super(UndoRedoComponent, self)._redo()
         if self.song.can_redo:
-            self.song.redo()
             self.show_notification(MessageBoxText.REDO)

@@ -38,7 +38,7 @@ class MixerComponent(MixerComponentBase):
         for index, track in enumerate(tracks):
             if liveobj_valid(track):
                 sends = track.mixer_device.sends
-                if send_index < len(sends):
+                if send_index != None and send_index < len(sends):
                     controlled_sends[index] = sends[send_index]
 
         return controlled_sends
@@ -90,11 +90,13 @@ class MixerComponent(MixerComponentBase):
         self._update_send_value_display()
 
     def _update_send_navigation_buttons(self):
-        self.send_up_button.enabled = self.send_index > 0
-        self.send_down_button.enabled = self.send_index < self.num_sends - 1
+        send_index = self.send_index
+        self.send_up_button.enabled = send_index != None and send_index > 0
+        self.send_down_button.enabled = send_index != None and send_index < self.num_sends - 1
 
     def _update_send_index_display(self):
-        self.send_index_display[0] = u'Send ' + chr(self.send_index + 65)
+        send_index = self.send_index
+        self.send_index_display[0] = u'Send ' + chr(send_index + 65) if send_index != None else u''
 
     def _update_send_value_display(self):
         for index, send in enumerate(self.controlled_sends):

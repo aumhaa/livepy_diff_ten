@@ -436,6 +436,7 @@ class Push2(IdentifiableControlSurface, PushBase):
             self._drum_pad_parameter_component.drum_pad = selected_pad
         self._device_or_pad_parameter_chooser.selected_mode = new_mode
         self._note_editor_settings_component.automation.set_drum_pad_selected(self._device_navigation.is_drum_pad_selected)
+        self._device_component.set_drum_pad_selected(self._device_navigation.is_drum_pad_selected)
 
     def _init_browser(self):
         self._browser_component_mode = BrowserComponentMode(weakref.ref(self._model), self._create_browser)
