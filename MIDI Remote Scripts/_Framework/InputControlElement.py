@@ -1,13 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import contextlib
+import logging
 from . import Task
-from .Debug import debug_print
 from .Dependency import depends
 from .Disconnectable import Disconnectable
 from .NotifyingControlElement import NotifyingControlElement
 from .Signal import Signal
 from .SubjectSlot import SubjectEvent
 from .Util import in_range, const, nop
+logger = logging.getLogger(__name__)
 MIDI_NOTE_TYPE = 0
 MIDI_CC_TYPE = 1
 MIDI_PB_TYPE = 2
@@ -422,7 +423,7 @@ class InputControlElement(NotifyingControlElement):
         message += u') '
         message += u'received value ' if is_input else u'sent value '
         message += str(value)
-        debug_print(message)
+        logger.debug(message)
 
     @property
     def _last_sent_value(self):

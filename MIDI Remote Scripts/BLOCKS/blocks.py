@@ -65,8 +65,7 @@ class Blocks(ControlSurface):
         self._nav_right_button = self._pads_raw[93]
         self._mode_cycle_button = ButtonElement(True, MIDI_CC_TYPE, 0, 127, skin=skin, name=u'Mode_Button')
         self._drum_pads = ButtonMatrixElement(rows=[ [ self._pads_raw[offset + col] for col in xrange(4) ] for offset in xrange(48, 35, -4) ], name=u'Drum_Pads')
-        self._tempo_encoder = EncoderElement(MIDI_PB_TYPE, 0, 0, Live.MidiMap.MapMode.absolute, name=u'Tempo_Encoder')
-        self._tempo_encoder.send_depends_on_forwarding = False
+        self._tempo_encoder = EncoderElement(MIDI_PB_TYPE, 0, 0, Live.MidiMap.MapMode.absolute, send_should_depend_on_forwarding=False, name=u'Tempo_Encoder')
         self._tempo_encoder.reset = nop
         self._sysex_element = SysexElement(sysex_identifier=SYSEX_HEADER, name=u'Sysex_Element')
         self._sysex_element.add_value_listener(nop)

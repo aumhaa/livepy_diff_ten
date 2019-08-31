@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
 from ...base import clamp, const, lazy_attribute, task, sign
-from .control import Connectable, InputControl, control_event
+from .control import Connectable, InputControl, SendValueMixin, control_event
 logger = logging.getLogger(__name__)
 __all__ = (u'EncoderControl', u'StepEncoderControl', u'ListValueEncoderControl', u'ListIndexEncoderControl', u'ValueStepper')
 
@@ -286,3 +286,9 @@ class ListIndexEncoderControl(StepEncoderControl):
             if self._max_index is not None:
                 new_index = clamp(self.connected_property_value + steps, 0, self._max_index)
                 self.connected_property_value = new_index
+
+
+class SendValueEncoderControl(EncoderControl):
+
+    class State(SendValueMixin, EncoderControl.State):
+        pass

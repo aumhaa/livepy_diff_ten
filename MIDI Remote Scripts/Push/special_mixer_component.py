@@ -14,7 +14,7 @@ class SpecialMixerComponent(components.MixerComponent):
     num_label_segments = 4
 
     def __init__(self, *a, **k):
-        super(SpecialMixerComponent, self).__init__(*a, **k)
+        super(SpecialMixerComponent, self).__init__(channel_strip_component_type=SpecialChanStripComponent, *a, **k)
         self._pan_send_index = 0
         self._pan_send_controls = None
         self._pan_send_names_display = None
@@ -27,9 +27,6 @@ class SpecialMixerComponent(components.MixerComponent):
         self._on_selected_track_changed.subject = self.song.view
         self._on_track_list_changed.subject = self.song
         self._update_selected_track_name()
-
-    def _create_strip(self):
-        return SpecialChanStripComponent()
 
     def set_pan_send_toggle(self, toggle):
         u"""

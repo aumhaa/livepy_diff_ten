@@ -2,7 +2,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import depends, listenable_property, listens, liveobj_changed
 from ableton.v2.control_surface.mode import ModesComponent
 from .auto_filter import AutoFilterDeviceComponent
+from .channel_eq import ChannelEqDeviceComponent
 from .compressor import CompressorDeviceComponent
+from .delay import DelayDeviceComponent
 from .echo import EchoDeviceComponent
 from .eq8 import Eq8DeviceComponent
 from .operator import OperatorDeviceComponent
@@ -17,7 +19,9 @@ DEVICE_COMPONENT_MODES = {u'Generic': GenericDeviceComponent,
  u'InstrumentVector': WavetableDeviceComponent,
  u'Operator': OperatorDeviceComponent,
  u'Echo': EchoDeviceComponent,
- u'AutoFilter': AutoFilterDeviceComponent}
+ u'AutoFilter': AutoFilterDeviceComponent,
+ u'ChannelEq': ChannelEqDeviceComponent,
+ u'Delay': DelayDeviceComponent}
 
 class DeviceComponentProvider(ModesComponent):
     u"""

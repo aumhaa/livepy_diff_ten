@@ -2,14 +2,14 @@ from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import const, inject, listens
 from ableton.v2.control_surface import ControlSurface, Layer, MIDI_CC_TYPE, MIDI_PB_TYPE
-from ableton.v2.control_surface.components import SessionNavigationComponent, SessionRingComponent
+from ableton.v2.control_surface.components import MixerComponent, SessionNavigationComponent, SessionRingComponent
 from ableton.v2.control_surface.elements import ButtonMatrixElement, EncoderElement, SliderElement, SysexElement
 from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
 from . import sysex
 from .arrangement import ArrangementComponent
+from .channel_strip import ChannelStripComponent
 from .control_element_utils import create_button, create_pad_led, create_ringed_encoder
 from .hardware_settings import HardwareSettingsComponent
-from .mixer import MixerComponent
 from .skin_default import default_skin
 from .transport import TransportComponent
 from .session import SessionComponent
@@ -21,6 +21,7 @@ class KeyLabEssential(ControlSurface):
     session_component_type = SessionComponent
     view_control_component_type = ViewControlComponent
     hardware_settings_component_type = HardwareSettingsComponent
+    channel_strip_component_type = ChannelStripComponent
 
     def __init__(self, *a, **k):
         super(KeyLabEssential, self).__init__(*a, **k)
@@ -98,7 +99,7 @@ class KeyLabEssential(ControlSurface):
         self._session_navigation.set_enabled(True)
 
     def _create_mixer(self):
-        self._mixer = self.mixer_component_type(tracks_provider=self._session_ring, is_enabled=False, layer=Layer(volume_controls=self._faders, pan_controls=self._encoders))
+        self._mixer = self.mixer_component_type(tracks_provider=self._session_ring, channel_strip_component_type=self.channel_strip_component_type, is_enabled=False, layer=Layer(volume_controls=self._faders, pan_controls=self._encoders))
         self._mixer.master_strip().set_volume_control(self._master_fader)
         self._mixer.set_enabled(True)
 

@@ -683,6 +683,7 @@ class RoutingControlComponent(ModesComponent):
         super(RoutingControlComponent, self).__init__(*a, **k)
         self.__on_current_monitoring_state_changed.subject = self.song.view
         self._real_time_channel_assigner = RoutingMeterRealTimeChannelAssigner(real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, is_enabled=False)
+        self._update_monitoring_state_task = self._tasks.add(task.run(self._update_monitoring_state))
         input_type_router = self.register_disconnectable(InputTypeRouter(song=self.song))
         output_type_router = self.register_disconnectable(OutputTypeRouter(song=self.song))
         input_channel_router = self.register_disconnectable(InputChannelRouter(song=self.song))
@@ -761,7 +762,7 @@ class RoutingControlComponent(ModesComponent):
 
     @listens_group(u'output_routing_type')
     def __on_any_output_routing_type_changed(self, *_a):
-        self._update_monitoring_state()
+        self._update_monitoring_state_task.restart()
 
     @listens(u'is_frozen')
     def __on_is_frozen_changed(self):
@@ -839,6 +840,7 @@ class RoutingControlComponent(ModesComponent):
         self.monitor_state_encoder.connect_static_list(self.song.view.selected_track, u'current_monitoring_state', list_values=[Live.Track.Track.monitoring_states.IN, Live.Track.Track.monitoring_states.AUTO, Live.Track.Track.monitoring_states.OFF])
 
     def _update_monitoring_state(self):
+        self._update_monitoring_state_task.kill()
         self._connect_monitoring_state_encoder()
         self._update_can_monitor()
 

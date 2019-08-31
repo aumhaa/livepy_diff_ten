@@ -63,8 +63,8 @@ class RestoringAutoArmComponent(AutoArmComponent, Messenger):
         self._auto_arm_restore_behaviour = None
         self._notification_reference = partial(nop, None)
 
-    def update(self):
-        super(RestoringAutoArmComponent, self).update()
+    def _update_implicit_arm(self):
+        super(RestoringAutoArmComponent, self)._update_implicit_arm()
         if self._auto_arm_restore_behaviour:
             self._auto_arm_restore_behaviour.update()
         self._update_notification()

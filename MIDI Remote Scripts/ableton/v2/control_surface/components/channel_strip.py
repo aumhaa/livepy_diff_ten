@@ -112,7 +112,6 @@ class ChannelStripComponent(Component):
         super(ChannelStripComponent, self).disconnect()
 
     def set_track(self, track):
-        assert isinstance(track, (type(None), Live.Track.Track))
         for control in self._all_controls():
             release_control(control)
 
@@ -124,7 +123,6 @@ class ChannelStripComponent(Component):
             slot.subject = track.mixer_device if liveobj_valid(track) else None
 
         if liveobj_valid(self._track):
-            assert isinstance(self._track, Live.Track.Track)
             assert self._track in tuple(self.song.tracks) + tuple(self.song.return_tracks) + (self.song.master_track,)
             for button in (self._mute_button,
              self._solo_button,
@@ -204,7 +202,6 @@ class ChannelStripComponent(Component):
             self.update()
 
     def set_invert_mute_feedback(self, invert_feedback):
-        assert isinstance(invert_feedback, type(False))
         if invert_feedback != self._invert_mute_feedback:
             self._invert_mute_feedback = invert_feedback
             self.update()
@@ -295,8 +292,6 @@ class ChannelStripComponent(Component):
         pass
 
     def _mute_value(self, value):
-        assert self._mute_button != None
-        assert isinstance(value, int)
         if self.is_enabled():
             if liveobj_valid(self._track) and self._track != self.song.master_track:
                 if not self._mute_button.is_momentary() or value != 0:
@@ -309,8 +304,6 @@ class ChannelStripComponent(Component):
             track.solo = False
 
     def _solo_value(self, value):
-        assert self._solo_button != None
-        assert value in range(128)
         if self.is_enabled():
             if liveobj_valid(self._track) and self._track != self.song.master_track:
                 self._solo_pressed = value != 0 and self._solo_button.is_momentary()
@@ -323,8 +316,6 @@ class ChannelStripComponent(Component):
                         self.update_solo_state(solo_exclusive, new_value, respect_multi_selection, track)
 
     def _arm_value(self, value):
-        assert self._arm_button != None
-        assert value in range(128)
         if self.is_enabled():
             if liveobj_valid(self._track) and self._track.can_be_armed:
                 self._arm_pressed = value != 0 and self._arm_button.is_momentary()
@@ -341,12 +332,9 @@ class ChannelStripComponent(Component):
                                 track.arm = False
 
     def _shift_value(self, value):
-        assert self._shift_button != None
         self._shift_pressed = value != 0
 
     def _crossfade_toggle_value(self, value):
-        assert self._crossfade_toggle != None
-        assert isinstance(value, int)
         if self.is_enabled():
             if liveobj_valid(self._track):
                 if value != 0 or not self._crossfade_toggle.is_momentary():
@@ -398,6 +386,5 @@ class ChannelStripComponent(Component):
                 self._crossfade_toggle.set_light(False)
 
     def _on_input_routing_changed(self):
-        assert liveobj_valid(self._track)
         if self.is_enabled():
             self._on_arm_changed()

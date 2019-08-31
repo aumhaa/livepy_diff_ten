@@ -3,8 +3,8 @@ from itertools import chain
 import Live
 from ableton.v2.base import listens, listens_group, liveobj_valid
 from ableton.v2.control_surface import Component, find_instrument_devices, find_instrument_meeting_requirement
+from ableton.v2.control_surface.control import SendValueControl
 KK_NAME_PREFIX = u'Komplete Kontrol'
-from .control import SendValueControl
 
 class FocusFollowComponent(Component):
     focus_follow_control = SendValueControl()

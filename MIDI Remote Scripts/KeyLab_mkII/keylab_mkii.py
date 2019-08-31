@@ -7,6 +7,7 @@ from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
 from KeyLab_Essential import sysex
 from KeyLab_Essential.control_element_utils import create_button, create_pad_led
 from KeyLab_Essential.keylab_essential import KeyLabEssential
+from .channel_strip import ChannelStripComponent
 from .hardware_settings import HardwareSettingsComponent
 from .mixer import MixerComponent
 from .session import SessionComponent
@@ -20,6 +21,7 @@ class KeyLabMkII(KeyLabEssential):
     session_component_type = SessionComponent
     view_control_component_type = ViewControlComponent
     hardware_settings_component_type = HardwareSettingsComponent
+    channel_strip_component_type = ChannelStripComponent
 
     def __init__(self, *a, **k):
         super(KeyLabMkII, self).__init__(*a, **k)

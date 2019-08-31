@@ -52,9 +52,10 @@ class RightAlignTracksTrackAssigner(TrackAssigner):
 class MixerComponent(Component):
     u""" Class encompassing several channel strips to form a mixer """
 
-    def __init__(self, tracks_provider = None, track_assigner = None, auto_name = False, invert_mute_feedback = False, *a, **k):
+    def __init__(self, tracks_provider = None, track_assigner = None, auto_name = False, invert_mute_feedback = False, channel_strip_component_type = None, *a, **k):
         assert tracks_provider is not None
         super(MixerComponent, self).__init__(*a, **k)
+        self._channel_strip_component_type = channel_strip_component_type or ChannelStripComponent
         self._track_assigner = track_assigner if track_assigner is not None else RightAlignTracksTrackAssigner(song=self.song)
         self._provider = tracks_provider
         self.__on_offset_changed.subject = tracks_provider
@@ -65,14 +66,14 @@ class MixerComponent(Component):
         self._channel_strips = []
         self._offset_can_start_after_tracks = False
         for index in range(self._provider.num_tracks):
-            strip = self._create_strip()
+            strip = self._channel_strip_component_type(parent=self)
             self._channel_strips.append(strip)
             if invert_mute_feedback:
                 strip.set_invert_mute_feedback(True)
 
-        self._master_strip = self._create_master_strip()
+        self._master_strip = self._channel_strip_component_type(parent=self)
         self._master_strip.set_track(self.song.master_track)
-        self._selected_strip = self._create_strip()
+        self._selected_strip = self._channel_strip_component_type(parent=self)
         self.__on_selected_track_changed.subject = self.song.view
         self.__on_selected_track_changed()
         self._reassign_tracks()
@@ -217,12 +218,6 @@ class MixerComponent(Component):
         tracks = self._track_assigner.tracks(self._provider)
         for track, channel_strip in izip(tracks, self._channel_strips):
             channel_strip.set_track(track)
-
-    def _create_strip(self):
-        return ChannelStripComponent(parent=self)
-
-    def _create_master_strip(self):
-        return self._create_strip()
 
     def _auto_name(self):
         self.name = u'Mixer'

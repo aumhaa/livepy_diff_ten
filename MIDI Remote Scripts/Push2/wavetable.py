@@ -80,7 +80,8 @@ class WavetableDeviceDecorator(WavetableDeviceDecoratorBase):
          ModMatrixParameter(name=u'MIDI Note Mod Amount', parent=self, modulation_value_host=self._live_object, modulation_target_index_host=self.current_mod_target_index, modulation_source=ModulationSource.midi_note),
          ModMatrixParameter(name=u'MIDI Pitch Bend Mod Amount', parent=self, modulation_value_host=self._live_object, modulation_target_index_host=self.current_mod_target_index, modulation_source=ModulationSource.midi_pitch_bend),
          ModMatrixParameter(name=u'MIDI Aftertouch Mod Amount', parent=self, modulation_value_host=self._live_object, modulation_target_index_host=self.current_mod_target_index, modulation_source=ModulationSource.midi_channel_pressure),
-         ModMatrixParameter(name=u'MIDI Mod Wheel Mod Amount', parent=self, modulation_value_host=self._live_object, modulation_target_index_host=self.current_mod_target_index, modulation_source=ModulationSource.midi_mod_wheel)) + (self.filter_switch_for_filter_switch_option, self.current_mod_target)
+         ModMatrixParameter(name=u'MIDI Mod Wheel Mod Amount', parent=self, modulation_value_host=self._live_object, modulation_target_index_host=self.current_mod_target_index, modulation_source=ModulationSource.midi_mod_wheel),
+         ModMatrixParameter(name=u'MIDI Random On Note On', parent=self, modulation_value_host=self._live_object, modulation_target_index_host=self.current_mod_target_index, modulation_source=ModulationSource.midi_random)) + (self.filter_switch_for_filter_switch_option, self.current_mod_target)
 
     def _create_options(self):
 

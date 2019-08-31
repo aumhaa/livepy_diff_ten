@@ -2,9 +2,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from ableton.v2.base import liveobj_valid, listens, listens_group
 from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
-from ableton.v2.control_surface.control import ButtonControl, TextDisplayControl, control_list
+from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, TextDisplayControl, control_list
 from .channel_strip import ChannelStripComponent
-from .control import ColorSysexControl, ConfigurableTextDisplayControl
+from .control import ConfigurableTextDisplayControl
 from .elements import SESSION_WIDTH
 from .util import color_for_track
 
@@ -20,7 +20,7 @@ class MixerComponent(MixerComponentBase):
     selected_track_color_field = ColorSysexControl()
 
     def __init__(self, *a, **k):
-        super(MixerComponent, self).__init__(*a, **k)
+        super(MixerComponent, self).__init__(channel_strip_component_type=ChannelStripComponent, *a, **k)
         self.__on_selected_track_changed.subject = self.song.view
         self.__on_selected_track_changed()
         self.pan_value_display.set_data_sources([ strip.pan_value_display_data_source for strip in self._channel_strips ])
@@ -131,6 +131,3 @@ class MixerComponent(MixerComponentBase):
         self._update_send_value_subjects()
         self._update_send_value_display()
         self._update_send_encoder_color_fields()
-
-    def _create_strip(self):
-        return ChannelStripComponent()

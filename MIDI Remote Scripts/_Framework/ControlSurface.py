@@ -2,12 +2,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial, wraps
 from itertools import chain, ifilter, imap
 from contextlib import contextmanager
+import logging
 import traceback
 import Live
 from . import Defaults
 from . import Task
 from .ControlElement import OptimizedOwnershipHandler
-from .Debug import debug_print
 from .Dependency import inject
 from .InputControlElement import InputControlElement, MIDI_CC_TYPE, MIDI_PB_TYPE, MIDI_NOTE_TYPE, MIDI_SYSEX_TYPE, MIDI_PB_STATUS
 from .PhysicalDisplayElement import PhysicalDisplayElement
@@ -15,6 +15,7 @@ from .Profile import profile
 from .SubjectSlot import SlotManager, Subject
 from .Util import BooleanContext, first, find_if, const, in_range
 from .MessageScheduler import MessageScheduler
+logger = logging.getLogger(__name__)
 
 def _scheduled_method(method):
     u"""
@@ -240,10 +241,7 @@ class ControlSurface(Subject, SlotManager):
         u""" Writes the given message into Live's main log file """
         message = u'(%s) %s' % (self.__class__.__name__, u' '.join(map(str, message)))
         console_message = u'LOG: ' + message
-        if debug_print != None:
-            debug_print(console_message)
-        else:
-            print(console_message)
+        logger.info(console_message)
         if self._c_instance:
             self._c_instance.log_message(message)
 

@@ -6,6 +6,7 @@ from .compound_element import NestedElementClient, CompoundElement
 from .control_element import ControlElement, ControlElementClient, ElementOwnershipHandler, get_element, NotifyingControlElement, OptimizedOwnershipHandler
 from .control_surface import ControlSurface, SimpleControlSurface
 from .decoration import DecoratorFactory, LiveObjectDecorator, NotifyingList, PitchParameter, get_parameter_by_name
+from .delay_decoration import DelayDeviceDecorator
 from .device_bank_registry import DeviceBankRegistry
 from .device_chain_utils import find_instrument_devices, find_instrument_meeting_requirement
 from .device_decorator_factory import DeviceDecoratorFactory

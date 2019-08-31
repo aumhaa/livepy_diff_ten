@@ -6,3 +6,6 @@ class PhysicalDisplayElement(PhysicalDisplayElementBase):
 
     def _build_display_message(self, display):
         return chain(*imap(lambda x: self._translate_string(unicode(x).strip()), display._logical_segments))
+
+    def _request_send_message(self):
+        self._send_message()

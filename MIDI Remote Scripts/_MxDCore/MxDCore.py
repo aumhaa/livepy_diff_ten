@@ -1,14 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import json
+import logging
 import Live.Base
 from functools import partial, wraps
 import _Framework
 from _Framework.Disconnectable import Disconnectable
-from _Framework.Debug import debug_print
 from .MxDUtils import TupleWrapper, StringHandler
 from .MxDControlSurfaceAPI import MxDControlSurfaceAPI
 from .LomUtils import LomInformation, LomIntrospection, LomPathCalculator, LomPathResolver
 from .LomTypes import ENUM_TYPES, LIVE_APP, CONTROL_SURFACES, PROPERTY_TYPES, ROOT_KEYS, MFLPropertyFormats, get_control_surfaces, get_exposed_lom_types, get_exposed_property_info, get_root_prop, is_lom_object, is_cplusplus_lom_object, is_object_iterable, LomNoteOperationWarning, LomNoteOperationError, LomAttributeError, LomObjectError, verify_object_property, is_property_hidden
+logger = logging.getLogger(__name__)
 
 def get_current_max_device(device_id):
     assert MxDCore.instance != None and MxDCore.instance.manager != None
@@ -915,9 +916,9 @@ class MxDCore(object):
         return StringHandler.parse(string, self._object_for_id(device_id))
 
     def _raise(self, device_id, object_id, message):
-        debug_print(u'Error: ' + unicode(message))
+        logger.error(u'Error: ' + unicode(message))
         self.manager.print_message(device_id, object_id, u'error', unicode(message))
 
     def _warn(self, device_id, object_id, message):
-        debug_print(u'Warning: ' + unicode(message))
+        logger.warning(u'Warning: ' + unicode(message))
         self.manager.print_message(device_id, object_id, u'warning', unicode(message))

@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.control import Control, TextDisplayControl, control_color
+from ableton.v2.control_surface.control import Control, TextDisplayControl
 
 class BinaryControl(Control):
 
@@ -32,24 +32,6 @@ class BinaryControl(Control):
         def _send_current_value(self):
             if self._control_element:
                 self._control_element.send_value(self.ON_VALUE if self.is_on else self.OFF_VALUE)
-
-
-class ColorSysexControl(Control):
-
-    class State(Control.State):
-        color = control_color(u'DefaultButton.Disabled')
-
-        def set_control_element(self, control_element):
-            super(ColorSysexControl.State, self).set_control_element(control_element)
-            self._send_current_color()
-
-        def update(self):
-            super(ColorSysexControl.State, self).update()
-            self._send_current_color()
-
-        def _send_current_color(self):
-            if self._control_element:
-                self._control_element.set_light(self.color)
 
 
 class ConfigurableTextDisplayControl(TextDisplayControl):

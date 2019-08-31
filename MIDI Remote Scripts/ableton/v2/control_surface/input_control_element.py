@@ -132,11 +132,10 @@ class InputControlElement(NotifyingControlElement):
     __events__ = (Event(name=u'value', signal=InputSignal, override=True),)
     _input_signal_listener_count = 0
     num_delayed_messages = 1
-    send_depends_on_forwarding = True
     allow_receiving_chunks = False
 
     @depends(request_rebuild_midi_map=const(nop))
-    def __init__(self, msg_type = None, channel = None, identifier = None, sysex_identifier = None, request_rebuild_midi_map = None, *a, **k):
+    def __init__(self, msg_type = None, channel = None, identifier = None, sysex_identifier = None, request_rebuild_midi_map = None, send_should_depend_on_forwarding = True, *a, **k):
         assert msg_type in MIDI_MSG_TYPES
         assert midi.is_valid_channel(channel) or channel is None
         assert midi.is_valid_identifier(identifier) or identifier is None
@@ -144,6 +143,7 @@ class InputControlElement(NotifyingControlElement):
         assert msg_type != MIDI_SYSEX_TYPE or identifier is None
         assert msg_type == MIDI_SYSEX_TYPE or sysex_identifier is None
         super(InputControlElement, self).__init__(*a, **k)
+        self._send_depends_on_forwarding = send_should_depend_on_forwarding
         self._request_rebuild = request_rebuild_midi_map
         self._msg_type = msg_type
         self._msg_channel = channel
@@ -166,6 +166,10 @@ class InputControlElement(NotifyingControlElement):
         self._last_sent_message = None
         self._report_input = False
         self._report_output = False
+
+    @property
+    def send_depends_on_forwarding(self):
+        return self._send_depends_on_forwarding
 
     def message_type(self):
         return self._msg_type

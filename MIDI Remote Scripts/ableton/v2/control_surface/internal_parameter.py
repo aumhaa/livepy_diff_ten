@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from Live import DeviceParameter
-from ..base import clamp, listenable_property, liveobj_valid, nop, EventError, EventObject, forward_property, Proxy, Slot
+from ..base import clamp, listenable_property, liveobj_valid, nop, EventError, EventObject, Slot
 
 def identity(value, _parent):
     return value

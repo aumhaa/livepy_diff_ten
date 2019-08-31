@@ -14,7 +14,7 @@ def create_encoder(identifier, name, is_s_mk2 = False):
     encoder = EncoderElement(MIDI_CC_TYPE, MIDI_CHANNEL, identifier, Live.MidiMap.MapMode.relative_smooth_two_compliment, name=name, encoder_sensitivity=1.0)
     if is_s_mk2:
         encoder.set_feedback_delay(-1)
-        encoder.mapping_sensitivity = 3.0
+        encoder.mapping_sensitivity = 0.1
     return encoder
 
 
@@ -29,4 +29,4 @@ def create_display_line(header, line_index, name, width = 0):
 
 
 def create_sysex_element(header, index, name):
-    return SysexElement(lambda value: header + (value, index, midi.SYSEX_END), default_value=0, name=name)
+    return SysexElement(lambda value: header + (value, index, midi.SYSEX_END), default_value=0, optimized=True, name=name)

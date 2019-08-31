@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from functools import partial
 import Live
 from ableton.v2.base import const, inject, liveobj_valid, listens
-from ableton.v2.control_surface import BankingInfo, ControlSurface, DeviceBankRegistry, DeviceDecoratorFactory, InputControlElement, Layer, MIDI_CC_TYPE, PercussionInstrumentFinder
+from ableton.v2.control_surface import BankingInfo, DeviceBankRegistry, DeviceDecoratorFactory, IdentifiableControlSurface, InputControlElement, Layer, MIDI_CC_TYPE, PercussionInstrumentFinder
 from ableton.v2.control_surface.components import AutoArmComponent, DrumGroupComponent, RightAlignTracksTrackAssigner, SessionRecordingComponent, SessionRingComponent
 from ableton.v2.control_surface.default_bank_definitions import BANK_DEFINITIONS
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, ModesComponent, NullModes, ReenterBehaviour, SetAttributeMode
@@ -29,11 +29,11 @@ from .view_control import NotifyingViewControlComponent
 from .util import is_song_recording
 DRUM_FEEDBACK_CHANNEL = 4
 
-class SLMkIII(ControlSurface):
+class SLMkIII(IdentifiableControlSurface):
     _sysex_message_cache = MidiMessageCache()
 
     def __init__(self, *a, **k):
-        super(SLMkIII, self).__init__(*a, **k)
+        super(SLMkIII, self).__init__(product_id_bytes=(sysex.NOVATION_MANUFACTURER_ID + sysex.DEVICE_FAMILY_CODE + sysex.DEVICE_FAMILY_MEMBER_CODE), *a, **k)
         self._main_modes = NullModes()
         self._element_injector = inject(element_container=const(None)).everywhere()
         self._message_injector = inject(message=const(None)).everywhere()
@@ -70,15 +70,22 @@ class SLMkIII(ControlSurface):
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])
         self._set_feedback_velocity()
 
+    def on_identified(self, midi_bytes):
+        self._switch_display_layout(sysex.KNOB_SCREEN_LAYOUT_BYTE, force=True)
+        self._main_modes.selected_mode = u'device_control'
+        self._auto_arm.set_enabled(True)
+        self._session_ring.set_enabled(True)
+        self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])
+        self.refresh_state()
+
     def disconnect(self):
         self._auto_arm.set_enabled(False)
         super(SLMkIII, self).disconnect()
 
     def port_settings_changed(self):
-        self._switch_display_layout(sysex.KNOB_SCREEN_LAYOUT_BYTE, force=True)
-        self._main_modes.selected_mode = u'device_control'
+        self._auto_arm.set_enabled(False)
+        self._session_ring.set_enabled(False)
         super(SLMkIII, self).port_settings_changed()
-        self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])
 
     @contextmanager
     def _component_guard(self):
@@ -124,7 +131,7 @@ class SLMkIII(ControlSurface):
             display.clear_send_cache()
 
     def _create_session(self):
-        self._session_ring = SessionRingComponent(num_tracks=SESSION_WIDTH, num_scenes=SESSION_HEIGHT, tracks_to_use=lambda : tuple(self.song.visible_tracks) + tuple(self.song.return_tracks) + (self.song.master_track,), name=u'Session_Ring')
+        self._session_ring = SessionRingComponent(is_enabled=False, num_tracks=SESSION_WIDTH, num_scenes=SESSION_HEIGHT, tracks_to_use=lambda : tuple(self.song.visible_tracks) + tuple(self.song.return_tracks) + (self.song.master_track,), name=u'Session_Ring')
         self._session = SessionComponent(is_enabled=False, session_ring=self._session_ring, name=u'Session', layer=Layer(clip_launch_buttons=u'pads', scene_launch_buttons=u'scene_launch_buttons', stop_track_clip_buttons=u'shifted_pad_row_1', stop_all_clips_button=u'shifted_scene_launch_button_1'))
         self._session.set_rgb_mode(CLIP_COLOR_TABLE, RGB_COLOR_TABLE)
         self._session.set_enabled(True)
@@ -148,7 +155,7 @@ class SLMkIII(ControlSurface):
         self._session_recording.set_enabled(True)
 
     def _create_auto_arm(self):
-        self._auto_arm = AutoArmComponent(name=u'Auto_Arm')
+        self._auto_arm = AutoArmComponent(is_enabled=False, name=u'Auto_Arm')
 
     def _create_track_navigation(self):
         self._view_control = NotifyingViewControlComponent(name=u'view_control', is_enabled=False, track_provider=self._session_ring, layer=Layer(prev_track_button=u'track_left_button', next_track_button=u'track_right_button', prev_track_page_button=u'track_left_button_with_shift', next_track_page_button=u'track_right_button_with_shift', prev_scene_button=u'up_button_with_shift', next_scene_button=u'down_button_with_shift'))

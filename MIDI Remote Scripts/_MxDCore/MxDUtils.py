@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+import logging
+logger = logging.getLogger(__name__)
 
 class TupleWrapper(object):
     u""" Wrapper class for the access to volatile lists and tuples in the Python API """
@@ -86,7 +88,7 @@ class StringHandler(object):
             if hasattr(self, handle_selector):
                 getattr(self, handle_selector)(char, index)
             else:
-                debug_print(u'Unknown state ' + str(self._state))
+                logger.info(u'Unknown state ' + str(self._state))
                 assert False
 
         finalize_selector = u'_finalize_' + str(self._state)

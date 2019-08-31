@@ -39,11 +39,10 @@ class ButtonElement(InputControlElement, ButtonElementMixin):
             Off = Color(1)
             Disabled = Color(0)
 
-    send_depends_on_forwarding = False
     num_delayed_messages = 2
 
-    def __init__(self, is_momentary, msg_type, channel, identifier, is_rgb = False, skin = Skin(Colors), undo_step_handler = DummyUndoStepHandler(), *a, **k):
-        super(ButtonElement, self).__init__(msg_type, channel, identifier, *a, **k)
+    def __init__(self, is_momentary, msg_type, channel, identifier, is_rgb = False, skin = Skin(Colors), undo_step_handler = DummyUndoStepHandler(), send_should_depend_on_forwarding = False, *a, **k):
+        super(ButtonElement, self).__init__(msg_type, channel, identifier, send_should_depend_on_forwarding=send_should_depend_on_forwarding, *a, **k)
         self.is_rgb = is_rgb
         self._is_momentary = bool(is_momentary)
         self._last_received_value = -1

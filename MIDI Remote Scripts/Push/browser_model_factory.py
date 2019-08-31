@@ -6,7 +6,7 @@ FilterType = Live.Browser.FilterType
 PLACES_LABEL = u'Places'
 
 def make_plugins_query():
-    return TagBrowserQuery(include=[u'Plug-ins'], root_name=u'plugins', subfolder=u'Plug-ins')
+    return TagBrowserQuery(include=[u'Plug-Ins'], root_name=u'plugins', subfolder=u'Plug-Ins')
 
 
 def make_midi_effect_browser_model(browser):

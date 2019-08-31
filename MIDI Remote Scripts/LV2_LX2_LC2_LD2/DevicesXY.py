@@ -9,5 +9,4 @@ XY_DEVICE_DICT = {u'AutoFilter': [[u'Frequency', u'Resonance']],
  u'GrainDelay': [[u'Pitch', u'Frequency']],
  u'Phaser': [[u'Frequency', u'Feedback']],
  u'Reverb': [[u'In Filter Freq', u'In Filter Width'], [u'ER Spin Rate', u'ER Spin Amount']],
- u'Vinyl': [[u'Tracing Freq.', u'Tracing Drive'], [u'Pinch Freq.', u'Pinch Drive']],
- u'PingPongDelay': [[u'Filter Freq', u'Filter Width']]}
+ u'Vinyl': [[u'Tracing Freq.', u'Tracing Drive'], [u'Pinch Freq.', u'Pinch Drive']]}

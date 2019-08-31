@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Komplete_Kontrol.komplete_kontrol_base import NUM_TRACKS, KompleteKontrolBase, ButtonMatrixElement, Layer, create_button, create_display_line, sysex
+from _Komplete_Kontrol.komplete_kontrol_base import KompleteKontrolBase, Layer, create_button, create_encoder
+from .view_control_component import ViewControlComponent
 
 class Komplete_Kontrol_A(KompleteKontrolBase):
 
@@ -7,8 +8,15 @@ class Komplete_Kontrol_A(KompleteKontrolBase):
         super(Komplete_Kontrol_A, self)._create_controls()
         self._mute_button = create_button(67, u'Mute_Button')
         self._solo_button = create_button(68, u'Solo_Button')
-        self._track_volume_displays = ButtonMatrixElement(rows=[[ create_display_line(sysex.TRACK_VOLUME_DISPLAY_HEADER, index, u'Track_Volume_Display_{}'.format(index), width=12) for index in xrange(NUM_TRACKS) ]], name=u'Track_Volume_Displays')
-        self._track_panning_displays = ButtonMatrixElement(rows=[[ create_display_line(sysex.TRACK_PANNING_DISPLAY_HEADER, index, u'Track_Panning_Display_{}'.format(index), width=12) for index in xrange(NUM_TRACKS) ]], name=u'Track_Panning_Displays')
+        self._vertical_encoder = create_encoder(48, u'Vertical_Encoder')
+        self._horizontal_encoder = create_encoder(50, u'Horizontal_Encoder')
+
+    def _create_components(self):
+        super(Komplete_Kontrol_A, self)._create_components()
+        self._create_view_control()
+
+    def _create_view_control(self):
+        self._view_control = ViewControlComponent(name=u'View_Control', is_enabled=False, layer=Layer(vertical_encoder=self._vertical_encoder, horizontal_encoder=self._horizontal_encoder))
 
     def _create_mixer_component_layer(self):
-        return super(Komplete_Kontrol_A, self)._create_mixer_component_layer() + Layer(mute_button=self._mute_button, solo_button=self._solo_button, track_volume_displays=self._track_volume_displays, track_panning_displays=self._track_panning_displays)
+        return super(Komplete_Kontrol_A, self)._create_mixer_component_layer() + Layer(mute_button=self._mute_button, solo_button=self._solo_button)

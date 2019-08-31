@@ -3,6 +3,7 @@ from ableton.v2.control_surface import DeviceDecoratorFactory as DeviceDecorator
 from .auto_filter import AutoFilterDeviceDecorator
 from .compressor import CompressorDeviceDecorator
 from .device_decoration import SamplerDeviceDecorator, PedalDeviceDecorator, DrumBussDeviceDecorator, UtilityDeviceDecorator
+from .delay import DelayDeviceDecorator
 from .echo import EchoDeviceDecorator
 from .eq8 import Eq8DeviceDecorator
 from .operator import OperatorDeviceDecorator
@@ -20,4 +21,5 @@ class DeviceDecoratorFactory(DeviceDecoratorFactoryBase):
      u'DrumBuss': DrumBussDeviceDecorator,
      u'Echo': EchoDeviceDecorator,
      u'InstrumentVector': WavetableDeviceDecorator,
-     u'StereoGain': UtilityDeviceDecorator}
+     u'StereoGain': UtilityDeviceDecorator,
+     u'Delay': DelayDeviceDecorator}

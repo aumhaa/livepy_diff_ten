@@ -17,5 +17,11 @@ class Colors:
         On = Color(127)
         Off = Color(0)
 
+    class Mixer:
+        MuteOn = Color(0)
+        MuteOff = Color(1)
+        SoloOn = Color(1)
+        SoloOff = Color(0)
+
 
 skin = Skin(Colors)

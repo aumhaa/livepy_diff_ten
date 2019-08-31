@@ -2,8 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from ableton.v2.control_surface import InternalParameterBase
 from ableton.v2.control_surface.components import DisplayingDeviceParameterComponent
-from ableton.v2.control_surface.control import control_list
-from .control import ColorSysexControl
+from ableton.v2.control_surface.control import ColorSysexControl, control_list
 from .util import convert_parameter_value_to_midi_value
 
 def is_internal_parameter(parameter):

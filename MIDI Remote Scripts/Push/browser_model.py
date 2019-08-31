@@ -47,7 +47,7 @@ class BrowserListItem(ActionListItem):
     URI_TO_NAME_FALLBACK = {u'query:Synths': u'Instruments',
      u'query:Drums': u'Drums',
      u'query:UserLibrary': u'User Library',
-     u'query:Plugins': u'Plug-ins'}
+     u'query:Plugins': u'Plug-Ins'}
 
     def __str__(self):
         return self._item_name

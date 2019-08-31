@@ -3,8 +3,8 @@ import Live
 from ableton.v2.base import clamp, listens, liveobj_valid
 from ableton.v2.control_surface.components import ChannelStripComponent as ChannelStripComponentBase
 from ableton.v2.control_surface.elements import DisplayDataSource, SysexRGBColor
-from ableton.v2.control_surface.control import ButtonControl
-from .control import BinaryControl, ColorSysexControl
+from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl
+from .control import BinaryControl
 from .messenger import Messenger
 from .parameter_mapping_sensitivities import CONTINUOUS_MAPPING_SENSITIVITY
 from .util import color_for_track, convert_parameter_value_to_midi_value, normalized_parameter_value
