@@ -24,7 +24,7 @@ class SpecialMixerComponent(components.MixerComponent):
         self._selected_track_data_sources = map(DisplayDataSource, (u'',) * self.num_label_segments)
         self._selected_track_data_sources[0].set_display_string(u'Track Selection:')
         self._selected_track_name_data_source = self._selected_track_data_sources[1]
-        self._on_selected_track_changed.subject = self.song.view
+        self._on_selected_track_name_changed.subject = self.song.view
         self._on_track_list_changed.subject = self.song
         self._update_selected_track_name()
 
@@ -142,7 +142,7 @@ class SpecialMixerComponent(components.MixerComponent):
             self._pan_send_index = 0
 
     @listens(u'selected_track.name')
-    def _on_selected_track_changed(self):
+    def _on_selected_track_name_changed(self):
         self._update_selected_track_name()
 
     def _update_selected_track_name(self):

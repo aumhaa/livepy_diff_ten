@@ -15,6 +15,7 @@ class SceneComponent(Component):
     def __init__(self, session_ring = None, *a, **k):
         assert session_ring is not None
         assert session_ring.num_tracks >= 0
+        self._controlled_tracks = []
         super(SceneComponent, self).__init__(*a, **k)
         self._session_ring = session_ring
         self._scene = None
@@ -35,7 +36,7 @@ class SceneComponent(Component):
 
     @listens(u'tracks')
     def __on_track_list_changed(self):
-        self.update()
+        self._update_controlled_tracks()
 
     def set_scene(self, scene):
         if liveobj_changed(scene, self._scene):
@@ -58,7 +59,7 @@ class SceneComponent(Component):
         assert offset >= 0
         if offset != self._track_offset:
             self._track_offset = offset
-            self.update()
+            self._update_controlled_tracks()
 
     def set_color_palette(self, palette):
         self._color_palette = palette
@@ -82,6 +83,12 @@ class SceneComponent(Component):
 
         self._update_launch_button()
 
+    def _update_controlled_tracks(self):
+        controlled_tracks = self._session_ring.controlled_tracks()
+        if controlled_tracks != self._controlled_tracks:
+            self.update()
+            self._controlled_tracks = controlled_tracks
+
     def _determine_actual_track_offset(self, tracks):
         actual_track_offset = self._track_offset
         if self._track_offset > 0:
@@ -100,7 +107,7 @@ class SceneComponent(Component):
         tracks = self.song.tracks
         track_offset = self._determine_actual_track_offset(tracks)
         clip_slots = self._scene.clip_slots
-        for slot in self._clip_slots:
+        for _ in self._clip_slots:
             while len(tracks) > track_offset and not tracks[track_offset].is_visible:
                 track_offset += 1
 

@@ -19,3 +19,7 @@ def liveobj_valid(obj):
     would treat lost weakrefs as valid.
     """
     return obj != None
+
+
+def is_parameter_bipolar(param):
+    return param.min == -1 * param.max

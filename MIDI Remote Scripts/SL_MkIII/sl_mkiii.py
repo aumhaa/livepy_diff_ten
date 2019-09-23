@@ -2,16 +2,15 @@ from __future__ import absolute_import, print_function, unicode_literals
 from contextlib import contextmanager
 from functools import partial
 import Live
-from ableton.v2.base import const, inject, liveobj_valid, listens
-from ableton.v2.control_surface import BankingInfo, DeviceBankRegistry, DeviceDecoratorFactory, IdentifiableControlSurface, InputControlElement, Layer, MIDI_CC_TYPE, PercussionInstrumentFinder
-from ableton.v2.control_surface.components import AutoArmComponent, DrumGroupComponent, RightAlignTracksTrackAssigner, SessionRecordingComponent, SessionRingComponent
+from ableton.v2.base import const, inject, listens
+from ableton.v2.control_surface import BankingInfo, DeviceBankRegistry, DeviceDecoratorFactory, IdentifiableControlSurface, Layer, MIDI_CC_TYPE, PercussionInstrumentFinder
+from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, ClipActionsComponent, DrumGroupComponent, RightAlignTracksTrackAssigner, SessionRecordingComponent, SessionRingComponent
 from ableton.v2.control_surface.default_bank_definitions import BANK_DEFINITIONS
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, ModesComponent, NullModes, ReenterBehaviour, SetAttributeMode
+from novation.colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE, Rgb
+from novation.view_control import NotifyingViewControlComponent
 from . import sysex
 from .actions import ActionsComponent
-from .background import BackgroundComponent
-from .clip_actions import ClipActionsComponent
-from .colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE, Rgb
 from .device import DeviceComponent
 from .device_navigation import DisplayingDeviceNavigationComponent, NUM_VISIBLE_ITEMS
 from .device_parameters import DeviceParameterComponent
@@ -25,7 +24,6 @@ from .session_navigation import SessionNavigationComponent
 from .session_ring_selection_linking import SessionRingSelectionLinking
 from .skin import skin
 from .transport import TransportComponent
-from .view_control import NotifyingViewControlComponent
 from .util import is_song_recording
 DRUM_FEEDBACK_CHANNEL = 4
 
@@ -76,7 +74,7 @@ class SLMkIII(IdentifiableControlSurface):
         self._auto_arm.set_enabled(True)
         self._session_ring.set_enabled(True)
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])
-        self.refresh_state()
+        super(SLMkIII, self).on_identified(midi_bytes)
 
     def disconnect(self):
         self._auto_arm.set_enabled(False)
@@ -182,7 +180,7 @@ class SLMkIII(IdentifiableControlSurface):
         self._clip_actions.set_enabled(True)
 
     def _create_background(self):
-        self._background = BackgroundComponent(name=u'Background', is_enabled=False, layer=Layer(select_button_7_with_shift=u'select_buttons_with_shift_raw[3]', select_button_4_with_shift=u'select_buttons_with_shift_raw[4]', select_button_5_with_shift=u'select_buttons_with_shift_raw[5]', select_button_6_with_shift=u'select_buttons_with_shift_raw[6]'))
+        self._background = BackgroundComponent(name=u'Background', is_enabled=False, add_nop_listeners=True, layer=Layer(select_button_7_with_shift=u'select_buttons_with_shift_raw[3]', select_button_4_with_shift=u'select_buttons_with_shift_raw[4]', select_button_5_with_shift=u'select_buttons_with_shift_raw[5]', select_button_6_with_shift=u'select_buttons_with_shift_raw[6]'))
         self._background.set_enabled(True)
 
     def _create_modes(self):

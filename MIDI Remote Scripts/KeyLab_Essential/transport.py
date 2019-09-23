@@ -22,7 +22,7 @@ class TransportComponent(TransportComponentBase):
         self.play_button.color = u'Transport.PlayOn' if self.song.is_playing else u'Transport.PlayOff'
 
     def _update_stop_button_color(self):
-        self._stop_button.color = u'Transport.StopOff' if self.song.is_playing else u'Transport.StopOn'
+        self.stop_button.color = u'Transport.StopOff' if self.song.is_playing else u'Transport.StopOn'
 
     @play_button.pressed
     def play_button(self, _):

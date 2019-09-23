@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import forward_property, listens
+from ableton.v2.base import listens
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.components import ToggleComponent
 from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, TextDisplayControl, ToggleButtonControl, control_list
 from .control import BinaryControl
 ACTION_NAMES = (u'Undo', u'Redo', u'Click', u'', u'', u'', u'', u'')

@@ -98,14 +98,14 @@ class ItemListerComponentBase(Component):
     def item_provider(self):
         return self._item_provider
 
-    def _get_item_offset(self):
+    @property
+    def item_offset(self):
         return self._item_offset
 
-    def _set_item_offset(self, offset):
+    @item_offset.setter
+    def item_offset(self, offset):
         self._item_offset = offset
         self.update_items()
-
-    item_offset = property(_get_item_offset, _set_item_offset)
 
     def can_scroll_left(self):
         return self.item_offset > 0
@@ -148,6 +148,10 @@ class ItemListerComponentBase(Component):
     @listens(u'items')
     def __on_items_changed(self):
         self.update_items()
+        self._on_items_changed()
+
+    def _on_items_changed(self):
+        pass
 
 
 class ScrollComponent(Component):
@@ -226,6 +230,9 @@ class ItemListerComponent(ItemListerComponentBase):
 
     @listens(u'selected_item')
     def __on_selection_changed(self):
+        self._on_selection_changed()
+
+    def _on_selection_changed(self):
         self._update_button_colors()
 
     def _items_equal(self, item, selected_item):

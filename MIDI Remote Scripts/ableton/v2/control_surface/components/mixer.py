@@ -178,6 +178,7 @@ class MixerComponent(Component):
     @listens(u'selected_track')
     def __on_selected_track_changed(self):
         self._update_selected_strip()
+        self._on_selected_track_changed()
 
     def _update_selected_strip(self):
         selected_track = self.song.view.selected_track
@@ -187,9 +188,13 @@ class MixerComponent(Component):
             else:
                 self._selected_strip.set_track(None)
 
+    def _on_selected_track_changed(self):
+        pass
+
     @listens(u'return_tracks')
     def __on_return_tracks_changed(self):
         self._update_send_index()
+        self.on_num_sends_changed()
 
     def _update_send_index(self):
         num_sends = self.num_sends
@@ -197,7 +202,6 @@ class MixerComponent(Component):
             self.send_index = clamp(self._send_index, 0, num_sends - 1) if num_sends > 0 else None
         else:
             self.send_index = 0 if num_sends > 0 else None
-        self.on_num_sends_changed()
 
     def on_num_sends_changed(self):
         pass

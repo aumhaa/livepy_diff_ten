@@ -2,9 +2,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
 from ableton.v2.base import liveobj_valid, listens, listens_group
 from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
-from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, TextDisplayControl, control_list
+from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, ConfigurableTextDisplayControl, TextDisplayControl, control_list
 from .channel_strip import ChannelStripComponent
-from .control import ConfigurableTextDisplayControl
 from .elements import SESSION_WIDTH
 from .util import color_for_track
 

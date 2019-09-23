@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
-import Live
 from ...base import EventObject, nop, listens, liveobj_valid
 from ..control import ButtonControl
 from ..component import Component
@@ -208,6 +207,9 @@ class ChannelStripComponent(Component):
 
     @listens(u'selected_track')
     def __on_selected_track_changed(self):
+        self._update_select_button()
+
+    def _update_select_button(self):
         if liveobj_valid(self._track) or self.empty_color == None:
             if self.song.view.selected_track == self._track:
                 self.select_button.color = u'DefaultButton.On'

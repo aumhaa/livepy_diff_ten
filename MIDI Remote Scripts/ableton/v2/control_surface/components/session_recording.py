@@ -30,10 +30,10 @@ class SessionRecordingComponent(Component):
     u"""
     Orchestrates the session recording (clip slot based) workflow.
     """
-    _automation_toggle = ToggleButtonControl(toggled_color=u'Automation.On', untoggled_color=u'Automation.Off')
-    _re_enable_automation = ButtonControl(color=u'Automation.On')
-    _delete_automation = ButtonControl(color=u'Automation.Off')
-    _record_button = ButtonControl()
+    automation_button = ToggleButtonControl(toggled_color=u'Automation.On', untoggled_color=u'Automation.Off')
+    re_enable_automation_button = ButtonControl(color=u'Automation.On')
+    delete_automation_button = ButtonControl(color=u'Automation.Off')
+    record_button = ButtonControl(color=u'Recording.Off')
 
     def __init__(self, view_controller = None, *a, **k):
         super(SessionRecordingComponent, self).__init__(*a, **k)
@@ -59,20 +59,6 @@ class SessionRecordingComponent(Component):
         self.__on_re_enable_automation_enabled_changed.subject = song
         self.__on_re_enable_automation_enabled_changed()
 
-    def set_record_button(self, button):
-        self._record_button.set_control_element(button)
-        self._update_record_button()
-
-    def set_automation_button(self, button):
-        self._automation_toggle.set_control_element(button)
-
-    def set_re_enable_automation_button(self, button):
-        self._re_enable_automation.set_control_element(button)
-
-    def set_delete_automation_button(self, button):
-        self._update_delete_automation_button_color()
-        self._delete_automation.set_control_element(button)
-
     def set_scene_list_new_button(self, button):
         self._scene_list_new_button = button
         self.__on_scene_list_new_button_value.subject = button
@@ -93,23 +79,26 @@ class SessionRecordingComponent(Component):
 
     @listens(u're_enable_automation_enabled')
     def __on_re_enable_automation_enabled_changed(self):
-        self._re_enable_automation.enabled = self.song.re_enable_automation_enabled
+        self.re_enable_automation_button.enabled = self.song.re_enable_automation_enabled
 
-    @_re_enable_automation.released
-    def _on_re_enable_automation_released(self, button):
+    @re_enable_automation_button.released
+    def re_enable_automation_button(self, button):
         if self.song.re_enable_automation_enabled:
             self.song.re_enable_automation()
 
     @listens(u'session_automation_record')
     def __on_session_automation_record_changed(self):
-        self._automation_toggle.is_toggled = self.song.session_automation_record
+        self._on_session_automation_record_changed()
 
-    @_automation_toggle.toggled
-    def _on_automation_toggled(self, is_toggled, button):
+    def _on_session_automation_record_changed(self):
+        self.automation_button.is_toggled = self.song.session_automation_record
+
+    @automation_button.toggled
+    def automation_button(self, is_toggled, button):
         self.song.session_automation_record = is_toggled
 
-    @_delete_automation.released
-    def _on_delete_button_released(self, button):
+    @delete_automation_button.released
+    def delete_automation_button(self, button):
         self._delete_automation_value()
 
     def update(self):
@@ -147,11 +136,11 @@ class SessionRecordingComponent(Component):
             song = self.song
             status = song.session_record_status
             if status == Live.Song.SessionRecordStatus.transition:
-                self._record_button.color = u'Recording.Transition'
+                self.record_button.color = u'Recording.Transition'
             elif status == Live.Song.SessionRecordStatus.on or song.session_record:
-                self._record_button.color = u'Recording.On'
+                self.record_button.color = u'Recording.On'
             else:
-                self._record_button.color = u'Recording.Off'
+                self.record_button.color = u'Recording.Off'
 
     @listens(u'has_envelopes')
     def _on_playing_clip_has_envelopes_changed(self):
@@ -159,7 +148,7 @@ class SessionRecordingComponent(Component):
 
     def _update_delete_automation_button_color(self):
         if self._on_playing_clip_has_envelopes_changed.subject:
-            self._delete_automation.color = u'Automation.On' if self._on_playing_clip_has_envelopes_changed.subject.has_envelopes else u'Automation.Off'
+            self.delete_automation_button.color = u'Automation.On' if self._on_playing_clip_has_envelopes_changed.subject.has_envelopes else u'Automation.Off'
 
     def _delete_automation_value(self):
         if self.is_enabled():
@@ -194,8 +183,8 @@ class SessionRecordingComponent(Component):
         if self.is_enabled():
             self._update_record_button()
 
-    @_record_button.pressed
-    def _record_button(self, button):
+    @record_button.pressed
+    def record_button(self, button):
         self._on_record_button_pressed()
 
     def _on_record_button_pressed(self):
@@ -206,8 +195,8 @@ class SessionRecordingComponent(Component):
             if not self._stop_recording():
                 self._start_recording()
 
-    @_record_button.released
-    def _record_button(self, button):
+    @record_button.released
+    def record_button(self, button):
         self._on_record_button_released()
 
     def _on_record_button_released(self):

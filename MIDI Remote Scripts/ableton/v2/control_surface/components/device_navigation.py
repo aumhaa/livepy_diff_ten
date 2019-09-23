@@ -1,13 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from contextlib import contextmanager
 from itertools import ifilter, imap, chain
-from functools import partial
-from multipledispatch import dispatch
-import Live
-from ...base import find_if, first, index_if, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, EventObject, SlotGroup, task
+from ...base import first, index_if, listens, liveobj_changed, liveobj_valid, SlotGroup
 from ...control_surface import device_to_appoint
-from ...control_surface.control import control_list, StepEncoderControl
-from ...control_surface.mode import Component, ModesComponent
 from .item_lister import ItemListerComponent, ItemProvider
 
 def is_empty_rack(rack):
@@ -52,15 +46,15 @@ class FlattenedDeviceChain(ItemProvider):
     def items(self):
         return self._devices
 
-    def _get_selected_item(self):
+    @property
+    def selected_item(self):
         return self._selected_item
 
-    def _set_selected_item(self, device):
+    @selected_item.setter
+    def selected_item(self, device):
         if liveobj_changed(self._selected_item, device):
             self._selected_item = device
             self.notify_selected_item()
-
-    selected_item = property(_get_selected_item, _set_selected_item)
 
     @property
     def has_invalid_selection(self):
@@ -117,7 +111,6 @@ class DeviceNavigationComponent(ItemListerComponent):
         return self.item_provider.selected_item
 
     def _on_select_button_pressed(self, button):
-        device_or_pad = self.items[button.index].item
         self._select_item(self.items[button.index].item)
 
     def _show_selected_item(self):

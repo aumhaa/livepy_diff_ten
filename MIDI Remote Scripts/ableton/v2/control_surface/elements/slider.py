@@ -4,7 +4,6 @@ from ..input_control_element import MIDI_NOTE_TYPE
 from .encoder import EncoderElement
 
 class SliderElement(EncoderElement):
-    u""" Class representing a slider on the controller """
 
     def __init__(self, msg_type, channel, identifier, *a, **k):
         assert msg_type is not MIDI_NOTE_TYPE

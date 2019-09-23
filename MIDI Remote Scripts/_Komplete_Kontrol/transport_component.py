@@ -47,7 +47,7 @@ class TransportComponent(TransportComponentBase):
 
     def _update_button_states(self):
         super(TransportComponent, self)._update_button_states()
-        self.play_button.color = self._play_toggle.toggled_color if self._play_toggle.is_toggled else self._play_toggle.untoggled_color
+        self.play_button.color = u'Transport.PlayOn' if self.song.is_playing else u'Transport.PlayOff'
 
     def _update_stop_button_color(self):
-        self._stop_button.color = self._play_toggle.untoggled_color if self._play_toggle.is_toggled else self._play_toggle.toggled_color
+        self.stop_button.color = u'Transport.PlayOff' if self.song.is_playing else u'Transport.PlayOn'

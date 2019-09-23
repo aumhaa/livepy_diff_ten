@@ -26,13 +26,13 @@ class IdentifiableControlSurface(ControlSurface):
         self._request_task.kill()
 
     def on_identified(self, response_bytes):
-        raise NotImplementedError
+        self.refresh_state()
 
     def port_settings_changed(self):
         self._request_task.restart()
 
     def process_midi_bytes(self, midi_bytes, midi_processor):
-        if midi.is_sysex(midi_bytes) and self._is_identity_reponse(midi_bytes):
+        if midi.is_sysex(midi_bytes) and self._is_identity_response(midi_bytes):
             product_id_bytes = self._extract_product_id_bytes(midi_bytes)
             if product_id_bytes == self._product_id_bytes:
                 self._request_task.kill()
@@ -44,7 +44,7 @@ class IdentifiableControlSurface(ControlSurface):
         else:
             super(IdentifiableControlSurface, self).process_midi_bytes(midi_bytes, midi_processor)
 
-    def _is_identity_reponse(self, midi_bytes):
+    def _is_identity_response(self, midi_bytes):
         return midi_bytes[3:5] == (midi.SYSEX_GENERAL_INFO, midi.SYSEX_IDENTITY_RESPONSE_ID)
 
     def _extract_product_id_bytes(self, midi_bytes):

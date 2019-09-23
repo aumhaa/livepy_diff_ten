@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip, izip_longest
 from ableton.v2.base import clamp, listens
 from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, TextDisplayControl, control_list
-from ableton.v2.control_surface.mode import ModesComponent, make_mode_button_control
+from ableton.v2.control_surface.mode import ModesComponent, make_mode_button_control, to_camel_case_name
 from .control import BinaryControl
 MAX_MODE_NUMBER = 8
 
@@ -59,26 +59,14 @@ class DisplayingNavigatableModesComponent(NavigatableModesComponent):
                 color_field.color = u'Mode.{}.On'.format(name.capitalize()) if name else u'DefaultButton.Disabled'
 
 
-def to_camel_case_name(mode_name, separator = u''):
-    return separator.join(map(lambda s: s.capitalize(), mode_name.split(u'_')))
-
-
-class SkinableModesComponent(ModesComponent):
-
-    def add_mode_button_control(self, mode_name, behaviour):
-        mode_color_basebame = u'Mode.' + to_camel_case_name(mode_name)
-        button_control = make_mode_button_control(self, mode_name, behaviour, mode_selected_color=mode_color_basebame + u'.On', mode_unselected_color=mode_color_basebame + u'.Off', mode_group_active_color=mode_color_basebame + u'.On')
-        self.add_control(u'%s_button' % mode_name, button_control)
-
-
-class DisplayingSkinableModesComponent(SkinableModesComponent):
+class DisplayingSkinableModesComponent(ModesComponent):
     mode_display = TextDisplayControl(segments=(u'',) * MAX_MODE_NUMBER)
     mode_color_fields = control_list(ColorSysexControl, MAX_MODE_NUMBER)
     mode_selection_fields = control_list(BinaryControl, MAX_MODE_NUMBER)
     selected_mode_color_field = ColorSysexControl()
 
     def __init__(self, *a, **k):
-        super(DisplayingSkinableModesComponent, self).__init__(*a, **k)
+        super(DisplayingSkinableModesComponent, self).__init__(enable_skinning=True, *a, **k)
         self.__on_selected_mode_changed.subject = self
 
     def add_mode_button_control(self, mode_name, behaviour):

@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.control import Control, TextDisplayControl
+from ableton.v2.control_surface.control import Control
 
 class BinaryControl(Control):
 
@@ -32,13 +32,3 @@ class BinaryControl(Control):
         def _send_current_value(self):
             if self._control_element:
                 self._control_element.send_value(self.ON_VALUE if self.is_on else self.OFF_VALUE)
-
-
-class ConfigurableTextDisplayControl(TextDisplayControl):
-
-    class State(TextDisplayControl.State):
-
-        def set_data_sources(self, data_sources):
-            self._data_sources = data_sources
-            if self._control_element:
-                self._control_element.set_data_sources(data_sources)

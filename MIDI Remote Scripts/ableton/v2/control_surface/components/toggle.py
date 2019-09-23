@@ -51,6 +51,7 @@ class ToggleComponent(Component):
 
     def set_toggle_button(self, button):
         assert button is None or not self.is_momentary or button.is_momentary()
+        self._property_button = button
         self.__on_button_value.subject = button
         self._update_button()
 
@@ -60,7 +61,7 @@ class ToggleComponent(Component):
 
     def _update_button(self):
         if self.is_enabled():
-            button = self.__on_button_value.subject
+            button = self._property_button
             if button:
                 button.set_light(self.view_transform(self.value))
 
@@ -75,5 +76,5 @@ class ToggleComponent(Component):
                     self.value = self.model_transform(True)
                 else:
                     self.value = self.model_transform(False)
-            elif value:
+            elif value or not self._property_button.is_momentary():
                 self.value = self.model_transform(not self.value)

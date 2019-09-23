@@ -108,7 +108,7 @@ class FixedLengthSessionRecordingComponent(SessionRecordingComponent, Messenger)
         self.footswitch_toggles_arrangement_recording = False
         self.__on_record_mode_changed.subject = self.song
         self.__on_record_mode_changed()
-        self.set_trigger_recording_on_release(not any((self._record_button.is_pressed, self.arrangement_record_button.is_pressed)))
+        self.set_trigger_recording_on_release(not any((self.record_button.is_pressed, self.arrangement_record_button.is_pressed)))
 
     def set_trigger_recording_on_release(self, trigger_recording):
         self._should_trigger_recording = trigger_recording
@@ -124,7 +124,7 @@ class FixedLengthSessionRecordingComponent(SessionRecordingComponent, Messenger)
     def capture_midi_button(self, button):
         try:
             self.song.capture_midi()
-            self.set_trigger_recording_on_release(not any((self._record_button.is_pressed, self.arrangement_record_button.is_pressed)))
+            self.set_trigger_recording_on_release(not any((self.record_button.is_pressed, self.arrangement_record_button.is_pressed)))
         except RuntimeError:
             pass
 
@@ -166,12 +166,12 @@ class FixedLengthSessionRecordingComponent(SessionRecordingComponent, Messenger)
             song = self.song
             clip_slot = get_clip_slot_from_index(song, song.view.selected_track, self._clip_slot_index_to_record_into())
             if liveobj_valid(clip_slot) and clip_slot.is_triggered and song.overdub and not clip_slot.is_recording:
-                self._record_button.color = u'Recording.Transition'
+                self.record_button.color = u'Recording.Transition'
             elif song.record_mode:
-                self._record_button.color = u'Recording.ArrangementRecordingOn'
+                self.record_button.color = u'Recording.ArrangementRecordingOn'
             else:
                 super(FixedLengthSessionRecordingComponent, self)._update_record_button()
-            self.arrangement_record_button.color = self._record_button.color
+            self.arrangement_record_button.color = self.record_button.color
 
     @listens(u'record_mode')
     def __on_record_mode_changed(self):

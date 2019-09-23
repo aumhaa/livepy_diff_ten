@@ -34,6 +34,10 @@ def tomode(thing):
     return thing
 
 
+def to_camel_case_name(mode_name, separator = u''):
+    return separator.join(map(lambda s: s.capitalize(), mode_name.split(u'_')))
+
+
 class Mode(object):
     u"""
     Interface to be implemented by modes.  When a mode is enabled,
@@ -349,6 +353,15 @@ class ReenterBehaviour(LatchingBehaviour):
         pass
 
 
+class ImmediateBehaviour(ModeButtonBehaviour):
+    u"""
+    Just goes to the pressed mode immediately. No latching or magic.
+    """
+
+    def press_immediate(self, component, mode):
+        component.selected_mode = mode
+
+
 def make_mode_button_control(modes_component, mode_name, behaviour, **k):
     button_control = ModeButtonControl(modes_component=modes_component, mode_name=mode_name, **k)
 
@@ -412,8 +425,10 @@ class ModesComponent(Component):
     cycle_mode_button = ButtonControl()
     default_behaviour = LatchingBehaviour()
 
-    def __init__(self, *a, **k):
+    def __init__(self, enable_skinning = False, cycle_modes_with_latching_only = False, *a, **k):
         super(ModesComponent, self).__init__(*a, **k)
+        self._enable_skinning = enable_skinning
+        self._cycle_modes_with_latching_only = cycle_modes_with_latching_only
         self._last_toggle_value = 0
         self._mode_toggle = None
         self._mode_list = []
@@ -519,7 +534,13 @@ class ModesComponent(Component):
         return set()
 
     def add_mode_button_control(self, mode_name, behaviour):
-        button_control = make_mode_button_control(self, mode_name, behaviour)
+        colors = {}
+        if self._enable_skinning:
+            mode_color_basebame = u'Mode.' + to_camel_case_name(mode_name)
+            colors = {u'mode_selected_color': mode_color_basebame + u'.On',
+             u'mode_unselected_color': mode_color_basebame + u'.Off',
+             u'mode_group_active_color': mode_color_basebame + u'.On'}
+        button_control = make_mode_button_control(self, mode_name, behaviour, **colors)
         self.add_control(u'%s_button' % mode_name, button_control)
         self._update_mode_buttons(self.selected_mode)
 
@@ -548,7 +569,7 @@ class ModesComponent(Component):
 
     @cycle_mode_button.released_delayed
     def cycle_mode_button(self, button):
-        if len(self._mode_list) and self.selected_mode != self._mode_list[0]:
+        if not self._cycle_modes_with_latching_only and len(self._mode_list) and self.selected_mode != self._mode_list[0]:
             self.cycle_mode(-1)
 
     def _update_cycle_mode_button(self, selected):

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from itertools import chain
-from ..base import EventObject, listens_group, liveobj_changed, liveobj_valid
+from ..base import EventObject, listens_group, liveobj_changed
 from .device_chain_utils import find_instrument_devices, find_instrument_meeting_requirement
 from .mode import Mode
 
@@ -16,7 +16,6 @@ class PercussionInstrumentFinder(Mode, EventObject):
     _simpler = None
 
     def __init__(self, device_parent = None, is_enabled = True, *a, **k):
-        assert liveobj_valid(device_parent)
         super(PercussionInstrumentFinder, self).__init__(*a, **k)
         self._is_enabled = is_enabled
         self._device_parent = None
@@ -51,22 +50,22 @@ class PercussionInstrumentFinder(Mode, EventObject):
         """
         return self._simpler
 
-    def _get_device_parent(self):
+    @property
+    def device_parent(self):
         u"""
         The currently observed track.
         """
         return self._device_parent
 
-    def _set_device_parent(self, device_parent):
+    @device_parent.setter
+    def device_parent(self, device_parent):
         if liveobj_changed(self._device_parent, device_parent):
             self._device_parent = device_parent
             self.update()
 
-    device_parent = property(_get_device_parent, _set_device_parent)
-
     @listens_group(u'devices')
     def __on_devices_changed(self, chain):
-        self._get_device_parent().set_data(u'alternative_mode_locked', False)
+        self.device_parent.set_data(u'alternative_mode_locked', False)
         self.update()
 
     @listens_group(u'chains')
@@ -106,7 +105,10 @@ def find_drum_group_device(track_or_chain):
     u"""
     Looks up recursively for a drum_group device in the track.
     """
-    requirement = lambda i: i.can_have_drum_pads
+
+    def requirement(instrument):
+        return instrument.can_have_drum_pads
+
     return find_instrument_meeting_requirement(requirement, track_or_chain)
 
 
@@ -114,5 +116,8 @@ def find_sliced_simpler(track_or_chain):
     u"""
     Looks up recursively for a sliced simpler device in the track.
     """
-    requirement = lambda i: getattr(i, u'playback_mode', None) == Live.SimplerDevice.PlaybackMode.slicing
+
+    def requirement(instrument):
+        return getattr(instrument, u'playback_mode', None) == Live.SimplerDevice.PlaybackMode.slicing
+
     return find_instrument_meeting_requirement(requirement, track_or_chain)

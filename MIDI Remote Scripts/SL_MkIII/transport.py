@@ -3,18 +3,11 @@ from ableton.v2.control_surface.components import TransportComponent as Transpor
 from ableton.v2.control_surface.control import ButtonControl
 
 class TransportComponent(TransportComponentBase):
-    continue_playing_button = ButtonControl()
 
     def __init__(self, *a, **k):
         super(TransportComponent, self).__init__(*a, **k)
         self._loop_toggle.view_transform = lambda v: (u'Transport.LoopOn' if v else u'Transport.LoopOff')
         self._record_toggle.view_transform = lambda v: (u'Recording.On' if v else u'Recording.Off')
-
-    @continue_playing_button.pressed
-    def continue_playing_button(self, _):
-        song = self.song
-        if not song.is_playing:
-            song.continue_playing()
 
     def set_seek_forward_button(self, ffwd_button):
         super(TransportComponent, self).set_seek_forward_button(ffwd_button)
@@ -44,4 +37,4 @@ class TransportComponent(TransportComponentBase):
             button.set_light(u'Transport.SeekOn' if button.is_pressed() else u'Transport.SeekOff')
 
     def _update_stop_button_color(self):
-        self._stop_button.color = u'Transport.StopEnabled' if self._play_toggle.is_toggled else u'Transport.StopDisabled'
+        self.stop_button.color = u'Transport.StopEnabled' if self.play_button.is_toggled else u'Transport.StopDisabled'

@@ -162,11 +162,8 @@ class SessionComponent(Component):
         scenes = self.song.scenes
         for index, scene in enumerate(self._scenes):
             scene_index = self._session_ring.scene_offset + index
-            if len(scenes) > scene_index:
-                scene.set_scene(scenes[scene_index])
-                scene.set_track_offset(self._session_ring.track_offset)
-            else:
-                self._scenes[index].set_scene(None)
+            scene.set_scene(scenes[scene_index] if len(scenes) > scene_index else None)
+            scene.set_track_offset(self._session_ring.track_offset)
 
         if self._selected_scene != None:
             self._selected_scene.set_track_offset(self._session_ring.track_offset)
@@ -200,13 +197,23 @@ class SessionComponent(Component):
 
     @listens_group(u'fired_slot_index')
     def __on_fired_slot_index_changed(self, track_index):
-        button_index = track_index - self._session_ring.track_offset
-        self._update_stop_clips_led(button_index)
+        self._on_fired_slot_index_changed(track_index)
+
+    def _on_fired_slot_index_changed(self, track_index):
+        session_ring = self._session_ring
+        button_index = track_index - session_ring.track_offset
+        if in_range(button_index, 0, session_ring.num_tracks):
+            self._update_stop_clips_led(button_index)
 
     @listens_group(u'playing_slot_index')
     def __on_playing_slot_index_changed(self, track_index):
-        button_index = track_index - self._session_ring.track_offset
-        self._update_stop_clips_led(button_index)
+        self._on_playing_slot_index_changed(track_index)
+
+    def _on_playing_slot_index_changed(self, track_index):
+        session_ring = self._session_ring
+        button_index = track_index - session_ring.track_offset
+        if in_range(button_index, 0, session_ring.num_tracks):
+            self._update_stop_clips_led(button_index)
 
     def _update_stop_clips_led(self, index):
         tracks_to_use = self._session_ring.tracks_to_use()

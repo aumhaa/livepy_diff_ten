@@ -93,6 +93,7 @@ class DrumGroupComponent(PlayableComponent, SlideComponent, Slideable):
             drum_group_view = drum_group_device.view if drum_group_device else None
             self.__on_selected_drum_pad_changed.subject = drum_group_view
             self.__on_drum_pads_scroll_position_changed.subject = drum_group_view
+            self.__on_chains_changed.subject = drum_group_device
             self._drum_group_device = drum_group_device
             self._update_drum_pad_listeners()
             self._update_selected_drum_pad()
@@ -199,6 +200,10 @@ class DrumGroupComponent(PlayableComponent, SlideComponent, Slideable):
     @listens(u'selected_drum_pad')
     def __on_selected_drum_pad_changed(self):
         self._update_selected_drum_pad()
+
+    @listens(u'chains')
+    def __on_chains_changed(self):
+        self._update_led_feedback()
 
     def _update_selected_drum_pad(self):
         selected_drum_pad = self._drum_group_device.view.selected_drum_pad if liveobj_valid(self._drum_group_device) else None

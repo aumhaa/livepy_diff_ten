@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import clamp, liveobj_valid
 from ableton.v2.control_surface.components import find_nearest_color
 from ableton.v2.control_surface.elements import Color
-from .colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
+from novation.colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
 
 def normalized_parameter_value(param):
     value = 0.0

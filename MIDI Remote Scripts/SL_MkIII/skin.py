@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface import Skin
-from .colors import Rgb
+from novation.colors import Rgb
 
 class Colors:
 
@@ -107,9 +107,11 @@ class Colors:
 
     class TrackNavigation:
         On = Rgb.LIGHT_BLUE
+        Pressed = Rgb.LIGHT_BLUE
 
     class SceneNavigation:
         On = Rgb.WHITE
+        Pressed = Rgb.WHITE
 
     class Action:
         Available = Rgb.WHITE

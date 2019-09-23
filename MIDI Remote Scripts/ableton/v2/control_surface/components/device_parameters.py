@@ -12,16 +12,16 @@ class DeviceParameterComponent(Component):
         super(DeviceParameterComponent, self).__init__(*a, **k)
         self.parameter_provider = parameter_provider
 
-    def _get_parameter_provider(self):
+    @property
+    def parameter_provider(self):
         return self._parameter_provider
 
-    def _set_parameter_provider(self, provider):
+    @parameter_provider.setter
+    def parameter_provider(self, provider):
         self._parameter_provider = provider or ParameterProvider()
         self._on_parameters_changed.subject = self._parameter_provider
         self._update_parameters()
         self._on_parameter_provider_changed(provider)
-
-    parameter_provider = property(_get_parameter_provider, _set_parameter_provider)
 
     def set_parameter_controls(self, encoders):
         self.controls.set_control_element(encoders)
@@ -65,6 +65,16 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
     @property
     def parameter_names(self):
         return map(lambda p: p and p.name or u'', self.parameters)
+
+    def set_parameter_name_displays(self, displays):
+        for data_source, display in izip_longest(self._parameter_name_data_sources, displays or []):
+            if display:
+                display.set_data_sources([data_source])
+
+    def set_parameter_value_displays(self, displays):
+        for data_source, display in izip_longest(self._parameter_value_data_sources, displays or []):
+            if display:
+                display.set_data_sources([data_source])
 
     def set_name_display_line(self, line):
         self._set_display_line(line, self._parameter_name_data_sources)
@@ -114,7 +124,6 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
                     data_source.set_display_string(value_string)
 
     def info_to_name(self, info):
-        parameter = info and info.parameter
         return info and info.name or u''
 
     def parameter_to_string(self, parameter):

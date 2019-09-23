@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
+from ...base import nop
 from ..component import Component
 
 class BackgroundComponent(Component):
@@ -11,8 +12,9 @@ class BackgroundComponent(Component):
     the midi track.
     """
 
-    def __init__(self, *a, **k):
+    def __init__(self, add_nop_listeners = False, *a, **k):
         super(BackgroundComponent, self).__init__(*a, **k)
+        self._add_nop_listeners = bool(add_nop_listeners)
         self._control_slots = {}
         self._control_map = {}
 
@@ -29,6 +31,8 @@ class BackgroundComponent(Component):
         if control:
             self._reset_control(control)
             self._control_map[name] = control
+            if self._add_nop_listeners:
+                self._control_slots[name] = self.register_slot(control, nop, u'value')
         elif name in self._control_map:
             del self._control_map[name]
 

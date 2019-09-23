@@ -14,8 +14,9 @@ class TransportComponent(Component):
     u"""
     Class encapsulating all functions in Live's transport section.
     """
-    _play_toggle = ToggleButtonControl(toggled_color=u'Transport.PlayOn', untoggled_color=u'Transport.PlayOff')
-    _stop_button = ButtonControl()
+    play_button = ToggleButtonControl(toggled_color=u'Transport.PlayOn', untoggled_color=u'Transport.PlayOff')
+    stop_button = ButtonControl()
+    continue_playing_button = ButtonControl()
 
     def __init__(self, *a, **k):
         super(TransportComponent, self).__init__(*a, **k)
@@ -43,31 +44,32 @@ class TransportComponent(Component):
         self.__on_is_playing_changed.subject = song
         self.__on_is_playing_changed()
 
+    @continue_playing_button.pressed
+    def continue_playing_button(self, _):
+        song = self.song
+        if not song.is_playing:
+            song.continue_playing()
+        else:
+            song.stop_playing()
+
     @listens(u'is_playing')
     def __on_is_playing_changed(self):
         self._update_button_states()
 
     def _update_button_states(self):
-        self._play_toggle.is_toggled = self.song.is_playing
+        self.play_button.is_toggled = self.song.is_playing
         self._update_stop_button_color()
 
     def _update_stop_button_color(self):
-        self._stop_button.color = self._play_toggle.toggled_color if self._play_toggle.is_toggled else self._play_toggle.untoggled_color
+        self.stop_button.color = self.play_button.toggled_color if self.play_button.is_toggled else self.play_button.untoggled_color
 
-    @_stop_button.released
+    @stop_button.released
     def _on_stop_button_released(self, button):
         self.song.is_playing = False
 
-    def set_stop_button(self, button):
-        self._update_stop_button_color()
-        self._stop_button.set_control_element(button)
-
-    @_play_toggle.toggled
+    @play_button.toggled
     def _on_play_button_toggled(self, is_toggled, button):
         self.song.is_playing = is_toggled
-
-    def set_play_button(self, button):
-        self._play_toggle.set_control_element(button)
 
     def set_seek_buttons(self, ffwd_button, rwd_button):
         if self._ffwd_button != ffwd_button:
