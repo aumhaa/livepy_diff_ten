@@ -1,16 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import chain, repeat, izip_longest
+from itertools import izip_longest
 import Live
-from ableton.v2.base import listens_group, listens
-from ableton.v2.control_surface import Component, ParameterProvider
+from ableton.v2.base import is_parameter_bipolar, listens_group
 from ableton.v2.control_surface.components import DisplayingDeviceParameterComponent as DeviceParameterComponentBase
-from ableton.v2.control_surface.control import ControlList, MappedSensitivitySettingControl
 from ableton.v2.control_surface.elements import DisplayDataSource
 from . import consts
 AutomationState = Live.DeviceParameter.AutomationState
 
 def graphic_bar_for_parameter(parameter):
-    if parameter.min == -1 * parameter.max:
+    if is_parameter_bipolar(parameter):
         return consts.GRAPH_PAN
     if parameter.is_quantized:
         return consts.GRAPH_SIN

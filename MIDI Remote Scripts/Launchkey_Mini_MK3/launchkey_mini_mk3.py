@@ -8,8 +8,8 @@ from novation.instrument_control import InstrumentControlMixin
 from novation.novation_base import NovationBase
 from novation.simple_device import SimpleDeviceParameterComponent
 from novation.view_control import NotifyingViewControlComponent
-from .midi import PAD_DRUM_LAYOUT, INCONTROL_ONLINE_VALUE, PAD_SESSION_LAYOUT, POT_VOLUME_LAYOUT
-from .sysex_ids import LK_MINI_MK3_FAMILY_CODE
+from . import midi
+from . import sysex_ids as ids
 from .drum_group import DrumGroupComponent
 from .elements import Elements, SESSION_HEIGHT
 from .mode import ModesComponent
@@ -18,21 +18,21 @@ from .transport import TransportComponent
 DRUM_FEEDBACK_CHANNEL = 1
 
 class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
-    model_family_code = LK_MINI_MK3_FAMILY_CODE
+    model_family_code = ids.LK_MINI_MK3_FAMILY_CODE
     element_class = Elements
     session_height = SESSION_HEIGHT
     skin = skin
     has_layout_switch = False
 
     def disconnect(self):
-        self._elements.pad_layout_switch.send_value(PAD_DRUM_LAYOUT)
+        self._elements.pad_layout_switch.send_value(midi.PAD_DRUM_LAYOUT)
         self._auto_arm.set_enabled(False)
         super(Launchkey_Mini_MK3, self).disconnect()
 
     def on_identified(self, midi_bytes):
-        self._elements.incontrol_mode_switch.send_value(INCONTROL_ONLINE_VALUE)
-        self._elements.pad_layout_switch.send_value(PAD_SESSION_LAYOUT)
-        self._elements.pot_layout_switch.send_value(POT_VOLUME_LAYOUT)
+        self._elements.incontrol_mode_switch.send_value(midi.INCONTROL_ONLINE_VALUE)
+        self._elements.pad_layout_switch.send_value(midi.PAD_SESSION_LAYOUT)
+        self._elements.pot_layout_switch.send_value(midi.POT_VOLUME_LAYOUT)
         self._target_track_changed()
         self._auto_arm.set_enabled(True)
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])

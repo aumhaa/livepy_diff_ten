@@ -9,6 +9,7 @@ from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.elements import ToggleElement
 from .firmware_handling import get_version_number_from_string
 HANDSHAKE_TIMEOUT = 10.0
+DONGLE_DELAY = 0.2
 DONGLE_SIZE = 16
 
 def to_bytes(dongle):
@@ -59,10 +60,11 @@ class HandshakeComponent(Component):
         super(HandshakeComponent, self).__init__(*a, **k)
         self._identity_control = identity_control
         self._presentation_control = presentation_control
-        self._dongle_control = dongle_control
         self._dongle_one, self._dongle_two = dongle
         self._on_identity_value.subject = identity_control
         self._on_dongle_value.subject = dongle_control
+        self._delay_dongle_task = self._tasks.add(task.sequence(task.wait(DONGLE_DELAY), task.run(dongle_control.enquire_value)))
+        self._delay_dongle_task.kill()
         self._identification_timeout_task = self._tasks.add(task.sequence(task.wait(HANDSHAKE_TIMEOUT), task.run(self._do_fail)))
         self._identification_timeout_task.kill()
 
@@ -106,7 +108,7 @@ class HandshakeComponent(Component):
             else:
                 self._hardware_identity = HardwareIdentity(firmware=value[:4], serial=value[4:8], manufacturing=value[8:25])
                 self._presentation_control.enquire_value()
-                self._dongle_control.enquire_value()
+                self._delay_dongle_task.restart()
         else:
             self._do_fail()
 
@@ -125,12 +127,14 @@ class HandshakeComponent(Component):
     def _do_succeed(self):
         if self._handshake_succeeded == None:
             self._handshake_succeeded = True
+            self._delay_dongle_task.kill()
             self._identification_timeout_task.kill()
             self.notify_success()
 
     def _do_fail(self, bootloader_mode = False):
         if self._handshake_succeeded == None:
             self._handshake_succeeded = False
+            self._delay_dongle_task.kill()
             self._identification_timeout_task.kill()
             self.notify_failure(bootloader_mode)
 

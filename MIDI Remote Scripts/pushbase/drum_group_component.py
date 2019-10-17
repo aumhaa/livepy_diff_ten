@@ -132,7 +132,6 @@ class DrumGroupComponent(SlideableTouchStripComponent, DrumGroupComponent, Messe
 
     @listens(u'chains')
     def _on_chains_changed(self):
-        self._update_led_feedback()
         self.notify_contents()
 
     def delete_pitch(self, drum_pad):

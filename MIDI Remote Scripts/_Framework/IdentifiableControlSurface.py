@@ -30,7 +30,7 @@ class IdentifiableControlSurface(ControlSurface):
         self._request_task.restart()
 
     def handle_sysex(self, midi_bytes):
-        if self._is_identity_reponse(midi_bytes):
+        if self._is_identity_response(midi_bytes):
             product_id_bytes = self._extract_product_id_bytes(midi_bytes)
             if product_id_bytes == self._product_id_bytes:
                 self._request_task.kill()
@@ -42,7 +42,7 @@ class IdentifiableControlSurface(ControlSurface):
         else:
             super(IdentifiableControlSurface, self).handle_sysex(midi_bytes)
 
-    def _is_identity_reponse(self, midi_bytes):
+    def _is_identity_response(self, midi_bytes):
         return midi_bytes[3:5] == (6, 2)
 
     def _extract_product_id_bytes(self, midi_bytes):

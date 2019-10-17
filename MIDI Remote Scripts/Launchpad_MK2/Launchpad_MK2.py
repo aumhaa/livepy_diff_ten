@@ -169,7 +169,8 @@ class Launchpad_MK2(IdentifiableControlSurface, OptimizedControlSurface):
         self._mixer_home_page_layer = LayerMode(self._mixer, Layer(volume_reset_buttons=self._volume_reset_buttons, pan_reset_buttons=self._pan_reset_buttons, send_a_reset_buttons=self._send_a_reset_buttons, send_b_reset_buttons=self._send_b_reset_buttons, mute_buttons=self._mute_buttons, solo_buttons=self._solo_buttons, arm_buttons=self._arm_buttons, unmute_all_button=self._mute_button, unsolo_all_button=self._solo_button, unarm_all_button=self._record_arm_button))
         self._mixer_volume_layer = LayerMode(self._mixer, Layer(volume_controls=self._sliders))
         self._mixer_pan_layer = LayerMode(self._mixer, Layer(pan_controls=self._sliders))
-        self._mixer_sends_layer = LayerMode(self._mixer, Layer(send_controls=self._sliders))
+        self._mixer_send_a_layer = LayerMode(self._mixer, Layer(send_a_controls=self._sliders))
+        self._mixer_send_b_layer = LayerMode(self._mixer, Layer(send_b_controls=self._sliders))
 
     def _create_translating_mixer_background(self, translation_channel):
         return TranslatingBackgroundComponent(translation_channel=translation_channel, is_enabled=False, name=u'Background', layer=Layer(stop_button=self._stop_button, mute_buttons=self._mute_button, solo_button=self._solo_button, record_arm_button=self._record_arm_button))
@@ -182,20 +183,11 @@ class Launchpad_MK2(IdentifiableControlSurface, OptimizedControlSurface):
         self._modes.add_mode(u'user_2_mode', [], layout_byte=2)
         self._modes.add_mode(u'volume_mode', [self._session, self._create_translating_mixer_background(consts.VOLUME_MODE_CHANNEL), self._mixer_volume_layer], layout_byte=4, groups=set(u'mixer'))
         self._modes.add_mode(u'pan_mode', [self._session, self._create_translating_mixer_background(consts.PAN_MODE_CHANNEL), self._mixer_pan_layer], layout_byte=5, groups=set(u'mixer'))
-        self._modes.add_mode(u'send_a_mode', [self._session,
-         self._create_translating_mixer_background(consts.SEND_A_MODE_CHANNEL),
-         partial(self._set_send_index, 0),
-         self._mixer_sends_layer], layout_byte=6, groups=set(u'mixer'))
-        self._modes.add_mode(u'send_b_mode', [self._session,
-         self._create_translating_mixer_background(consts.SEND_B_MODE_CHANNEL),
-         partial(self._set_send_index, 1),
-         self._mixer_sends_layer], layout_byte=7, groups=set(u'mixer'))
+        self._modes.add_mode(u'send_a_mode', [self._session, self._create_translating_mixer_background(consts.SEND_A_MODE_CHANNEL), self._mixer_send_a_layer], layout_byte=6, groups=set(u'mixer'))
+        self._modes.add_mode(u'send_b_mode', [self._session, self._create_translating_mixer_background(consts.SEND_B_MODE_CHANNEL), self._mixer_send_b_layer], layout_byte=7, groups=set(u'mixer'))
         self._modes.add_mode(u'mixer_mode', [self._session, self._stop_clip_layer_mode, self._mixer_home_page_layer], layout_byte=3, groups=set(u'mixer'))
         self._modes.layer = Layer(session_mode_button=self._session_button, user_1_mode_button=self._user_1_button, user_2_mode_button=self._user_2_button, mixer_mode_button=self._mixer_button, volume_mode_button=self._volume_button, pan_mode_button=self._pan_button, send_a_mode_button=self._send_a_button, send_b_mode_button=self._send_b_button)
         self._modes.selected_mode = u'session_mode'
-
-    def _set_send_index(self, index):
-        self._mixer.send_index = index
 
     def _switch_layout(self, layout_byte):
         if layout_byte != self._last_sent_layout_byte:

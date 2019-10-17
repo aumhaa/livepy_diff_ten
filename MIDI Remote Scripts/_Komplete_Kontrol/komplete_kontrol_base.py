@@ -1,11 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.control_surface import ControlSurface, Layer, midi
-from ableton.v2.control_surface.components import AutoArmComponent, SessionRecordingComponent, SimpleTrackAssigner, UndoRedoComponent
+from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, SessionRecordingComponent, SimpleTrackAssigner, UndoRedoComponent
 from ableton.v2.base import listens, nop, task
 from ableton.v2.control_surface.mode import ModesComponent, AddLayerMode, EnablingMode
 from ableton.v2.control_surface.elements import ButtonMatrixElement, MultiElement, SysexElement
-from .background_component import BackgroundComponent
 from .clip_launch_component import ClipLaunchComponent
 from .detail_clip_component import DetailClipComponent
 from .focus_follow_component import FocusFollowComponent
@@ -127,7 +126,7 @@ class KompleteKontrolBase(ControlSurface):
         self._clip_launch = ClipLaunchComponent(name=u'Clip_Launch', is_enabled=False, layer=Layer(clip_launch_button=self._clip_launch_button, track_stop_button=self._track_stop_button))
 
     def _create_clip_launch_background(self):
-        self._clip_launch_background = BackgroundComponent(name=u'Background', is_enabled=False, layer=Layer(clip_launch_button=self._clip_launch_button, track_stop_button=self._track_stop_button, priority=-1))
+        self._clip_launch_background = BackgroundComponent(name=u'Background', is_enabled=False, add_nop_listeners=True, layer=Layer(clip_launch_button=self._clip_launch_button, track_stop_button=self._track_stop_button, priority=-1))
 
     def _create_detail_clip(self):
         self._detail_clip = DetailClipComponent(name=u'Detail_Clip', is_enabled=False, layer=Layer(quantize_notes_button=self._quantize_button, delete_notes_button=self._clear_button))

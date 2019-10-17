@@ -366,7 +366,7 @@ class InputControlElement(NotifyingControlElement):
     def _do_send_value(self, value, channel = None):
         data_byte1 = self._original_identifier
         data_byte2 = value
-        status_byte = self._status_byte(channel or self._original_channel)
+        status_byte = self._status_byte(self._original_channel if channel is None else channel)
         if self._msg_type == MIDI_PB_TYPE:
             data_byte1 = value & 127
             data_byte2 = value >> 7 & 127

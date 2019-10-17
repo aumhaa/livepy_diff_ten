@@ -64,24 +64,30 @@ class MixerComponent(MixerComponentBase):
                 control.type = consts.FADER_BIPOLAR_TYPE
                 control.color = self._pan_on_value
 
-    def set_send_controls(self, controls):
+    def set_send_a_controls(self, controls):
+        self.set_send_controls(controls, 0)
+
+    def set_send_b_controls(self, controls):
+        self.set_send_controls(controls, 1)
+
+    def set_send_controls(self, controls, send_index):
         translation_channel = 0
-        if self.send_index == 0:
+        if send_index == 0:
             translation_channel = consts.SEND_A_MODE_CHANNEL
-        elif self.send_index == 1:
+        elif send_index == 1:
             translation_channel = consts.SEND_B_MODE_CHANNEL
         if controls is not None:
-            for control in controls:
-                if control is not None:
-                    control.set_channel(translation_channel)
-
-        super(MixerComponent, self).set_send_controls(controls)
-        if controls is not None:
             for index, control in enumerate(controls):
-                control.index = index
-                control.type = consts.FADER_STANDARD_TYPE
+                if control is not None:
+                    self.channel_strip(index).set_send_controls((None,) * send_index + (control,))
+                    control.set_channel(translation_channel)
+                    control.index = index
+                    control.type = consts.FADER_STANDARD_TYPE
+                    control.color = u'Sends.Send%d.On' % send_index
 
-        self.on_send_index_changed()
+        else:
+            for strip in self._channel_strips:
+                strip.set_send_controls(None)
 
     def set_volume_reset_buttons(self, buttons):
         if buttons is not None:
@@ -136,9 +142,3 @@ class MixerComponent(MixerComponentBase):
         for track in self.song().tracks:
             if track.arm:
                 track.arm = False
-
-    def on_send_index_changed(self):
-        super(MixerComponent, self).on_send_index_changed()
-        if self.send_index is not None and self._send_controls is not None:
-            for control in self._send_controls:
-                control.color = u'Sends.Send%d.On' % (self.send_index,)

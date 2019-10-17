@@ -42,8 +42,7 @@ class FocusFollowComponent(Component):
         self.__on_devices_changed.replace_subjects(chains)
 
     def _update_komplete_kontrol_instance(self):
-        is_kk_instance = lambda d: isinstance(d, Live.PluginDevice.PluginDevice) and d.name.startswith(KK_NAME_PREFIX)
-        instance = find_instrument_meeting_requirement(is_kk_instance, self._track)
+        instance = find_instrument_meeting_requirement(lambda d: isinstance(d, Live.PluginDevice.PluginDevice) and d.name.startswith(KK_NAME_PREFIX), self._track)
         param_name = u''
         if liveobj_valid(instance):
             param_name = instance.get_parameter_names(end=1)[0]

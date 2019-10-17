@@ -57,7 +57,7 @@ class APC(ControlSurface):
                 version_bytes = midi_bytes[9:13]
                 self._device_id = midi_bytes[13]
                 self._send_introduction_message()
-                self._send_dongle_challenge()
+                self.schedule_message(2, self._send_dongle_challenge)
                 self._log_version(version_bytes)
 
     def _on_dongle_response(self, midi_bytes):

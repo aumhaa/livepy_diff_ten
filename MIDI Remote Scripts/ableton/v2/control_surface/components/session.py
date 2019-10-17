@@ -87,15 +87,16 @@ class SessionComponent(Component):
                 slot.set_launch_button(None)
 
     def set_scene_launch_buttons(self, buttons):
-        assert not buttons or buttons.width() == self._session_ring.num_scenes and buttons.height() == 1
+        num_scenes = self._session_ring.num_scenes
+        assert not buttons or buttons.width() == num_scenes and buttons.height() == 1 or buttons.height() == num_scenes and buttons.width() == 1
         if buttons:
-            for button, (x, _) in buttons.iterbuttons():
+            for x, button in enumerate(buttons):
                 scene = self.scene(x)
                 scene.set_launch_button(button)
 
         else:
-            for x in xrange(self._session_ring.num_scenes):
-                scene = self.scene(x)
+            for index in xrange(self._session_ring.num_scenes):
+                scene = self.scene(index)
                 scene.set_launch_button(None)
 
     @listens(u'offset')

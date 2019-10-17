@@ -38,6 +38,11 @@ def to_camel_case_name(mode_name, separator = u''):
     return separator.join(map(lambda s: s.capitalize(), mode_name.split(u'_')))
 
 
+def pop_last_mode(component, mode):
+    if len(component.active_modes) > 1:
+        component.pop_mode(mode)
+
+
 class Mode(object):
     u"""
     Interface to be implemented by modes.  When a mode is enabled,
@@ -315,22 +320,40 @@ class ModeButtonBehaviour(object):
         pass
 
 
-class LatchingBehaviour(ModeButtonBehaviour):
+class ImmediateBehaviour(ModeButtonBehaviour):
     u"""
-    Behaviour that will jump back to the previous mode when the button
-    is released after having been hold for some time.  If the button
-    is quickly pressed, the selected mode will stay.
+    Behaviour that just goes to the pressed mode immediately with no latching or magic.
     """
 
     def press_immediate(self, component, mode):
         component.push_mode(mode)
 
+
+class LatchingBehaviour(ImmediateBehaviour):
+    u"""
+    Behaviour that will jump back to the previous mode when the button
+    is released after having been held for some time.  If the button
+    is quickly pressed, the selected mode will stay.
+    """
+
     def release_immediate(self, component, mode):
         component.pop_unselected_modes()
 
     def release_delayed(self, component, mode):
-        if len(component.active_modes) > 1:
-            component.pop_mode(mode)
+        pop_last_mode(component, mode)
+
+
+class MomentaryBehaviour(ImmediateBehaviour):
+    u"""
+    Behaviour that will jump back to the previous mode regardless of how long the button
+    is held.
+    """
+
+    def release_immediate(self, component, mode):
+        pop_last_mode(component, mode)
+
+    def release_delayed(self, component, mode):
+        pop_last_mode(component, mode)
 
 
 class ReenterBehaviour(LatchingBehaviour):
@@ -351,15 +374,6 @@ class ReenterBehaviour(LatchingBehaviour):
 
     def on_reenter(self):
         pass
-
-
-class ImmediateBehaviour(ModeButtonBehaviour):
-    u"""
-    Just goes to the pressed mode immediately. No latching or magic.
-    """
-
-    def press_immediate(self, component, mode):
-        component.selected_mode = mode
 
 
 def make_mode_button_control(modes_component, mode_name, behaviour, **k):
