@@ -2,14 +2,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import listens, liveobj_valid, mixin
 from ableton.v2.control_surface import Layer
-from ableton.v2.control_surface.components import BackgroundComponent, SessionRecordingComponent
+from ableton.v2.control_surface.components import ArmedTargetTrackComponent, BackgroundComponent, SessionRecordingComponent
 from ableton.v2.control_surface.mode import AddLayerMode, EnablingMode, ImmediateBehaviour, ModesComponent, ReenterBehaviour
 from novation import sysex
 from novation.colors import Rgb
 from novation.drum_group import DrumGroupComponent
 from novation.instrument_control import InstrumentControlMixin
 from novation.novation_base import NovationBase
-from novation.target_track import ArmedTargetTrackComponent
 from novation.track_recording import TrackRecordingComponent
 from . import sysex_ids as ids
 from .configurable_playable import ConfigurablePlayableComponent
@@ -79,7 +78,7 @@ class Launchpad_X(InstrumentControlMixin, NovationBase):
             element.clear_send_cache()
 
     def _create_session_modes(self):
-        self._session_modes = ModesComponent(name=u'Session_Modes', is_enabled=False, enable_skinning=True, cycle_modes_with_latching_only=True, layer=Layer(cycle_mode_button=u'session_mode_button', launch_button=u'session_button_color_element'))
+        self._session_modes = ModesComponent(name=u'Session_Modes', is_enabled=False, enable_skinning=True, support_momentary_mode_cycling=False, layer=Layer(cycle_mode_button=u'session_mode_button', launch_button=u'session_button_color_element'))
         self._session_modes.add_mode(u'launch', AddLayerMode(self._session, Layer(scene_launch_buttons=u'scene_launch_buttons')))
         self._session_modes.add_mode(u'mixer', EnablingMode(self._mixer_modes))
         self._session_modes.selected_mode = u'launch'

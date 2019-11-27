@@ -67,6 +67,11 @@ class ButtonMatrixElement(CompoundElement):
         if len(self._buttons[row]) > column:
             return self._buttons[row][column]
 
+    def set_channel(self, channel):
+        for button in self:
+            if button:
+                button.set_channel(channel)
+
     def reset(self):
         for button in self:
             if button:

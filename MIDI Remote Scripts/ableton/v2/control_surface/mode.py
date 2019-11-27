@@ -439,10 +439,10 @@ class ModesComponent(Component):
     cycle_mode_button = ButtonControl()
     default_behaviour = LatchingBehaviour()
 
-    def __init__(self, enable_skinning = False, cycle_modes_with_latching_only = False, *a, **k):
+    def __init__(self, enable_skinning = False, support_momentary_mode_cycling = True, *a, **k):
         super(ModesComponent, self).__init__(*a, **k)
         self._enable_skinning = enable_skinning
-        self._cycle_modes_with_latching_only = cycle_modes_with_latching_only
+        self._support_momentary_mode_cycling = support_momentary_mode_cycling
         self._last_toggle_value = 0
         self._mode_toggle = None
         self._mode_list = []
@@ -583,7 +583,7 @@ class ModesComponent(Component):
 
     @cycle_mode_button.released_delayed
     def cycle_mode_button(self, button):
-        if not self._cycle_modes_with_latching_only and len(self._mode_list) and self.selected_mode != self._mode_list[0]:
+        if self._support_momentary_mode_cycling and len(self._mode_list) and self.selected_mode != self._mode_list[0]:
             self.cycle_mode(-1)
 
     def _update_cycle_mode_button(self, selected):

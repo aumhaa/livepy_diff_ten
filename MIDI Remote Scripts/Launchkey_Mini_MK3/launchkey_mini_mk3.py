@@ -92,7 +92,7 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
         self._pot_modes.set_enabled(True)
 
     def _create_stop_solo_mute_modes(self):
-        self._stop_solo_mute_modes = ModesComponent(name=u'Stop_Solo_Mute_Modes', is_enabled=False, cycle_modes_with_latching_only=True)
+        self._stop_solo_mute_modes = ModesComponent(name=u'Stop_Solo_Mute_Modes', is_enabled=False, support_momentary_mode_cycling=False)
         bottom_row = self._elements.clip_launch_matrix.submatrix[:, 1:]
         self._stop_solo_mute_modes.add_mode(u'launch', None, cycle_mode_button_color=u'Mode.Launch.On')
         self._stop_solo_mute_modes.add_mode(u'stop', AddLayerMode(self._session, Layer(stop_track_clip_buttons=bottom_row)), cycle_mode_button_color=u'Session.StopClip')

@@ -44,6 +44,7 @@ class ToggleComponent(Component):
     def value(self):
         if self.subject:
             return getattr(self.subject, self._property_name)
+        return False
 
     @value.setter
     def value(self, value):

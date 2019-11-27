@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens
 from ableton.v2.control_surface import PercussionInstrumentFinder
+from ableton.v2.control_surface.components import TargetTrackComponent
 from .colors import Rgb
-from .target_track import TargetTrackComponent
 from .util import is_song_recording
 
 class InstrumentControlMixin(object):

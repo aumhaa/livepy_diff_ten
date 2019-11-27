@@ -3,6 +3,12 @@ from ableton.v2.base import listens, listens_group
 from ableton.v2.control_surface import Component
 
 class TargetTrackComponent(Component):
+    u"""
+    Component that can be used to notify other components (such as
+    PercussionInstrumentFinder) of the track they should control/listen to
+    (the target_track). In this base class, the target_track will always be the
+    selected track.
+    """
     __events__ = (u'target_track',)
 
     def __init__(self, *a, **k):
@@ -33,6 +39,11 @@ class TargetTrackComponent(Component):
 
 
 class ArmedTargetTrackComponent(TargetTrackComponent):
+    u"""
+    TargetTrackComponent that monitors the armed status of tracks and designates the
+    most recently armed track as the target_track. If no tracks are armed, then the
+    target_track will be the selected track.
+    """
 
     def __init__(self, *a, **k):
         super(ArmedTargetTrackComponent, self).__init__(*a, **k)
