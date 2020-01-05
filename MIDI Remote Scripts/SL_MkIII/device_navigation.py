@@ -3,8 +3,8 @@ from itertools import izip_longest
 from ableton.v2.base import listens, listens_group
 from ableton.v2.control_surface import Layer
 from ableton.v2.control_surface.components import DeviceNavigationComponent
-from ableton.v2.control_surface.control import ColorSysexControl, TextDisplayControl, control_list
-from .control import BinaryControl
+from ableton.v2.control_surface.control import ColorSysexControl, control_list
+from .control import BinaryControl, TextDisplayControl
 NUM_VISIBLE_ITEMS = 16
 NUM_DISPLAY_SEGMENTS = NUM_VISIBLE_ITEMS / 2
 

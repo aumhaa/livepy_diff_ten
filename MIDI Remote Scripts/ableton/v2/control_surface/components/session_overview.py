@@ -13,6 +13,7 @@ class SessionOverviewComponent(Component):
         assert session_ring is not None
         self._buttons = None
         self._scene_bank_index = 0
+        self._track_bank_index = 0
         self._empty_value = 0
         self._stopped_value = 100
         self._playing_value = 127
@@ -39,7 +40,7 @@ class SessionOverviewComponent(Component):
         self._buttons = buttons
         self.__on_matrix_value.subject = self._buttons
         self.update()
-        self._update_bank_index(self._session_ring.scene_offset)
+        self._update_bank_index(self._session_ring.track_offset, self._session_ring.scene_offset)
 
     def set_empty_value(self, value):
         self._empty_value = value
@@ -68,12 +69,13 @@ class SessionOverviewComponent(Component):
             for x in xrange(self._buttons.width()):
                 for y in xrange(self._buttons.height()):
                     value_to_send = self._empty_value
+                    track_bank_offset = self._track_bank_index * self._buttons.width() * width
                     scene_bank_offset = self._scene_bank_index * self._buttons.height() * height
-                    track_offset = x * width
+                    track_offset = x * width + track_bank_offset
                     scene_offset = y * height + scene_bank_offset
                     if track_offset in xrange(len(tracks)) and scene_offset in xrange(len(scenes)):
                         value_to_send = self._stopped_value
-                        if self._session_ring.track_offset in xrange(width * (x - 1) + 1, width * (x + 1)) and self._session_ring.scene_offset - scene_bank_offset in xrange(height * (y - 1) + 1, height * (y + 1)):
+                        if self._session_ring.track_offset - track_bank_offset in xrange(width * (x - 1) + 1, width * (x + 1)) and self._session_ring.scene_offset - scene_bank_offset in xrange(height * (y - 1) + 1, height * (y + 1)):
                             value_to_send = self._selected_value
                         else:
                             playing = False
@@ -97,11 +99,12 @@ class SessionOverviewComponent(Component):
                         self._buttons.set_light(x, y, value_to_send)
 
     @listens(u'offset')
-    def __on_session_offset_changes(self, _, scene_offset):
-        self._update_bank_index(scene_offset)
+    def __on_session_offset_changes(self, track_offset, scene_offset):
+        self._update_bank_index(track_offset, scene_offset)
 
-    def _update_bank_index(self, scene_offset):
+    def _update_bank_index(self, track_offset, scene_offset):
         if self._buttons and self.is_enabled():
+            self._track_bank_index = int(track_offset / self._session_ring.num_tracks / self._buttons.width())
             self._scene_bank_index = int(scene_offset / self._session_ring.num_scenes / self._buttons.height())
         self.update()
 
@@ -109,7 +112,7 @@ class SessionOverviewComponent(Component):
     def __on_matrix_value(self, value, x, y, is_momentary):
         if self.is_enabled():
             if value != 0 or not is_momentary:
-                track_offset = x * self._session_ring.num_tracks
+                track_offset = (x + self._track_bank_index * self._buttons.width()) * self._session_ring.num_tracks
                 scene_offset = (y + self._scene_bank_index * self._buttons.height()) * self._session_ring.num_scenes
                 if track_offset in xrange(len(self._session_ring.tracks_to_use())) and scene_offset in xrange(len(self.song.scenes)):
                     self._session_ring.set_offsets(track_offset, scene_offset)

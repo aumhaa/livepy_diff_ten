@@ -2,11 +2,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens, nop
 from ableton.v2.control_surface import Layer, SessionRingSelectionLinking
 from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent
-from ableton.v2.control_surface.mode import AddLayerMode, EnablingMode, LayerMode
+from ableton.v2.control_surface.mode import AddLayerMode, LayerMode
 from novation import sysex
 from novation.instrument_control import InstrumentControlMixin
 from novation.novation_base import NovationBase
 from novation.simple_device import SimpleDeviceParameterComponent
+from novation.transport import TransportComponent
 from novation.view_control import NotifyingViewControlComponent
 from . import midi
 from . import sysex_ids as ids
@@ -14,7 +15,6 @@ from .drum_group import DrumGroupComponent
 from .elements import Elements, SESSION_HEIGHT
 from .mode import ModesComponent
 from .skin import skin
-from .transport import TransportComponent
 DRUM_FEEDBACK_CHANNEL = 1
 
 class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
@@ -22,7 +22,7 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
     element_class = Elements
     session_height = SESSION_HEIGHT
     skin = skin
-    has_layout_switch = False
+    suppress_layout_switch = False
 
     def disconnect(self):
         self._elements.pad_layout_switch.send_value(midi.PAD_DRUM_LAYOUT)
@@ -84,7 +84,7 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
         self._pot_modes = ModesComponent(name=u'Pot_Modes', is_enabled=False, layer=Layer(mode_selection_control=u'pot_layout_switch'))
         self._pot_modes.add_mode(u'custom', None)
         self._pot_modes.add_mode(u'volume', AddLayerMode(self._mixer, Layer(volume_controls=u'pots')))
-        self._pot_modes.add_mode(u'device', EnablingMode(enableable=self._device))
+        self._pot_modes.add_mode(u'device', self._device)
         self._pot_modes.add_mode(u'pan', AddLayerMode(self._mixer, Layer(pan_controls=u'pots')))
         self._pot_modes.add_mode(u'send_a', AddLayerMode(self._mixer, Layer(send_a_controls=u'pots')))
         self._pot_modes.add_mode(u'send_b', AddLayerMode(self._mixer, Layer(send_b_controls=u'pots')))
@@ -105,7 +105,7 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
         self._pad_modes = ModesComponent(name=u'Pad_Modes', is_enabled=False, layer=Layer(mode_selection_control=u'pad_layout_switch'))
         bg_mode = AddLayerMode(self._background, layer=Layer(scene_launch_buttons=u'scene_launch_buttons'))
         self._pad_modes.add_mode(u'custom', bg_mode)
-        self._pad_modes.add_mode(u'drum', (bg_mode, EnablingMode(self._drum_group)))
+        self._pad_modes.add_mode(u'drum', (bg_mode, self._drum_group))
         self._pad_modes.add_mode(u'session', LayerMode(self._stop_solo_mute_modes, layer=Layer(cycle_mode_button=self._elements.scene_launch_buttons_raw[1])))
         self._pad_modes.selected_mode = u'session'
         self._pad_modes.set_enabled(True)

@@ -130,6 +130,10 @@ class ChannelStripComponent(ChannelStripComponentBase):
         if liveobj_valid(track) and track != self.song.master_track:
             track.mute = not track.mute
 
+    def _on_select_button_pressed_delayed(self, _):
+        if self.track.is_foldable:
+            self.track.fold_state = not self.track.fold_state
+
     @listens(u'has_audio_output')
     def __on_has_audio_output_changed(self):
         self._update_output_meter_listeners()

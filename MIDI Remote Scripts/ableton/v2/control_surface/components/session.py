@@ -3,6 +3,7 @@ import Live
 from itertools import count
 from ...base import EventObject, in_range, product, listens, listens_group
 from ..component import Component
+from ..control import ButtonControl
 from .scene import SceneComponent
 
 class SessionComponent(Component):
@@ -12,6 +13,9 @@ class SessionComponent(Component):
     """
     _session_component_ends_initialisation = True
     scene_component_type = SceneComponent
+    managed_select_button = ButtonControl(color=u'Session.Select', pressed_color=u'Session.SelectPressed')
+    managed_delete_button = ButtonControl(color=u'Session.Delete', pressed_color=u'Session.DeletePressed')
+    managed_duplicate_button = ButtonControl(color=u'Session.Duplicate', pressed_color=u'Session.DuplicatePressed')
 
     def __init__(self, session_ring = None, auto_name = False, *a, **k):
         super(SessionComponent, self).__init__(*a, **k)
@@ -71,6 +75,26 @@ class SessionComponent(Component):
         self._stop_track_clip_buttons = buttons
         self.__on_stop_track_value.replace_subjects(buttons or [])
         self._update_stop_track_clip_buttons()
+
+    def set_managed_select_button(self, button):
+        self.managed_select_button.set_control_element(button)
+        self.set_modifier_button(button, u'select')
+
+    def set_managed_delete_button(self, button):
+        self.managed_delete_button.set_control_element(button)
+        self.set_modifier_button(button, u'delete')
+
+    def set_managed_duplicate_button(self, button):
+        self.managed_duplicate_button.set_control_element(button)
+        self.set_modifier_button(button, u'duplicate')
+
+    def set_modifier_button(self, button, name, clip_slots_only = False):
+        for y in xrange(self._session_ring.num_scenes):
+            scene = self.scene(y)
+            if not clip_slots_only:
+                getattr(scene, u'set_{}_button'.format(name))(button)
+            for x in xrange(self._session_ring.num_tracks):
+                getattr(scene.clip_slot(x), u'set_{}_button'.format(name))(button)
 
     def set_clip_launch_buttons(self, buttons):
         assert not buttons or buttons.width() == self._session_ring.num_tracks and buttons.height() == self._session_ring.num_scenes

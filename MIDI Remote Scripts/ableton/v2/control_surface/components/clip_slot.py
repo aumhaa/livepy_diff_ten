@@ -207,21 +207,33 @@ class ClipSlotComponent(Component):
     def _do_delete_clip(self):
         if self._clip_slot and self._clip_slot.has_clip:
             self._clip_slot.delete_clip()
+            self._on_clip_deleted()
+
+    def _on_clip_deleted(self):
+        pass
 
     def _do_select_clip(self, clip_slot):
         if liveobj_valid(self._clip_slot):
             if self.song.view.highlighted_clip_slot != self._clip_slot:
                 self.song.view.highlighted_clip_slot = self._clip_slot
+                self._on_slot_selected()
+
+    def _on_slot_selected(self):
+        pass
 
     def _do_duplicate_clip(self):
         if self._clip_slot and self._clip_slot.has_clip:
             try:
                 track = self._clip_slot.canonical_parent
                 track.duplicate_clip_slot(list(track.clip_slots).index(self._clip_slot))
+                self._on_clip_duplicated()
             except Live.Base.LimitationError:
                 pass
             except RuntimeError:
                 pass
+
+    def _on_clip_duplicated(self):
+        pass
 
     def _do_launch_clip(self, fire_state):
         object_to_launch = self._clip_slot

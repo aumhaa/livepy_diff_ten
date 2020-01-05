@@ -279,6 +279,13 @@ class ChannelStripComponent(Component):
         if liveobj_valid(self._track) and self.song.view.selected_track != self._track:
             self.song.view.selected_track = self._track
 
+    @select_button.pressed_delayed
+    def select_button(self, button):
+        self._on_select_button_pressed_delayed(button)
+
+    def _on_select_button_pressed_delayed(self, button):
+        pass
+
     @select_button.released
     def select_button(self, button):
         self._on_select_button_released(button)

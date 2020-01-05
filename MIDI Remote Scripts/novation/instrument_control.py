@@ -5,6 +5,10 @@ from ableton.v2.control_surface.components import TargetTrackComponent
 from .colors import Rgb
 from .util import is_song_recording
 
+def track_can_record(track):
+    return track.can_be_armed and (track.arm or track.implicit_arm)
+
+
 class InstrumentControlMixin(object):
     target_track_class = TargetTrackComponent
 
@@ -64,7 +68,7 @@ class InstrumentControlMixin(object):
 
     def _set_feedback_velocity(self):
         track = self._target_track.target_track
-        if is_song_recording(self.song) and (track.arm or track.implicit_arm):
+        if is_song_recording(self.song) and track_can_record(track):
             feedback_velocity = Rgb.RED.midi_value
         else:
             feedback_velocity = Rgb.GREEN.midi_value

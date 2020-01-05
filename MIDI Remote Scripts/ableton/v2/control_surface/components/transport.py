@@ -17,6 +17,7 @@ class TransportComponent(Component):
     play_button = ToggleButtonControl(toggled_color=u'Transport.PlayOn', untoggled_color=u'Transport.PlayOff')
     stop_button = ButtonControl()
     continue_playing_button = ButtonControl()
+    tap_tempo_button = ButtonControl(color=u'DefaultButton.On', pressed_color=u'DefaultButton.Off')
 
     def __init__(self, *a, **k):
         super(TransportComponent, self).__init__(*a, **k)
@@ -106,12 +107,6 @@ class TransportComponent(Component):
     def set_record_button(self, button):
         self._record_toggle.set_toggle_button(button)
 
-    def set_tap_tempo_button(self, button):
-        if self._tap_tempo_button != button:
-            self._tap_tempo_button = button
-            self.__tap_tempo_value.subject = button
-            self._update_tap_tempo_button()
-
     def set_loop_button(self, button):
         self._loop_toggle.set_toggle_button(button)
 
@@ -150,11 +145,6 @@ class TransportComponent(Component):
             self._fine_tempo_needs_pickup = True
             self._prior_fine_tempo_value = -1
 
-    def update(self):
-        super(TransportComponent, self).update()
-        if self.is_enabled():
-            self._update_tap_tempo_button()
-
     @listens(u'value')
     def __ffwd_value_slot(self, value):
         self._ffwd_value(value)
@@ -185,19 +175,12 @@ class TransportComponent(Component):
         song.current_song_time = max(0.0, song.current_song_time + speed * delta)
         return task.RUNNING
 
-    @listens(u'value')
-    def __tap_tempo_value(self, value):
-        if self.is_enabled():
-            if value or not self._tap_tempo_button.is_momentary():
-                if not self._end_undo_step_task.is_running:
-                    self.song.begin_undo_step()
-                self._end_undo_step_task.restart()
-                self.song.tap_tempo()
-            self._update_tap_tempo_button()
-
-    def _update_tap_tempo_button(self):
-        if self.is_enabled() and self._tap_tempo_button:
-            self._tap_tempo_button.set_light(True)
+    @tap_tempo_button.pressed
+    def tap_tempo_button(self, _):
+        if not self._end_undo_step_task.is_running:
+            self.song.begin_undo_step()
+        self._end_undo_step_task.restart()
+        self.song.tap_tempo()
 
     @listens(u'value')
     def __tempo_value(self, value):

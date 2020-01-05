@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ...base import listens, liveobj_valid
+from ...base import duplicate_clip_loop, listens, liveobj_valid
 from ...control_surface import Component
 from ...control_surface.control import ButtonControl
 
@@ -41,7 +41,7 @@ class ClipActionsComponent(Component):
 
     @double_loop_button.pressed
     def double_loop_button(self, _):
-        self.clip_slot.clip.duplicate_loop()
+        duplicate_clip_loop(self.clip_slot.clip)
 
     @listens(u'selected_scene')
     def __on_selected_scene_changed(self):

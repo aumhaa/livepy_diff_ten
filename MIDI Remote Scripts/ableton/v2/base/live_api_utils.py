@@ -23,3 +23,11 @@ def liveobj_valid(obj):
 
 def is_parameter_bipolar(param):
     return param.min == -1 * param.max
+
+
+def duplicate_clip_loop(clip):
+    if liveobj_valid(clip) and clip.is_midi_clip:
+        try:
+            clip.duplicate_loop()
+        except RuntimeError:
+            pass

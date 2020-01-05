@@ -4,10 +4,10 @@ from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC,
 
 def get_capabilities():
     return {CONTROLLER_ID_KEY: controller_id(vendor_id=4661, product_ids=[258], model_name=[u'Launchkey Mini MK3']),
-     PORTS_KEY: [inport(props=[]),
-                 inport(props=[NOTES_CC, SCRIPT, REMOTE]),
-                 outport(props=[SYNC]),
-                 outport(props=[NOTES_CC, SCRIPT, REMOTE])]}
+     PORTS_KEY: [inport(props=[NOTES_CC, REMOTE]),
+                 inport(props=[NOTES_CC, SCRIPT]),
+                 outport(props=[SYNC, REMOTE]),
+                 outport(props=[NOTES_CC, SCRIPT])]}
 
 
 def create_instance(c_instance):

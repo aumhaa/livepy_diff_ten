@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens, liveobj_valid
-from ableton.v2.control_surface.components import find_nearest_color, PlayableComponent
-from novation.colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
+from ableton.v2.control_surface.components import PlayableComponent
 from novation.drum_group import DrumGroupComponent as DrumGroupComponentBase
+from novation.util import get_midi_color_value_for_track
 
 class DrumGroupComponent(DrumGroupComponentBase):
 
@@ -34,9 +34,5 @@ class DrumGroupComponent(DrumGroupComponentBase):
 
     @listens(u'color')
     def __on_track_color_changed(self):
-        self._track_color = 0
-        if liveobj_valid(self._track):
-            self._track_color = CLIP_COLOR_TABLE.get(self._track.color, None)
-            if self._track_color is None:
-                self._track_color = find_nearest_color(RGB_COLOR_TABLE, self._track.color)
+        self._track_color = get_midi_color_value_for_track(self._track)
         self._update_led_feedback()

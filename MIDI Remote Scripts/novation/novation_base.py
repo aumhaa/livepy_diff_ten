@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from ableton.v2.base import const, inject, nop
 from ableton.v2.control_surface import IdentifiableControlSurface, Layer
 from ableton.v2.control_surface.components import SessionComponent, SessionRecordingComponent, SessionRingComponent, SimpleTrackAssigner
-from ableton.v2.control_surface.mode import EnablingMode, ModesComponent
+from ableton.v2.control_surface.mode import ModesComponent
 from . import sysex
 from .channel_strip import ChannelStripComponent
 from .colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
@@ -16,12 +16,14 @@ from .track_recording import TrackRecordingComponent
 class NovationBase(IdentifiableControlSurface):
     model_family_code = (0, 0)
     element_class = LaunchpadElements
-    session_ring_component_class = SessionRingComponent
+    session_class = SessionComponent
+    mixer_class = MixerComponent
     session_recording_class = SessionRecordingComponent
     track_recording_class = TrackRecordingComponent
+    channel_strip_class = ChannelStripComponent
     session_height = SESSION_HEIGHT
     skin = skin
-    has_layout_switch = True
+    suppress_layout_switch = True
 
     def __init__(self, *a, **k):
         super(NovationBase, self).__init__(product_id_bytes=(sysex.NOVATION_MANUFACTURER_ID + self.model_family_code + sysex.DEVICE_FAMILY_MEMBER_CODE), *a, **k)
@@ -30,7 +32,7 @@ class NovationBase(IdentifiableControlSurface):
             with inject(skin=const(self.skin)).everywhere():
                 self._elements = self.element_class()
         self._element_injector = inject(element_container=const(self._elements)).everywhere()
-        if self.has_layout_switch:
+        if self.suppress_layout_switch:
             self.register_slot(self._elements.layout_switch, nop, u'value')
         with self.component_guard():
             self._create_components()
@@ -54,8 +56,8 @@ class NovationBase(IdentifiableControlSurface):
         self._create_mixer()
 
     def _create_session(self):
-        self._session_ring = self.session_ring_component_class(name=u'Session_Ring', is_enabled=False, num_tracks=SESSION_WIDTH, num_scenes=self.session_height)
-        self._session = SessionComponent(name=u'Session', is_enabled=False, session_ring=self._session_ring, layer=self._create_session_layer())
+        self._session_ring = SessionRingComponent(name=u'Session_Ring', is_enabled=False, num_tracks=SESSION_WIDTH, num_scenes=self.session_height)
+        self._session = self.session_class(name=u'Session', is_enabled=False, session_ring=self._session_ring, layer=self._create_session_layer())
         self._session.set_rgb_mode(CLIP_COLOR_TABLE, RGB_COLOR_TABLE)
         self._session.set_enabled(True)
         self._session_navigation = SessionNavigationComponent(name=u'Session_Navigation', is_enabled=False, session_ring=self._session_ring, layer=self._create_session_navigation_layer())
@@ -68,7 +70,7 @@ class NovationBase(IdentifiableControlSurface):
         return Layer(up_button=u'up_button', down_button=u'down_button', left_button=u'left_button', right_button=u'right_button')
 
     def _create_mixer(self):
-        self._mixer = MixerComponent(name=u'Mixer', auto_name=True, tracks_provider=self._session_ring, track_assigner=SimpleTrackAssigner(), invert_mute_feedback=True, channel_strip_component_type=ChannelStripComponent)
+        self._mixer = self.mixer_class(name=u'Mixer', auto_name=True, tracks_provider=self._session_ring, track_assigner=SimpleTrackAssigner(), invert_mute_feedback=True, channel_strip_component_type=self.channel_strip_class)
 
     def _create_session_recording(self):
         self._session_recording = self.session_recording_class(self._target_track, name=u'Session_Recording', is_enabled=False, layer=Layer(record_button=u'record_button'))
@@ -80,6 +82,6 @@ class NovationBase(IdentifiableControlSurface):
         self._create_session_recording()
         self._create_track_recording()
         self._recording_modes = ModesComponent(name=u'Recording_Modes')
-        self._recording_modes.add_mode(u'session', EnablingMode(self._session_recording))
-        self._recording_modes.add_mode(u'track', EnablingMode(self._track_recording))
+        self._recording_modes.add_mode(u'session', self._session_recording)
+        self._recording_modes.add_mode(u'track', self._track_recording)
         self._recording_modes.selected_mode = u'session'

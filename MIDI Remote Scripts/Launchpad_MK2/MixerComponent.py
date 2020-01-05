@@ -65,12 +65,12 @@ class MixerComponent(MixerComponentBase):
                 control.color = self._pan_on_value
 
     def set_send_a_controls(self, controls):
-        self.set_send_controls(controls, 0)
+        self._set_send_controls(controls, 0)
 
     def set_send_b_controls(self, controls):
-        self.set_send_controls(controls, 1)
+        self._set_send_controls(controls, 1)
 
-    def set_send_controls(self, controls, send_index):
+    def _set_send_controls(self, controls, send_index):
         translation_channel = 0
         if send_index == 0:
             translation_channel = consts.SEND_A_MODE_CHANNEL

@@ -8,3 +8,5 @@ class SessionNavigationComponent(SessionNavigationComponentBase):
         super(SessionNavigationComponent, self).__init__(*a, **k)
         skin_scroll_buttons(self._vertical_banking, u'Session.Navigation', u'Session.NavigationPressed')
         skin_scroll_buttons(self._horizontal_banking, u'Session.Navigation', u'Session.NavigationPressed')
+        skin_scroll_buttons(self._vertical_paginator, u'Session.Navigation', u'Session.NavigationPressed')
+        skin_scroll_buttons(self._horizontal_paginator, u'Session.Navigation', u'Session.NavigationPressed')

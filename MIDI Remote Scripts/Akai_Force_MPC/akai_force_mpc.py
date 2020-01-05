@@ -8,7 +8,7 @@ from ableton.v2.control_surface.components import BackgroundComponent, RightAlig
 from ableton.v2.control_surface.default_bank_definitions import BANK_DEFINITIONS as DEFAULT_BANK_DEFINITIONS
 from ableton.v2.control_surface.elements import MultiElement, SysexElement
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, ModesComponent, MomentaryBehaviour
-from . import sysex
+from .sysex import SYSEX_MSG_HEADER, SYSEX_END_BYTE, MPC_X_PRODUCT_ID, MPC_LIVE_PRODUCT_ID, FORCE_PRODUCT_ID, SUPPORTED_PRODUCT_IDS, BROADCAST_ID, PING_MSG_TYPE, PONG_MSG_TYPE
 from .background import LightingBackgroundComponent
 from .channel_strip import ChannelStripComponent
 from .clip_actions import ClipActionsComponent
@@ -38,8 +38,8 @@ class Akai_Force_MPC(ControlSurface):
         self._initialize_task.kill()
         self._components_enabled = False
         with self.component_guard():
-            self._ping_element = SysexElement(send_message_generator=const(sysex.SYSEX_MSG_HEADER + (sysex.BROADCAST_ID, sysex.PING_MSG_TYPE, sysex.SYSEX_END_BYTE)), name=u'Ping_Element')
-            self._pong_element = MultiElement(name=u'Pong_Multi_Element', *[ IdentifyingSysexElement(sysex_identifier=sysex.SYSEX_MSG_HEADER + (identifier, sysex.PONG_MSG_TYPE), name=u'Pong_Element_{}'.format(index)) for index, identifier in enumerate(sysex.SUPPORTED_PRODUCT_IDS) ])
+            self._ping_element = SysexElement(send_message_generator=const(SYSEX_MSG_HEADER + (BROADCAST_ID, PING_MSG_TYPE, SYSEX_END_BYTE)), name=u'Ping_Element')
+            self._pong_element = MultiElement(name=u'Pong_Multi_Element', *[ IdentifyingSysexElement(sysex_identifier=SYSEX_MSG_HEADER + (identifier, PONG_MSG_TYPE), name=u'Pong_Element_{}'.format(index)) for index, identifier in enumerate(SUPPORTED_PRODUCT_IDS) ])
             self._ping_pong = PingPongComponent(on_pong_callback=self._identify, on_ping_timeout=partial(self._enable_components, False), name=u'Ping_Pong')
             self._ping_pong.layer = Layer(ping=self._ping_element, pong=self._pong_element)
 
@@ -51,10 +51,10 @@ class Akai_Force_MPC(ControlSurface):
 
     @property
     def is_force(self):
-        return self._product_id == sysex.FORCE_PRODUCT_ID
+        return self._product_id == FORCE_PRODUCT_ID
 
     def _identify(self, id_byte):
-        if id_byte in sysex.SUPPORTED_PRODUCT_IDS:
+        if id_byte in SUPPORTED_PRODUCT_IDS:
             if not self._is_initialized:
                 self._product_id = id_byte
                 self._create_elements()
@@ -74,9 +74,9 @@ class Akai_Force_MPC(ControlSurface):
                 elements_class = None
                 if self.is_force:
                     elements_class = ForceElements
-                elif self._product_id == sysex.MPC_X_PRODUCT_ID:
+                elif self._product_id == MPC_X_PRODUCT_ID:
                     elements_class = MPCXElements
-                elif self._product_id == sysex.MPC_LIVE_PRODUCT_ID:
+                elif self._product_id == MPC_LIVE_PRODUCT_ID:
                     elements_class = MPCLiveElements
                 self._elements = elements_class(self._product_id)
         self._element_injector = inject(element_container=const(self._elements)).everywhere()
@@ -147,7 +147,7 @@ class Akai_Force_MPC(ControlSurface):
         self._launch_modes.add_mode(u'clip_launch', [partial(self._elements.launch_mode_switch.send_value, 0), ExtendComboElementMode(combo_pairs=zip(chain(*self._elements.clip_launch_buttons_raw), chain(*self._elements.physical_clip_launch_buttons_raw))), ExtendComboElementMode(combo_pairs=zip(chain(*self._elements.clip_color_controls_raw), chain(*self._elements.physical_clip_color_controls_raw)))], cycle_mode_button_color=u'Mode.Off')
         if not self.is_force:
             self._launch_modes.add_mode(u'scene_launch', [partial(self._elements.launch_mode_switch.send_value, 1), LayerMode(self._scene_list, Layer(scene_launch_buttons=u'mpc_scene_launch_buttons', scene_color_controls=u'mpc_scene_color_controls'))], cycle_mode_button_color=u'Mode.On')
-            self._launch_modes.layer = Layer(cycle_mode_button=u'xyfx_button' if self._product_id == sysex.MPC_X_PRODUCT_ID else u'sixteen_level_button')
+            self._launch_modes.layer = Layer(cycle_mode_button=u'xyfx_button' if self._product_id == MPC_X_PRODUCT_ID else u'sixteen_level_button')
         self._launch_modes.selected_mode = u'clip_launch'
 
     def _create_actions(self):
@@ -164,6 +164,7 @@ class Akai_Force_MPC(ControlSurface):
     def _create_transport(self):
         transport_component_class = ForceTransportComponent if self.is_force else MPCTransportComponent
         self._transport = transport_component_class(is_enabled=False, name=u'Transport', layer=Layer(tempo_display=u'tempo_display', tempo_control=u'tempo_control', play_button=u'play_button', continue_playing_button=u'continue_button', stop_button=u'stop_button', tap_tempo_button=u'tap_tempo_button', shift_button=u'shift_button', nudge_down_button=u'phase_nudge_down_button', nudge_up_button=u'phase_nudge_up_button', tui_metronome_button=u'tui_metronome_button', metronome_button=u'physical_metronome_button', loop_button=u'loop_button', arrangement_overdub_button=u'arrangement_overdub_button', follow_song_button=u'follow_song_button', clip_trigger_quantization_control=u'clip_trigger_quantization_control', loop_start_display=u'tui_loop_start_display', loop_length_display=u'tui_loop_length_display', arrangement_position_display=u'tui_arrangement_position_display', loop_start_control=u'tui_loop_start_control', loop_length_control=u'tui_loop_length_control', arrangement_position_control=u'tui_arrangement_position_control', tui_arrangement_record_button=u'tui_arrangement_record_button'))
+        self._transport.tap_tempo_button.color = u'Transport.TapTempo'
         if self.is_force:
             self._transport.layer += Layer(clip_trigger_quantization_button_row=u'physical_track_select_buttons_with_shift')
         else:

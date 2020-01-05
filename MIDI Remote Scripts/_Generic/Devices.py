@@ -603,7 +603,7 @@ def best_of_parameter_bank(device, device_bob_dict = DEVICE_BOB_DICT):
         except:
             return []
 
-    return []
+    return device.parameters[1:9]
 
 
 def number_of_parameter_banks(device, device_dict = DEVICE_DICT):

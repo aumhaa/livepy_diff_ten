@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip, izip_longest
 from ableton.v2.base import clamp, listens
-from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, TextDisplayControl, control_list
+from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, control_list
 from ableton.v2.control_surface.mode import ModesComponent, make_mode_button_control, to_camel_case_name
-from .control import BinaryControl
+from .control import BinaryControl, TextDisplayControl
 MAX_MODE_NUMBER = 8
 
 class NavigatableModesComponent(ModesComponent):

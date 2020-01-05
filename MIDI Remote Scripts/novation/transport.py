@@ -9,6 +9,7 @@ class TransportComponent(TransportComponentBase):
 
     def __init__(self, *a, **k):
         super(TransportComponent, self).__init__(*a, **k)
+        self._metronome_toggle.view_transform = lambda v: (u'Transport.MetronomeOn' if v else u'Transport.MetronomeOff')
         self.__on_can_capture_midi_changed.subject = self.song
         self.__on_can_capture_midi_changed()
 

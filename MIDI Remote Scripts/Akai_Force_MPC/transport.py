@@ -180,10 +180,6 @@ class TransportComponent(TransportComponentBase):
     def __on_signature_denominator_changed(self):
         self._cached_num_beats_in_bar = num_beats_in_bar(self.song)
 
-    def _update_tap_tempo_button(self):
-        if self.is_enabled() and self._tap_tempo_button:
-            self._tap_tempo_button.set_light(u'Transport.TapTempo')
-
     def _update_clip_trigger_quantization_control(self):
         self.clip_trigger_quantization_control.value = int(self.song.clip_trigger_quantization)
 

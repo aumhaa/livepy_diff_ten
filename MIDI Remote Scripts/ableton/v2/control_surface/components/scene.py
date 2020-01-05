@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+import Live
 from itertools import izip
 from ...base import listens, liveobj_valid, liveobj_changed
 from ..component import Component
@@ -32,6 +33,7 @@ class SceneComponent(Component):
         self._track_offset = 0
         self._select_button = None
         self._delete_button = None
+        self._duplicate_button = None
         self.__on_track_list_changed.subject = session_ring
 
     @listens(u'tracks')
@@ -54,6 +56,9 @@ class SceneComponent(Component):
 
     def set_delete_button(self, button):
         self._delete_button = button
+
+    def set_duplicate_button(self, button):
+        self._duplicate_button = button
 
     def set_track_offset(self, offset):
         assert offset >= 0
@@ -124,10 +129,12 @@ class SceneComponent(Component):
         self._on_launch_button_pressed()
 
     def _on_launch_button_pressed(self):
-        if self._select_button and self._select_button.is_pressed():
+        if is_button_pressed(self._select_button):
             self._do_select_scene(self._scene)
         elif liveobj_valid(self._scene):
-            if self._delete_button and self._delete_button.is_pressed():
+            if is_button_pressed(self._duplicate_button):
+                self._do_duplicate_scene(self._scene)
+            elif is_button_pressed(self._delete_button):
                 self._do_delete_scene(self._scene)
             else:
                 self._do_launch_scene(True)
@@ -137,7 +144,7 @@ class SceneComponent(Component):
         self._on_launch_button_released()
 
     def _on_launch_button_released(self):
-        if not is_button_pressed(self._select_button) and liveobj_valid(self._scene) and not is_button_pressed(self._delete_button):
+        if not is_button_pressed(self._select_button) and liveobj_valid(self._scene) and not is_button_pressed(self._duplicate_button) and not is_button_pressed(self._delete_button):
             self._do_launch_scene(False)
 
     def _do_select_scene(self, scene_for_overrides):
@@ -145,14 +152,33 @@ class SceneComponent(Component):
             view = self.song.view
             if view.selected_scene != self._scene:
                 view.selected_scene = self._scene
+                self._on_scene_selected()
+
+    def _on_scene_selected(self):
+        pass
 
     def _do_delete_scene(self, scene_for_overrides):
         try:
             if liveobj_valid(self._scene):
                 song = self.song
                 song.delete_scene(list(song.scenes).index(self._scene))
+                self._on_scene_deleted()
         except RuntimeError:
             pass
+
+    def _on_scene_deleted(self):
+        pass
+
+    def _do_duplicate_scene(self, scene_for_overrides):
+        try:
+            song = self.song
+            song.duplicate_scene(list(song.scenes).index(self._scene))
+            self._on_scene_duplicated()
+        except (Live.Base.LimitationError, IndexError, RuntimeError):
+            pass
+
+    def _on_scene_duplicated(self):
+        pass
 
     def _do_launch_scene(self, value):
         launched = False

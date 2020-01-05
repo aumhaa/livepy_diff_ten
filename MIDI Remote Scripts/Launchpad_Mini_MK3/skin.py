@@ -10,7 +10,6 @@ class Colors:
 
         class Session:
             Launch = Color((Rgb.PALE_GREEN_HALF.midi_value, Rgb.WHITE_HALF.midi_value))
-            Mixer = Color((Rgb.CREAM.midi_value, Rgb.WHITE_HALF.midi_value))
             Overview = Color((Rgb.BLUE.midi_value, Rgb.WHITE_HALF.midi_value))
 
 
