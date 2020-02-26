@@ -77,6 +77,7 @@ class PushBase(ControlSurface):
             with inject(skin=const(self._skin)).everywhere():
                 self._create_controls()
         self._element_injector = inject(element_container=const(self.elements)).everywhere()
+        self._save_note_modes = False
 
     def initialize(self):
         self._setup_accidental_touch_prevention()
@@ -87,6 +88,7 @@ class PushBase(ControlSurface):
         self.__on_session_record_changed()
         self.__on_selected_track_is_frozen_changed.subject = self.song.view
         self.set_feedback_channels(FEEDBACK_CHANNELS)
+        self._save_note_modes = True
 
     def disconnect(self):
         if self._user is not None:
@@ -750,17 +752,17 @@ class PushBase(ControlSurface):
     @listens(u'selected_mode')
     def __on_note_editor_layout_changed(self, mode):
         self.reset_controlled_track(mode)
-        if mode:
+        if mode and self._save_note_modes:
             self.song.view.selected_track.set_data(u'push-selected-note-mode', mode)
 
     @listens(u'selected_mode')
     def __on_drums_note_layout_changed(self, mode):
-        if mode:
+        if mode and self._save_note_modes:
             self.song.view.selected_track.set_data(u'push-selected-note-mode', mode)
 
     @listens(u'selected_mode')
     def __on_slicing_note_layout_changed(self, mode):
-        if mode:
+        if mode and self._save_note_modes:
             self.song.view.selected_track.set_data(u'push-selected-note-mode', mode)
 
     def _save_default_note_layout(self, track):
