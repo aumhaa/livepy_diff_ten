@@ -31,7 +31,7 @@ class SimpleLayerOwner(Disconnectable):
 
 class LayerClient(ControlElementClient):
     u"""
-    Client of the indivial elements that delivers the elements to the
+    Client of the individual elements that delivers the elements to the
     layer owner.
     """
 
@@ -71,7 +71,7 @@ class CompoundLayer(CompoundResource):
     u"""
     A compound resource takes two layers and makes them look like one,
     grabbing both of them.  Both can have different priorities
-    thought.
+    though.
     """
 
     @property
@@ -125,7 +125,7 @@ class Layer(LayerBase):
     is an exclusive resource.  When grabbing the layer, it will try to
     grab all elements and will forward them to its own owner when he
     receives them, and will take them from him when they are
-    release. The layer with give and take away the elements from its
+    release. The layer will give and take away the elements from its
     client using methods of the form::
     
         client.set[element-name](element)

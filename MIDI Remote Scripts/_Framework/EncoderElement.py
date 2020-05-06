@@ -14,6 +14,7 @@ _map_modes = map_modes = Live.MidiMap.MapMode
 ENCODER_VALUE_NORMALIZER = {_map_modes.relative_smooth_two_compliment: lambda v: (v if v <= 64 else v - 128),
  _map_modes.relative_smooth_signed_bit: lambda v: (v if v <= 64 else 64 - v),
  _map_modes.relative_smooth_binary_offset: lambda v: v - 64}
+MAX_14_BIT_CC = 95
 
 class EncoderElement(InputControlElement):
     u"""
@@ -33,7 +34,10 @@ class EncoderElement(InputControlElement):
         super(EncoderElement, self).__init__(msg_type, channel, identifier, *a, **k)
         if encoder_sensitivity is not None:
             self.encoder_sensitivity = encoder_sensitivity
-        self.__map_mode = map_mode
+        if map_mode is _map_modes.absolute_14_bit and identifier > MAX_14_BIT_CC:
+            self.__map_mode = _map_modes.absolute
+        else:
+            self.__map_mode = map_mode
         self.__value_normalizer = ENCODER_VALUE_NORMALIZER.get(map_mode, _not_implemented)
 
     def message_map_mode(self):

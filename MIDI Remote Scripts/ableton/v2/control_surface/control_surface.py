@@ -39,7 +39,7 @@ def get_control_surfaces():
 class SimpleControlSurface(EventObject):
     u"""
     Base class for connecting a hardware controller with Live. It gives access to
-    the controllers MIDI input and output ports as well as Live's data model. Together
+    the controller's MIDI input and output ports as well as Live's data model. Together
     it can be used to connect hardware controls with functionality in Live and give
     feedback through MIDI.
     
@@ -140,7 +140,7 @@ class SimpleControlSurface(EventObject):
         u"""
         Live -> Script
         
-        Should return True, if the ControlSurfaces can lock a device.
+        Should return True, if the ControlSurface can lock a device.
         SimpleControlSurface does not support controlling devices, so it will always
         be False.
         """
@@ -192,7 +192,7 @@ class SimpleControlSurface(EventObject):
         When the internal MIDI controller has changed in a way that
         you need to rebuild the MIDI mappings, request a rebuild
         by calling this function. This is processed as a request,
-        to be sure that its not too often called, because its
+        to be sure that it's not too often called, because it's
         time-critical.
         """
         assert not self._in_build_midi_map
@@ -225,7 +225,7 @@ class SimpleControlSurface(EventObject):
         Live -> Script
         
         Is called when either the user changes the MIDI ports that are assigned
-        to the script, or the ports state changes due to unplugging/replugging the
+        to the script, or the port states change due to unplugging/replugging the
         device.
         
         Will always be called initially when setting up the script.
@@ -620,11 +620,11 @@ class SimpleControlSurface(EventObject):
     def preferences(self):
         u"""
         Returns a dictionary of preferences, that is persistent and stored in the
-        users preferences folder. :attr:`preferences_key` is used to uniquely access
+        user's preferences folder. :attr:`preferences_key` is used to uniquely access
         the dictionary.
         
         The preferences are saved whenever the control surface is disconnected,
-        Lives preferences dialog is closed or Live is shut down.
+        Live's preferences dialog is closed or Live is shut down.
         
         Raises a :class:`RuntimeError` if the preferences are accessed but
         preferences_key is not set.

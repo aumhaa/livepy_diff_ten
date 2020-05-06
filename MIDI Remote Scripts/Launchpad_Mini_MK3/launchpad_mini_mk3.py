@@ -1,12 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from ableton.v2.base import listens
 from ableton.v2.control_surface import Layer
-from ableton.v2.control_surface.components import BackgroundComponent, SessionOverviewComponent
+from ableton.v2.control_surface.components import SessionOverviewComponent
 from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
 from novation import sysex
 from novation.novation_base import NovationBase
 from novation.session_modes import SessionModesComponent
 from . import sysex_ids as ids
 from .elements import Elements
+from .notifying_background import NotifyingBackgroundComponent
 from .skin import skin
 
 class Launchpad_Mini_MK3(NovationBase):
@@ -14,9 +16,13 @@ class Launchpad_Mini_MK3(NovationBase):
     element_class = Elements
     skin = skin
 
+    def __init__(self, *a, **k):
+        self._last_layout_byte = sysex.SESSION_LAYOUT_BYTE
+        super(Launchpad_Mini_MK3, self).__init__(*a, **k)
+
     def on_identified(self, midi_bytes):
         self._elements.firmware_mode_switch.send_value(sysex.DAW_MODE_BYTE)
-        self._elements.layout_switch.send_value(sysex.SESSION_LAYOUT_BYTE)
+        self._elements.layout_switch.send_value(self._last_layout_byte)
         super(Launchpad_Mini_MK3, self).on_identified(midi_bytes)
 
     def _create_components(self):
@@ -24,6 +30,7 @@ class Launchpad_Mini_MK3(NovationBase):
         self._create_background()
         self._create_stop_solo_mute_modes()
         self._create_session_modes()
+        self.__on_layout_switch_value.subject = self._elements.layout_switch
 
     def _create_session_layer(self):
         return super(Launchpad_Mini_MK3, self)._create_session_layer() + Layer(scene_launch_buttons=u'scene_launch_buttons')
@@ -45,7 +52,22 @@ class Launchpad_Mini_MK3(NovationBase):
         (self._session_modes.add_mode(u'overview', (self._session_overview, AddLayerMode(self._session_navigation, Layer(page_up_button=u'up_button', page_down_button=u'down_button', page_left_button=u'left_button', page_right_button=u'right_button')), AddLayerMode(self._background, Layer(scene_launch_buttons=u'scene_launch_buttons')))),)
         self._session_modes.selected_mode = u'launch'
         self._session_modes.set_enabled(True)
+        self.__on_session_mode_changed.subject = self._session_modes
 
     def _create_background(self):
-        self._background = BackgroundComponent(name=u'Background', is_enabled=False, add_nop_listeners=True, layer=Layer(drums_mode_button=u'drums_mode_button', keys_mode_button=u'keys_mode_button', user_mode_button=u'user_mode_button'))
+        self._background = NotifyingBackgroundComponent(name=u'Background', is_enabled=False, add_nop_listeners=True, layer=Layer(drums_mode_button=u'drums_mode_button', keys_mode_button=u'keys_mode_button', user_mode_button=u'user_mode_button'))
         self._background.set_enabled(True)
+        self.__on_background_control_value.subject = self._background
+
+    @listens(u'selected_mode')
+    def __on_session_mode_changed(self, _):
+        self._elements.layout_switch.enquire_value()
+
+    @listens(u'value')
+    def __on_background_control_value(self, control, value):
+        if value and u'Mode' in control.name:
+            self._elements.layout_switch.enquire_value()
+
+    @listens(u'value')
+    def __on_layout_switch_value(self, value):
+        self._last_layout_byte = value

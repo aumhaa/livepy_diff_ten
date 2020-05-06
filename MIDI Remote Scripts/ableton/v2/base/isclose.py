@@ -27,7 +27,7 @@ def isclose(a, b, rel_tol = 1e-09, abs_tol = 0.0):
     is, NaN is not close to anything, even itself. inf and -inf are
     only close to themselves.
     The function can be used with any type that supports comparison,
-    substratcion and multiplication, including Decimal, Fraction, and
+    subtraction and multiplication, including Decimal, Fraction, and
     Complex
     Complex values are compared based on their absolute value.
     See PEP-0485 for a detailed description

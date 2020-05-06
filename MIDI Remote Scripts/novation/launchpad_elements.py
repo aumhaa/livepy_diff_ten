@@ -39,7 +39,7 @@ class LaunchpadElements(object):
          v,
          sysex.SYSEX_END_BYTE), default_value=sysex.STANDALONE_MODE_BYTE, optimized=True)
         layout_switch_identifier = sysex.STD_MSG_HEADER + (self.model_id, sysex.LAYOUT_COMMAND_BYTE)
-        self.layout_switch = SysexElement(name=u'Layout_Switch', sysex_identifier=layout_switch_identifier, send_message_generator=lambda v: layout_switch_identifier + (v if type(v) is tuple else (v,)) + (sysex.SYSEX_END_BYTE,), default_value=self.default_layout)
+        self.layout_switch = SysexElement(name=u'Layout_Switch', sysex_identifier=layout_switch_identifier, send_message_generator=lambda v: layout_switch_identifier + (v if type(v) is tuple else (v,)) + (sysex.SYSEX_END_BYTE,), default_value=self.default_layout, enquire_message=layout_switch_identifier + (sysex.SYSEX_END_BYTE,))
 
     def _create_scale_feedback_switch(self):
         self.scale_feedback_switch = SysexElement(name=u'Scale_Feedback_Switch', send_message_generator=lambda v: sysex.STD_MSG_HEADER + (self.model_id,

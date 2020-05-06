@@ -289,7 +289,7 @@ class ModeButtonControl(ButtonControlBase):
 class ModeButtonBehaviour(object):
     u"""
     Strategy that determines how the mode button of a specific mode
-    behaves. The protocol is a follows:
+    behaves. The protocol is as follows:
     
     1. When the button is pressed, the press_immediate is called.
     
@@ -458,7 +458,7 @@ class ModesComponent(Component):
     def selected_mode(self):
         u"""
         Mode that is currently the top of the mode stack. Setting the
-        selected mode explictly will also cleanup the mode stack.
+        selected mode explicitly will also cleanup the mode stack.
         """
         return self._mode_stack.owner or self._last_selected_mode
 
@@ -573,7 +573,7 @@ class ModesComponent(Component):
 
     def _update_mode_buttons(self, selected):
         if self.is_enabled():
-            for name, entry in self._mode_map.iteritems():
+            for name, _ in self._mode_map.iteritems():
                 self._get_mode_behaviour(name).update_button(self, name, selected)
 
     @cycle_mode_button.pressed

@@ -3,6 +3,7 @@ from ableton.v2.control_surface.control import InputControl
 from ableton.v2.control_surface.mode import ModesComponent as ModesComponentBase
 
 class ModesComponent(ModesComponentBase):
+    __events__ = (u'mode_byte',)
     mode_selection_control = InputControl()
 
     @mode_selection_control.value
@@ -10,3 +11,4 @@ class ModesComponent(ModesComponentBase):
         modes = self.modes
         if value < len(modes):
             self.selected_mode = modes[value]
+            self.notify_mode_byte(value)

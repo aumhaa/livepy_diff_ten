@@ -88,6 +88,7 @@ class Colors:
         ArmOn = Rgb.RED
         ArmOff = Rgb.RED_HALF
         EmptyTrack = Rgb.BLACK
+        TrackSelected = Rgb.WHITE
         TrackNotSelected = Rgb.WHITE_HALF
 
     class DrumGroup:

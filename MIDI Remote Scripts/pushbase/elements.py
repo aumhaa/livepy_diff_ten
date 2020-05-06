@@ -85,7 +85,8 @@ class Elements(object):
         self.master_volume_control.mapping_sensitivity = continuous_mapping_sensitivity
         self.global_param_touch_buttons_raw = [ create_note_button(index, u'Track_Control_Touch_' + str(index), resource_type=PrioritizedResource) for index in range(8) ]
         self.global_param_touch_buttons = ButtonMatrixElement(name=u'Track_Control_Touches', rows=[self.global_param_touch_buttons_raw])
-        self.parameter_controls_raw = [ TouchEncoderElement(channel=0, identifier=71 + index, map_mode=consts.GLOBAL_MAP_MODE, undo_step_handler=undo_handler, delete_handler=deleter, encoder_sensitivity=BASE_ENCODER_SENSITIVITY, name=u'Track_Control_' + str(index), touch_element=self.global_param_touch_buttons_raw[index]) for index in xrange(8) ]
+        undo_group = object()
+        self.parameter_controls_raw = [ TouchEncoderElement(channel=0, identifier=71 + index, map_mode=consts.GLOBAL_MAP_MODE, undo_step_handler=undo_handler, undo_group=undo_group, delete_handler=deleter, encoder_sensitivity=BASE_ENCODER_SENSITIVITY, name=u'Track_Control_' + str(index), touch_element=self.global_param_touch_buttons_raw[index]) for index in xrange(8) ]
         self.global_param_controls = ButtonMatrixElement(name=u'Track_Controls', rows=[self.parameter_controls_raw])
         self.fine_grain_param_controls_raw = [ FineGrainWithModifierEncoderElement(encoder, self.shift_button, fine_grained_continuous_mapping_sensitivity, continuous_mapping_sensitivity) for encoder in self.parameter_controls_raw ]
         self.fine_grain_param_controls = ButtonMatrixElement(rows=[self.fine_grain_param_controls_raw])

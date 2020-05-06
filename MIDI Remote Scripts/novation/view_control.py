@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import EventObject, ObservablePropertyAlias, clamp, index_if, listens
 from ableton.v2.control_surface.components import BasicSceneScroller, BasicTrackScroller, ScrollComponent, ViewControlComponent, all_tracks
-from novation.util import skin_scroll_buttons
+from .util import skin_scroll_buttons
 
 class NotifyingTrackScroller(BasicTrackScroller, EventObject):
     __events__ = (u'scrolled',)

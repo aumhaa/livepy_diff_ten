@@ -65,7 +65,7 @@ class MixerComponent(Component):
         self._send_controls = None
         self._channel_strips = []
         self._offset_can_start_after_tracks = False
-        for index in range(self._provider.num_tracks):
+        for _ in range(self._provider.num_tracks):
             strip = self._channel_strip_component_type(parent=self)
             self._channel_strips.append(strip)
             if invert_mute_feedback:

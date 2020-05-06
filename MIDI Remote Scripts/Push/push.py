@@ -22,6 +22,7 @@ from pushbase.quantization_component import QuantizationComponent
 from pushbase.sysex import LIVE_MODE
 from pushbase.sliced_simpler_component import SlicedSimplerComponent
 from pushbase.special_session_component import SpecialSessionComponent
+from pushbase.undo_step_handler import UndoStepHandler
 from .actions import CreateDeviceComponent, CreateDefaultTrackComponent, CreateInstrumentTrackComponent
 from .browser_component import BrowserComponent
 from .browser_model_factory import make_browser_model
@@ -457,7 +458,7 @@ class Push(PushBase):
             def delete_clip_envelope(_, param):
                 return self._delete_default_component.delete_clip_envelope(param)
 
-        self.elements = Elements(deleter=Deleter(), undo_handler=self.song, pad_sensitivity_update=self._pad_sensitivity_update, playhead=self._c_instance.playhead, velocity_levels=self._c_instance.velocity_levels, full_velocity=self._c_instance.full_velocity)
+        self.elements = Elements(deleter=Deleter(), undo_handler=UndoStepHandler(song=self.song), pad_sensitivity_update=self._pad_sensitivity_update, playhead=self._c_instance.playhead, velocity_levels=self._c_instance.velocity_levels, full_velocity=self._c_instance.full_velocity)
 
     def _create_pad_sensitivity_update(self):
         all_pad_sysex_control = create_sysex_element(sysex.ALL_PADS_SENSITIVITY_PREFIX)

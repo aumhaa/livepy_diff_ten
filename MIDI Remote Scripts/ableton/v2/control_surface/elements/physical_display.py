@@ -9,11 +9,11 @@ from .logical_display_segment import LogicalDisplaySegment
 
 class _DisplayCentralResource(StackingResource):
     u"""
-    Resource to be used internallt by the PhysicalDisplayElement.  All
+    Resource to be used internally by the PhysicalDisplayElement.  All
     sub-displays and the display itself will compete against this
     central resource.  The central resource will take into account
-    wheter there is any free area in the display for a client, to
-    decide wheter he gets it or not.
+    whether there is any free area in the display for a client, to
+    decide whether he gets it or not.
     """
 
     def __init__(self, root_display = None, *a, **k):
@@ -103,7 +103,7 @@ class DisplayElement(ControlElement):
     def set_data_sources(self, sources):
         u"""
         Given a sequences of data sources, divides the display into
-        the number of segments neded to accomodate them and connects
+        the number of segments needed to accommodate them and connects
         the logical segments to the data sources.
         """
         if not sources:

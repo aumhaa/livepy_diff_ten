@@ -22,7 +22,7 @@ class SelectPlayingClipComponent(MessengerModesComponent):
         self.selected_mode = u'default'
         self.notify_when_enabled = True
         self._on_detail_clip_changed.subject = self.song.view
-        self._on_playing_slot_index_changed.subject = self.song.view.selected_track
+        self._on_playing_slot_index_changed.subject = self.song.view
         self._notification_reference = partial(nop, None)
 
     @action_button.pressed
@@ -33,7 +33,7 @@ class SelectPlayingClipComponent(MessengerModesComponent):
     def _on_detail_clip_changed(self):
         self._update_mode_task.restart()
 
-    @listens(u'playing_slot_index')
+    @listens(u'selected_track.playing_slot_index')
     def _on_playing_slot_index_changed(self):
         self._update_mode_task.restart()
 

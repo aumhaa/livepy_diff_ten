@@ -410,7 +410,7 @@ def listens(event_path, *a, **k):
     The method will be made into either a :class:`~Slot` or :class:`~MultiSlot`,
     depending on the event_path being a simple event or an actual path.
     
-    It can than be connected using :attr:`Slot.subject`.
+    It can then be connected using :attr:`Slot.subject`.
     """
 
     @instance_decorator
@@ -450,7 +450,7 @@ def listens_group(event_name, *a, **k):
 
 class listenable_property(listenable_property_base, property):
     u"""
-    Can be used like Pythons built-in property and will in addition generate a
+    Can be used like Python's built-in property and will in addition generate a
     corresponding event for it. The event has the same name as the property. The class
     hosting the property must inherit from :class:`~EventObject`.
     """
@@ -458,7 +458,7 @@ class listenable_property(listenable_property_base, property):
     @classmethod
     def managed(cls, default_value):
         u"""
-        Adds a property to the class and manages the properties value internally. No
+        Adds a property to the class and manages the property's value internally. No
         explicit setter and getter is required.
         A corresponding event will be created, which will notify whenever a new value
         is assigned to the property. Assigning the same value again has no effect.

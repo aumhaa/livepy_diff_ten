@@ -150,10 +150,10 @@ WVT_BANKS = (WVT_BANK1,
  WVT_BANK2,
  WVT_BANK3,
  WVT_BANK4,
- WVT_BANK4,
  WVT_BANK5,
  WVT_BANK6,
- WVT_BANK7)
+ WVT_BANK7,
+ WVT_BANK8)
 WVT_BOBS = (WVT_BOB,)
 WVT_BANK_NAMES = (u'Oscillator 1', u'Oscillator 2', u'Filter 1', u'Filter 2', u'Amp Envelope', u'Envelope 2/3', u'LFO 1/2', u'Global')
 ARP_BANK1 = (u'Style', u'Groove', u'Offset', u'Synced Rate', u'Retrigger Mode', u'Ret. Interval', u'Repeats', u'Gate')

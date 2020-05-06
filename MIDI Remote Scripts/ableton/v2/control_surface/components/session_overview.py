@@ -63,7 +63,7 @@ class SessionOverviewComponent(Component):
         if self._buttons != None:
             tracks = self._session_ring.tracks_to_use()
             scenes = self.song.scenes
-            slots_registry = [ None for index in xrange(len(scenes)) ]
+            slots_registry = [ None for _ in xrange(len(scenes)) ]
             width = self._session_ring.num_tracks
             height = self._session_ring.num_scenes
             for x in xrange(self._buttons.width()):

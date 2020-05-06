@@ -13,7 +13,7 @@ class Slideable(EventObject):
     def contents_range(self, pmin, pmax):
         u"""
         Tells whether there are any contents in the (min, max) range,
-        wheren min and max are floats in the (0, position_count)
+        wherein min and max are floats in the (0, position_count)
         range. Can be left unimplemented.
         """
         pos_count = self.position_count

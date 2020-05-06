@@ -25,7 +25,7 @@ class ElementOwnershipHandler(object):
 class OptimizedOwnershipHandler(ElementOwnershipHandler):
     u"""
     Control element ownership handler that delays notification of
-    ownership changes and minimizes the number of actual owernship
+    ownership changes and minimizes the number of actual ownership
     changes that are delivered.
     """
 
@@ -63,9 +63,9 @@ _element_list_access_expr = re.compile(u'(\\w+)\\[([+-]?\\d+)\\]')
 @depends(element_container=const(None))
 def get_element(obj, element_container = None):
     u"""
-    Function for receiving a control element by name. Use this function for adressing
+    Function for receiving a control element by name. Use this function for addressing
     elements consistently by name.
-    If an element_container is injected, control elements can be adressed by string in
+    If an element_container is injected, control elements can be addressed by string in
     that scope.
     Lists of elements can be accessed by index. Example:
         get_element('buttons[0]')

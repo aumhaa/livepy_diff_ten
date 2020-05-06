@@ -62,7 +62,7 @@ def maybe(fn):
 def memoize(function):
     u"""
     Decorator to use automatic memoization on a given function, such
-    that results are chached and, if called a second time, the
+    that results are cached and, if called a second time, the
     function will return the cached value. Example::
     
         @memoize
@@ -88,7 +88,7 @@ def memoize(function):
         Computing fibonacci of: 1
     
     Note that every computed value is cached in global state, so this
-    can be inapropiate when the function domain is very big.
+    can be inappropriate when the function domain is very big.
     """
     memoized = {}
 
@@ -189,7 +189,7 @@ def monkeypatch_extend(target, name = None):
     
     Known issues: if you are extending a method of class Deriv,
     when the method is only defined in its super-class Base (i.e. not
-    overriden by Deriv but is inherited from Base), can break the
+    overridden by Deriv but is inherited from Base), can break the
     ability of the method to properly cooperate (i.e. propagate calls
     to super in a diamond-shaped hierarchy [1]).  If
     monkeypatch_extend in a metaclass, this can be worked around by

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
 from ableton.v2.control_surface.components import find_nearest_color
-from novation.colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE, Rgb
+from .colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE, Rgb
 
 def skin_scroll_buttons(scoll_component, color, pressed_color):
     scoll_component.scroll_up_button.color = color

@@ -1,16 +1,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import izip_longest
-from ableton.v2.base import clamp, listens_group
-from ableton.v2.control_surface.control import SendValueControl
+from ableton.v2.base import clamp, listens_group, liveobj_valid
+from ableton.v2.control_surface.control import control_list, SendValueControl
+from novation.fixed_radio_button_group import FixedRadioButtonGroup
 from novation.mixer import MixerComponent as MixerComponentBase
 from novation.util import get_midi_color_value_for_track
 from .control import SendReceiveValueControl
-from .fixed_radio_button_group import FixedRadioButtonGroup
 NUM_SENDS = 8
 SEND_FADER_BANK = 2
 
 class MixerComponent(MixerComponentBase):
     send_select_buttons = FixedRadioButtonGroup(control_count=8, unchecked_color=u'Mode.Sends.Bank.Available')
+    return_track_color_controls = control_list(SendValueControl, control_count=8)
     stop_fader_control = SendReceiveValueControl()
 
     def __init__(self, *a, **k):
@@ -46,15 +47,19 @@ class MixerComponent(MixerComponentBase):
 
     def _update_send_control_colors(self):
         self._update_send_select_button_colors()
-        if self.send_select_buttons.active_control_count > 0:
-            self.set_static_color_value(self.send_select_buttons[self.send_index].checked_color)
-        else:
-            self.set_static_color_value(0)
+        self._update_return_track_color_controls()
 
     def _update_send_select_button_colors(self):
         for select_button, track in izip_longest(self.send_select_buttons, self.song.return_tracks[:NUM_SENDS]):
             if select_button:
                 select_button.checked_color = get_midi_color_value_for_track(track)
+
+    def _update_return_track_color_controls(self):
+        value = 0
+        if self.send_select_buttons.active_control_count:
+            value = self.send_select_buttons[self.send_index].checked_color
+        for strip, control in izip_longest(self._channel_strips, self.return_track_color_controls):
+            control.value = value if liveobj_valid(strip.track) else 0
 
     @listens_group(u'color')
     def __on_return_track_color_changed(self, _):

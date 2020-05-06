@@ -44,6 +44,9 @@ class MappedControl(InputControl):
             self._direct_mapping = direct_mapping
             self._update_direct_connection()
 
+        def _event_listener_required(self):
+            return True
+
         def _update_direct_connection(self):
             if self._control_element:
                 self._control_element.connect_to(self._direct_mapping)

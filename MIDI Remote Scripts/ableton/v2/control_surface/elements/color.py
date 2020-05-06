@@ -22,7 +22,7 @@ class Color(object):
     def draw(self, interface):
         u"""
         Draws the color into the interface.  Depending on the color
-        type, interface might be required special capabilities.
+        type, interface might require special capabilities.
         """
         interface.send_value(self.midi_value)
 

@@ -222,7 +222,7 @@ class InputControlElement(NotifyingControlElement):
 
     def force_next_send(self):
         u"""
-        Enforces sending the next value regardless of wether the
+        Enforces sending the next value regardless of whether the
         control is mapped to the script.
         """
         self._force_next_send = True
@@ -287,7 +287,7 @@ class InputControlElement(NotifyingControlElement):
 
     def script_wants_forwarding(self):
         u"""
-        Returns wether the script wants to receive the values,
+        Returns whether the script wants to receive the values,
         otherwise, the control will be mapped to the track.
         
         Subclasses that overload this should _request_rebuild()
@@ -415,7 +415,7 @@ class InputControlElement(NotifyingControlElement):
     def receive_chunk(self, chunk):
         u"""
         Is called when a chunk of MIDI is received in a defined time interval.
-        Chunks are only sent if allow_receiving_chunks is True. Oterhwise receive_value
+        Chunks are only sent if allow_receiving_chunks is True. Otherwise receive_value
         is called for each MIDI message.
         """
         for value in chunk:

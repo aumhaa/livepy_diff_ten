@@ -59,9 +59,14 @@ class AutoArmRestoreBehaviour(ModeButtonBehaviour):
 class RestoringAutoArmComponent(AutoArmComponent, Messenger):
 
     def __init__(self, *a, **k):
+        AutoArmComponent.active_push_instances.append(self)
         super(RestoringAutoArmComponent, self).__init__(*a, **k)
         self._auto_arm_restore_behaviour = None
         self._notification_reference = partial(nop, None)
+
+    def disconnect(self):
+        AutoArmComponent.active_push_instances.remove(self)
+        super(RestoringAutoArmComponent, self).disconnect()
 
     def _update_implicit_arm(self):
         super(RestoringAutoArmComponent, self)._update_implicit_arm()

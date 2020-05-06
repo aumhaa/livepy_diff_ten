@@ -25,7 +25,7 @@ class ButtonElementMixin(object):
 
 class ButtonElement(InputControlElement, ButtonElementMixin):
     u"""
-    Class representing a button a the controller
+    Class representing a button on a controller
     """
 
     class ProxiedInterface(InputControlElement.ProxiedInterface, ButtonElementMixin):
@@ -56,7 +56,7 @@ class ButtonElement(InputControlElement, ButtonElementMixin):
         self.suppress_script_forwarding = False
 
     def is_momentary(self):
-        u""" returns true if the buttons sends a message on being released """
+        u""" returns true if the button sends a message on being released """
         return self._is_momentary
 
     def message_map_mode(self):

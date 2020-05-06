@@ -30,9 +30,13 @@ class Launchpad_X(InstrumentControlMixin, NovationBase):
     target_track_class = ArmedTargetTrackComponent
     skin = skin
 
+    def __init__(self, *a, **k):
+        self._last_layout_byte = sysex.SESSION_LAYOUT_BYTE
+        super(Launchpad_X, self).__init__(*a, **k)
+
     def on_identified(self, midi_bytes):
         self._elements.firmware_mode_switch.send_value(sysex.DAW_MODE_BYTE)
-        self._elements.layout_switch.send_value(sysex.SESSION_LAYOUT_BYTE)
+        self._elements.layout_switch.send_value(self._last_layout_byte)
         self._target_track_changed()
         self._drum_group_changed()
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL, SCALE_FEEDBACK_CHANNEL])
@@ -48,6 +52,7 @@ class Launchpad_X(InstrumentControlMixin, NovationBase):
         self._create_note_modes()
         self._create_main_modes()
         self._mixer.set_send_controls = nop
+        self.__on_layout_switch_value.subject = self._elements.layout_switch
 
     def _create_mixer_modes(self):
         self._mixer_modes = ModesComponent(name=u'Mixer_Modes', is_enabled=False, enable_skinning=True, layer=Layer(volume_button=self._elements.scene_launch_buttons_raw[0], pan_button=self._elements.scene_launch_buttons_raw[1], send_a_button=self._elements.scene_launch_buttons_raw[2], send_b_button=self._elements.scene_launch_buttons_raw[3], stop_button=self._elements.scene_launch_buttons_raw[4], mute_button=self._elements.scene_launch_buttons_raw[5], solo_button=self._elements.scene_launch_buttons_raw[6], arm_button=self._elements.scene_launch_buttons_raw[7]))
@@ -117,11 +122,16 @@ class Launchpad_X(InstrumentControlMixin, NovationBase):
         if mode == u'session':
             self._session_modes.revert_to_main_mode()
         self._update_controlled_track()
+        self._elements.layout_switch.enquire_value()
 
     @listens(u'selected_mode')
     def __on_note_mode_changed(self, mode):
         if self._note_modes.is_enabled():
             self._update_controlled_track()
+
+    @listens(u'value')
+    def __on_layout_switch_value(self, value):
+        self._last_layout_byte = value
 
     def _drum_group_changed(self):
         drum_group = self._drum_group_finder.drum_group

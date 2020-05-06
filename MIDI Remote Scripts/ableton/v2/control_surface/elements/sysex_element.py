@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base.dependency import depends
 from ..input_control_element import InputControlElement, MIDI_SYSEX_TYPE
-from ..skin import Skin
 from .. import midi
 
 class SysexElement(InputControlElement):

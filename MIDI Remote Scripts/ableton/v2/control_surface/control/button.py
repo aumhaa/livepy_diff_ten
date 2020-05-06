@@ -91,7 +91,7 @@ class ButtonControlBase(InputControl):
         def is_pressed(self):
             u"""
             True while the Control is pressed. The state might be different than the
-            connected Button Elements `is_pressed` state.
+            connected Button Element's `is_pressed` state.
             """
             return self._is_pressed
 
@@ -241,7 +241,7 @@ class ButtonControl(ButtonControlBase):
 
 class PlayableControl(ButtonControl):
     u"""
-    Button that will make the elements MIDI go into Live, to make it playable. If
+    Button that will make the element's MIDI go into Live, to make it playable. If
     :meth:`set_mode` is set to `PlayableControl.Mode.listenable`, the Control with behave
     like a :class:`ButtonControl`.
     """

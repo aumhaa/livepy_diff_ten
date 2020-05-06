@@ -196,9 +196,11 @@ class PushBase(ControlSurface):
         self._matrix_background.layer = Layer(matrix=u'matrix')
         self._mod_background = ModifierBackgroundComponent()
         self._mod_background.layer = Layer(shift_button=u'shift_button', select_button=u'select_button', delete_button=u'delete_button', duplicate_button=u'duplicate_button', quantize_button=u'quantize_button')
+        self._param_control_background = BackgroundComponent(is_enabled=False, add_nop_listeners=True, layer=Layer(global_param_controls=u'global_param_controls', priority=consts.BACKGROUND_PRIORITY))
+        self._param_control_background.set_enabled(True)
 
     def _create_background_layer(self):
-        return Layer(top_buttons=u'select_buttons', bottom_buttons=u'track_state_buttons', scales_button=u'scale_presets_button', octave_up=u'octave_up_button', octave_down=u'octave_down_button', side_buttons=u'side_buttons', repeat_button=u'repeat_button', accent_button=u'accent_button', double_button=u'double_button', param_controls=u'global_param_controls', param_touch=u'global_param_touch_buttons', touch_strip=u'touch_strip_control', nav_up_button=u'nav_up_button', nav_down_button=u'nav_down_button', nav_left_button=u'nav_left_button', nav_right_button=u'nav_right_button', new_button=u'new_button', aftertouch=u'aftertouch_control', _notification=self._notification.use_single_line(2), priority=consts.BACKGROUND_PRIORITY)
+        return Layer(top_buttons=u'select_buttons', bottom_buttons=u'track_state_buttons', scales_button=u'scale_presets_button', octave_up=u'octave_up_button', octave_down=u'octave_down_button', side_buttons=u'side_buttons', repeat_button=u'repeat_button', accent_button=u'accent_button', double_button=u'double_button', param_touch=u'global_param_touch_buttons', touch_strip=u'touch_strip_control', nav_up_button=u'nav_up_button', nav_down_button=u'nav_down_button', nav_left_button=u'nav_left_button', nav_right_button=u'nav_right_button', new_button=u'new_button', aftertouch=u'aftertouch_control', _notification=self._notification.use_single_line(2), priority=consts.BACKGROUND_PRIORITY)
 
     def _init_track_list(self):
         pass

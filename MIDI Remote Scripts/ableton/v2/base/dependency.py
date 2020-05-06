@@ -1,7 +1,7 @@
 u"""
 Dependency injection framework.
 
-The framework provides lously coupled passing of dependencies from
+The framework provides loosely coupled passing of dependencies from
 providers to the objects that require them.
 
 Dependencies are identified by keys, that are valid Python
@@ -53,7 +53,7 @@ def get_dependency_for(name, default = None):
 class dependency(object):
     u"""
     Data descriptor that provides a given dependency looking as an
-    attribute.  The depedency is specified as a keyword parameter,
+    attribute.  The dependency is specified as a keyword parameter,
     whose value can be a default accessor or None.  The attribute only
     tries to fetch the dependency on demand when needed.  Example::
     
@@ -168,7 +168,7 @@ class InjectionFactory(object):
 
 def inject(**k):
     u"""
-    Inject returns a InjectorFactory that can generate Injectors to
+    Inject returns an InjectorFactory that can generate Injectors to
     inject the provided keys at different levels.  The values to
     inject are specified as keyword parameters mapping keys to given
     nullary callables that will be used to access the dependency when

@@ -111,6 +111,7 @@ class TouchStripElement(InputControlElement):
         self._light_element = light_element
         self._touch_button = touch_button
         self._touch_slot = self.register_slot(touch_button, None, u'value')
+        self._force_next_behaviour = False
         self._behaviour = None
         self.behaviour = None
 
@@ -131,10 +132,11 @@ class TouchStripElement(InputControlElement):
 
     def _set_behaviour(self, behaviour):
         behaviour = behaviour or DEFAULT_BEHAVIOUR
-        if behaviour != self._behaviour:
+        if behaviour != self._behaviour or self._force_next_behaviour:
             self._behaviour = behaviour
             self._touch_slot.listener = behaviour.handle_touch
             self._mode_element.send_value(behaviour.mode)
+        self._force_next_behaviour = False
 
     def _get_behaviour(self):
         return self._behaviour
@@ -149,6 +151,10 @@ class TouchStripElement(InputControlElement):
 
     def reset(self):
         self.behaviour = None
+
+    def clear_send_cache(self):
+        self._force_next_behaviour = True
+        super(TouchStripElement, self).clear_send_cache()
 
     def notify_value(self, value):
         notify = super(TouchStripElement, self).notify_value

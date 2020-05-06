@@ -5,15 +5,16 @@ from ableton.v2.control_surface.components import AutoArmComponent, BackgroundCo
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode
 from novation import sysex
 from novation.instrument_control import InstrumentControlMixin
+from novation.launchkey_drum_group import DrumGroupComponent
+from novation.launchkey_elements import SESSION_HEIGHT
+from novation.mode import ModesComponent
 from novation.novation_base import NovationBase
 from novation.simple_device import SimpleDeviceParameterComponent
 from novation.transport import TransportComponent
 from novation.view_control import NotifyingViewControlComponent
 from . import midi
 from . import sysex_ids as ids
-from .drum_group import DrumGroupComponent
-from .elements import Elements, SESSION_HEIGHT
-from .mode import ModesComponent
+from .elements import Elements
 from .skin import skin
 DRUM_FEEDBACK_CHANNEL = 1
 
@@ -24,6 +25,11 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
     skin = skin
     suppress_layout_switch = False
 
+    def __init__(self, *a, **k):
+        self._last_pad_layout_byte = midi.PAD_SESSION_LAYOUT
+        self._last_pot_layout_byte = midi.POT_VOLUME_LAYOUT
+        super(Launchkey_Mini_MK3, self).__init__(*a, **k)
+
     def disconnect(self):
         self._elements.pad_layout_switch.send_value(midi.PAD_DRUM_LAYOUT)
         self._auto_arm.set_enabled(False)
@@ -31,9 +37,10 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
 
     def on_identified(self, midi_bytes):
         self._elements.incontrol_mode_switch.send_value(midi.INCONTROL_ONLINE_VALUE)
-        self._elements.pad_layout_switch.send_value(midi.PAD_SESSION_LAYOUT)
-        self._elements.pot_layout_switch.send_value(midi.POT_VOLUME_LAYOUT)
+        self._elements.pad_layout_switch.send_value(self._last_pad_layout_byte)
+        self._elements.pot_layout_switch.send_value(self._last_pot_layout_byte)
         self._target_track_changed()
+        self._drum_group_changed()
         self._auto_arm.set_enabled(True)
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])
         super(Launchkey_Mini_MK3, self).on_identified(midi_bytes)
@@ -90,6 +97,7 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
         self._pot_modes.add_mode(u'send_b', AddLayerMode(self._mixer, Layer(send_b_controls=u'pots')))
         self._pot_modes.selected_mode = u'volume'
         self._pot_modes.set_enabled(True)
+        self.__on_pot_mode_byte_changed.subject = self._pot_modes
 
     def _create_stop_solo_mute_modes(self):
         self._stop_solo_mute_modes = ModesComponent(name=u'Stop_Solo_Mute_Modes', is_enabled=False, support_momentary_mode_cycling=False)
@@ -110,11 +118,20 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
         self._pad_modes.selected_mode = u'session'
         self._pad_modes.set_enabled(True)
         self.__on_pad_mode_changed.subject = self._pad_modes
+        self.__on_pad_mode_byte_changed.subject = self._pad_modes
 
     @listens(u'selected_mode')
     def __on_pad_mode_changed(self, mode):
         self._recording_modes.selected_mode = u'track' if mode == u'drum' else u'session'
         self._update_controlled_track()
+
+    @listens(u'mode_byte')
+    def __on_pad_mode_byte_changed(self, mode_byte):
+        self._last_pad_layout_byte = mode_byte
+
+    @listens(u'mode_byte')
+    def __on_pot_mode_byte_changed(self, mode_byte):
+        self._last_pot_layout_byte = mode_byte
 
     def _drum_group_changed(self):
         self._drum_group.set_drum_group_device(self._drum_group_finder.drum_group)

@@ -20,6 +20,7 @@ from pushbase import consts
 from pushbase.push_base import PushBase, NUM_TRACKS, NUM_SCENES
 from pushbase.track_frozen_mode import TrackFrozenModesComponent
 from pushbase.messenger_mode_component import MessengerModesComponent
+from pushbase.undo_step_handler import UndoStepHandler
 from . import sysex
 from .actions import CaptureAndInsertSceneComponent
 from .automation import AutomationComponent
@@ -757,7 +758,7 @@ class Push2(IdentifiableControlSurface, PushBase):
             def delete_clip_envelope(_, param):
                 return self._delete_default_component.delete_clip_envelope(param)
 
-        self.elements = Elements(deleter=Deleter(), undo_handler=self.song, pad_sensitivity_update=self._pad_sensitivity_update, playhead=self._c_instance.playhead, velocity_levels=self._c_instance.velocity_levels, full_velocity=self._c_instance.full_velocity, model=self._model)
+        self.elements = Elements(deleter=Deleter(), undo_handler=UndoStepHandler(song=self.song), pad_sensitivity_update=self._pad_sensitivity_update, playhead=self._c_instance.playhead, velocity_levels=self._c_instance.velocity_levels, full_velocity=self._c_instance.full_velocity, model=self._model)
         self.__on_param_encoder_touched.replace_subjects(self.elements.global_param_touch_buttons_raw)
         self._update_encoder_model()
 

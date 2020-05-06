@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import duplicate_clip_loop
 from ableton.v2.control_surface.components import ClipActionsComponent as ClipActionsComponentBase
-from novation.blinking_button import BlinkingButtonControl
+from .blinking_button import BlinkingButtonControl
 
 class ClipActionsComponent(ClipActionsComponentBase):
     quantization_component = None

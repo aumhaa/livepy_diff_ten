@@ -5,6 +5,7 @@ from ableton.v2.control_surface import Layer
 from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, SessionOverviewComponent, UndoRedoComponent
 from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent, MomentaryBehaviour, ReenterBehaviour
 from novation import sysex
+from novation.clip_actions import ClipActionsComponent
 from novation.colors import Rgb
 from novation.configurable_playable import ConfigurablePlayableComponent
 from novation.fixed_length import FixedLengthComponent, FixedLengthSetting
@@ -12,15 +13,14 @@ from novation.fixed_length_recording import FixedLengthRecording
 from novation.instrument_control import InstrumentControlMixin
 from novation.novation_base import NovationBase
 from novation.print_to_clip import PrintToClipComponent
+from novation.quantization import QuantizationComponent
 from novation.simple_device_navigation import SimpleDeviceNavigationComponent
 from novation.track_recording import FixedLengthTrackRecordingComponent
 from . import sysex_ids as ids
 from .channel_strip import ChannelStripComponent
-from .clip_actions import ClipActionsComponent
 from .drum_group import DrumGroupComponent
 from .elements import Elements, FADER_MODES
 from .mixer import MixerComponent
-from .quantization import QuantizationComponent
 from .session import ClipSlotComponent, SessionComponent
 from .simple_device import SimpleDeviceParameterComponent
 from .skin import skin
@@ -44,6 +44,7 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
 
     def __init__(self, *a, **k):
         self._layout_to_restore = None
+        self._last_layout_bytes = ids.SESSION_LAYOUT_BYTES
         super(Launchpad_Pro_MK3, self).__init__(*a, **k)
 
     def disconnect(self):
@@ -53,7 +54,7 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
 
     def on_identified(self, midi_bytes):
         self._elements.firmware_mode_switch.send_value(sysex.DAW_MODE_BYTE)
-        self._elements.layout_switch.send_value(ids.SESSION_LAYOUT_BYTES)
+        self._elements.layout_switch.send_value(self._last_layout_bytes)
         self._target_track_changed()
         self._drum_group_changed()
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL, SCALE_FEEDBACK_CHANNEL])
@@ -182,7 +183,7 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
 
         add_fader_mode(u'volume', 0, AddLayerMode(self._mixer, Layer(static_color_controls=u'volume_button_fader_color_elements')), static_color=Rgb.GREEN.midi_value)
         add_fader_mode(u'pan', 1, AddLayerMode(self._mixer, Layer(track_color_controls=u'pan_button_fader_color_elements')))
-        add_fader_mode(u'sends', 2, AddLayerMode(self._mixer, Layer(send_select_buttons=u'scene_launch_buttons', static_color_controls=u'sends_button_fader_color_elements', stop_fader_control=u'stop_fader_element')))
+        add_fader_mode(u'sends', 2, AddLayerMode(self._mixer, Layer(send_select_buttons=u'scene_launch_buttons', return_track_color_controls=u'sends_button_fader_color_elements', stop_fader_control=u'stop_fader_element')))
         add_fader_mode(u'device', 3, (AddLayerMode(self._background, Layer(up_button=u'up_button', down_button=u'down_button')), AddLayerMode(self._device_navigation, Layer(prev_button=u'left_button', next_button=u'right_button')), AddLayerMode(self._device_parameters, Layer(bank_select_buttons=u'scene_launch_buttons'))))
         self._mixer_modes.selected_mode = u'track_select'
         self._mixer_modes.set_enabled(True)
@@ -225,6 +226,7 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
                 self._main_modes.selected_mode = LAYOUT_BYTES_TO_MODE_NAMES_MAP[value]
             else:
                 self._main_modes.selected_mode = u'none'
+        self._last_layout_bytes = value
 
     def _drum_group_changed(self):
         drum_group = self._drum_group_finder.drum_group

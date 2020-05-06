@@ -34,7 +34,7 @@ class ToggleButtonControl(ButtonControlBase):
         @property
         def is_toggled(self):
             u"""
-            Represents the buttons toggled state. If a property is connected to the
+            Represents the button's toggled state. If a property is connected to the
             Control, it will not be affected by setting is_toggled.
             """
             return self._is_toggled
@@ -47,7 +47,7 @@ class ToggleButtonControl(ButtonControlBase):
 
         def connect_property(self, *a):
             u"""
-            Creates a bidirectional binding between a boolean property and the buttons
+            Creates a bidirectional binding between a boolean property and the button's
             toggled state.
             """
             super(ToggleButtonControl.State, self).connect_property(*a)

@@ -112,15 +112,30 @@ class FixedLengthComponent(Component, Messenger):
             if press_slot == slot and slot.is_recording and not clip.is_overdubbing:
                 length, _ = self._fixed_length_setting.get_selected_length(song)
                 one_bar = 4.0 * song.signature_numerator / song.signature_denominator
-                loop_end = int(press_position / one_bar) * one_bar
-                loop_start = loop_end - length
-                if loop_start >= 0.0:
-                    clip.loop_end = loop_end
-                    clip.end_marker = loop_end
-                    clip.loop_start = loop_start
-                    clip.start_marker = loop_start
-                    self._tasks.add(task.sequence(task.delay(0), task.run(partial(slot.fire, force_legato=True, launch_quantization=Quantization.q_no_q))))
+                loop_start = int(press_position / length) * length
+                loop_end = loop_start + length
+                clip.loop_end = loop_end
+                clip.end_marker = loop_end
+                clip.loop_start = loop_start
+                clip.start_marker = loop_start
+                progress = (press_position - loop_start) / (loop_end - loop_start)
+                if progress < 0.5 and loop_start - length >= 0:
+                    launch_quantization = Quantization.q_no_q
                     self.song.overdub = False
+                else:
+                    duration_needed_to_finish_recording_bar = (loop_end - press_position) / one_bar
+                    launch_quantization = Quantization.q_no_q
+                    if duration_needed_to_finish_recording_bar < 0.5:
+                        launch_quantization = Quantization.q_half
+                    elif duration_needed_to_finish_recording_bar < 1:
+                        launch_quantization = Quantization.q_bar
+                    elif duration_needed_to_finish_recording_bar < 2:
+                        launch_quantization = Quantization.q_2_bars
+                    elif duration_needed_to_finish_recording_bar < 4:
+                        launch_quantization = Quantization.q_4_bars
+                    elif duration_needed_to_finish_recording_bar < 8:
+                        launch_quantization = Quantization.q_8_bars
+                self._tasks.add(task.sequence(task.delay(0), task.run(partial(slot.fire, force_legato=True, launch_quantization=launch_quantization))))
                 loop_set = True
         self._length_press_state = None
         return loop_set

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import imap
-from ...base import depends, find_if, first, clamp, listenable_property, listens_group, listens, liveobj_changed, liveobj_valid
+from ...base import depends, find_if, first, clamp, listens_group, listens, liveobj_changed, liveobj_valid
 from ..control import ButtonControl
 from .slide import SlideComponent, Slideable
 from .playable import PlayableComponent

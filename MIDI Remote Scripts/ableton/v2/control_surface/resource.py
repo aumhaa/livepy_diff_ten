@@ -20,7 +20,7 @@ class Resource(object):
 class CompoundResource(Resource):
     u"""
     A resource that composes two resources, making sure that both
-    grabs have to be successfull for the compound to be adquired.
+    grabs have to be successful for the compound to be acquired.
     """
 
     def __init__(self, first_resource = None, second_resource = None, *a, **k):
@@ -75,7 +75,7 @@ class ExclusiveResource(Resource):
             self.on_lost = on_lost_callback
 
     def grab(self, client, *a, **k):
-        assert client is not None, u'Someone has to adquire resource'
+        assert client is not None, u'Someone has to acquire resource'
         if self._owner == None:
             self.on_received(client, *a, **k)
             self._owner = client
@@ -113,7 +113,7 @@ class SharedResource(Resource):
         self._clients = set()
 
     def grab(self, client, *a, **k):
-        assert client is not None, u'Someone has to adquire resource'
+        assert client is not None, u'Someone has to acquire resource'
         self.on_received(client, *a, **k)
         self._clients.add(client)
         return True

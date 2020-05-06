@@ -77,7 +77,7 @@ def control_event(event_name):
 class control_color(object):
     u"""
     Defines a color of a Control. The color is created with a default color and will
-    be update the Control every time a new color is set.
+    update the Control every time a new color is set.
     
     Colors need to be defined on Control-state level.
     """
@@ -105,13 +105,13 @@ class Control(object):
        the received MIDI.
      * Logic and state common in other UI frameworks, like an enabled state to deactivate
        the Control under certain circumstances.
-     * Feedback to represents different states of the Control.
+     * Feedback to represent different states of the Control.
     
     Controls are a virtual representation of a relation between a hardware control and
     a piece of logic. A Control needs to be connected with a Control Element to be
     functional. The Control Element is connected and disconnected by using
     :meth:`Control.State.set_control_element`. The user of a Control does not need to
-    care a Control Element is currently connected, which makes working with Controls
+    care if a Control Element is currently connected, which makes working with Controls
     much less error-prone than working with Control Elements directly.
     
     Controls are a Descriptor on a class level, so listeners can be easily defined using
@@ -158,8 +158,8 @@ class Control(object):
             u"""
             Connect a Control with a Control Element or disconnect the Control if
             None is passed. When connecting, the Control Element is reset and the
-            Controls current color is sent. When disconnecting, the Control Element
-            needs to be updates by its new owner.
+            Control's current color is sent. When disconnecting, the Control Element
+            needs to be updated by its new owner.
             """
             self._control_element = control_element
             if self._control_element:
@@ -341,7 +341,7 @@ class Connectable(EventObject):
         If a Control is a Connectable, it has certain expectations on the connected
         property.
         
-        The transform argument can be used to transform the Controls value to the
+        The transform argument can be used to transform the Control's value to the
         expected value of the property.
         
         Only one property can be connected at a time.

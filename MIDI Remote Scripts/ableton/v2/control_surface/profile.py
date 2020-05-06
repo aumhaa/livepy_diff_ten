@@ -34,7 +34,7 @@ def dump(name = u'default'):
     
     1. [name].profile contains the profile data in pstats format.
     2. [name].profile.time.txt contains the data in human readable form, sorted
-       by *total time* - i.e. how much time has been expent in each function itself,
+       by *total time* - i.e. how much time has been spent in each function itself,
        without counting the time spent in sub-functions.
     3. [name].profile.cumulative.txt contains the data sorted by cumulative time - i.e.
        how much time is spent in a function and its sub-calls.

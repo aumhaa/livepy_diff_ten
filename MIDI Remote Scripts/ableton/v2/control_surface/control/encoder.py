@@ -160,7 +160,7 @@ class ValueStepper(object):
         return result
 
     def reset(self):
-        u""" Resets the Value Steppers state, as if it had never been advanced. """
+        u""" Resets the Value Stepper's state, as if it had never been advanced. """
         self._step = 0.0
 
 

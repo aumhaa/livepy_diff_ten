@@ -25,7 +25,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
     The CompoundElement's value event notifies whenever any owned Element notifies its
     value event.
     
-    Iterating over a CompoundElement or accessing it's elements by index or slice returns
+    Iterating over a CompoundElement or accessing its elements by index or slice returns
     the registered Control Element if it's owned or None in case another client grabbed
     it.
     """
@@ -57,15 +57,15 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
     def on_nested_control_element_received(self, control):
         u"""
         Is called when the CompoundElement owns the registered Control Element.
-        Can be overriden to react to ownership changes.
+        Can be overridden to react to ownership changes.
         """
         pass
 
     def on_nested_control_element_lost(self, control):
         u"""
-        Is called when the CompoundElement does no longer own the registered
+        Is called when the CompoundElement no longer owns the registered
         Control Element.
-        Can be overriden to react to ownership changes.
+        Can be overridden to react to ownership changes.
         """
         pass
 
@@ -73,7 +73,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         u"""
         Is called when an owned Control Element notifies its value event.
         
-        By default, the notification is fowarded to the CompoundElements value event
+        By default, the notification is forwarded to the CompoundElement's value event
         with the corresponding Control Element that triggered it.
         """
         self.notify_value(value, control)
@@ -153,13 +153,13 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
     def request_listen_nested_control_elements(self):
         u"""
         By default, the compound control element will listen to its
-        nested control elements IFF he himself has listeners.  This is
+        nested control elements IF he himself has listeners.  This is
         important, because for nested InputControlElements, the
-        existence of listeners determine wether they will send the
+        existence of listeners determines whether they will send the
         MIDI messages to Live or to the script.
         
         You can force the compound to listen to its nested elements
-        using this methods.  The compound will then listen to them IFF
+        using this method.  The compound will then listen to them IF
         the number of requests is greater than the number of
         unrequests OR it has listeners.
         """

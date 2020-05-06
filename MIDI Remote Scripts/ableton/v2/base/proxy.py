@@ -33,7 +33,7 @@ class ProxyBase(object):
 
     def proxy_hasattr(self, attr):
         u"""
-        Returns wether the proxy, not the proxied, has an attribute.
+        Returns whether the proxy, not the proxied, has an attribute.
         """
         with self._skip_wrapper_lookup():
             return hasattr(self, attr)

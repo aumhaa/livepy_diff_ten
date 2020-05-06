@@ -53,7 +53,7 @@ class DeviceComponent(DeviceComponentBase):
             if self._device.class_name in self._device_banks.keys():
                 result = len(self._device_banks[self._device.class_name])
             else:
-                result = DeviceComponent._number_of_parameter_banks(self)
+                result = super(DeviceComponent, self)._number_of_parameter_banks()
         return result
 
     def _parameter_banks(self):
