@@ -19,7 +19,7 @@ class SliderSection:
         feedback_rule.cc_value_map = tuple()
         feedback_rule.delay_in_ms = -1.0
         for channel in range(16):
-            Live.MidiMap.map_midi_cc_with_feedback_map(midi_map_handle, self.__parent.song().master_track.mixer_device.volume, channel, AXIOM_SLI9, Live.MidiMap.MapMode.absolute_14_bit, feedback_rule, not needs_takeover)
+            Live.MidiMap.map_midi_cc_with_feedback_map(midi_map_handle, self.__parent.song().master_track.mixer_device.volume, channel, AXIOM_SLI9, Live.MidiMap.MapMode.absolute, feedback_rule, not needs_takeover)
 
         for channel in range(4):
             Live.MidiMap.forward_midi_cc(script_handle, midi_map_handle, channel, AXIOM_BUT9)
@@ -31,7 +31,7 @@ class SliderSection:
                     feedback_rule.cc_no = AXIOM_SLIDERS[slider]
                     feedback_rule.cc_value_map = tuple()
                     feedback_rule.delay_in_ms = -1.0
-                    Live.MidiMap.map_midi_cc_with_feedback_map(midi_map_handle, tracks[track_index].mixer_device.volume, channel, AXIOM_SLIDERS[slider], Live.MidiMap.MapMode.absolute_14_bit, feedback_rule, not needs_takeover)
+                    Live.MidiMap.map_midi_cc_with_feedback_map(midi_map_handle, tracks[track_index].mixer_device.volume, channel, AXIOM_SLIDERS[slider], Live.MidiMap.MapMode.absolute, feedback_rule, not needs_takeover)
                     Live.MidiMap.forward_midi_cc(script_handle, midi_map_handle, channel, AXIOM_BUTTONS[slider])
                 else:
                     break
