@@ -31,15 +31,16 @@ class NotifyingTrackPager(NotifyingTrackScroller):
 class NotifyingViewControlComponent(ViewControlComponent):
     __events__ = (u'selection_scrolled', u'selection_paged')
 
-    def __init__(self, track_provider = None, *a, **k):
+    def __init__(self, track_provider = None, enable_skinning = True, *a, **k):
         self._track_provider = track_provider
         super(NotifyingViewControlComponent, self).__init__(*a, **k)
         self._page_tracks = ScrollComponent(self._create_track_pager(), parent=self)
         self.__on_tracks_changed.subject = self._track_provider
         self.__on_selected_track_changed.subject = self.song.view
-        skin_scroll_buttons(self._page_tracks, u'TrackNavigation.On', u'TrackNavigation.Pressed')
-        skin_scroll_buttons(self._scroll_tracks, u'TrackNavigation.On', u'TrackNavigation.Pressed')
-        skin_scroll_buttons(self._scroll_scenes, u'SceneNavigation.On', u'SceneNavigation.Pressed')
+        if enable_skinning:
+            skin_scroll_buttons(self._page_tracks, u'TrackNavigation.On', u'TrackNavigation.Pressed')
+            skin_scroll_buttons(self._scroll_tracks, u'TrackNavigation.On', u'TrackNavigation.Pressed')
+            skin_scroll_buttons(self._scroll_scenes, u'SceneNavigation.On', u'SceneNavigation.Pressed')
 
     def set_prev_track_page_button(self, button):
         self._page_tracks.set_scroll_up_button(button)
