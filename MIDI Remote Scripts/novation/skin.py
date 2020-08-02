@@ -100,6 +100,7 @@ class Colors:
         PadMutedSelected = Rgb.LIGHT_BLUE
         PadSoloed = Rgb.DARK_BLUE
         PadSoloedSelected = Rgb.LIGHT_BLUE
+        PadAction = Rgb.WHITE
         Navigation = Rgb.YELLOW_HALF
         NavigationPressed = Rgb.YELLOW
 

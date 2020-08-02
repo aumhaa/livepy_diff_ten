@@ -3,7 +3,7 @@ from functools import partial
 from ableton.v2.base import const, inject, listens, liveobj_valid
 from ableton.v2.control_surface import Layer
 from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, SessionOverviewComponent, UndoRedoComponent
-from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent, MomentaryBehaviour, ReenterBehaviour
+from ableton.v2.control_surface.mode import AddLayerMode, DelayMode, ModesComponent, MomentaryBehaviour, ReenterBehaviour
 from novation import sysex
 from novation.clip_actions import ClipActionsComponent
 from novation.colors import Rgb
@@ -30,6 +30,10 @@ SCALE_FEEDBACK_CHANNEL = 2
 LAYOUT_BYTES_TO_MODE_NAMES_MAP = {ids.SESSION_LAYOUT_BYTES: u'session',
  ids.CHORD_LAYOUT_BYTES: u'chord',
  ids.NOTE_LAYOUT_BYTES: u'note'}
+LIVE_LAYOUT_BYTES = (ids.SESSION_LAYOUT_BYTES[0],
+ ids.CHORD_LAYOUT_BYTES[0],
+ ids.NOTE_LAYOUT_BYTES[0],
+ ids.FADER_LAYOUT_BYTE)
 NOTE_MODE_NAMES = (u'chord', u'note')
 
 class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
@@ -44,6 +48,7 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
 
     def __init__(self, *a, **k):
         self._layout_to_restore = None
+        self._can_restore_layout = False
         self._last_layout_bytes = ids.SESSION_LAYOUT_BYTES
         super(Launchpad_Pro_MK3, self).__init__(*a, **k)
 
@@ -91,6 +96,7 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
         self._create_scale_pad_translator()
         self._create_mixer_modes()
         self._create_session_modes()
+        self._create_note_modes()
         self._create_main_modes()
         self.__on_layout_switch_value.subject = self._elements.layout_switch
 
@@ -122,7 +128,7 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
         self._transport.set_enabled(True)
 
     def _create_clip_actions(self):
-        self._clip_actions = ClipActionsComponent(name=u'Clip_Actions', is_enabled=False, layer=Layer(delete_button=u'clear_button', duplicate_button=u'duplicate_button', quantize_button=u'quantize_button', double_loop_button=u'duplicate_button_with_shift'))
+        self._clip_actions = ClipActionsComponent(name=u'Clip_Actions', is_enabled=False, layer=Layer(duplicate_button=u'duplicate_button', quantize_button=u'quantize_button', double_loop_button=u'duplicate_button_with_shift'))
 
     def _create_quantization(self):
         self._quantization = QuantizationComponent(name=u'Quantization', is_enabled=False, layer=Layer(quantization_toggle_button=u'quantize_button_with_shift'))
@@ -136,11 +142,11 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
         self._fixed_length.set_enabled(True)
 
     def _create_drum_group(self):
-        self._drum_group = DrumGroupComponent(name=u'Drum_Group', is_enabled=False, translation_channel=DRUM_FEEDBACK_CHANNEL, layer=Layer(matrix=u'drum_pads'))
+        self._drum_group = DrumGroupComponent(self._clip_actions, name=u'Drum_Group', is_enabled=False, translation_channel=DRUM_FEEDBACK_CHANNEL, layer=Layer(matrix=u'drum_pads'))
         self._drum_group.set_enabled(True)
 
     def _create_device_parameters(self):
-        self._device_parameters = SimpleDeviceParameterComponent(name=u'Device_Parameters', is_enabled=False, layer=Layer(parameter_controls=u'device_button_faders', static_color_controls=u'device_button_fader_color_elements', stop_fader_control=u'stop_fader_element'), static_color_value=Rgb.DARK_BLUE.midi_value)
+        self._device_parameters = SimpleDeviceParameterComponent(name=u'Device_Parameters', is_enabled=False, device_bank_registry=self._device_bank_registry, layer=Layer(parameter_controls=u'device_button_faders', static_color_controls=u'device_button_fader_color_elements', stop_fader_control=u'stop_fader_element'), static_color_value=Rgb.DARK_BLUE.midi_value)
         self._device_parameters.set_enabled(True)
 
     def _create_device_navigation(self):
@@ -156,13 +162,13 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
         reselect_track_select_mode = partial(setattr, self._mixer_modes, u'selected_mode', u'track_select')
 
         def restore_main_layout():
-            if self._layout_to_restore:
+            if self._can_restore_layout and self._layout_to_restore:
                 self._elements.layout_switch.send_value(self._layout_to_restore)
 
         def add_track_select_button_mode(name, control = None, component = self._mixer):
             control_key = control if control else u'{}_buttons'.format(name)
             control_dict = {control_key: u'track_select_buttons'}
-            self._mixer_modes.add_mode(name, (AddLayerMode(component, Layer(**control_dict)), restore_main_layout), behaviour=ReenterBehaviour(on_reenter=reselect_track_select_mode))
+            self._mixer_modes.add_mode(name, (AddLayerMode(component, Layer(**control_dict)), DelayMode(restore_main_layout, delay=0.1)), behaviour=ReenterBehaviour(on_reenter=reselect_track_select_mode))
 
         add_track_select_button_mode(u'track_select')
         add_track_select_button_mode(u'arm')
@@ -194,13 +200,18 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
         self._session_modes.add_mode(u'overview', (self._session_overview, AddLayerMode(self._session_navigation, Layer(page_up_button=u'up_button', page_down_button=u'down_button', page_left_button=u'left_button', page_right_button=u'right_button'))), behaviour=MomentaryBehaviour())
         self._session_modes.selected_mode = u'launch'
 
+    def _create_note_modes(self):
+        self._note_modes = ModesComponent(name=u'Note_Modes', is_enabled=False)
+        self._note_modes.add_mode(u'scale', AddLayerMode(self._clip_actions, Layer(delete_button=u'clear_button')))
+        self._note_modes.add_mode(u'drum', AddLayerMode(self._drum_group, Layer(scroll_up_button=u'left_button', scroll_down_button=u'right_button', scroll_page_up_button=u'up_button', scroll_page_down_button=u'down_button', delete_button=u'clear_button')))
+
     def _create_main_modes(self):
         self._main_modes = ModesComponent(name=u'Main_Modes', is_enabled=False)
         suppressed_arrow_button_mode = (AddLayerMode(self._background, Layer(left_button=u'left_button', right_button=u'right_button', up_button=u'up_button', down_button=u'down_button')),)
         self._main_modes.add_mode(u'none', suppressed_arrow_button_mode)
         self._main_modes.add_mode(u'fader', None)
         self._main_modes.add_mode(u'session', self._session_modes)
-        self._main_modes.add_mode(u'note', (AddLayerMode(self._drum_group, Layer(scroll_up_button=u'left_button', scroll_down_button=u'right_button', scroll_page_up_button=u'up_button', scroll_page_down_button=u'down_button')), self._clip_actions))
+        self._main_modes.add_mode(u'note', (self._note_modes, self._clip_actions))
         self._main_modes.add_mode(u'chord', suppressed_arrow_button_mode)
         self._main_modes.selected_mode = u'session'
         self._main_modes.set_enabled(True)
@@ -216,6 +227,9 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
 
     @listens(u'value')
     def __on_layout_switch_value(self, value):
+        self._can_restore_layout = value[0] in LIVE_LAYOUT_BYTES
+        if not self._can_restore_layout:
+            return
         if value[0] == ids.FADER_LAYOUT_BYTE:
             self._main_modes.selected_mode = u'fader'
         else:
@@ -230,8 +244,10 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
 
     def _drum_group_changed(self):
         drum_group = self._drum_group_finder.drum_group
+        drum_group_valid = liveobj_valid(drum_group)
         self._drum_group.set_drum_group_device(drum_group)
-        self._elements.layout_switch.send_value(ids.DRUM_LAYOUT_BYTES if liveobj_valid(drum_group) else ids.SCALE_LAYOUT_BYTES)
+        self._elements.layout_switch.send_value(ids.DRUM_LAYOUT_BYTES if drum_group_valid else ids.SCALE_LAYOUT_BYTES)
+        self._note_modes.selected_mode = u'drum' if drum_group_valid else u'scale'
 
     def _is_instrument_mode(self):
         return self._main_modes.selected_mode in NOTE_MODE_NAMES
