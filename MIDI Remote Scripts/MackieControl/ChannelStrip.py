@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from .MackieControlComponent import *
 from itertools import chain
+from ableton.v2.base import liveobj_valid
 
 class ChannelStrip(MackieControlComponent):
     u"""Represets a Channel Strip of the Mackie Control, which consists out of the"""
@@ -226,11 +227,16 @@ class ChannelStrip(MackieControlComponent):
             self.song().view.add_selected_track_listener(self.__update_track_is_selected_led)
 
     def __remove_listeners(self):
-        if self.__assigned_track.can_be_armed:
-            self.__assigned_track.remove_arm_listener(self.__update_arm_led)
-        self.__assigned_track.remove_mute_listener(self.__update_mute_led)
-        self.__assigned_track.remove_solo_listener(self.__update_solo_led)
-        self.song().view.remove_selected_track_listener(self.__update_track_is_selected_led)
+        if liveobj_valid(self.__assigned_track):
+            if self.__assigned_track.can_be_armed:
+                self.__remove_listener(self.__assigned_track, u'arm', self.__update_arm_led)
+            self.__remove_listener(self.__assigned_track, u'mute', self.__update_mute_led)
+            self.__remove_listener(self.__assigned_track, u'solo', self.__update_solo_led)
+            self.__remove_listener(self.song().view, u'selected_track', self.__update_track_is_selected_led)
+
+    def __remove_listener(self, object, property, listener):
+        if getattr(object, u'{}_has_listener'.format(property))(listener):
+            getattr(object, u'remove_{}_listener'.format(property))(listener)
 
     def __send_meter_mode(self):
         on_mode = 1

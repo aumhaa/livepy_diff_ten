@@ -71,7 +71,7 @@ class ScrollableListComponent(Component):
 
     def _set_selected_option(self, selected_option):
         if selected_option != self._selected_option:
-            assert selected_option == None or in_range(selected_option, 0, self._option_names)
+            assert selected_option == None or in_range(selected_option, 0, len(self._option_names))
             self._selected_option = selected_option
             self.notify_change_option(selected_option)
             self.update()

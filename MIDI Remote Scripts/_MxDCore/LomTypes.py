@@ -579,6 +579,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                                         MFLProperty(u'unison_voice_count'),
                                         MFLProperty(u'visible_modulation_target_names')])}
 HIDDEN_TYPE_PROPERTIES = {Live.Sample.Sample: (u'slices',)}
+PROPERTY_NAMES_EXCLUDED_FROM_DOCUMENTATION = (u'canonical_parent',)
 EXTRA_CS_FUNCTIONS = (u'get_control_names', u'get_control', u'grab_control', u'release_control', u'send_midi', u'send_receive_sysex', u'grab_midi', u'release_midi')
 ENUM_TYPES = (Live.Song.Quantization,
  Live.Song.RecordingQuantization,
@@ -680,6 +681,18 @@ def get_exposed_property_info(lom_type, property_name, epii_version):
     if not prop:
         return None
     return prop[0]
+
+
+def get_exposed_properties_to_document_for_type(lom_type, epii_version):
+    properties = set(get_exposed_property_names_for_type(lom_type, epii_version))
+    if issubclass(lom_type, Live.Device.Device):
+        properties -= {prop.name for prop in _DEVICE_BASE_PROPS}
+    if issubclass(lom_type, Live.Chain.Chain):
+        properties -= {prop.name for prop in _CHAIN_BASE_PROPS}
+    if issubclass(lom_type, Live.Device.Device.View):
+        properties -= {prop.name for prop in _DEVICE_VIEW_BASE_PROPS}
+    properties -= set(PROPERTY_NAMES_EXCLUDED_FROM_DOCUMENTATION)
+    return list(properties)
 
 
 def is_class(class_object):

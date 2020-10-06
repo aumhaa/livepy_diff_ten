@@ -648,6 +648,7 @@ class ChannelStripController(MackieControlComponent):
         u""" Cryptically label the current assignment mode in the 2char display above
             the assignment buttons
         """
+        ass_string = [u' ', u' ']
         if self.__assignment_mode == CSM_VOLPAN:
             ass_string = [u'P', u'N']
         elif self.__assignment_mode == CSM_PLUGINS or self.__assignment_mode == CSM_SENDS:

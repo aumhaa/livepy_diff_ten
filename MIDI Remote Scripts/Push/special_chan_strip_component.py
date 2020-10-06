@@ -144,7 +144,7 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
         self._on_sends_value_changed.replace_subjects(sends)
 
     def _update_parameter_name_sources(self):
-        num_params = self._track and len(self._track.mixer_device.sends) + 2
+        num_params = len(self._track.mixer_device.sends) + 2 if self._track else 0
         for index, source in enumerate(self._track_parameter_name_sources):
             if index < num_params:
                 track_parameter_names = (u'Volume', u'Pan') + SEND_PARAMETER_NAMES
