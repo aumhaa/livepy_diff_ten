@@ -12,9 +12,6 @@ DEVICE_TYPES_WITH_PRESET_NAME = [u'InstrumentGroupDevice',
  u'MxDeviceInstrument',
  u'MxDeviceAudioEffect',
  u'MxDeviceMidiEffect']
-display_pattern = re.compile(u'\\d|\xb0|/|\\%|\\.|\\:|\\-|\\+|inf')
-unit_pattern = re.compile(u'inf\\s*[A-z]+$|\\d\\s*[A-z]+$')
-string_pattern = re.compile(u'[A-z]+$')
 
 def _get_parameter_by_name(device, name):
     parameters = device.parameters if liveobj_valid(device) else []
@@ -37,25 +34,42 @@ def _try_to_round_number(parameter_string):
     return value_as_number
 
 
-def get_parameter_display_value(parameter):
+note_pattern = re.compile(u'^([CDEFGAB].?)((?:-[1-2])|[0-8])$')
+large_pattern = re.compile(u'\\d|\xb0|/|\\%|\\.|\\:|\\-|\\+|inf')
+
+def get_parameter_display_large(parameter):
+    u"""
+    If a numerical value is found, round and return it. Otherwise return the full string.
+    
+    Used together with get_parameter_display_small to draw the number part of a
+    parameter value larger than the unit part.
+    
+    There are some exceptions, sometimes the unit looks better in the large part.
+    See the tests for intended usage and special cases.
+    """
     parameter_string = unicode(parameter)
-    found_string = u''.join(display_pattern.findall(parameter_string))
-    if found_string in (u'inf', u'-inf'):
-        parameter_display = found_string
-    else:
-        value = _try_to_round_number(found_string)
-        parameter_display = unicode(value) if value is not None else parameter_string
-        if found_string.startswith(u'+'):
-            parameter_display = u'+' + parameter_display
-    return parameter_display
+    if note_pattern.search(parameter_string) is not None:
+        return parameter_string
+    large_string = u''.join(large_pattern.findall(parameter_string))
+    if large_string in (u'inf', u'-inf'):
+        return large_string
+    large_number = _try_to_round_number(large_string)
+    if large_number is None:
+        return parameter_string
+    if large_string.startswith(u'+'):
+        return u'+' + unicode(large_number)
+    return unicode(large_number)
 
 
-def get_parameter_unit(parameter):
+small_pattern = re.compile(u'inf\\s*[A-z]+$|\\d\\s*[A-z]+$')
+string_pattern = re.compile(u'[A-z]+$')
+
+def get_parameter_display_small(parameter):
     parameter_string = unicode(parameter)
-    value = unit_pattern.findall(parameter_string)
-    if value:
-        return u''.join(string_pattern.findall(value[0]))
-    return u''
+    small_tokens = small_pattern.findall(parameter_string)
+    if len(small_tokens) is 0:
+        return u''
+    return u''.join(string_pattern.findall(small_tokens[0]))
 
 
 def strip_formatted_string(str):
@@ -185,11 +199,11 @@ class DeviceParameterAdapter(ModelAdapter):
 
     @listenable_property
     def displayValue(self):
-        return get_parameter_display_value(self._adaptee)
+        return get_parameter_display_large(self._adaptee)
 
     @listenable_property
     def unit(self):
-        return get_parameter_unit(self._adaptee)
+        return get_parameter_display_small(self._adaptee)
 
     def _has_automation(self):
         no_automation = 0

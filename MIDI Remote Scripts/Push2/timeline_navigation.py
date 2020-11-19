@@ -325,7 +325,7 @@ class TimelineNavigation(EventObject):
                 else:
                     zoom_region = self._add_margin_to_zoomed_region_end(zoom_region, position)
             else:
-                logger.warn(u"Focused object not visible. Couldn't add margin to zoomed region. %d not in %r" % (position, zoom_region))
+                logger.warning(u"Focused object not visible. Couldn't add margin to zoomed region. %d not in %r" % (position, zoom_region))
         return zoom_region
 
     def _add_margin_to_zoomed_region_start(self, region, focused_position):

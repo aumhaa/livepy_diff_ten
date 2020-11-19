@@ -8,11 +8,11 @@ class TargetTrackComponent(ControlSurfaceComponent, Subject):
     note mode-related functionality and notifying listeners.
     """
     __subject_events__ = (u'target_track',)
-    _target_track = None
-    _armed_track_stack = []
 
     def __init__(self, *a, **k):
         super(TargetTrackComponent, self).__init__(*a, **k)
+        self._target_track = None
+        self._armed_track_stack = []
         self._on_tracks_changed.subject = self.song()
         self._on_tracks_changed()
 
