@@ -19,6 +19,9 @@ class Slot(object):
     def __eq__(self, other):
         return id(self) == id(other) or self.callback == other
 
+    def __hash__(self):
+        return hash((self.callback,))
+
 
 class IdentifyingSlot(Slot):
 
