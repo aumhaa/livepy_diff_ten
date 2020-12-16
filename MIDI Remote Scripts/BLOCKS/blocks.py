@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from functools import partial
 import Live
 from ableton.v2.base import clamp, listens, liveobj_valid, nop
@@ -55,16 +58,16 @@ class Blocks(ControlSurface):
         self._set_feedback_velocity()
 
     def _create_controls(self):
-        self._pads_raw = [ ButtonElement(True, MIDI_NOTE_TYPE, 0, identifier, name=u'Pad_{}'.format(identifier), skin=skin) for identifier in xrange(100) ]
-        self._session_matrix = ButtonMatrixElement(rows=[ [ self._pads_raw[offset + col] for col in xrange(NUM_TRACKS) ] for offset in xrange(80, 49, -10) ], name=u'Session_Matrix')
-        self._scene_launch_button_matrix = ButtonMatrixElement(rows=[[ self._pads_raw[identifier] for identifier in xrange(89, 58, -10) ]], name=u'Scene_Launch_Button_Matrix')
+        self._pads_raw = [ ButtonElement(True, MIDI_NOTE_TYPE, 0, identifier, name=u'Pad_{}'.format(identifier), skin=skin) for identifier in range(100) ]
+        self._session_matrix = ButtonMatrixElement(rows=[ [ self._pads_raw[offset + col] for col in range(NUM_TRACKS) ] for offset in range(80, 49, -10) ], name=u'Session_Matrix')
+        self._scene_launch_button_matrix = ButtonMatrixElement(rows=[[ self._pads_raw[identifier] for identifier in range(89, 58, -10) ]], name=u'Scene_Launch_Button_Matrix')
         self._stop_all_clips_button = ButtonElement(True, MIDI_NOTE_TYPE, 0, 127, skin=skin, name=u'Stop_All_Clips_Button')
         self._nav_down_button = self._pads_raw[90]
         self._nav_up_button = self._pads_raw[91]
         self._nav_left_button = self._pads_raw[92]
         self._nav_right_button = self._pads_raw[93]
         self._mode_cycle_button = ButtonElement(True, MIDI_CC_TYPE, 0, 127, skin=skin, name=u'Mode_Button')
-        self._drum_pads = ButtonMatrixElement(rows=[ [ self._pads_raw[offset + col] for col in xrange(4) ] for offset in xrange(48, 35, -4) ], name=u'Drum_Pads')
+        self._drum_pads = ButtonMatrixElement(rows=[ [ self._pads_raw[offset + col] for col in range(4) ] for offset in range(48, 35, -4) ], name=u'Drum_Pads')
         self._tempo_encoder = EncoderElement(MIDI_PB_TYPE, 0, 0, Live.MidiMap.MapMode.absolute, send_should_depend_on_forwarding=False, name=u'Tempo_Encoder')
         self._tempo_encoder.reset = nop
         self._sysex_element = SysexElement(sysex_identifier=SYSEX_HEADER, name=u'Sysex_Element')
@@ -118,7 +121,7 @@ class Blocks(ControlSurface):
 
     @listens(u'tempo')
     def __on_tempo_changed_in_live(self):
-        normalized_tempo = (clamp(self.song.tempo, TEMPO_MIN, TEMPO_MAX) - TEMPO_MIN) / (TEMPO_MAX - TEMPO_MIN)
+        normalized_tempo = old_div(clamp(self.song.tempo, TEMPO_MIN, TEMPO_MAX) - TEMPO_MIN, TEMPO_MAX - TEMPO_MIN)
         value_to_send = clamp(int(normalized_tempo * PB_VALUE_RANGE_MAX), 0, PB_VALUE_RANGE_MAX)
         self._tempo_encoder.send_value(value_to_send)
 

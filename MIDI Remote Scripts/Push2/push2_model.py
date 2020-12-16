@@ -1,7 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from pprint import pformat
 import logging
 import json
+from ableton.v2.base import PY2
 from .model import RootModel
 from .model.generation import generate_mrs_model, ModelUpdateNotifier
 logger = logging.getLogger(__name__)
@@ -31,7 +33,7 @@ class Sender(object):
         def send_data(data):
             if data[u'command'] == u'full-model-update':
                 data[u'fingerprint'] = root_model.__fingerprint__
-            raw = json.dumps(data)
+            raw = json.dumps(data, ensure_ascii=PY2)
             self._message_sink(raw)
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(u'Model sent: %s', pformat(data))

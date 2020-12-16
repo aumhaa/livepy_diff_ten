@@ -1,6 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.base import group, in_range
 from pushbase.touch_strip_element import TouchStripModes, TouchStripStates
+from functools import reduce
 START = (240, 71, 127, 21)
 CLEAR_LINE1 = START + (28, 0, 0, 247)
 CLEAR_LINE2 = START + (29, 0, 0, 247)
@@ -78,7 +80,7 @@ TOUCHSTRIP_STATE_TO_VALUE = {TouchStripStates.STATE_OFF: 0,
 def make_touch_strip_light_message(state):
     state = [ TOUCHSTRIP_STATE_TO_VALUE[s] for s in state ]
     group_size = 3
-    bytes = [ reduce(lambda byte, (i, state): byte | state << 2 * i, enumerate(state_group), 0) for state_group in group(state, group_size) ]
+    bytes = [ reduce(lambda byte, idx_state: byte | idx_state[1] << 2 * idx_state[0], enumerate(state_group), 0) for state_group in group(state, group_size) ]
     return START + (100, 0, 8) + tuple(bytes) + (247,)
 
 
@@ -88,4 +90,4 @@ def to_bytes(number, size):
     ordered from most significant to least significant byte
     """
     assert in_range(number, 0, 1 << size * 4)
-    return tuple([ number >> offset & 15 for offset in xrange((size - 1) * 4, -1, -4) ])
+    return tuple([ number >> offset & 15 for offset in range((size - 1) * 4, -1, -4) ])

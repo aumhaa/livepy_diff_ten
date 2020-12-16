@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from numbers import Number
 from ...base import listenable_property
 from ..component import Component
 from ..control import PlayableControl, ButtonControl, control_matrix
@@ -86,7 +87,7 @@ class PlayableComponent(Component):
 
     def _button_should_be_enabled(self, button):
         identifier, _ = self._note_translation_for_button(button)
-        return identifier < 128
+        return identifier is None or isinstance(identifier, Number) and identifier < 128
 
     def _note_translation_for_button(self, button):
         return (button.identifier, button.channel)

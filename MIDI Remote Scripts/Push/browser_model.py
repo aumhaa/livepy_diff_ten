@@ -1,7 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import object
 import os
 from functools import partial
-from itertools import imap, chain
+from itertools import chain
 import Live
 from ableton.v2.base import first, nop, find_if, index_if, in_range, lazy_attribute, BooleanContext, EventObject
 from pushbase.scrollable_list import ActionList, ActionListItem
@@ -206,7 +208,7 @@ class FullBrowserModel(BrowserModel):
 
     @property
     def content_lists(self):
-        return map(first, self._contents[:self._num_contents])
+        return list(map(first, self._contents[:self._num_contents]))
 
     def can_be_exchanged(self, model):
         return isinstance(model, FullBrowserModel) and super(FullBrowserModel, self).can_be_exchanged(model)
@@ -308,7 +310,7 @@ class QueryingBrowserModel(FullBrowserModel):
 
     def get_root_children(self):
         browser = self.browser
-        return chain.from_iterable(imap(lambda q: q(browser), self.queries))
+        return chain.from_iterable(map(lambda q: q(browser), self.queries))
 
     def can_be_exchanged(self, model):
         return isinstance(model, QueryingBrowserModel) and super(QueryingBrowserModel, self).can_be_exchanged(model)

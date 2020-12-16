@@ -1,14 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.builtins import range
 from collections import defaultdict
 import gc
+from .util import old_hasattr
 
 def typename(obj):
     u"""
     Robust class-name utility-function
     """
-    if hasattr(obj, u'__class__'):
+    if old_hasattr(obj, u'__class__'):
         return obj.__class__.__name__
-    if hasattr(obj, u'__name__'):
+    if old_hasattr(obj, u'__name__'):
         return obj.__name__
     return u'<unknown>'
 
@@ -58,7 +60,7 @@ def refget(objs, level = 1):
     You can control the number of generations to collect with
     the level-parameter.
     """
-    for _ in xrange(level):
+    for _ in range(level):
         refs = gc.get_referrers(*objs)
         try:
             refs.remove(objs)

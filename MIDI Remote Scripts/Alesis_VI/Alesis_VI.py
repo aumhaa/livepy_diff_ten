@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from _Framework.ControlSurface import ControlSurface
 from _Framework.MidiMap import make_encoder, MidiMap as MidiMapBase
 from _Framework.InputControlElement import MIDI_CC_TYPE
@@ -17,13 +18,13 @@ class MidiMap(MidiMapBase):
         self.add_momentary_button(u'Record', 0, 114, MIDI_CC_TYPE)
         self.add_momentary_button(u'Forward', 0, 117, MIDI_CC_TYPE)
         self.add_momentary_button(u'Backward', 0, 116, MIDI_CC_TYPE)
-        self.add_matrix(u'Volume_Encoders', make_encoder, 0, [range(20, 32) + [35,
+        self.add_matrix(u'Volume_Encoders', make_encoder, 0, [list(range(20, 32)) + [35,
           41,
           46,
           47]], MIDI_CC_TYPE)
 
     def add_momentary_button(self, name, channel, number, midi_message_type):
-        assert name not in self.keys()
+        assert name not in list(self.keys())
         self[name] = ButtonElement(True, midi_message_type, channel, number, name=name)
 
 

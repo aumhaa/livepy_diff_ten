@@ -2,7 +2,8 @@ u"""
 Mode handling components.
 """
 from __future__ import absolute_import, print_function, unicode_literals
-from ..base import depends, infinite_context_manager, listens, is_contextmanager, is_iterable, lazy_attribute, listenable_property, NamedTuple, task
+from future.utils import iteritems
+from ..base import depends, infinite_context_manager, listens, is_contextmanager, is_iterable, lazy_attribute, listenable_property, NamedTuple, old_hasattr, task
 from . import defaults
 from .layer import Layer, CompoundLayer
 from .resource import StackingResource
@@ -14,7 +15,7 @@ def tomode(thing):
         return Mode()
     if isinstance(thing, Mode):
         return thing
-    if hasattr(thing, u'set_enabled'):
+    if old_hasattr(thing, u'set_enabled'):
         return EnablingMode(thing)
     if isinstance(thing, tuple) and len(thing) == 2:
         if isinstance(thing[0], Component) and isinstance(thing[1], (Layer, CompoundLayer)):
@@ -23,14 +24,14 @@ def tomode(thing):
             mode = Mode()
             mode.enter_mode, mode.leave_mode = thing
             return mode
-    if callable(thing):
-        mode = Mode()
-        mode.enter_mode = thing
-        return mode
     if is_iterable(thing):
         return CompoundMode(*thing)
     if is_contextmanager(thing):
         return ContextManagerMode(thing)
+    if callable(thing):
+        mode = Mode()
+        mode.enter_mode = thing
+        return mode
     return thing
 
 
@@ -173,7 +174,7 @@ class CompoundMode(Mode):
 
     def __init__(self, *modes, **k):
         super(CompoundMode, self).__init__(**k)
-        self._modes = map(tomode, modes)
+        self._modes = list(map(tomode, modes))
 
     def enter_mode(self):
         for mode in self._modes:
@@ -573,7 +574,7 @@ class ModesComponent(Component):
 
     def _update_mode_buttons(self, selected):
         if self.is_enabled():
-            for name, _ in self._mode_map.iteritems():
+            for name, entry in iteritems(self._mode_map):
                 self._get_mode_behaviour(name).update_button(self, name, selected)
 
     @cycle_mode_button.pressed

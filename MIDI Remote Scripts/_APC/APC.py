@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 import Live
 from _Framework.ControlSurface import ControlSurface
 MANUFACTURER_ID = 71
@@ -62,13 +64,13 @@ class APC(ControlSurface):
 
     def _on_dongle_response(self, midi_bytes):
         if midi_bytes[1] == MANUFACTURER_ID and midi_bytes[3] == self._product_model_id_byte() and midi_bytes[2] == self._device_id and midi_bytes[5] == 0 and midi_bytes[6] == 16:
-            response = [long(0), long(0)]
+            response = [int(0), int(0)]
             for index in range(8):
-                response[0] += long(midi_bytes[7 + index] & 15) << 4 * (7 - index)
-                response[1] += long(midi_bytes[15 + index] & 15) << 4 * (7 - index)
+                response[0] += int(midi_bytes[7 + index] & 15) << 4 * (7 - index)
+                response[1] += int(midi_bytes[15 + index] & 15) << 4 * (7 - index)
 
             expected_response = Live.Application.encrypt_challenge(self._dongle_challenge[0], self._dongle_challenge[1])
-            if [long(expected_response[0]), long(expected_response[1])] == response:
+            if [int(expected_response[0]), int(expected_response[1])] == response:
                 self._on_handshake_successful()
 
     def _on_handshake_successful(self):
@@ -172,4 +174,4 @@ class APC(ControlSurface):
             APC._combine_active_instances()
 
     def _product_model_id_byte(self):
-        raise AssertionError, u'Function _product_model_id_byte must be overridden by subclass'
+        raise AssertionError(u'Function _product_model_id_byte must be overridden by subclass')

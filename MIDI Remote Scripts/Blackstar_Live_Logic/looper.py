@@ -145,7 +145,7 @@ class LooperComponent(Component):
         Stop any playing tracks in the group track,
         or otherwise start all tracks
         """
-        playing_children = filter(is_playing, grouped_tracks(track))
+        playing_children = list(filter(is_playing, grouped_tracks(track)))
         if playing_children:
             if not self.song.is_playing:
                 self.song.is_playing = True

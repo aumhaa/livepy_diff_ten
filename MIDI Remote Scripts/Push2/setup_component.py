@@ -11,6 +11,7 @@ MIN_USER_FACING_DISPLAY_BRIGHTNESS = 2
 
 class GeneralSettings(EventObject):
     workflow = listenable_property.managed(u'scene')
+    aftertouch_mode = listenable_property.managed(u'mono')
 
 
 class HardwareSettings(SerializableListenableProperties):
@@ -60,6 +61,7 @@ class Settings(CompoundDisconnectable):
 
 class GeneralSettingsComponent(Component):
     workflow_encoder = StepEncoderControl()
+    aftertouch_mode_encoder = StepEncoderControl()
     led_brightness_encoder = StepEncoderControl(num_steps=60)
     display_brightness_encoder = StepEncoderControl(num_steps=120)
 
@@ -70,6 +72,7 @@ class GeneralSettingsComponent(Component):
         self._settings = settings
         self._hardware_settings = hardware_settings
         self.workflow_encoder.connect_property(settings, u'workflow', lambda v: (u'clip' if v > 0 else u'scene'))
+        self.aftertouch_mode_encoder.connect_property(settings, u'aftertouch_mode', lambda v: (u'polyphonic' if v > 0 else u'mono'))
 
     @led_brightness_encoder.value
     def led_brightness_encoder(self, value, encoder):

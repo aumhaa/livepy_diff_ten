@@ -1,18 +1,19 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from _Framework.Skin import Skin
 from _Framework.ButtonElement import Color
 
-class Defaults:
+class Defaults(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Color(127)
         Off = Color(0)
         Disabled = Color(0)
 
 
-class BiLedColors:
+class BiLedColors(object):
 
-    class Mixer:
+    class Mixer(object):
         SoloOn = Color(60)
         SoloOff = Color(28)
         MuteOn = Color(29)
@@ -25,7 +26,7 @@ class BiLedColors:
         Sends = Color(47)
         Pans = Color(60)
 
-    class Device:
+    class Device(object):
         Parameters = Color(13)
         NoDevice = Color(0)
         BankSelected = Color(15)

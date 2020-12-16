@@ -1,10 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from _Framework.Skin import Skin
 from .Colors import Rgb
 
-class Colors:
+class Colors(object):
 
-    class Session:
+    class Session(object):
         SceneTriggered = Rgb.GREEN_BLINK
         NoScene = Rgb.BLACK
         ClipStarted = Rgb.GREEN_PULSE
@@ -18,7 +19,7 @@ class Colors:
         StoppedClip = Rgb.GREEN_HALF
         Enabled = Rgb.YELLOW
 
-    class Mode:
+    class Mode(object):
         DeviceMode = Rgb.PURPLE_HALF
         DeviceModeOn = Rgb.PURPLE
         PanMode = Rgb.ORANGE_HALF
@@ -37,7 +38,7 @@ class Colors:
         Send5ModeOn = Rgb.YELLOW
         Disabled = Rgb.BLACK
 
-    class Device:
+    class Device(object):
         Bank = Rgb.DARK_PURPLE
         BestOfBank = Rgb.PURPLE_HALF
         BankSelected = Rgb.PURPLE

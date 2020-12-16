@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter
+from builtins import filter
+from builtins import map
+from builtins import range
 from .ControlSurfaceComponent import ControlSurfaceComponent
 from .Dependency import depends
 from .Util import product
@@ -23,21 +25,22 @@ class DrumRackComponent(ControlSurfaceComponent):
 
     def _create_and_set_pad_translations(self, matrix):
 
-        def create_translation_entry((y, x)):
+        def create_translation_entry(y_x):
+            y, x = y_x
             button = matrix.get_button(x, y)
             return (x,
              y + NUM_PADS_Y - matrix.height(),
              button.message_identifier() if button is not None else 0,
              button.message_channel() if button is not None else 0)
 
-        translations = map(create_translation_entry, product(xrange(matrix.height()), xrange(matrix.width())))
+        translations = list(map(create_translation_entry, product(range(matrix.height()), range(matrix.width()))))
         self._set_pad_translations(tuple(translations))
 
     def set_pads(self, matrix):
         if matrix is not None:
             _validate_matrix(matrix)
             self._create_and_set_pad_translations(matrix)
-            for button in ifilter(None, matrix):
+            for button in filter(None, matrix):
                 button.suppress_script_forwarding = True
 
         else:

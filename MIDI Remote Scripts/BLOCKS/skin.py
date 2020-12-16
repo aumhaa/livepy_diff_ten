@@ -1,16 +1,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface import Skin
 from ableton.v2.control_surface.elements import Color
 from .colors import Rgb
 
-class Colors:
+class Colors(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Rgb.WHITE
         Off = Rgb.BLACK
         Disabled = Rgb.BLACK
 
-    class Session:
+    class Session(object):
         RecordButton = Rgb.RED
         ClipTriggeredPlay = Rgb.GREEN_BLINK
         ClipTriggeredRecord = Rgb.RED_BLINK
@@ -25,7 +26,7 @@ class Colors:
         StopClipDisabled = Rgb.BLACK
         ClipEmpty = Rgb.BLACK
 
-    class DrumGroup:
+    class DrumGroup(object):
         PadEmpty = Rgb.BLACK
         PadFilled = Rgb.YELLOW
         PadSelected = Rgb.LIGHT_BLUE

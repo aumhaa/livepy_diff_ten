@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from future.moves.itertools import zip_longest
 from _Generic.Devices import best_of_parameter_bank, parameter_banks
 from ableton.v2.base import clamp, depends, EventObject, listens, liveobj_valid, nop
 from ableton.v2.control_surface import Component
@@ -130,7 +130,7 @@ class SimpleDeviceParameterComponent(Component):
             self._empty_control_slots.register_slot(control, nop, u'value')
 
     def _connect_parameters(self):
-        for control, parameter in izip_longest(self._parameter_controls or [], self.selected_bank):
+        for control, parameter in zip_longest(self._parameter_controls or [], self.selected_bank):
             if liveobj_valid(control):
                 if liveobj_valid(parameter):
                     control.connect_to(parameter)

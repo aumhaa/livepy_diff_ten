@@ -1,4 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import range
+from builtins import round
+from past.utils import old_div
 import sys
 import Live
 from .FaderfoxComponent import FaderfoxComponent
@@ -6,6 +11,7 @@ from .consts import *
 from .Devices import *
 from .DevicesXY import *
 from .ParamMap import ParamMap
+from ableton.v2.base import old_hasattr
 
 class FaderfoxDeviceController(FaderfoxComponent):
     __module__ = __name__
@@ -19,7 +25,7 @@ class FaderfoxDeviceController(FaderfoxComponent):
         FaderfoxComponent.realinit(self, parent)
         self.log(u'device controller %s' % parent)
         self.device = None
-        if hasattr(self.parent.song(), u'appointed_device'):
+        if old_hasattr(self.parent.song(), u'appointed_device'):
             self.device = self.parent.song().appointed_device
         self.log(u'device %s' % self.device)
         self.device_locked = False
@@ -119,7 +125,7 @@ class FaderfoxDeviceController(FaderfoxComponent):
                     if parameter:
                         mode2 = mode
                         fullname = self.helper.device_name(device) + u'.' + parameter.name
-                        if parameter.is_quantized and not self.parent.is_lv1 and not INVERT_QUANT_PARAM.has_key(fullname):
+                        if parameter.is_quantized and not self.parent.is_lv1 and fullname not in INVERT_QUANT_PARAM:
                             mode2 = Live.MidiMap.MapMode.relative_binary_offset
                         self.logfmt(u'parameter %s %s to %s (quant %s)', parameter, parameter.name, ccs[encoder], parameter.is_quantized)
                         ParamMap.map_with_feedback(midi_map_handle, channel, ccs[encoder], parameter, mode2)
@@ -133,7 +139,7 @@ class FaderfoxDeviceController(FaderfoxComponent):
             param_bank = 0
             device_name = self.helper.device_name(self.device)
             self.log(u"device name '%s'" % device_name)
-            if device_name in XY_DEVICE_DICT.keys():
+            if device_name in list(XY_DEVICE_DICT.keys()):
                 xys = XY_DEVICE_DICT[device_name]
                 if len(xys) > 0:
                     param1 = self.helper.get_parameter_by_name(self.device, xys[0][0])
@@ -161,7 +167,7 @@ class FaderfoxDeviceController(FaderfoxComponent):
                         channel = TRACK_CHANNEL_SETUP2
                     ParamMap.map_with_feedback(midi_map_handle, channel, ccx, param1, Live.MidiMap.MapMode.absolute)
                     ParamMap.map_with_feedback(midi_map_handle, channel, ccy, param2, Live.MidiMap.MapMode.absolute)
-            if device_name in DEVICE_BOB_DICT.keys():
+            if device_name in list(DEVICE_BOB_DICT.keys()):
                 param_bank = DEVICE_BOB_DICT[device_name]
                 if device_name == u'Compressor2' and self.helper.get_parameter_by_name(self.device, u'S/C Gain'):
                     param_bank = CP2_BANK1_LIVE7
@@ -172,7 +178,7 @@ class FaderfoxDeviceController(FaderfoxComponent):
                 self.show_bank_select(u'First eight parameters')
                 map_params_by_number(self.device)
             else:
-                self.log(u'Could not find %s in %s' % (device_name, DEVICE_BOB_DICT.keys()))
+                self.log(u'Could not find %s in %s' % (device_name, list(DEVICE_BOB_DICT.keys())))
                 return
 
     def show_bank_select(self, bank_name):
@@ -197,7 +203,7 @@ class FaderfoxDeviceController(FaderfoxComponent):
                 return
             idx = index_of(notes, note_no)
             parameter = None
-            if device_name in DEVICE_BOB_DICT.keys():
+            if device_name in list(DEVICE_BOB_DICT.keys()):
                 param_bank = DEVICE_BOB_DICT[device_name]
                 parameter = self.helper.get_parameter_by_name(self.device, param_bank[idx])
             elif self.helper.device_is_plugin(self.device):
@@ -224,7 +230,7 @@ class FaderfoxDeviceController(FaderfoxComponent):
                 return cc_value
 
         def round_to(x, step):
-            return step * round(x / step)
+            return step * round(old_div(x, step))
 
         if chan == CHANNEL_SETUP2 and self.selected_clip:
             if cc_no == CLIP_TRANSPOSE_CC and self.selected_clip.is_audio_clip:
@@ -258,7 +264,7 @@ class FaderfoxDeviceController(FaderfoxComponent):
     def unlock_from_device(self, device):
         if device and device == self.device:
             self.device_locked = False
-        if hasattr(self.parent.song(), u'appointed_device'):
+        if old_hasattr(self.parent.song(), u'appointed_device'):
             if not self.parent.song().appointed_device == self.device:
                 self.parent.request_rebuild_midi_map()
 

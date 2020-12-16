@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from past.utils import old_div
 from .MackieControlComponent import *
 
 class Transport(MackieControlComponent):
@@ -97,14 +99,14 @@ class Transport(MackieControlComponent):
                     self.____fast_forward_counter += 1
                     self.__fast___rewind_counter -= 4
                     if not self.alt_is_pressed():
-                        self.__fast_forward(base_acceleration + max(1, self.____fast_forward_counter / 4))
+                        self.__fast_forward(base_acceleration + max(1, old_div(self.____fast_forward_counter, 4)))
                     else:
                         self.__fast_forward(base_acceleration)
                 if self.____rewind_button_down:
                     self.__fast___rewind_counter += 1
                     self.____fast_forward_counter -= 4
                     if not self.alt_is_pressed():
-                        self.__rewind(base_acceleration + max(1, self.__fast___rewind_counter / 4))
+                        self.__rewind(base_acceleration + max(1, old_div(self.__fast___rewind_counter, 4)))
                     else:
                         self.__rewind(base_acceleration)
         else:

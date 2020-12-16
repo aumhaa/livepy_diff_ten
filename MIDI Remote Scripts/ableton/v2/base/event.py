@@ -2,12 +2,14 @@ u"""
 Module for adding and listening to events.
 """
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip, repeat, chain
+from future.builtins import filter, zip
+from itertools import repeat, chain
 from functools import partial, wraps
+from future.utils import iteritems, string_types, with_metaclass
 from .disconnectable import Disconnectable, CompoundDisconnectable
 from .live_api_utils import liveobj_valid
-from .signal import Signal
-from .util import instance_decorator, monkeypatch, monkeypatch_extend, NamedTuple
+from .abl_signal import Signal
+from .util import instance_decorator, monkeypatch, monkeypatch_extend, NamedTuple, old_hasattr
 __all__ = (u'EventObject', u'Event', u'EventError', u'listenable_property', u'listens', u'listens_group', u'Slot', u'SlotGroup', u'MultiSlot', u'has_event', u'validate_event_interface')
 
 class EventError(Exception):
@@ -43,7 +45,7 @@ def add_event(cls, event_name_or_event):
     
     The disconnect method will be patched to remove all registered listeners.
     """
-    if isinstance(event_name_or_event, basestring):
+    if isinstance(event_name_or_event, string_types):
         event = Event(name=event_name_or_event)
     else:
         event = event_name_or_event
@@ -131,7 +133,7 @@ class EventObjectMeta(type):
 
     @staticmethod
     def collect_listenable_properties(dct):
-        return filter(lambda item: isinstance(item[1], listenable_property_base), dct.iteritems())
+        return list(filter(lambda item: isinstance(item[1], listenable_property_base), iteritems(dct)))
 
     def __new__(cls, name, bases, dct):
         listenable_properties = EventObjectMeta.collect_listenable_properties(dct)
@@ -144,14 +146,14 @@ class EventObjectMeta(type):
         if has_events and u'disconnect' not in dct:
             dct[u'disconnect'] = lambda self: super(cls, self).disconnect()
         cls = super(EventObjectMeta, cls).__new__(cls, name, bases, dct)
-        assert not has_events or hasattr(cls, u'disconnect')
+        assert not has_events or old_hasattr(cls, u'disconnect')
         for lst in chain(events, property_events):
             add_event(cls, lst)
 
         return cls
 
 
-class EventObject(CompoundDisconnectable):
+class EventObject(with_metaclass(EventObjectMeta, CompoundDisconnectable)):
     u"""
     Base class to enable defining and listening to events.
     
@@ -167,7 +169,6 @@ class EventObject(CompoundDisconnectable):
     guarantee that listeners are disconnected correctly, if the EventObject itself is
     disconnected and should be the preferred way of connecting to events.
     """
-    __metaclass__ = EventObjectMeta
 
     def register_slot(self, *a, **k):
         u"""
@@ -324,7 +325,7 @@ class SlotGroup(EventObject):
         the subject itself.
         """
         self.disconnect()
-        for subject, identifier in izip(subjects, identifiers):
+        for subject, identifier in zip(subjects, identifiers):
             self.add_subject(subject, identifier=identifier)
 
     def add_subject(self, subject, identifier = None):
@@ -502,7 +503,7 @@ class SerializableListenablePropertiesMeta(EventObjectMeta):
             return data
 
         def setstate(self, data):
-            for k, v in data.iteritems():
+            for k, v in iteritems(data):
                 setattr(self, k, v)
 
         dct[u'__getstate__'] = getstate
@@ -520,12 +521,12 @@ class SerializableListenablePropertiesBase(Disconnectable):
         pass
 
 
-class SerializableListenableProperties(SerializableListenablePropertiesBase):
+class SerializableListenableProperties(with_metaclass(SerializableListenablePropertiesMeta, SerializableListenablePropertiesBase)):
     u"""
     Installs a meta class, that generates __getstate__ and __setstate__ for
     serializing all listenable properties.
     """
-    __metaclass__ = SerializableListenablePropertiesMeta
+    pass
 
 
 class ObservablePropertyAlias(EventObject):

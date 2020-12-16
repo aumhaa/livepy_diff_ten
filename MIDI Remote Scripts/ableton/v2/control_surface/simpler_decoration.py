@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import round
+from past.utils import old_div
 from functools import partial
 from math import ceil, floor
 import Live
@@ -9,7 +11,7 @@ from .internal_parameter import EnumWrappingParameter, RelativeInternalParameter
 BoolWrappingParameter = partial(WrappingParameter, to_property_value=lambda integer, _simpler: bool(integer), from_property_value=lambda boolean, _simpler: int(boolean), value_items=[u'Off', u'On'], display_value_conversion=lambda val: (u'On' if val else u'Off'))
 
 def from_user_range(minv, maxv):
-    return lambda v, s: (v - minv) / float(maxv - minv)
+    return lambda v, s: old_div(v - minv, float(maxv - minv))
 
 
 def to_user_range(minv, maxv):
@@ -22,7 +24,7 @@ def to_user_range_quantized(minv, maxv):
 
 
 def from_sample_count(value, sample):
-    return float(value) / sample.length
+    return old_div(float(value), sample.length)
 
 
 def to_sample_count(prev_value_getter, value, sample):
@@ -118,7 +120,7 @@ class SimplerDeviceDecorator(EventObject, LiveObjectDecorator):
 
     @property
     def available_warp_modes(self):
-        return SimplerWarpModes.values()
+        return list(SimplerWarpModes.values())
 
     @property
     def available_resolutions(self):

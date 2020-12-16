@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import imap
+from builtins import map
+from numbers import Number
 NOTE_ON_STATUS = 144
 NOTE_OFF_STATUS = 128
 CC_STATUS = 176
@@ -18,14 +19,20 @@ SYSEX_IDENTITY_REQUEST_MESSAGE = (SYSEX_START,
  SYSEX_END)
 
 def is_valid_channel(channel):
+    if not isinstance(channel, Number):
+        return False
     return 0 <= channel < 16
 
 
 def is_valid_value(value):
+    if not isinstance(value, Number):
+        return False
     return 0 <= value < 128
 
 
 def is_valid_identifier(identifier):
+    if not isinstance(identifier, Number):
+        return False
     return 0 <= identifier < 128
 
 
@@ -48,5 +55,5 @@ def extract_value(midi_bytes):
 
 
 def pretty_print_bytes(midi_bytes):
-    hex_values = imap(hex, midi_bytes)
+    hex_values = list(map(hex, midi_bytes))
     return u' '.join(hex_values)

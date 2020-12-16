@@ -1,6 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import object
 from ableton.v2.base import EventObject, const, inject, listenable_property, listens, liveobj_valid
-from ableton.v2.control_surface import InternalParameter, LiveObjectDecorator, get_parameter_by_name
+from ableton.v2.control_surface import NotifyingList, EnumWrappingParameter, InternalParameter, LiveObjectDecorator, get_parameter_by_name
 from .device_options import DeviceSwitchOption, DeviceOnOffOption
 from .timeline_navigation import Region, SimplerWaveformNavigation
 
@@ -108,6 +110,8 @@ class SlicePoint(object):
 
     def __ne__(self, other):
         return not self == other
+
+    __hash__ = None
 
 
 class SimplerPositions(EventObject):
@@ -342,7 +346,7 @@ class ModMatrixParameter(InternalParameter):
         percentage = 100.0 * self._modulation_value
         precision = 1 if abs(percentage) < 10.0 else 0
         format_str = u'%.' + str(precision) + u'f'
-        return unicode(format_str % percentage)
+        return str(format_str % percentage)
 
     @property
     def default_value(self):
@@ -385,7 +389,7 @@ class SimplerDecoratedPropertiesCopier(object):
          self.ADDITIONAL_PROPERTIES[1]: None})
 
     def copy_properties(self, properties):
-        for prop, getter in properties.iteritems():
+        for prop, getter in properties.items():
             if getter:
                 self._nested_properties[prop] = getter(self._decorated_object)
             else:

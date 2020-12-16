@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
 from _Framework.EncoderElement import EncoderElement
@@ -87,7 +88,7 @@ class TrackFilterComponent(ControlSurfaceComponent):
         if self._track != None:
             for index in range(len(self._track.devices)):
                 device = self._track.devices[-1 * (index + 1)]
-                if device.class_name in FILTER_DEVICES.keys():
+                if device.class_name in list(FILTER_DEVICES.keys()):
                     self._device = device
                     break
 

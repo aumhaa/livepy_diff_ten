@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import round
+from past.utils import old_div
 from contextlib import contextmanager
 import Live
 from ..base import EventObject, find_if, liveobj_valid, clamp, listens
@@ -65,7 +67,7 @@ class SimplerSliceNudging(EventObject):
 
     def _sample_change_from_delta(self, delta):
         sample_length = self._simpler.sample.length
-        change_in_samples = round(delta * sample_length / 10)
+        change_in_samples = round(old_div(delta * sample_length, 10))
         return int(change_in_samples)
 
     def _display_value_conversion(self, _value):

@@ -1,10 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 from MackieControl.consts import *
 from MackieControl.MainDisplay import MainDisplay
 from MackieControl.ChannelStrip import ChannelStrip
 import Live
 
-class MackieControlXT:
+class MackieControlXT(object):
     u"""Extension for a Mackie Control.
        Only works hand in hand with a 'main' Mackie Control as master
     """

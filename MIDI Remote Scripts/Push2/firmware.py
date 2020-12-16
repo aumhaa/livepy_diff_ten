@@ -1,16 +1,20 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter
+from builtins import object
 import fnmatch
+from functools import total_ordering
 import logging
 import os
 import re
 from collections import namedtuple
-from itertools import imap
 from ableton.v2.base import find_if, listenable_property, task
 from ableton.v2.control_surface import Component
 import Live
 logger = logging.getLogger(__name__)
 WELCOME_STATE_TIME = 2.0
 FIRMWARE_PATH = os.path.join(os.path.dirname(__file__), u'firmware')
+
+@total_ordering
 
 class FirmwareVersion(object):
 
@@ -29,6 +33,12 @@ class FirmwareVersion(object):
         if self.major > other.major or self.major == other.major and self.minor > other.minor or self.major == other.major and self.minor == other.minor and self.build > other.build:
             return 1
         return -1
+
+    def __eq__(self, other):
+        return isinstance(other, FirmwareVersion) and self.major == other.major and self.minor == other.minor and self.build == other.build
+
+    def __lt__(self, other):
+        return self.major < other.major or self.major == other.major and self.minor < other.minor or self.major == other.major and self.minor == other.minor and self.build < other.build
 
     def __repr__(self):
         return u'<FirmwareVersion %i.%i.%i %s>' % (self.major,
@@ -70,14 +80,14 @@ class FirmwareCollector(object):
             return max(self.dev_firmwares, key=lambda f: f.version)
 
     def get_release_type(self, version):
-        if version in imap(lambda f: f.version, self.stable_firmwares):
+        if version in map(lambda f: f.version, self.stable_firmwares):
             return u'stable'
-        if version in imap(lambda f: f.version, self.dev_firmwares):
+        if version in map(lambda f: f.version, self.dev_firmwares):
             return u'dev'
         return u'unknown'
 
     def _collect_firmware_files(self, prefix, release_type):
-        return filter(lambda x: x.version is not None, [ FirmwareInfo(extract_firmware_version(f, prefix, release_type), f) for f in os.listdir(FIRMWARE_PATH) if fnmatch.fnmatch(f, u'*.upgrade') ])
+        return list(filter(lambda x: x.version is not None, [ FirmwareInfo(extract_firmware_version(f, prefix, release_type), f) for f in os.listdir(FIRMWARE_PATH) if fnmatch.fnmatch(f, u'*.upgrade') ]))
 
 
 class FirmwareUpdateComponent(Component):

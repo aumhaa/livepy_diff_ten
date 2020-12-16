@@ -1,25 +1,26 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface import Skin
 from .colors import Mono, Rgb
 
-class Colors:
+class Colors(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Mono.ON
         Off = Mono.OFF
         Disabled = Mono.OFF
         RgbOff = Rgb.BLACK
 
-    class Transport:
+    class Transport(object):
         PlayOn = Mono.ON
         PlayOff = Mono.OFF
 
-    class Recording:
+    class Recording(object):
         On = Mono.ON
         Transition = Mono.ON
         Off = Mono.OFF
 
-    class Mixer:
+    class Mixer(object):
         ArmOn = Rgb.RED
         ArmOff = Rgb.RED_HALF
         SoloOn = Rgb.BLUE
@@ -27,7 +28,7 @@ class Colors:
         Selected = Rgb.WHITE
         EmptyTrack = Rgb.BLACK
 
-    class Session:
+    class Session(object):
         ClipEmpty = Rgb.BLACK
         ClipTriggeredPlay = Rgb.GREEN_BLINK
         ClipTriggeredRecord = Rgb.RED_BLINK
@@ -41,20 +42,20 @@ class Colors:
         StopClip = Rgb.RED
         StopClipDisabled = Rgb.RED_HALF
 
-    class Zooming:
+    class Zooming(object):
         Selected = Rgb.WHITE
         Stopped = Rgb.RED
         Playing = Rgb.GREEN
         Empty = Rgb.BLACK
 
-    class NotePad:
+    class NotePad(object):
         Pressed = Rgb.RED
 
-    class Keyboard:
+    class Keyboard(object):
         Natural = Rgb.YELLOW
         Sharp = Rgb.BLUE
 
-    class DrumGroup:
+    class DrumGroup(object):
         PadEmpty = Rgb.BLACK
         PadFilled = Rgb.YELLOW
         PadSelected = Rgb.WHITE
@@ -72,21 +73,21 @@ class Colors:
         PadQuadrant6 = Rgb.PINK
         PadQuadrant7 = Rgb.PEACH
 
-    class Mode:
+    class Mode(object):
 
-        class Volume:
+        class Volume(object):
             On = Rgb.GREEN
             Off = Rgb.GREEN_HALF
 
-        class Pan:
+        class Pan(object):
             On = Rgb.YELLOW
             Off = Rgb.YELLOW_HALF
 
-        class SendA:
+        class SendA(object):
             On = Rgb.BLUE
             Off = Rgb.BLUE_HALF
 
-        class SendB:
+        class SendB(object):
             On = Rgb.PURPLE
             Off = Rgb.PURPLE_HALF
 

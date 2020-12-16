@@ -3,7 +3,9 @@ Module for the color interfaces defining all posible ways of turning
 on buttons on Push.
 """
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip, repeat
+from builtins import object
+from past.utils import old_div
+from itertools import repeat
 from ableton.v2.control_surface.elements import Color, to_midi_value
 
 class PushColor(Color):
@@ -34,14 +36,14 @@ class RgbColor(PushColor):
         Generate a new shaded RGB from this color.
         """
         assert shade_level > 0 and shade_level <= 2
-        shade_factor = 1.0 / 2.0 * (2 - shade_level)
-        return RgbColor(self.midi_value + shade_level, [ a * b for a, b in izip(self._rgb_value, repeat(shade_factor)) ])
+        shade_factor = old_div(1.0, 2.0) * (2 - shade_level)
+        return RgbColor(self.midi_value + shade_level, [ a * b for a, b in zip(self._rgb_value, repeat(shade_factor)) ])
 
     def highlight(self):
         u"""
         Generate a new highlighted RGB from this color.
         """
-        return RgbColor(self.midi_value - 1, [ a * b for a, b in izip(self._rgb_value, repeat(1.5)) ])
+        return RgbColor(self.midi_value - 1, [ a * b for a, b in zip(self._rgb_value, repeat(1.5)) ])
 
     def __iter__(self):
         return iter(self._rgb_value)
@@ -93,7 +95,7 @@ class AnimatedColor(PushColor):
         interface.send_value(self.color2.midi_value, channel=self.channel2)
 
     def convert_to_midi_value(self):
-        raise NotImplementedError, u'Animations cannot be serialized'
+        raise NotImplementedError(u'Animations cannot be serialized')
 
 
 class Pulse(AnimatedColor):
@@ -133,7 +135,7 @@ class TransparentColor(object):
         pass
 
 
-class Rgb:
+class Rgb(object):
     u"""
     Table of RgbColors for main matrix.
     """
@@ -157,7 +159,7 @@ class Rgb:
     PINK = RgbColor(57)
 
 
-class Basic:
+class Basic(object):
     u"""
     Table of basic colors for side buttons.
     """
@@ -172,7 +174,7 @@ class Basic:
     TRANSPARENT = TransparentColor()
 
 
-class BiLed:
+class BiLed(object):
     u"""
     Table of colors for scene launch buttons.
     """

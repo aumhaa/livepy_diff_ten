@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from ableton.v2.base import old_hasattr
 from ableton.v2.control_surface.elements import MultiElement as MultiElementBase
 
 class MultiElement(MultiElementBase):
@@ -10,7 +11,7 @@ class MultiElement(MultiElementBase):
     @property
     def touch_element(self):
         for control in self.owned_control_elements():
-            if hasattr(control, u'touch_element'):
+            if old_hasattr(control, u'touch_element'):
                 return control.touch_element
 
     def connect_to(self, parameter):

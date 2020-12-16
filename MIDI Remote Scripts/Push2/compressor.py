@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.base import depends, EventObject, listenable_property, listens, liveobj_valid, mixin
 from ableton.v2.control_surface import EnumWrappingParameter, LiveObjectDecorator, get_parameter_by_name
 from .device_decoration import DeviceOnOffOption

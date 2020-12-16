@@ -1,10 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter
+from builtins import str
+from builtins import map
+from builtins import range
 from functools import partial, wraps
-from itertools import chain, ifilter, imap
+from future.utils import string_types
+from itertools import chain
 from contextlib import contextmanager
 import logging
 import traceback
 import Live
+from ableton.v2.base import old_hasattr
 from . import Defaults
 from . import Task
 from .ControlElement import OptimizedOwnershipHandler
@@ -44,11 +50,11 @@ def publish_control_surface(control_surface):
 
 def get_control_surfaces():
     if isinstance(__builtins__, dict):
-        if CS_LIST_KEY not in __builtins__.keys():
+        if CS_LIST_KEY not in list(__builtins__.keys()):
             __builtins__[CS_LIST_KEY] = []
         return __builtins__[CS_LIST_KEY]
     else:
-        if not hasattr(__builtins__, CS_LIST_KEY):
+        if not old_hasattr(__builtins__, CS_LIST_KEY):
             setattr(__builtins__, CS_LIST_KEY, [])
         return getattr(__builtins__, CS_LIST_KEY)
 
@@ -101,11 +107,11 @@ class ControlSurface(Subject, SlotManager):
 
     @property
     def components(self):
-        return tuple(filter(lambda comp: not comp.is_private, self._components))
+        return tuple([ comp for comp in self._components if not comp.is_private ])
 
     @property
     def root_components(self):
-        return tuple(filter(lambda comp: comp.is_root and not comp.is_private, self._components))
+        return tuple([ comp for comp in self._components if comp.is_root and not comp.is_private ])
 
     def _get_tasks(self):
         return self._task_group
@@ -234,7 +240,7 @@ class ControlSurface(Subject, SlotManager):
 
     def show_message(self, message):
         u""" Displays the given message in Live's status bar """
-        assert isinstance(message, (str, unicode))
+        assert isinstance(message, string_types)
         self._c_instance.show_message(message)
 
     def log_message(self, *message):
@@ -362,7 +368,7 @@ class ControlSurface(Subject, SlotManager):
             self.log_message(u'Got unknown message: ' + str(midi_bytes))
 
     def handle_sysex(self, midi_bytes):
-        result = find_if(lambda (id, _): midi_bytes[:len(id)] == id, self._forwarding_long_identifier_registry.iteritems())
+        result = find_if(lambda id__: midi_bytes[:len(id__[0])] == id__[0], iter(self._forwarding_long_identifier_registry.items()))
         if result != None:
             id, control = result
             control.receive_value(midi_bytes[len(id):-1])
@@ -412,7 +418,7 @@ class ControlSurface(Subject, SlotManager):
             assert in_range(translation[3], -1, 16)
             return True
 
-        assert pad_translations is None or all(imap(check_translation, pad_translations)) and len(pad_translations) <= 16
+        assert pad_translations is None or all(map(check_translation, pad_translations)) and len(pad_translations) <= 16
         self._pad_translations = pad_translations
 
     def set_enabled(self, enable):
@@ -518,7 +524,7 @@ class ControlSurface(Subject, SlotManager):
     @profile
     def call_listeners(self, listeners):
         with self.component_guard():
-            for listener in ifilter(lambda l: l != None, listeners):
+            for listener in filter(lambda l: l != None, listeners):
                 listener()
 
     @contextmanager
@@ -556,7 +562,7 @@ class ControlSurface(Subject, SlotManager):
 
     def _flush_midi_messages(self):
         assert self._accumulate_midi_messages
-        for _, message in sorted(chain(self._midi_message_list, self._midi_message_dict.itervalues()), key=first):
+        for _, message in sorted(chain(self._midi_message_list, iter(self._midi_message_dict.values())), key=first):
             self._do_send_midi(message)
 
         self._midi_message_dict.clear()
@@ -624,7 +630,7 @@ class ControlSurface(Subject, SlotManager):
             forwarding_keys = control.identifier_bytes()
             for key in forwarding_keys:
                 registry = self._forwarding_registry if control.message_type() != MIDI_SYSEX_TYPE else self._forwarding_long_identifier_registry
-                assert key not in registry.keys(), u'Registry key %s registered twice. Check Midi messages!' % str(key)
+                assert key not in list(registry.keys()), u'Registry key %s registered twice. Check Midi messages!' % str(key)
                 registry[key] = control
 
         return success
@@ -703,5 +709,5 @@ class OptimizedControlSurface(ControlSurface):
 
     def _register_control(self, control):
         super(OptimizedControlSurface, self)._register_control(control)
-        if hasattr(control, u'_is_resource_based'):
+        if old_hasattr(control, u'_is_resource_based'):
             control._is_resource_based = True

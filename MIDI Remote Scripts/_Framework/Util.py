@@ -2,9 +2,19 @@ u"""
 Various utilities.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import map
+from builtins import range
+from builtins import object
+from future.utils import raise_
 from contextlib import contextmanager
 from functools import wraps, partial
-from itertools import chain, imap, izip_longest
+from future.moves.itertools import zip_longest
+from itertools import chain
+from functools import reduce
+from numbers import Number
+from ableton.v2.base import old_hasattr
 
 def clamp(val, minv, maxv):
     return max(minv, min(val, maxv))
@@ -28,6 +38,8 @@ def const(value):
 
 
 def in_range(value, lower_bound, upper_open_bound):
+    if not isinstance(value, Number):
+        return False
     return value >= lower_bound and value < upper_open_bound
 
 
@@ -46,7 +58,7 @@ def to_slice(obj):
 
 
 def slice_size(slice, width):
-    return len(range(width)[slice])
+    return len(list(range(width))[slice])
 
 
 def maybe(fn):
@@ -145,7 +157,7 @@ def monkeypatch(target, name = None, override = False, doc = None):
 
     def patcher(func):
         patchname = func.__name__ if name is None else name
-        if not override and hasattr(target, patchname):
+        if not override and old_hasattr(target, patchname):
             raise TypeError(u'Class %s already has method %s' % (target.__name__, patchname))
         setattr(target, patchname, func)
         try:
@@ -196,7 +208,7 @@ def monkeypatch_extend(target, name = None):
     def patcher(func):
         newfunc = func
         patchname = func.__name__ if name is None else name
-        if hasattr(target, patchname):
+        if old_hasattr(target, patchname):
             oldfunc = getattr(target, patchname)
             if not callable(oldfunc):
                 raise TypeError(u'Can not extend non callable attribute')
@@ -348,7 +360,7 @@ def group(lst, n):
     Returns a list of lists with elements from 'lst' grouped in blocks
     of 'n' elements.
     """
-    return list(izip_longest(*[ lst[i::n] for i in range(n) ]))
+    return list(zip_longest(*[ lst[i::n] for i in range(n) ]))
 
 
 def find_if(predicate, seq):
@@ -400,7 +412,7 @@ def next(iter):
     u"""
     Equivalent to iter.next()
     """
-    return iter.next()
+    return iter.__next__()
 
 
 def is_iterable(value):
@@ -430,7 +442,7 @@ def recursive_map(fn, element, sequence_type = None):
     if sequence_type is None:
         return recursive_map(fn, element, type(element))
     elif isinstance(element, sequence_type):
-        return map(lambda x: recursive_map(fn, x, sequence_type), element)
+        return [ recursive_map(fn, x, sequence_type) for x in element ]
     else:
         return fn(element)
 
@@ -451,7 +463,7 @@ def is_matrix(iterable):
     not empty
     """
     if is_iterable(iterable) and len(iterable) > 0:
-        return all(imap(lambda x: is_iterable(x) and len(iterable[0]) == len(x) and len(x) > 0, iterable))
+        return all(map(lambda x: is_iterable(x) and len(iterable[0]) == len(x) and len(x) > 0, iterable))
     else:
         return False
 
@@ -486,7 +498,7 @@ def compose(*funcs):
 
 
 def is_contextmanager(value):
-    return callable(getattr(value, u'__enter__')) and callable(getattr(value, u'__exit__'))
+    return callable(getattr(value, u'__enter__', None)) and callable(getattr(value, u'__exit__', None))
 
 
 def infinite_context_manager(generator):
@@ -540,7 +552,7 @@ class BooleanContext(object):
             self.default_value = default_value
         self._current_value = self.default_value
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self._current_value)
 
     def __call__(self, update_value = None):
@@ -576,7 +588,7 @@ def dict_diff(left, right):
     not or different in the left.
     """
     dummy = object()
-    return dict(filter(lambda (k, v): left.get(k, dummy) != v, right.iteritems()))
+    return dict([ k_v for k_v in iter(right.items()) if left.get(k_v[0], dummy) != k_v[1] ])
 
 
 class NamedTuple(object):
@@ -603,10 +615,10 @@ class NamedTuple(object):
             self._eq_dict.update(k)
 
     def __setattr__(self, name, value):
-        raise AttributeError, u'Named tuple is constant'
+        raise AttributeError(u'Named tuple is constant')
 
     def __delattr__(self, name):
-        raise AttributeError, u'Named tuple is constant'
+        raise AttributeError(u'Named tuple is constant')
 
     def __getitem__(self, name):
         return self.__dict__[name]
@@ -615,12 +627,15 @@ class NamedTuple(object):
     def _eq_dict(self):
 
         def public(objdict):
-            return dict(filter(lambda (k, _): not k.startswith(u'_'), objdict.iteritems()))
+            return dict([ k__ for k__ in iter(objdict.items()) if not k__[0].startswith(u'_') ])
 
-        return reduce(lambda a, b: union(b, a), map(lambda c: public(c.__dict__), self.__class__.__mro__), public(self.__dict__))
+        return reduce(lambda a, b: union(b, a), [ public(c.__dict__) for c in self.__class__.__mro__ ], public(self.__dict__))
 
     def __eq__(self, other):
         return isinstance(other, NamedTuple) and self._eq_dict == other._eq_dict
+
+    def __hash__(self):
+        return hash(id(self))
 
     def __getstate__(self):
         res = dict(self.__dict__)
@@ -715,7 +730,7 @@ class overlaymap(object):
             if key in m:
                 return m[key]
 
-        raise KeyError, key
+        raise_(KeyError, key)
 
     def keys(self):
         res = set()
@@ -725,10 +740,10 @@ class overlaymap(object):
         return list(res)
 
     def values(self):
-        return [ self[key] for key in self.keys() ]
+        return [ self[key] for key in list(self.keys()) ]
 
     def iteritems(self):
-        for key in self.keys():
+        for key in list(self.keys()):
             yield (key, self[key])
 
 

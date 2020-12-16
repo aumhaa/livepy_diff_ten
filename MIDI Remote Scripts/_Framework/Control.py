@@ -1,6 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
+from builtins import object
 from functools import partial
-from itertools import izip_longest
+from future.moves.itertools import zip_longest
+from ableton.v2.base import old_hasattr
 from . import Task
 from .Defaults import MOMENTARY_DELAY
 from .SubjectSlot import SlotManager
@@ -20,7 +25,7 @@ class ControlManager(SlotManager):
         return True
 
     def update(self):
-        for control_state in self._control_states.values():
+        for control_state in list(self._control_states.values()):
             control_state.update()
 
 
@@ -500,7 +505,7 @@ class EncoderControl(Control):
             super(EncoderControl.State, self).set_control_element(control_element)
             if self._touch_value_slot:
                 self._touch_value_slot.subject = control_element
-            if control_element and hasattr(control_element, u'is_pressed') and control_element.is_pressed():
+            if control_element and old_hasattr(control_element, u'is_pressed') and control_element.is_pressed():
                 self._touch_encoder()
 
         def _touch_encoder(self):
@@ -619,7 +624,7 @@ class ControlList(Control):
         def _set_unavailable_color(self, value):
             self._unavailable_color = value
             control_elements = self._control_elements or []
-            for control, element in izip_longest(self._controls, control_elements):
+            for control, element in zip_longest(self._controls, control_elements):
                 if not control and element:
                     self._send_unavailable_color(element)
 
@@ -627,7 +632,7 @@ class ControlList(Control):
 
         def _create_controls(self, count):
             self._disconnect_controls()
-            self._controls = [ self._make_control(i) for i in xrange(count) ]
+            self._controls = [ self._make_control(i) for i in range(count) ]
 
         def _disconnect_controls(self):
             for control in self._controls:
@@ -638,7 +643,7 @@ class ControlList(Control):
             control = self._control_type(*self._extra_args, **self._extra_kws)
             control._event_listeners = self._event_listeners
             control_state = control._get_state(self._manager)
-            if not hasattr(control_state, u'index'):
+            if not old_hasattr(control_state, u'index'):
                 control_state.index = index
             else:
                 raise RuntimeError(u"Cannot set 'index' attribute. Attribute already set.")
@@ -652,7 +657,7 @@ class ControlList(Control):
 
         def _update_controls(self):
             control_elements = self._control_elements or []
-            for control, element in izip_longest(self._controls, control_elements):
+            for control, element in zip_longest(self._controls, control_elements):
                 if control:
                     control._get_state(self._manager).set_control_element(element)
                 elif element:
@@ -660,7 +665,7 @@ class ControlList(Control):
                     self._send_unavailable_color(element)
 
         def _send_unavailable_color(self, element):
-            if hasattr(element, u'set_light'):
+            if old_hasattr(element, u'set_light'):
                 element.set_light(self._unavailable_color)
 
         def __getitem__(self, index):
@@ -740,18 +745,18 @@ class MatrixControl(ControlList):
         def _make_control(self, index):
             control = super(MatrixControl.State, self)._make_control(index)
             control_state = control._get_state(self._manager)
-            if not hasattr(control_state, u'coordinate'):
-                control_state.coordinate = (int(index / self.width), index % self.width)
+            if not old_hasattr(control_state, u'coordinate'):
+                control_state.coordinate = (int(old_div(index, self.width)), index % self.width)
             else:
                 raise RuntimeError(u"Cannot set 'coordinate' attribute. Attribute already set.")
             return control
 
         def set_control_element(self, control_elements):
             dimensions = (None, None)
-            if hasattr(control_elements, u'width') and hasattr(control_elements, u'height'):
+            if old_hasattr(control_elements, u'width') and old_hasattr(control_elements, u'height'):
                 dimensions = (control_elements.height(), control_elements.width())
                 if not self._dynamic_create:
-                    control_elements = [ control_elements.get_button(col, row) for row, col in product(xrange(self.height), xrange(self.width)) ]
+                    control_elements = [ control_elements.get_button(col, row) for row, col in product(range(self.height), range(self.width)) ]
             elif is_matrix(control_elements):
                 dimensions = (len(control_elements), len(first(control_elements)))
                 if not self._dynamic_create:

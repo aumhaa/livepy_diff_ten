@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import chr
+from builtins import range
 from functools import partial
 from itertools import chain
 import Live
@@ -60,9 +63,9 @@ class LaunchControlXL(IdentifiableControlSurface):
         def make_slider(identifier, name):
             return SliderElement(MIDI_CC_TYPE, LIVE_CHANNEL, identifier, name=name)
 
-        self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, u'Top_Send_%d' % (i + 1)) for i in xrange(8) ], [ make_encoder(29 + i, u'Bottom_Send_%d' % (i + 1)) for i in xrange(8) ]])
-        self._pan_device_encoders = ButtonMatrixElement(rows=[[ make_encoder(49 + i, u'Pan_Device_%d' % (i + 1)) for i in xrange(8) ]])
-        self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, u'Volume_%d' % (i + 1)) for i in xrange(8) ]])
+        self._send_encoders = ButtonMatrixElement(rows=[[ make_encoder(13 + i, u'Top_Send_%d' % (i + 1)) for i in range(8) ], [ make_encoder(29 + i, u'Bottom_Send_%d' % (i + 1)) for i in range(8) ]])
+        self._pan_device_encoders = ButtonMatrixElement(rows=[[ make_encoder(49 + i, u'Pan_Device_%d' % (i + 1)) for i in range(8) ]])
+        self._volume_faders = ButtonMatrixElement(rows=[[ make_slider(77 + i, u'Volume_%d' % (i + 1)) for i in range(8) ]])
         self._pan_device_mode_button = make_button(105, u'Pan_Device_Mode', MIDI_NOTE_TYPE)
         self._mute_mode_button = make_button(106, u'Mute_Mode', MIDI_NOTE_TYPE)
         self._solo_mode_button = make_button(107, u'Solo_Mode', MIDI_NOTE_TYPE)
@@ -71,8 +74,8 @@ class LaunchControlXL(IdentifiableControlSurface):
         self._down_button = make_button(105, u'Down')
         self._left_button = make_button(106, u'Track_Left')
         self._right_button = make_button(107, u'Track_Right')
-        self._select_buttons = ButtonMatrixElement(rows=[make_button_list(chain(xrange(41, 45), xrange(57, 61)), u'Track_Select_%d')])
-        self._state_buttons = ButtonMatrixElement(rows=[make_button_list(chain(xrange(73, 77), xrange(89, 93)), u'Track_State_%d')])
+        self._select_buttons = ButtonMatrixElement(rows=[make_button_list(chain(range(41, 45), range(57, 61)), u'Track_Select_%d')])
+        self._state_buttons = ButtonMatrixElement(rows=[make_button_list(chain(range(73, 77), range(89, 93)), u'Track_State_%d')])
         self._send_encoder_lights = ButtonMatrixElement(rows=[make_button_list([13,
           29,
           45,
@@ -101,7 +104,7 @@ class LaunchControlXL(IdentifiableControlSurface):
         mixer = MixerComponent(NUM_TRACKS, is_enabled=True, auto_name=True)
         mixer.layer = Layer(track_select_buttons=self._select_buttons, send_controls=self._send_encoders, next_sends_button=self._down_button, prev_sends_button=self._up_button, pan_controls=self._pan_device_encoders, volume_controls=self._volume_faders, send_lights=self._send_encoder_lights, pan_lights=self._pan_device_encoder_lights)
         mixer.on_send_index_changed = partial(self._show_controlled_sends_message, mixer)
-        for channel_strip in map(mixer.channel_strip, xrange(NUM_TRACKS)):
+        for channel_strip in map(mixer.channel_strip, range(NUM_TRACKS)):
             channel_strip.empty_color = u'Mixer.NoTrack'
 
         mixer_modes = ModesComponent()

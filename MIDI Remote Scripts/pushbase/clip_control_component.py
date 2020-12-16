@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import Live
 from ableton.v2.base import EventObject, clamp, forward_property, listenable_property, listens, liveobj_valid, nop
 from ableton.v2.control_surface import Component
@@ -26,28 +30,30 @@ WARP_MODE_NAMES = {Live.Clip.WarpMode.beats: u'Beats',
  Live.Clip.WarpMode.complex_pro: u'Pro',
  Live.Clip.WarpMode.rex: u'Rex'}
 
-def convert_beat_time_to_bars_beats_sixteenths((numerator, denominator), beat_time):
+def convert_beat_time_to_bars_beats_sixteenths(numerator_denominator, beat_time):
+    numerator, denominator = numerator_denominator
     if beat_time is None:
         return u'-'
     beats_per_bar = one_bar_in_note_values((numerator, denominator), 4.0)
-    musical_beats_per_beat = denominator / 4.0
+    musical_beats_per_beat = old_div(denominator, 4.0)
     if beat_time >= 0:
-        bars = 1 + int(beat_time / beats_per_bar)
+        bars = 1 + int(old_div(beat_time, beats_per_bar))
     else:
-        bars = int(beat_time / beats_per_bar) if beat_time % beats_per_bar == 0 else int(beat_time / beats_per_bar) - 1
+        bars = int(old_div(beat_time, beats_per_bar)) if beat_time % beats_per_bar == 0 else int(old_div(beat_time, beats_per_bar)) - 1
     beats = 1 + int(beat_time % beats_per_bar * musical_beats_per_beat)
-    sixteenths = 1 + int(beat_time % (1.0 / musical_beats_per_beat) * 4.0)
+    sixteenths = 1 + int(beat_time % old_div(1.0, musical_beats_per_beat) * 4.0)
     return u'%i.%i.%i' % (bars, beats, sixteenths)
 
 
-def convert_beat_length_to_bars_beats_sixteenths((numerator, denominator), beat_length):
+def convert_beat_length_to_bars_beats_sixteenths(numerator_denominator, beat_length):
+    numerator, denominator = numerator_denominator
     if beat_length is None:
         return u'-'
     beats_per_bar = one_bar_in_note_values((numerator, denominator), 4.0)
-    musical_beats_per_beat = denominator / 4.0
-    bars = int(beat_length / beats_per_bar)
+    musical_beats_per_beat = old_div(denominator, 4.0)
+    bars = int(old_div(beat_length, beats_per_bar))
     beats = int(beat_length % beats_per_bar * musical_beats_per_beat)
-    sixteenths = int(beat_length % (1.0 / musical_beats_per_beat) * 4.0)
+    sixteenths = int(beat_length % old_div(1.0, musical_beats_per_beat) * 4.0)
     return u'%i.%i.%i' % (bars, beats, sixteenths)
 
 
@@ -55,8 +61,9 @@ def is_new_recording(clip):
     return clip.is_recording and not clip.is_overdubbing
 
 
-def one_bar_in_note_values((numerator, denominator), note_value = 4.0):
-    return note_value * numerator / denominator
+def one_bar_in_note_values(numerator_denominator, note_value = 4.0):
+    numerator, denominator = numerator_denominator
+    return old_div(note_value * numerator, denominator)
 
 
 class LoopSettingsModel(EventObject):
@@ -135,7 +142,7 @@ class LoopSettingsModel(EventObject):
         signature = (self.clip.signature_numerator, self.clip.signature_denominator)
         measure_in_beats = one_bar_in_note_values(signature)
         measure_in_sixteenths = one_bar_in_note_values(signature, 16.0)
-        additional_offset = measure_in_beats / measure_in_sixteenths * (measure_in_sixteenths - 1) if fine_grained else 0.0
+        additional_offset = old_div(measure_in_beats, measure_in_sixteenths) * (measure_in_sixteenths - 1) if fine_grained else 0.0
         new_value = min(new_value, self.clip.loop_end - measure_in_beats + additional_offset)
         if self.looping:
             if new_value >= self.clip.end_marker:
@@ -164,7 +171,7 @@ class LoopSettingsModel(EventObject):
 
     def _encoder_factor(self, fine_grained):
         if fine_grained:
-            return 1.0 / one_bar_in_note_values((self.clip.signature_numerator, self.clip.signature_denominator), 16.0)
+            return old_div(1.0, one_bar_in_note_values((self.clip.signature_numerator, self.clip.signature_denominator), 16.0))
         return 1.0
 
 
@@ -282,8 +289,8 @@ class LoopSettingsComponent(LoopSettingsControllerComponent):
 
     def __init__(self, *a, **k):
         super(LoopSettingsComponent, self).__init__(*a, **k)
-        self._name_sources = [ DisplayDataSource() for _ in xrange(4) ]
-        self._value_sources = [ DisplayDataSource() for _ in xrange(4) ]
+        self._name_sources = [ DisplayDataSource() for _ in range(4) ]
+        self._value_sources = [ DisplayDataSource() for _ in range(4) ]
         self.__on_looping_changed.subject = self._loop_model
         self.__on_start_marker_changed.subject = self._loop_model
         self.__on_loop_start_changed.subject = self._loop_model
@@ -520,8 +527,8 @@ class AudioClipSettingsComponent(AudioClipSettingsControllerComponent):
 
     def __init__(self, *a, **k):
         super(AudioClipSettingsComponent, self).__init__(*a, **k)
-        self._name_sources = [ DisplayDataSource() for _ in xrange(4) ]
-        self._value_sources = [ DisplayDataSource() for _ in xrange(4) ]
+        self._name_sources = [ DisplayDataSource() for _ in range(4) ]
+        self._value_sources = [ DisplayDataSource() for _ in range(4) ]
         self.__on_pitch_fine_changed.subject = self._audio_clip_model
         self.__on_pitch_coarse_changed.subject = self._audio_clip_model
         self.__on_gain_changed.subject = self._audio_clip_model
@@ -606,7 +613,7 @@ class ClipNameComponent(Component):
     def __init__(self, *a, **k):
         super(ClipNameComponent, self).__init__(*a, **k)
         self._clip = None
-        self._name_data_sources = [ DisplayDataSource() for _ in xrange(self.num_label_segments) ]
+        self._name_data_sources = [ DisplayDataSource() for _ in range(self.num_label_segments) ]
         self._name_data_sources[0].set_display_string(u'Clip Selection:')
 
     def _get_clip(self):
@@ -623,7 +630,7 @@ class ClipNameComponent(Component):
     def set_display(self, display):
         if display:
             display.set_num_segments(self.num_label_segments)
-            for idx in xrange(self.num_label_segments):
+            for idx in range(self.num_label_segments):
                 display.segment(idx).set_data_source(self._name_data_sources[idx])
 
     @listens(u'name')

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
 from _Framework.Util import recursive_map
 from _Framework.ControlSurface import OptimizedControlSurface
@@ -38,13 +39,13 @@ class RolandMX1(OptimizedControlSurface):
         self._modified_start_stop_button = with_modifier(self._start_stop_button, self._aux_button)
         self._recall_button = make_button(u'Recall_Button', 17)
         self._store_button = make_button(u'Store_Button', 18)
-        self._tone_filter_knobs = ButtonMatrixElement(rows=[[ make_encoder(u'Tone_Filter_Encoder_%d' % (col,), identifier) for col, identifier in enumerate(xrange(102, 113)) ]], name=u'Tone_Filter_Knobs')
-        step_buttons_raw = [[ make_button(u'Step_Button_%d' % (col,), identifier) for col, identifier in enumerate(xrange(20, 31)) ]]
+        self._tone_filter_knobs = ButtonMatrixElement(rows=[[ make_encoder(u'Tone_Filter_Encoder_%d' % (col,), identifier) for col, identifier in enumerate(range(102, 113)) ]], name=u'Tone_Filter_Knobs')
+        step_buttons_raw = [[ make_button(u'Step_Button_%d' % (col,), identifier) for col, identifier in enumerate(range(20, 31)) ]]
         self._step_buttons = ButtonMatrixElement(rows=step_buttons_raw, name=u'Step_Buttons')
         self._modified_step_buttons = ButtonMatrixElement(rows=recursive_map(partial(with_modifier, modifier=self._aux_button), step_buttons_raw), name=u'Step_Buttons_With_Modifier')
-        self._select_buttons = ButtonMatrixElement(rows=[[ make_button(u'Select_Button_%d' % (col,), identifier) for col, identifier in enumerate(xrange(60, 71)) ]], name=u'Select_Buttons')
-        self._bfx_buttons = ButtonMatrixElement(rows=[[ make_button(u'BFX_Button_%d' % (col,), identifier) for col, identifier in enumerate(xrange(80, 91)) ]], name=u'BFX_Buttons')
-        self._mfx_buttons = ButtonMatrixElement(rows=[[ make_button(u'MFX_Button_%d' % (col,), identifier) for col, identifier in enumerate(xrange(100, 111)) ]], name=u'MFX_Buttons')
+        self._select_buttons = ButtonMatrixElement(rows=[[ make_button(u'Select_Button_%d' % (col,), identifier) for col, identifier in enumerate(range(60, 71)) ]], name=u'Select_Buttons')
+        self._bfx_buttons = ButtonMatrixElement(rows=[[ make_button(u'BFX_Button_%d' % (col,), identifier) for col, identifier in enumerate(range(80, 91)) ]], name=u'BFX_Buttons')
+        self._mfx_buttons = ButtonMatrixElement(rows=[[ make_button(u'MFX_Button_%d' % (col,), identifier) for col, identifier in enumerate(range(100, 111)) ]], name=u'MFX_Buttons')
 
     def _create_transport(self):
         transport = TransportComponent(play_toggle_model_transform=lambda v: v)

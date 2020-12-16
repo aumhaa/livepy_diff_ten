@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from builtins import map
+from builtins import range
+from future.moves.itertools import zip_longest
 from .ChannelStripComponent import ChannelStripComponent, release_control
 from .CompoundComponent import CompoundComponent
 from .SubjectSlot import subject_slot
@@ -78,7 +80,7 @@ class MixerComponent(CompoundComponent):
         return self._send_index
 
     def _set_send_index(self, index):
-        if 0 <= index < self.num_sends or index is None:
+        if index is None or 0 <= index < self.num_sends:
             if self._send_index != index:
                 self._send_index = index
                 self.set_send_controls(self._send_controls)
@@ -120,35 +122,35 @@ class MixerComponent(CompoundComponent):
         self.update()
 
     def set_volume_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.set_volume_control(control)
 
     def set_pan_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.set_pan_control(control)
 
     def set_send_controls(self, controls):
         self._send_controls = controls
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             if self._send_index is None:
                 strip.set_send_controls(None)
             else:
                 strip.set_send_controls((None,) * self._send_index + (control,))
 
     def set_arm_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_arm_button(button)
 
     def set_solo_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_solo_button(button)
 
     def set_mute_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_mute_button(button)
 
     def set_track_select_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_select_button(button)
 
     def set_shift_button(self, button):
@@ -232,10 +234,10 @@ class MixerComponent(CompoundComponent):
             else:
                 release_control(self._prehear_volume_control)
                 release_control(self._crossfader_control)
-                map(lambda x: turn_button_on_off(x, on=False), [self._bank_up_button,
+                list(map(lambda x: turn_button_on_off(x, on=False), [self._bank_up_button,
                  self._bank_down_button,
                  self._next_track_button,
-                 self._prev_track_button])
+                 self._prev_track_button]))
         else:
             self._update_requests += 1
 

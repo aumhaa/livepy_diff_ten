@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import round
+from past.utils import old_div
 import Live
 from ableton.v2.base import clamp, listens, task
 from ableton.v2.control_surface import Component
@@ -48,7 +51,7 @@ class HardwareSettingsComponent(Component):
     def _on_fade_in_led_brightness_timer(self):
         if self._led_brightness < self._target_led_brightness:
             distance = float(self._target_led_brightness - MIN_BRIGHTNESS_FOR_FADE_IN)
-            increment = distance / LED_FADE_IN_TIME * LED_FADE_IN_FREQUENCY
+            increment = old_div(distance, LED_FADE_IN_TIME) * LED_FADE_IN_FREQUENCY
             self._led_brightness = clamp(self._led_brightness + increment, MIN_BRIGHTNESS_FOR_FADE_IN, self._target_led_brightness)
             self._led_brightness_element.send_value(int(round(self._led_brightness)))
         else:

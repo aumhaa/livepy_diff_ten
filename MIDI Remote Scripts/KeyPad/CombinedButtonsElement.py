@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import imap
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
 from _Framework.ButtonElement import OFF_VALUE
 from _Framework.Util import const, BooleanContext
@@ -14,7 +13,7 @@ class CombinedButtonsElement(ButtonMatrixElement):
         return True
 
     def is_pressed(self):
-        return any(imap(lambda (b, _): (b.is_pressed() if b is not None else False), self.iterbuttons())) or bool(self._is_pressed)
+        return any(map(lambda b__: (b__[0].is_pressed() if b__[0] is not None else False), self.iterbuttons())) or bool(self._is_pressed)
 
     def on_nested_control_element_value(self, value, sender):
         with self._is_pressed():

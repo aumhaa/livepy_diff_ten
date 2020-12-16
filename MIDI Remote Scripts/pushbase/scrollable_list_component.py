@@ -2,9 +2,12 @@ u"""
 Scrollable list component.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import zip
+from builtins import map
+from builtins import range
 from functools import partial
 from ableton.v2.base import EventObject, in_range, Event
-from ableton.v2.base.signal import short_circuit_signal
+from ableton.v2.base.abl_signal import short_circuit_signal
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.elements import DisplayDataSource
 from . import consts
@@ -35,7 +38,7 @@ class ScrollableListComponent(Component):
         if line:
             sources = self._data_sources
             line.set_num_segments(len(sources))
-            for segment in xrange(len(sources)):
+            for segment in range(len(sources)):
                 line.segment(segment).set_data_source(sources[segment])
 
     def set_select_buttons(self, buttons):
@@ -135,7 +138,7 @@ class ScrollableListComponent(Component):
             if self._has_select_button(-1):
                 self._select_buttons[-1].set_light(u'List.ScrollerOn')
             max_segment -= 1
-        for i, j in zip(xrange(first_segment, max_segment), xrange(self._offset_index, self._offset_index + self.num_segments)):
+        for i, j in zip(range(first_segment, max_segment), range(self._offset_index, self._offset_index + self.num_segments)):
             self._data_sources[i].set_display_string(self._get_display_string(j))
             if self._has_select_button(i):
                 if i < len(self.option_names):
@@ -160,7 +163,7 @@ class ScrollableListWithTogglesComponent(ScrollableListComponent):
         def create_state_slot(idx):
             return self.register_slot(None, partial(self._on_state_button_value, idx), u'value')
 
-        self._state_button_slots = map(create_state_slot, xrange(self.num_segments))
+        self._state_button_slots = list(map(create_state_slot, range(self.num_segments)))
         self._option_states = []
 
     def set_state_buttons(self, state_buttons):

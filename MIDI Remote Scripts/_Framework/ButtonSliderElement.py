@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from .ButtonElement import ButtonElement
 from .InputControlElement import InputControlElement, MIDI_INVALID_TYPE
 from .SliderElement import SliderElement
@@ -26,13 +29,13 @@ class ButtonSliderElement(SliderElement, SlotManager):
         self._buttons = None
 
     def message_channel(self):
-        raise NotImplementedError, u'message_channel() should not be called directly on ButtonSliderElement'
+        raise NotImplementedError(u'message_channel() should not be called directly on ButtonSliderElement')
 
     def message_identifier(self):
-        raise NotImplementedError, u'message_identifier() should not be called directly on ButtonSliderElement'
+        raise NotImplementedError(u'message_identifier() should not be called directly on ButtonSliderElement')
 
     def message_map_mode(self):
-        raise NotImplementedError, u'message_map_mode() should not be called directly on ButtonSliderElement'
+        raise NotImplementedError(u'message_map_mode() should not be called directly on ButtonSliderElement')
 
     def install_connections(self, install_translation_callback, install_mapping_callback, install_forwarding_callback):
         pass
@@ -48,14 +51,14 @@ class ButtonSliderElement(SliderElement, SlotManager):
         InputControlElement.release_parameter(self)
 
     def identifier_bytes(self):
-        raise RuntimeWarning, u'identifier_bytes() should not be called on ButtonSliderElement'
+        raise RuntimeWarning(u'identifier_bytes() should not be called on ButtonSliderElement')
 
     def send_value(self, value):
         if value != self._last_sent_value:
             num_buttons = len(self._buttons)
             index_to_light = 0
-            index_to_light = int((num_buttons - 1) * value / 127) if value > 0 else 0
-            for index in xrange(num_buttons):
+            index_to_light = int(old_div((num_buttons - 1) * value, 127)) if value > 0 else 0
+            for index in range(num_buttons):
                 if index == index_to_light:
                     self._buttons[index].turn_on()
                 else:
@@ -67,12 +70,12 @@ class ButtonSliderElement(SliderElement, SlotManager):
         self.clear_send_cache()
         if value != 0 or not sender.is_momentary():
             index_of_sender = list(self._buttons).index(sender)
-            midi_value = int(127 * index_of_sender / (len(self._buttons) - 1))
+            midi_value = int(old_div(127 * index_of_sender, len(self._buttons) - 1))
             if self._parameter_to_map_to != None and self._parameter_to_map_to.is_enabled:
                 param_range = self._parameter_to_map_to.max - self._parameter_to_map_to.min
-                param_value = param_range * index_of_sender / (len(self._buttons) - 1) + self._parameter_to_map_to.min
+                param_value = old_div(param_range * index_of_sender, len(self._buttons) - 1) + self._parameter_to_map_to.min
                 if index_of_sender > 0:
-                    param_value += param_range / (4 * len(self._buttons))
+                    param_value += old_div(param_range, 4 * len(self._buttons))
                     if param_value > self._parameter_to_map_to.max:
                         param_value = self._parameter_to_map_to.max
                 self._parameter_to_map_to.value = param_value
@@ -81,5 +84,5 @@ class ButtonSliderElement(SliderElement, SlotManager):
     def _on_parameter_changed(self):
         assert self._parameter_to_map_to != None
         param_range = abs(self._parameter_to_map_to.max - self._parameter_to_map_to.min)
-        midi_value = int(127 * abs(self._parameter_to_map_to.value - self._parameter_to_map_to.min) / param_range)
+        midi_value = int(old_div(127 * abs(self._parameter_to_map_to.value - self._parameter_to_map_to.min), param_range))
         self.send_value(midi_value)

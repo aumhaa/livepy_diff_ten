@@ -3,4 +3,5 @@ from pushbase.setting import OnOffSetting
 
 def create_settings(preferences = None):
     preferences = preferences if preferences is not None else {}
-    return {u'workflow': OnOffSetting(name=u'Workflow', value_labels=[u'Scene', u'Clip'], default_value=True, preferences=preferences)}
+    return {u'workflow': OnOffSetting(name=u'Workflow', value_labels=[u'Scene', u'Clip'], default_value=True, preferences=preferences),
+     u'aftertouch_mode': OnOffSetting(name=u'Pressure', value_labels=[u'Mono', u'Polyphonic'], default_value=True, preferences=preferences)}

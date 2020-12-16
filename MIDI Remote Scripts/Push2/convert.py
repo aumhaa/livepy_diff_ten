@@ -1,8 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import map
+from builtins import object
 from functools import partial
-from itertools import izip
 import Live
-from ableton.v2.base import EventObject, find_if, listenable_property, listens, liveobj_valid, task
+from ableton.v2.base import EventObject, find_if, listenable_property, listens, liveobj_valid, old_hasattr, task
 from ableton.v2.control_surface import Component, find_instrument_devices
 from ableton.v2.control_surface.control import ButtonControl, control_list
 from .colors import UNCOLORED_INDEX
@@ -98,7 +100,7 @@ class MidiTrackWithoutSimpler(TrackBasedConvertCategory):
     def __init__(self, device = None, decorator_factory = None, *a, **k):
         super(MidiTrackWithoutSimpler, self).__init__(*a, **k)
         self._decorator_factory = decorator_factory
-        if hasattr(device, u'playback_mode'):
+        if old_hasattr(device, u'playback_mode'):
             self.__on_playback_mode_changed.subject = device
 
     def convert(self, song, action):
@@ -115,7 +117,7 @@ class MidiTrackWithoutSimpler(TrackBasedConvertCategory):
 
     def _apply_simpler_properties(self, drum_pad, song, copiers):
         destination_simplers = find_all_simplers_on_pad(drum_pad)
-        for copier, destination in izip(copiers, destination_simplers):
+        for copier, destination in zip(copiers, destination_simplers):
             if copier:
                 copier.apply_properties(destination, song)
 
@@ -126,7 +128,7 @@ class MidiTrackWithoutSimpler(TrackBasedConvertCategory):
             if decorated:
                 return SimplerDecoratedPropertiesCopier(decorated, self._decorator_factory)
 
-        return map(create_copier_if_decorated, find_simplers(self._track))
+        return list(map(create_copier_if_decorated, find_simplers(self._track)))
 
 
 class CreateTrackWithSimpler(ConvertAction):
@@ -273,7 +275,7 @@ class ConvertComponent(Component):
     action_buttons = control_list(ButtonControl, color=u'Option.Unselected', pressed_color=u'Option.Selected')
     cancel_button = ButtonControl(color=u'Option.Unselected', pressed_color=u'Option.Selected')
     source_color_index = listenable_property.managed(UNCOLORED_INDEX)
-    source_name = listenable_property.managed(unicode(u''))
+    source_name = listenable_property.managed(str(u''))
 
     def __init__(self, tracks_provider = None, conversions_provider = possible_conversions, decorator_factory = None, *a, **k):
         assert tracks_provider is not None
@@ -287,7 +289,7 @@ class ConvertComponent(Component):
 
     @listenable_property
     def available_conversions(self):
-        return map(lambda x: x.label, self._category.actions)
+        return [ x.label for x in self._category.actions ]
 
     def on_enabled_changed(self):
         super(ConvertComponent, self).on_enabled_changed()
@@ -313,7 +315,7 @@ class ConvertComponent(Component):
     @listens(u'name')
     def __on_action_source_name_changed(self):
         name_source = self.__on_action_source_name_changed.subject
-        self.source_name = name_source.name if name_source else unicode()
+        self.source_name = name_source.name if name_source else str()
 
     @action_buttons.released
     def action_buttons(self, button):

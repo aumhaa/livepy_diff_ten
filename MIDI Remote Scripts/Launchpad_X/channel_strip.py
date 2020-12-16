@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import next
 from ableton.v2.base import liveobj_valid
 from novation.channel_strip import ChannelStripComponent as ChannelStripComponentBase
 

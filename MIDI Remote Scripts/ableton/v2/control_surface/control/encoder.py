@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
-from ...base import clamp, const, lazy_attribute, task, sign
+from ...base import clamp, const, lazy_attribute, old_hasattr, task, sign
 from .control import Connectable, InputControl, SendValueMixin, control_event
 logger = logging.getLogger(__name__)
 __all__ = (u'EncoderControl', u'StepEncoderControl', u'ListValueEncoderControl', u'ListIndexEncoderControl', u'ValueStepper')
@@ -48,7 +48,7 @@ class EncoderControl(InputControl):
                 self._kill_all_tasks()
             super(EncoderControl.State, self).set_control_element(control_element)
             self._touch_value_slot.subject = self._get_touch_element(control_element) if control_element is not None else None
-            if control_element and hasattr(control_element, u'is_pressed') and control_element.is_pressed():
+            if control_element and old_hasattr(control_element, u'is_pressed') and control_element.is_pressed():
                 self._touch_encoder()
 
         def _get_touch_element(self, control_element):

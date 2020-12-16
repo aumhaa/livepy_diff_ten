@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from ableton.v2.base import listenable_property, listens, liveobj_valid, NamedTuple, EventObject, task
 from ableton.v2.control_surface.components import PlayableComponent
@@ -17,7 +18,7 @@ class NullTargetNoteProvider(EventObject):
 
 
 class VelocityLevelsComponent(PlayableComponent):
-    SOURCE_NOTES = list(reversed(range(64, 128)))
+    SOURCE_NOTES = list(reversed(list(range(64, 128))))
     DEFAULT_VELOCITY = 100
     matrix = control_matrix(PadControl)
     select_button = ButtonControl()

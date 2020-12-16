@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter, imap, chain
+from itertools import chain
+from builtins import filter
+from builtins import map
 from ...base import first, index_if, listens, liveobj_changed, liveobj_valid, SlotGroup
 from ...control_surface import device_to_appoint
 from .item_lister import ItemListerComponent, ItemProvider
@@ -40,6 +42,7 @@ class FlattenedDeviceChain(ItemProvider):
         self._selected_chain_changed = make_slot_group(u'selected_chain')
         self._selected_pad_changed = make_slot_group(u'selected_drum_pad')
         self._collapsed_state_changed = make_slot_group(u'is_collapsed')
+        self._macros_mapped_changed = make_slot_group(u'macros_mapped')
         self._chain_devices_visibility_changed = make_slot_group(u'is_showing_chain_devices')
 
     @property
@@ -72,21 +75,21 @@ class FlattenedDeviceChain(ItemProvider):
     def _update_listeners(self):
 
         def get_rack_views(racks):
-            return map(lambda x: first(x).view, racks)
+            return list(map(lambda rack: rack.view, racks))
 
-        racks = filter(lambda x: getattr(first(x), u'can_have_chains', False), self._devices)
+        racks = [ rack for rack, nesting_level in self._devices if getattr(rack, u'can_have_chains', False) ]
         rack_views = get_rack_views(racks)
-        device_parents = chain(imap(lambda x: x.selected_chain, rack_views), [self._device_parent])
+        device_parents = chain(map(lambda x: x.selected_chain, rack_views), [self._device_parent])
 
-        def is_empty_pad_drum_rack(item):
-            rack = first(item)
+        def is_empty_pad_drum_rack(rack):
             return rack.can_have_drum_pads and rack.view.selected_drum_pad and len(rack.view.selected_drum_pad.chains) == 0
 
-        empty_pad_drum_rack_views = get_rack_views(ifilter(is_empty_pad_drum_rack, racks))
+        empty_pad_drum_rack_views = get_rack_views(list(filter(is_empty_pad_drum_rack, racks)))
         self._devices_changed.replace_subjects(device_parents)
         self._selected_chain_changed.replace_subjects(rack_views)
         self._collapsed_state_changed.replace_subjects(rack_views)
         self._chain_devices_visibility_changed.replace_subjects(rack_views)
+        self._macros_mapped_changed.replace_subjects(racks)
         self._selected_pad_changed.replace_subjects(empty_pad_drum_rack_views)
 
 

@@ -17,7 +17,7 @@ class DeviceBankRegistry(Subject):
         self._device_bank_listeners = []
 
     def compact_registry(self):
-        newreg = dict(filter(lambda (k, _): k != None, self._device_bank_registry.items()))
+        newreg = dict([ k__ for k__ in list(self._device_bank_registry.items()) if k__[0] != None ])
         self._device_bank_registry = newreg
 
     def set_device_bank(self, device, bank):
@@ -31,6 +31,6 @@ class DeviceBankRegistry(Subject):
         return self._device_bank_registry.get(self._find_device_bank_key(device), 0)
 
     def _find_device_bank_key(self, device):
-        for k in self._device_bank_registry.iterkeys():
+        for k in self._device_bank_registry.keys():
             if k == device:
                 return k

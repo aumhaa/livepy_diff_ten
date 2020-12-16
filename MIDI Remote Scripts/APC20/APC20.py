@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
-from itertools import izip
 import Live
 MapMode = Live.MidiMap.MapMode
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
@@ -47,24 +47,24 @@ class APC20(APC):
         make_color_button = partial(make_button, skin=self._skin)
         self._shift_button = make_button(0, 81, name=u'Shift_Button')
         self._matrix = ButtonMatrixElement(name=u'Button_Matrix')
-        self._scene_launch_buttons = [ make_color_button(0, index + 82, name=u'Scene_%d_Launch_Button' % index) for index in xrange(SESSION_HEIGHT) ]
-        self._track_stop_buttons = [ make_color_button(index, 52, name=u'Track_%d_Stop_Button' % index) for index in xrange(SESSION_WIDTH) ]
-        for scene_index in xrange(SESSION_HEIGHT):
-            row = [ make_color_button(track_index, scene_index + 53, name=u'%d_Clip_%d_Button' % (track_index, scene_index)) for track_index in xrange(SESSION_WIDTH) ]
+        self._scene_launch_buttons = [ make_color_button(0, index + 82, name=u'Scene_%d_Launch_Button' % index) for index in range(SESSION_HEIGHT) ]
+        self._track_stop_buttons = [ make_color_button(index, 52, name=u'Track_%d_Stop_Button' % index) for index in range(SESSION_WIDTH) ]
+        for scene_index in range(SESSION_HEIGHT):
+            row = [ make_color_button(track_index, scene_index + 53, name=u'%d_Clip_%d_Button' % (track_index, scene_index)) for track_index in range(SESSION_WIDTH) ]
             self._matrix.add_row(row)
 
         self._selected_scene_launch_button = make_pedal_button(64, name=u'Selected_Scene_Launch_Button')
         self._scene_launch_buttons = ButtonMatrixElement(name=u'Scene_Launch_Buttons', rows=[self._scene_launch_buttons])
-        self._solo_buttons = [ make_button(track_index, 49, name=u'%d_Solo_Button' % track_index) for track_index in xrange(MIXER_SIZE) ]
-        self._mute_buttons = [ make_button(track_index, 50, name=u'%d_Mute_Button' % track_index) for track_index in xrange(MIXER_SIZE) ]
+        self._solo_buttons = [ make_button(track_index, 49, name=u'%d_Solo_Button' % track_index) for track_index in range(MIXER_SIZE) ]
+        self._mute_buttons = [ make_button(track_index, 50, name=u'%d_Mute_Button' % track_index) for track_index in range(MIXER_SIZE) ]
         self._master_volume_control = make_slider(0, 14, name=u'Master_Volume_Control')
         self._prehear_control = EncoderElement(MIDI_CC_TYPE, 0, 47, MapMode.relative_two_compliment, name=u'Prehear_Volume_Control')
         self._master_select_button = make_button(0, 80, name=u'Master_Select_Button')
-        self._select_buttons = [ make_button(track_index, 51, name=u'%d_Select_Button' % track_index) for track_index in xrange(8) ]
-        self._arm_buttons = [ make_button(track_index, 48, name=u'%d_Arm_Button' % track_index) for track_index in xrange(8) ]
-        self._sliders = [ make_slider(track_index, 7, name=u'%d_Volume_Control' % track_index) for track_index in xrange(8) ]
+        self._select_buttons = [ make_button(track_index, 51, name=u'%d_Select_Button' % track_index) for track_index in range(8) ]
+        self._arm_buttons = [ make_button(track_index, 48, name=u'%d_Arm_Button' % track_index) for track_index in range(8) ]
+        self._sliders = [ make_slider(track_index, 7, name=u'%d_Volume_Control' % track_index) for track_index in range(8) ]
         self._note_matrix = ButtonMatrixElement(name=u'Note_Button_Matrix')
-        self._note_buttons = [ [ make_button(9, note + i, name=u'Note_%d_Button' % (note + i)) for i in xrange(4) ] for note in xrange(36, 75, 4) ]
+        self._note_buttons = [ [ make_button(9, note + i, name=u'Note_%d_Button' % (note + i)) for i in range(4) ] for note in range(36, 75, 4) ]
         for row in self._note_buttons:
             for button in row:
                 button.send_depends_on_forwarding = False
@@ -76,9 +76,9 @@ class APC20(APC):
         self._session.set_clip_launch_buttons(self._matrix)
         self._session.set_stop_track_clip_buttons(tuple(self._track_stop_buttons))
         self._session.set_scene_launch_buttons(self._scene_launch_buttons)
-        for scene_index in xrange(SESSION_HEIGHT):
+        for scene_index in range(SESSION_HEIGHT):
             scene = self._session.scene(scene_index)
-            for track_index in xrange(SESSION_WIDTH):
+            for track_index in range(SESSION_WIDTH):
                 clip_slot = scene.clip_slot(track_index)
                 clip_slot.name = u'%d_Clip_Slot_%d' % (track_index, scene_index)
 
@@ -92,7 +92,7 @@ class APC20(APC):
         self._mixer = MixerComponent(MIXER_SIZE, name=u'Mixer')
         self._mixer.master_strip().name = u'Master_Channel_Strip'
         self._mixer.selected_strip().name = u'Selected_Channel_Strip'
-        buttons = izip(self._solo_buttons, self._mute_buttons)
+        buttons = zip(self._solo_buttons, self._mute_buttons)
         for track_index, (solo_button, mute_button) in enumerate(buttons):
             strip = self._mixer.channel_strip(track_index)
             strip.name = u'Channel_Strip_%d' % track_index

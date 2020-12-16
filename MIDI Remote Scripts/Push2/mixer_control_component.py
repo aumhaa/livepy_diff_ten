@@ -1,7 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter
+from builtins import range
+from past.utils import old_div
 from contextlib import contextmanager
 from functools import partial
-from itertools import izip, izip_longest
+from future.moves.itertools import zip_longest
 from math import ceil
 import Live
 from ableton.v2.base import clamp, depends, listens, listens_group, liveobj_valid, NamedTuple
@@ -39,7 +42,7 @@ class MixerSectionDescription(NamedTuple):
 
 
 def assign_parameters(controls, parameters):
-    for control, parameter in izip_longest(controls, parameters):
+    for control, parameter in zip_longest(controls, parameters):
         if control:
             if not liveobj_valid(parameter) or isinstance(parameter.canonical_parent, Live.MixerDevice.MixerDevice):
                 control.mapped_parameter = parameter
@@ -55,7 +58,7 @@ class MixerControlComponent(ModesComponent):
 
     @staticmethod
     def get_tracks(items):
-        return filter(lambda item: item is not None and isinstance(item.proxied_object, Live.Track.Track), items)
+        return list(filter(lambda item: item is not None and isinstance(item.proxied_object, Live.Track.Track), items))
 
     @depends(tracks_provider=None, real_time_mapper=None, register_real_time_data=None)
     def __init__(self, view_model = None, tracks_provider = None, real_time_mapper = None, register_real_time_data = None, *a, **k):
@@ -64,7 +67,7 @@ class MixerControlComponent(ModesComponent):
         assert tracks_provider is not None
         super(MixerControlComponent, self).__init__(*a, **k)
         self._send_offset = 0
-        self.real_time_meter_handlers = [ RealTimeDataComponent(channel_type=u'meter', real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, is_enabled=False) for _ in xrange(8) ]
+        self.real_time_meter_handlers = [ RealTimeDataComponent(channel_type=u'meter', real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data, is_enabled=False) for _ in range(8) ]
         self._track_provider = tracks_provider
         self._on_return_tracks_changed.subject = self.song
         self._on_mode_changed.subject = self
@@ -82,7 +85,7 @@ class MixerControlComponent(ModesComponent):
         self._on_selected_item_changed.subject = self._track_provider
         tracks = self.get_tracks(self._track_provider.items)
         self.__on_track_frozen_state_changed.replace_subjects(tracks)
-        self.__on_panning_mode_changed.replace_subjects(filter(has_pan_mode, [ t.mixer_device for t in tracks ]))
+        self.__on_panning_mode_changed.replace_subjects(list(filter(has_pan_mode, [ t.mixer_device for t in tracks ])))
 
     def _setup_modes(self, view_model):
         self._add_mode(u'volume', view_model.volumeControlListView, lambda mixer: mixer.volume, additional_mode_contents=self.real_time_meter_handlers)
@@ -91,7 +94,7 @@ class MixerControlComponent(ModesComponent):
         def add_send_mode(index):
             self._add_mode(SEND_MODE_NAMES[index], view_model.sendControlListView, lambda mixer: (mixer.sends[self._send_offset + index] if len(mixer.sends) > self._send_offset + index else None))
 
-        for i in xrange(SEND_LIST_LENGTH):
+        for i in range(SEND_LIST_LENGTH):
             add_send_mode(i)
 
     def _add_mode(self, mode, view, parameter_getter, additional_mode_contents = []):
@@ -138,14 +141,14 @@ class MixerControlComponent(ModesComponent):
     def _on_return_tracks_changed(self):
         with self._updating_send_offset_mode_selection():
             self._update_mode_selection()
-            new_send_offset = max(0, int(ceil(float(self.number_sends) / float(SEND_LIST_LENGTH) - 1) * SEND_LIST_LENGTH))
+            new_send_offset = max(0, int(ceil(old_div(float(self.number_sends), float(SEND_LIST_LENGTH)) - 1) * SEND_LIST_LENGTH))
             if new_send_offset < self._send_offset:
                 self._send_offset = new_send_offset
 
     @listens(u'items')
     def _on_items_changed(self):
         tracks = self.get_tracks(self._track_provider.items)
-        self.__on_panning_mode_changed.replace_subjects(filter(has_pan_mode, [ t.mixer_device for t in tracks ]))
+        self.__on_panning_mode_changed.replace_subjects(list(filter(has_pan_mode, [ t.mixer_device for t in tracks ])))
         self._update_controls(self._parameter_getter, self._selected_view)
 
     @listens_group(u'is_frozen')
@@ -205,19 +208,19 @@ class MixerControlComponent(ModesComponent):
 
     def _update_realtime_ids(self):
         mixables = self._track_provider.items
-        for handler, mixable in izip(self.real_time_meter_handlers, mixables):
+        for handler, mixable in zip(self.real_time_meter_handlers, mixables):
             handler.set_data(mixable.mixer_device if liveobj_valid(mixable) else None)
 
     def _get_parameter_for_tracks(self, parameter_getter):
         tracks = self._track_provider.items
         self.controls.control_count = len(tracks)
-        return map(lambda t: (parameter_getter(t.mixer_device) if t else None), tracks)
+        return [ (parameter_getter(t.mixer_device) if t else None) for t in tracks ]
 
     def mode_can_be_used(self, mode):
         return mode not in SEND_MODE_NAMES or SEND_MODE_NAMES.index(mode) + self._send_offset < self.number_sends
 
     def _update_buttons(self, selected_mode):
-        for name in self._mode_map.iterkeys():
+        for name in self._mode_map.keys():
             self.get_mode_button(name).enabled = self.mode_can_be_used(name)
 
         self.cycle_sends_button.enabled = self.number_sends > SEND_LIST_LENGTH

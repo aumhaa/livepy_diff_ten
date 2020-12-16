@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import chr
+from builtins import range
+from past.utils import old_div
 from .MackieControlComponent import *
 from _Generic.Devices import *
 from itertools import chain
@@ -22,7 +26,7 @@ def target_by_name(target_list, name):
     u"""
         Return the first object in `target_list` whose `display_name` is equal to `name`
     """
-    matches = filter(lambda t: t.display_name == name, target_list)
+    matches = [ t for t in target_list if t.display_name == name ]
     if matches:
         return matches[0]
 
@@ -210,7 +214,7 @@ class ChannelStripController(MackieControlComponent):
         elif switch_id == SID_FADERBANK_NEXT_BANK:
             if value == BUTTON_PRESSED:
                 if self.shift_is_pressed():
-                    last_possible_offset = (self.__controlled_num_of_tracks() - self.__strip_offset()) / len(self.__channel_strips) * len(self.__channel_strips) + self.__strip_offset()
+                    last_possible_offset = old_div(self.__controlled_num_of_tracks() - self.__strip_offset(), len(self.__channel_strips)) * len(self.__channel_strips) + self.__strip_offset()
                     if last_possible_offset == self.__controlled_num_of_tracks():
                         last_possible_offset -= len(self.__channel_strips)
                     self.__set_channel_offset(last_possible_offset)

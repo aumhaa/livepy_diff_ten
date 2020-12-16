@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from itertools import izip
+from builtins import zip
 from ...base import listens, liveobj_valid, liveobj_changed
 from ..component import Component
 from ..control import ButtonControl
@@ -79,7 +79,7 @@ class SceneComponent(Component):
         super(SceneComponent, self).update()
         if liveobj_valid(self._scene) and self.is_enabled():
             clip_slots_to_use = self.build_clip_slot_list()
-            for slot_wrapper, clip_slot in izip(self._clip_slots, clip_slots_to_use):
+            for slot_wrapper, clip_slot in zip(self._clip_slots, clip_slots_to_use):
                 slot_wrapper.set_clip_slot(clip_slot)
 
         else:

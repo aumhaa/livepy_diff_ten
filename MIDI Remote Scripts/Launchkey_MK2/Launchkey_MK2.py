@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 from functools import partial
 from _Framework import Task
 from _Framework.Util import const, nop, mixin
@@ -38,9 +40,9 @@ class Launchkey_MK2(OptimizedControlSurface):
         self._request_task.kill()
 
     def _create_controls(self):
-        self._encoders = ButtonMatrixElement(rows=[[ make_encoder(identifier, name=u'Encoder_%d' % (index,)) for index, identifier in enumerate(xrange(21, 29)) ]])
-        self._top_pad_row = ButtonMatrixElement(rows=[[ make_button(identifier, name=u'Pad_0_%d' % (index,)) for index, identifier in enumerate(xrange(96, 104)) ]])
-        self._bottom_pad_row_raw = [ make_button(identifier, name=u'Pad_1_%d' % (index,)) for index, identifier in enumerate(xrange(112, 120)) ]
+        self._encoders = ButtonMatrixElement(rows=[[ make_encoder(identifier, name=u'Encoder_%d' % (index,)) for index, identifier in enumerate(range(21, 29)) ]])
+        self._top_pad_row = ButtonMatrixElement(rows=[[ make_button(identifier, name=u'Pad_0_%d' % (index,)) for index, identifier in enumerate(range(96, 104)) ]])
+        self._bottom_pad_row_raw = [ make_button(identifier, name=u'Pad_1_%d' % (index,)) for index, identifier in enumerate(range(112, 120)) ]
         self._bottom_pad_row = ButtonMatrixElement(rows=[self._bottom_pad_row_raw])
         self._top_launch_button = make_button(104, name=u'Scene_Launch_Button')
         self._bottom_launch_button = make_button(120, name=u'Stop_All_Clips_Button')
@@ -50,10 +52,10 @@ class Launchkey_MK2(OptimizedControlSurface):
         self._play_button = make_button(115, MIDI_CC_TYPE, name=u'Play_Button')
         self._loop_button = make_button(116, MIDI_CC_TYPE, name=u'Loop_Button')
         self._record_button = make_button(117, MIDI_CC_TYPE, name=u'Record_Button')
-        self._sliders = ButtonMatrixElement(rows=[[ make_slider(identifier, name=u'Slider_%d' % (index,)) for index, identifier in enumerate(xrange(41, 49)) ]])
+        self._sliders = ButtonMatrixElement(rows=[[ make_slider(identifier, name=u'Slider_%d' % (index,)) for index, identifier in enumerate(range(41, 49)) ]])
         self._master_slider = make_slider(7, name=u'Master_Slider')
         self._25_key_slider = make_slider(7, name=u'Slider', channel=0)
-        self._mute_buttons_raw = [ make_button(identifier, MIDI_CC_TYPE, name=u'Mute_Button_%d' % (index,)) for index, identifier in enumerate(xrange(51, 59)) ]
+        self._mute_buttons_raw = [ make_button(identifier, MIDI_CC_TYPE, name=u'Mute_Button_%d' % (index,)) for index, identifier in enumerate(range(51, 59)) ]
         self._mute_buttons = ButtonMatrixElement(rows=[self._mute_buttons_raw])
         self._master_button = make_button(59, MIDI_CC_TYPE, name=u'Master_Button')
         self._track_left_button = make_button(102, MIDI_CC_TYPE, name=u'Track_Left_Button')
@@ -61,7 +63,7 @@ class Launchkey_MK2(OptimizedControlSurface):
         self._device_mode_button = self._bottom_pad_row_raw[0]
         self._pan_mode_button = self._bottom_pad_row_raw[1]
         self._send_mode_buttons = dict()
-        for index in xrange(consts.MAX_SENDS):
+        for index in range(consts.MAX_SENDS):
             setattr(self, u'_send_%d_button' % (index,), self._bottom_pad_row_raw[index + 2])
             self._send_mode_buttons[u'send_%d_mode_button' % (index,)] = getattr(self, u'_send_%d_button' % (index,))
 
@@ -126,7 +128,7 @@ class Launchkey_MK2(OptimizedControlSurface):
         background_mode = LayerMode(self._background, Layer(bank_buttons=self._top_pad_row))
         self._encoder_modes.add_mode(u'device_mode', device_mode, is_enabled=True)
         self._encoder_modes.add_mode(u'pan_mode', [pan_mode, background_mode], is_enabled=True)
-        for index in xrange(6):
+        for index in range(6):
             self._encoder_modes.add_mode(u'send_%d_mode' % (index,), [sends_mode, partial(self._set_send_index, index), background_mode], is_enabled=False)
 
         self._encoder_modes.selected_mode = u'device_mode'
@@ -153,7 +155,7 @@ class Launchkey_MK2(OptimizedControlSurface):
     @subject_slot(u'return_tracks')
     def _on_return_tracks_changed(self):
         num_sends = self._mixer.num_sends
-        for index in xrange(6):
+        for index in range(6):
             self._encoder_modes.set_mode_enabled(u'send_%d_mode' % (index,), True if index < num_sends else False)
 
     def _set_send_index(self, index):

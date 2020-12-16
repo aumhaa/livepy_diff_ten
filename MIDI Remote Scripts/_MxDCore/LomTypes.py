@@ -1,31 +1,46 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from past.builtins import basestring
+from builtins import object
 import ast
 from collections import namedtuple
 import json
 import types
 import Live
+from ableton.v2.base import old_hasattr, PY2
 from _Framework.ControlSurface import ControlSurface
 from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
 from _Framework.ControlElement import ControlElement
 from _Framework.Util import is_iterable
 
-class MFLPropertyFormats:
-    Default, JSON = range(2)
+class MFLPropertyFormats(object):
+    Default, JSON = (0, 1)
 
 
 _MFLProperty = namedtuple(u'MFLProperty', u'name format to_json from_json min_epii_version')
+SORT_KEYS = False
 
 def MFLProperty(name, format = MFLPropertyFormats.Default, to_json = None, from_json = None, min_epii_version = (-1, -1)):
     return _MFLProperty(name, format, to_json, from_json, min_epii_version)
 
 
 def data_dict_to_json(property_name, data_dict):
-    return json.dumps({property_name: data_dict})
+    return json.dumps({property_name: data_dict}, ensure_ascii=PY2, sort_keys=SORT_KEYS)
 
 
 def json_to_data_dict(property_name, json_dict):
     data_dict = ast.literal_eval(json_dict)
     return data_dict.get(property_name, data_dict)
+
+
+def warp_markers_to_json(obj):
+    property_value = getattr(obj, u'warp_markers')
+    return data_dict_to_json(u'warp_markers', tuple([ warp_marker_to_dict(t) for t in property_value ]))
+
+
+def warp_marker_to_dict(warp_marker):
+    return {u'sample_time': warp_marker.sample_time,
+     u'beat_time': warp_marker.beat_time}
 
 
 def verify_routings_available_for_object(obj, prop_name):
@@ -203,6 +218,8 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                   MFLProperty(u'end_time'),
                   MFLProperty(u'gain'),
                   MFLProperty(u'gain_display_string'),
+                  MFLProperty(u'has_groove'),
+                  MFLProperty(u'groove'),
                   MFLProperty(u'file_path'),
                   MFLProperty(u'has_envelopes'),
                   MFLProperty(u'is_arrangement_clip'),
@@ -212,6 +229,9 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                   MFLProperty(u'is_playing'),
                   MFLProperty(u'is_recording'),
                   MFLProperty(u'is_triggered'),
+                  MFLProperty(u'launch_mode'),
+                  MFLProperty(u'launch_quantization'),
+                  MFLProperty(u'legato'),
                   MFLProperty(u'length'),
                   MFLProperty(u'loop_end'),
                   MFLProperty(u'loop_start'),
@@ -228,6 +248,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                   MFLProperty(u'start_marker'),
                   MFLProperty(u'start_time'),
                   MFLProperty(u'warp_mode'),
+                  MFLProperty(u'warp_markers', format=MFLPropertyFormats.JSON, to_json=warp_markers_to_json, min_epii_version=(4, 3)),
                   MFLProperty(u'warping'),
                   MFLProperty(u'will_record_on_start'),
                   MFLProperty(u'clear_all_envelopes'),
@@ -238,6 +259,13 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                   MFLProperty(u'fire'),
                   MFLProperty(u'get_notes'),
                   MFLProperty(u'get_selected_notes'),
+                  MFLProperty(u'get_notes_by_id', min_epii_version=(4, 3)),
+                  MFLProperty(u'get_notes_extended', min_epii_version=(4, 3)),
+                  MFLProperty(u'get_selected_notes_extended', min_epii_version=(4, 3)),
+                  MFLProperty(u'add_new_notes', min_epii_version=(4, 3)),
+                  MFLProperty(u'apply_note_modifications', min_epii_version=(4, 3)),
+                  MFLProperty(u'remove_notes_extended', min_epii_version=(4, 3)),
+                  MFLProperty(u'remove_notes_by_id', min_epii_version=(4, 3)),
                   MFLProperty(u'move_playing_pos'),
                   MFLProperty(u'quantize'),
                   MFLProperty(u'quantize_pitch'),
@@ -248,7 +276,8 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                   MFLProperty(u'set_fire_button_state'),
                   MFLProperty(u'set_notes'),
                   MFLProperty(u'stop'),
-                  MFLProperty(u'stop_scrub')),
+                  MFLProperty(u'stop_scrub'),
+                  MFLProperty(u'velocity_amount')),
  Live.Clip.Clip.View: (MFLProperty(u'canonical_parent'),
                        MFLProperty(u'grid_is_triplet'),
                        MFLProperty(u'grid_quantization'),
@@ -256,6 +285,12 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                        MFLProperty(u'select_envelope_parameter'),
                        MFLProperty(u'show_envelope'),
                        MFLProperty(u'show_loop')),
+ Live.Groove.Groove: (MFLProperty(u'name'),
+                      MFLProperty(u'base'),
+                      MFLProperty(u'quantization_amount'),
+                      MFLProperty(u'timing_amount'),
+                      MFLProperty(u'random_amount'),
+                      MFLProperty(u'velocity_amount')),
  Live.ClipSlot.ClipSlot: (MFLProperty(u'canonical_parent'),
                           MFLProperty(u'clip'),
                           MFLProperty(u'color'),
@@ -315,7 +350,9 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                             MFLProperty(u'get_bank_name'),
                             MFLProperty(u'get_bank_parameters'),
                             MFLProperty(u'audio_outputs'),
-                            MFLProperty(u'audio_inputs')]),
+                            MFLProperty(u'audio_inputs'),
+                            MFLProperty(u'midi_outputs'),
+                            MFLProperty(u'midi_inputs')]),
  Live.MixerDevice.MixerDevice: (MFLProperty(u'canonical_parent'),
                                 MFLProperty(u'sends'),
                                 MFLProperty(u'cue_volume'),
@@ -337,7 +374,16 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                               MFLProperty(u'visible_drum_pads'),
                               MFLProperty(u'has_macro_mappings'),
                               MFLProperty(u'has_drum_pads'),
-                              MFLProperty(u'copy_pad')]),
+                              MFLProperty(u'copy_pad'),
+                              MFLProperty(u'add_macro'),
+                              MFLProperty(u'remove_macro'),
+                              MFLProperty(u'randomize_macros'),
+                              MFLProperty(u'variation_count'),
+                              MFLProperty(u'selected_variation_index'),
+                              MFLProperty(u'store_variation'),
+                              MFLProperty(u'recall_selected_variation'),
+                              MFLProperty(u'recall_last_used_variation'),
+                              MFLProperty(u'delete_selected_variation')]),
  Live.RackDevice.RackDevice.View: tuple(_DEVICE_VIEW_BASE_PROPS + [MFLProperty(u'selected_chain'),
                                    MFLProperty(u'selected_drum_pad'),
                                    MFLProperty(u'drum_pads_scroll_position'),
@@ -352,6 +398,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                       MFLProperty(u'file_path'),
                       MFLProperty(u'gain'),
                       MFLProperty(u'length'),
+                      MFLProperty(u'sample_rate'),
                       MFLProperty(u'slicing_sensitivity'),
                       MFLProperty(u'start_marker'),
                       MFLProperty(u'texture_flux'),
@@ -359,6 +406,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                       MFLProperty(u'tones_grain_size'),
                       MFLProperty(u'warp_mode'),
                       MFLProperty(u'warping'),
+                      MFLProperty(u'warp_markers', format=MFLPropertyFormats.JSON, to_json=warp_markers_to_json, min_epii_version=(4, 3)),
                       MFLProperty(u'slicing_style'),
                       MFLProperty(u'slicing_beat_division'),
                       MFLProperty(u'slicing_region_count'),
@@ -367,7 +415,8 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                       MFLProperty(u'move_slice'),
                       MFLProperty(u'remove_slice'),
                       MFLProperty(u'clear_slices'),
-                      MFLProperty(u'reset_slices')),
+                      MFLProperty(u'reset_slices'),
+                      MFLProperty(u'slices')),
  Live.Scene.Scene: (MFLProperty(u'canonical_parent'),
                     MFLProperty(u'clip_slots'),
                     MFLProperty(u'color'),
@@ -418,6 +467,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                   MFLProperty(u'exclusive_arm'),
                   MFLProperty(u'exclusive_solo'),
                   MFLProperty(u'groove_amount'),
+                  MFLProperty(u'groove_pool'),
                   MFLProperty(u'is_counting_in'),
                   MFLProperty(u'is_playing'),
                   MFLProperty(u'last_event_time'),
@@ -490,11 +540,13 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                        MFLProperty(u'draw_mode'),
                        MFLProperty(u'follow_song'),
                        MFLProperty(u'select_device')),
+ Live.GroovePool.GroovePool: (MFLProperty(u'grooves'),),
  Live.Song.CuePoint: (MFLProperty(u'canonical_parent'),
                       MFLProperty(u'name'),
                       MFLProperty(u'time'),
                       MFLProperty(u'jump')),
  Live.Track.Track: (MFLProperty(u'clip_slots'),
+                    MFLProperty(u'arrangement_clips'),
                     MFLProperty(u'devices'),
                     MFLProperty(u'canonical_parent'),
                     MFLProperty(u'mixer_device'),
@@ -578,7 +630,6 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (MFLProperty(u'view'),
                                         MFLProperty(u'unison_mode'),
                                         MFLProperty(u'unison_voice_count'),
                                         MFLProperty(u'visible_modulation_target_names')])}
-HIDDEN_TYPE_PROPERTIES = {Live.Sample.Sample: (u'slices',)}
 PROPERTY_NAMES_EXCLUDED_FROM_DOCUMENTATION = (u'canonical_parent',)
 EXTRA_CS_FUNCTIONS = (u'get_control_names', u'get_control', u'grab_control', u'release_control', u'send_midi', u'send_receive_sysex', u'grab_midi', u'release_midi')
 ENUM_TYPES = (Live.Song.Quantization,
@@ -586,12 +637,15 @@ ENUM_TYPES = (Live.Song.Quantization,
  Live.Song.CaptureMode,
  Live.Clip.GridQuantization,
  Live.DeviceParameter.AutomationState,
+ Live.Groove.Base,
  Live.Sample.SlicingStyle,
  Live.Sample.SlicingBeatDivision)
 TUPLE_TYPES = {u'tracks': Live.Track.Track,
+ u'grooves': Live.Groove.Groove,
  u'visible_tracks': Live.Track.Track,
  u'return_tracks': Live.Track.Track,
  u'clip_slots': Live.ClipSlot.ClipSlot,
+ u'arrangement_clips': Live.Clip.Clip,
  u'scenes': Live.Scene.Scene,
  u'parameters': Live.DeviceParameter.DeviceParameter,
  u'sends': Live.DeviceParameter.DeviceParameter,
@@ -605,7 +659,9 @@ TUPLE_TYPES = {u'tracks': Live.Track.Track,
  u'components': ControlSurfaceComponent,
  u'controls': ControlElement,
  u'audio_outputs': Live.DeviceIO.DeviceIO,
- u'audio_inputs': Live.DeviceIO.DeviceIO}
+ u'audio_inputs': Live.DeviceIO.DeviceIO,
+ u'midi_outputs': Live.DeviceIO.DeviceIO,
+ u'midi_inputs': Live.DeviceIO.DeviceIO}
 PROPERTY_TYPES = {u'master_track': Live.Track.Track,
  u'selected_track': Live.Track.Track,
  u'selected_scene': Live.Scene.Scene,
@@ -616,6 +672,7 @@ PROPERTY_TYPES = {u'master_track': Live.Track.Track,
  u'cue_volume': Live.DeviceParameter.DeviceParameter,
  u'track_activator': Live.DeviceParameter.DeviceParameter,
  u'chain_activator': Live.DeviceParameter.DeviceParameter,
+ u'groove': Live.Groove.Groove,
  u'clip': Live.Clip.Clip,
  u'detail_clip': Live.Clip.Clip,
  u'highlighted_clip_slot': Live.ClipSlot.ClipSlot,
@@ -660,14 +717,16 @@ class LomNoteOperationError(AttributeError):
 
 
 def get_exposed_lom_types():
-    return EXPOSED_TYPE_PROPERTIES.keys()
+    return list(EXPOSED_TYPE_PROPERTIES.keys())
 
 
-def get_exposed_properties_for_type(lom_type, epii_version):
+def get_exposed_properties_for_type(lom_type, epii_version = None):
+    if epii_version is None:
+        epii_version = (float(u'inf'), float(u'inf'))
     return [ prop for prop in EXPOSED_TYPE_PROPERTIES.get(lom_type, []) if epii_version >= prop.min_epii_version ]
 
 
-def get_exposed_property_names_for_type(lom_type, epii_version):
+def get_exposed_property_names_for_type(lom_type, epii_version = None):
     return [ prop.name for prop in get_exposed_properties_for_type(lom_type, epii_version) ]
 
 
@@ -677,14 +736,14 @@ def is_property_exposed_for_type(property_name, lom_type, epii_version):
 
 def get_exposed_property_info(lom_type, property_name, epii_version):
     properties = get_exposed_properties_for_type(lom_type, epii_version)
-    prop = filter(lambda p: p.name == property_name, properties)
+    prop = [ p for p in properties if p.name == property_name ]
     if not prop:
         return None
     return prop[0]
 
 
-def get_exposed_properties_to_document_for_type(lom_type, epii_version):
-    properties = set(get_exposed_property_names_for_type(lom_type, epii_version))
+def get_exposed_properties_to_document_for_type(lom_type):
+    properties = set(get_exposed_property_names_for_type(lom_type))
     if issubclass(lom_type, Live.Device.Device):
         properties -= {prop.name for prop in _DEVICE_BASE_PROPS}
     if issubclass(lom_type, Live.Chain.Chain):
@@ -696,16 +755,16 @@ def get_exposed_properties_to_document_for_type(lom_type, epii_version):
 
 
 def is_class(class_object):
-    return isinstance(class_object, types.ClassType) or hasattr(class_object, u'__bases__')
+    return isinstance(class_object, type) or old_hasattr(class_object, u'__bases__')
 
 
 def get_control_surfaces():
     result = []
     cs_list_key = u'control_surfaces'
     if isinstance(__builtins__, dict):
-        if cs_list_key in __builtins__.keys():
+        if cs_list_key in list(__builtins__.keys()):
             result = __builtins__[cs_list_key]
-    elif hasattr(__builtins__, cs_list_key):
+    elif old_hasattr(__builtins__, cs_list_key):
         result = getattr(__builtins__, cs_list_key)
     return tuple(result)
 
@@ -753,14 +812,10 @@ def is_object_iterable(obj):
     return not isinstance(obj, basestring) and is_iterable(obj) and not isinstance(obj, cs_base_classes())
 
 
-def is_property_hidden(lom_object, property_name):
-    return property_name in HIDDEN_TYPE_PROPERTIES.get(type(lom_object), [])
-
-
 def verify_object_property(lom_object, property_name, epii_version):
     raise_error = False
     if isinstance(lom_object, cs_base_classes()):
-        if not hasattr(lom_object, property_name):
+        if not old_hasattr(lom_object, property_name):
             raise_error = True
     elif not is_property_exposed_for_type(property_name, type(lom_object), epii_version):
         raise_error = True

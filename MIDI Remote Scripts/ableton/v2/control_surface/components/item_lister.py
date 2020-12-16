@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip
+from builtins import map
+from builtins import zip
 from ...base import forward_property, listenable_property, listens, EventObject
 from .. import Component
 from ..control import control_list, ButtonControl
@@ -131,7 +132,7 @@ class ItemListerComponentBase(Component):
             self.disconnect_disconnectable(item)
 
         self._adjust_offset()
-        self._items = map(self.register_disconnectable, self._create_slots())
+        self._items = list(map(self.register_disconnectable, self._create_slots()))
         self.notify_items()
 
     def _create_slots(self):
@@ -240,7 +241,7 @@ class ItemListerComponent(ItemListerComponentBase):
 
     def _update_button_colors(self):
         selected_item = self._item_provider.selected_item
-        for button, item in izip(self.select_buttons, self.items):
+        for button, item in zip(self.select_buttons, self.items):
             button.color = self._color_for_button(button.index, self._items_equal(item, selected_item))
 
     def _color_for_button(self, button_index, is_selected):

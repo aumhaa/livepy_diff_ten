@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 from .RemoteSLComponent import RemoteSLComponent
 from .consts import *
 
@@ -67,7 +69,7 @@ class DisplayController(RemoteSLComponent):
                 assert len(parameters) == NUM_CONTROLS_PER_ROW
                 for p in parameters:
                     if p:
-                        message_string += self.__generate_strip_string(unicode(p))
+                        message_string += self.__generate_strip_string(str(p))
                     else:
                         message_string += self.__generate_strip_string(u'')
 

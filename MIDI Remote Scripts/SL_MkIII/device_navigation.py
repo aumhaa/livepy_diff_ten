@@ -1,12 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from __future__ import division
+from builtins import range
+from past.utils import old_div
+from itertools import zip_longest
 from ableton.v2.base import listens, listens_group
 from ableton.v2.control_surface import Layer
 from ableton.v2.control_surface.components import DeviceNavigationComponent
 from ableton.v2.control_surface.control import ColorSysexControl, control_list
 from .control import BinaryControl, TextDisplayControl
 NUM_VISIBLE_ITEMS = 16
-NUM_DISPLAY_SEGMENTS = NUM_VISIBLE_ITEMS / 2
+NUM_DISPLAY_SEGMENTS = old_div(NUM_VISIBLE_ITEMS, 2)
 
 class DisplayingDeviceNavigationComponent(DeviceNavigationComponent):
     device_name_display_1 = TextDisplayControl(segments=(u'',) * NUM_DISPLAY_SEGMENTS)
@@ -66,22 +69,22 @@ class DisplayingDeviceNavigationComponent(DeviceNavigationComponent):
         self._update_selected_device_name_display()
 
     def _update_device_color_fields(self):
-        for color_field, item in izip_longest(self.device_color_fields, self.items):
+        for color_field, item in zip_longest(self.device_color_fields, self.items):
             color_field.color = u'Device.On' if item else u'DefaultButton.Disabled'
 
     def _update_selection_display(self):
         selected_item = self._item_provider.selected_item
-        for selection_field, item in izip_longest(self.device_selection_fields, self.items):
+        for selection_field, item in zip_longest(self.device_selection_fields, self.items):
             selection_field.is_on = bool(item) and self._items_equal(item, selected_item)
 
     def _update_device_names(self):
-        for index, item in izip_longest(xrange(NUM_VISIBLE_ITEMS), self.items):
-            display = getattr(self, u'device_name_display_{}'.format(index / NUM_DISPLAY_SEGMENTS + 1))
+        for index, item in zip_longest(range(NUM_VISIBLE_ITEMS), self.items):
+            display = getattr(self, u'device_name_display_{}'.format(old_div(index, NUM_DISPLAY_SEGMENTS) + 1))
             display[index % NUM_DISPLAY_SEGMENTS] = item.item.name if item else u''
 
     def _update_device_bank_names(self):
-        for index, item in izip_longest(xrange(NUM_VISIBLE_ITEMS), self.items):
-            display = getattr(self, u'device_bank_name_display_{}'.format(index / NUM_DISPLAY_SEGMENTS + 1))
+        for index, item in zip_longest(range(NUM_VISIBLE_ITEMS), self.items):
+            display = getattr(self, u'device_bank_name_display_{}'.format(old_div(index, NUM_DISPLAY_SEGMENTS) + 1))
             display[index % NUM_DISPLAY_SEGMENTS] = self._bank_name_for_item(item.item if item else None)
 
     def _update_selected_device_name_display(self):

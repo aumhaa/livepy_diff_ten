@@ -1,7 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
+from builtins import filter
 from itertools import chain
-from ..base import EventObject, listens_group, liveobj_changed
+from ..base import EventObject, listens_group, liveobj_changed, old_hasattr
 from .device_chain_utils import find_instrument_devices, find_instrument_meeting_requirement
 from .mode import Mode
 
@@ -84,8 +85,8 @@ class PercussionInstrumentFinder(Mode, EventObject):
     def _update_listeners(self):
         device_parent = self.device_parent
         devices = list(find_instrument_devices(device_parent))
-        racks = filter(lambda d: d.can_have_chains, devices)
-        simplers = filter(lambda d: hasattr(d, u'playback_mode'), devices)
+        racks = list(filter(lambda d: d.can_have_chains, devices))
+        simplers = list(filter(lambda d: old_hasattr(d, u'playback_mode'), devices))
         chains = list(chain([device_parent], *[ d.chains for d in racks ]))
         self.__on_chains_changed.replace_subjects(racks)
         self.__on_devices_changed.replace_subjects(chains)

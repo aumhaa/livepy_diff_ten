@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 import re
 from itertools import count
 from ableton.v2.base import clamp, index_if, listens, listens_group, liveobj_valid
@@ -233,7 +235,7 @@ class ChannelStripComponent(ChannelStripComponentBase):
     def _update_controls(self):
         self._update_track_type_control()
         self._update_oled_display_style_control()
-        for send_index in xrange(MAX_NUM_SENDS):
+        for send_index in range(MAX_NUM_SENDS):
             self._update_send_value_display(send_index)
 
     def _update_track_type_control(self):

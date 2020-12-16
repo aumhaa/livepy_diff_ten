@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import range
 from _Framework.MixerComponent import MixerComponent as MixerComponentBase
 from .TrackEQComponent import TrackEQComponent
 from .TrackFilterComponent import TrackFilterComponent
@@ -6,11 +8,11 @@ from .TrackFilterComponent import TrackFilterComponent
 class MixerComponent(MixerComponentBase):
 
     def __init__(self, num_tracks, *a, **k):
-        self._track_eqs = [ TrackEQComponent() for _ in xrange(num_tracks) ]
-        self._track_filters = [ TrackFilterComponent() for _ in xrange(num_tracks) ]
+        self._track_eqs = [ TrackEQComponent() for _ in range(num_tracks) ]
+        self._track_filters = [ TrackFilterComponent() for _ in range(num_tracks) ]
         super(MixerComponent, self).__init__(num_tracks, *a, **k)
-        map(self.register_components, self._track_eqs)
-        map(self.register_components, self._track_filters)
+        list(map(self.register_components, self._track_eqs))
+        list(map(self.register_components, self._track_filters))
 
     def track_eq(self, index):
         assert index in range(len(self._track_eqs))

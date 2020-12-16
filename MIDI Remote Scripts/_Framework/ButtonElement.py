@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 import Live
 from .InputControlElement import InputControlElement, MIDI_CC_TYPE
 from .Skin import Skin, SkinColorMissingError
@@ -28,7 +29,7 @@ class ButtonValue(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self != OFF_VALUE
 
 

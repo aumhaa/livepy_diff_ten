@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-from itertools import izip_longest
+from future.moves.itertools import zip_longest
 from ableton.v2.base import clamp, listens, liveobj_valid, forward_property
 from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
 from ableton.v2.control_surface.control import ButtonControl, SendValueControl
@@ -45,11 +45,11 @@ class MixerComponent(MixerComponentBase):
 
     def set_send_controls(self, controls):
         self._send_controls = controls
-        for strip, row in izip_longest(self._channel_strips, controls.rows() if controls else []):
+        for strip, row in zip_longest(self._channel_strips, controls.rows() if controls else []):
             strip.set_send_controls(row)
 
     def set_send_value_displays(self, displays):
-        for strip, row in izip_longest(self._channel_strips, displays.rows() if displays else []):
+        for strip, row in zip_longest(self._channel_strips, displays.rows() if displays else []):
             strip.set_send_value_displays(row)
 
     def set_selected_track_mute_button(self, button):
@@ -59,18 +59,18 @@ class MixerComponent(MixerComponentBase):
     set_selected_track_solo_button = forward_property(u'_selected_strip')(u'set_solo_button')
 
     def set_track_type_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.track_type_control.set_control_element(control)
 
     def _set_channel_strip_controls(self, name, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             set_method = getattr(strip, u'set_{}'.format(name), None)
             if not set_method:
                 set_method = getattr(strip, name, None).set_control_element
             set_method(control)
 
     def set_solo_mute_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.solo_mute_button.set_control_element(button)
 
     @master_button.pressed

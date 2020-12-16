@@ -1,5 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import count, izip_longest, product
+from __future__ import division
+from builtins import range
+from future.moves.itertools import zip_longest
+from past.utils import old_div
+from itertools import count, product
 import Live
 from ableton.v2.base import clamp, find_if, in_range, index_if, listens_group, liveobj_valid
 from ableton.v2.control_surface.components import SessionComponent as SessionComponentBase
@@ -66,7 +70,7 @@ class SessionComponent(SessionComponentBase):
         self._set_scene_controls(u'force_launch_button', buttons)
 
     def set_select_button(self, button):
-        for scene_index, slot_index in product(xrange(self._session_ring.num_scenes), xrange(self._session_ring.num_tracks)):
+        for scene_index, slot_index in product(range(self._session_ring.num_scenes), range(self._session_ring.num_tracks)):
             self.scene(scene_index).clip_slot(slot_index).set_select_button(button)
 
     def _reassign_tracks(self):
@@ -88,7 +92,7 @@ class SessionComponent(SessionComponentBase):
             self._do_update_playing_position_subject(track_index - track_offset)
 
     def _update_playing_position_subjects(self):
-        for index in xrange(NUM_TRACK_CONTROLS):
+        for index in range(NUM_TRACK_CONTROLS):
             self._do_update_playing_position_subject(index)
 
     def _do_update_playing_position_subject(self, index):
@@ -126,15 +130,15 @@ class SessionComponent(SessionComponentBase):
             loop_start = clip.loop_start
             start_marker = clip.start_marker
             if not clip.looping:
-                normalized_value = (playing_position - clip.start_marker) / clip.length
+                normalized_value = old_div(playing_position - clip.start_marker, clip.length)
             elif start_marker < loop_start and playing_position < loop_start:
-                normalized_value = (playing_position - clip.start_marker) / (loop_start - start_marker)
+                normalized_value = old_div(playing_position - clip.start_marker, loop_start - start_marker)
             else:
                 length = clip.length
                 position_in_loop = playing_position - loop_start - max(0, clip.start_marker - loop_start)
                 if position_in_loop < 0:
                     position_in_loop += length
-                normalized_value = position_in_loop / length
+                normalized_value = old_div(position_in_loop, length)
         self.playing_position_controls[index].value = clamp(int(normalized_value * 127), 0, 127)
 
     def _update_stop_clips_led(self, index):
@@ -149,17 +153,17 @@ class SessionComponent(SessionComponentBase):
 
     def _set_clip_controls(self, name, controls):
         assert not controls or controls.width() == self._session_ring.num_tracks and controls.height() == self._session_ring.num_scenes
-        for x, y in product(xrange(self._session_ring.num_tracks), xrange(self._session_ring.num_scenes)):
+        for x, y in product(range(self._session_ring.num_tracks), range(self._session_ring.num_scenes)):
             scene = self.scene(y)
             slot = scene.clip_slot(x)
             _set_method(slot, name)(controls.get_button(x, y) if controls else None)
 
     def _set_scene_controls(self, name, controls):
         assert not controls or controls.width() == self._session_ring.num_scenes and controls.height() == 1
-        for x in xrange(self._session_ring.num_scenes):
+        for x in range(self._session_ring.num_scenes):
             scene = self.scene(x)
 
-        for scene, control in izip_longest(self._scenes, controls or []):
+        for scene, control in zip_longest(self._scenes, controls or []):
             _set_method(scene, name)(control)
 
     def _can_have_playing_slots(self, track):

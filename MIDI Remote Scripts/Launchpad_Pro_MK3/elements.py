@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.control_surface import PrioritizedResource
 from ableton.v2.control_surface.elements import ButtonMatrixElement, ComboElement, SysexElement
 from novation import sysex
@@ -37,7 +38,7 @@ class Elements(LaunchpadElements):
         self.record_button = create_button(10, u'Record_Button')
         self.play_button = create_button(20, u'Play_Button')
         self.fixed_length_button = create_button(30, u'Fixed_Length_Button')
-        self.track_select_buttons_raw = [ create_button(index + 101, u'Track_Select_Button_{}'.format(index)) for index in xrange(SESSION_WIDTH) ]
+        self.track_select_buttons_raw = [ create_button(index + 101, u'Track_Select_Button_{}'.format(index)) for index in range(SESSION_WIDTH) ]
         self.track_select_buttons = ButtonMatrixElement(rows=[self.track_select_buttons_raw], name=u'Track_Select_Buttons')
         for bank, bank_name in enumerate(FADER_MODES):
             capitalized_name = bank_name.capitalize()

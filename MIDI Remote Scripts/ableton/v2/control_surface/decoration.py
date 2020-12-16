@@ -1,8 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter
+from builtins import round
+from builtins import map
+from builtins import filter
+from future.utils import iteritems
 import Live
 AutomationState = Live.DeviceParameter.AutomationState
-from ..base import CompoundDisconnectable, EventObject, Proxy, clamp, find_if, listenable_property, listens, liveobj_valid
+from ..base import CompoundDisconnectable, EventObject, Proxy, clamp, find_if, listenable_property, listens, liveobj_valid, old_hasattr
 from .internal_parameter import InternalParameter
 
 def get_parameter_by_name(decorator, name):
@@ -34,7 +37,7 @@ class LiveObjectDict(dict):
         return super(LiveObjectDict, self).get(self._transform_key(key), *default)
 
     def _transform_key(self, key):
-        assert hasattr(key, u'_live_ptr')
+        assert old_hasattr(key, u'_live_ptr')
         return key._live_ptr
 
     def update(self, *a, **k):
@@ -42,9 +45,9 @@ class LiveObjectDict(dict):
         super(LiveObjectDict, self).update(*[ (trans(key), v) for key, v in a ], **dict(((trans(key), k[key]) for key in k)))
 
     def prune(self, keys):
-        transformed_keys = map(self._transform_key, keys)
+        transformed_keys = list(map(self._transform_key, keys))
         deleted_objects = []
-        for key in ifilter(lambda x: x not in transformed_keys, self.keys()):
+        for key in filter(lambda x: x not in transformed_keys, list(self.keys())):
             deleted_objects.append(super(LiveObjectDict, self).__getitem__(key))
             super(LiveObjectDict, self).__delitem__(key)
 
@@ -57,7 +60,7 @@ class LiveObjectDecorator(CompoundDisconnectable, Proxy):
         assert live_object is not None
         super(LiveObjectDecorator, self).__init__(proxied_object=live_object)
         self._live_object = live_object
-        for name, value in additional_properties.iteritems():
+        for name, value in iteritems(additional_properties):
             setattr(self, name, value)
 
     def __eq__(self, other):
@@ -68,6 +71,9 @@ class LiveObjectDecorator(CompoundDisconnectable, Proxy):
 
     def __nonzero__(self):
         return self._live_object != None
+
+    def __bool__(self):
+        return self.__nonzero__()
 
     def __hash__(self):
         return hash(self._live_object)

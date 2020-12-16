@@ -1,7 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+import Live
+from builtins import filter
+from builtins import str
+from builtins import map
+from builtins import range
+from builtins import round
+from past.utils import old_div
 import math
 from functools import partial
-from itertools import ifilter, imap, chain, izip_longest
+from itertools import chain
 from ableton.v2.base import clamp, find_if, forward_property, listenable_property, listens, listens_group, liveobj_valid, task
 from ableton.v2.control_surface import defaults, Component
 from ableton.v2.control_surface.control import ButtonControl, ControlManager, control_list, EncoderControl, StepEncoderControl
@@ -59,9 +67,10 @@ class NoteSetting(NoteSettingBase):
 
 RANGE_STRING_FLOAT = u'%.1f' + CHAR_ELLIPSIS + u'%.1f'
 RANGE_STRING_INT = u'%d' + CHAR_ELLIPSIS + u'%d'
+RANGE_STRING_PERCENT = u'%d %%' + CHAR_ELLIPSIS + u'%d %%'
 
 def step_offset_percentage(step_length, value):
-    return int(round((value - int(value / step_length) * step_length) / step_length * 100))
+    return int(round(old_div(value - int(old_div(value, step_length)) * step_length, step_length) * 100))
 
 
 def step_offset_min_max_to_string(step_length, min_value, max_value):
@@ -75,7 +84,7 @@ def step_offset_min_max_to_string(step_length, min_value, max_value):
 def convert_value_to_graphic(value, value_range):
     value_bar = GRAPH_VOL
     graph_range = float(len(value_bar))
-    value = clamp(int(value / value_range * graph_range), 0, len(value_bar) - 1)
+    value = clamp(int(old_div(value, value_range) * graph_range), 0, len(value_bar) - 1)
     display_string = value_bar[value]
     return display_string
 
@@ -101,8 +110,8 @@ class NoteLengthCoarseSetting(NoteSetting):
         return u'Length -'
 
     def attribute_min_max_to_string(self, min_value, max_value):
-        min_value = min_value / self.step_length
-        max_value = max_value / self.step_length
+        min_value = old_div(min_value, self.step_length)
+        max_value = old_div(max_value, self.step_length)
 
         def format_string(value):
             num_non_decimal_figures = int(math.log10(value)) if value > 0 else 0
@@ -149,6 +158,38 @@ class NoteVelocitySetting(NoteSetting):
         return RANGE_STRING_INT % (min_value, max_value)
 
 
+class NoteVelocityDeviationSetting(NoteSetting):
+    attribute_index = 4
+
+    def get_label(self):
+        return u'VelRange'
+
+    def encoder_value_to_attribute(self, value):
+        return value * 128
+
+    def attribute_min_max_to_string(self, min_value, max_value):
+        if int(min_value) == int(max_value):
+            return str(int(min_value))
+        return RANGE_STRING_INT % (min_value, max_value)
+
+
+class NoteProbabilitySetting(NoteSetting):
+    attribute_index = 5
+
+    def get_label(self):
+        return u'Problty'
+
+    def encoder_value_to_attribute(self, value):
+        return value * 128
+
+    def attribute_min_max_to_string(self, min_value, max_value):
+        min_value_percent = round(min_value * 100)
+        max_value_percent = round(max_value * 100)
+        if min_value_percent == max_value_percent:
+            return u'%d %%' % min_value_percent
+        return RANGE_STRING_PERCENT % (min_value_percent, max_value_percent)
+
+
 class NoteSettingsComponentBase(Component):
     __events__ = (u'setting_changed', u'full_velocity')
     full_velocity_button = ButtonControl()
@@ -164,6 +205,9 @@ class NoteSettingsComponentBase(Component):
         self._add_setting(NoteLengthCoarseSetting(grid_resolution=grid_resolution))
         self._add_setting(NoteLengthFineSetting(grid_resolution=grid_resolution))
         self._add_setting(NoteVelocitySetting(grid_resolution=grid_resolution))
+        if self.show_velocity_ranges_and_probabilities:
+            self._add_setting(NoteVelocityDeviationSetting(grid_resolution=grid_resolution))
+            self._add_setting(NoteProbabilitySetting(grid_resolution=grid_resolution))
 
     def _add_setting(self, setting):
         assert len(self._settings) < 8, u'Cannot show more than 8 settings'
@@ -175,6 +219,14 @@ class NoteSettingsComponentBase(Component):
     @property
     def number_of_settings(self):
         return len(self._settings)
+
+    @property
+    def settings(self):
+        return self._settings
+
+    @property
+    def show_velocity_ranges_and_probabilities(self):
+        return Live.Application.UnavailableFeature.note_velocity_ranges_and_probabilities not in Live.Application.get_application().unavailable_features
 
     def set_info_message(self, message):
         pass
@@ -194,12 +246,22 @@ class NoteSettingsComponentBase(Component):
             self.notify_full_velocity()
 
     def _update_encoders(self):
+        u"""
+        This assigns each encoder to a setting in the same order
+        as the settings are created in _create_settings, which means:
+        0 - Nudge
+        1 - Length
+        2 - Fine
+        3 - Velocity
+        4 - Velocity Deviation
+        5 - Probability
+        """
         if self.is_enabled() and self._encoders:
-            for encoder, setting in izip_longest(self._encoders[-len(self._settings):], self._settings):
-                setting.encoder.set_control_element(encoder)
+            for index, setting in enumerate(self._settings):
+                setting.encoder.set_control_element(self._encoders[index])
 
         else:
-            map(lambda setting: setting.encoder.set_control_element(None), self._settings)
+            list(map(lambda setting: setting.encoder.set_control_element(None), self._settings))
 
     def update(self):
         super(NoteSettingsComponentBase, self).update()
@@ -210,14 +272,14 @@ class NoteSettingsComponent(NoteSettingsComponentBase):
 
     def __init__(self, *a, **k):
         super(NoteSettingsComponent, self).__init__(*a, **k)
-        self._top_data_sources = [ DisplayDataSource() for _ in xrange(8) ]
-        self._bottom_data_sources = [ DisplayDataSource() for _ in xrange(8) ]
+        self._top_data_sources = [ DisplayDataSource() for _ in range(8) ]
+        self._bottom_data_sources = [ DisplayDataSource() for _ in range(8) ]
         self._info_data_source = DisplayDataSource()
         self._create_display_sources()
 
     def _create_display_sources(self):
-        self._top_data_sources = [ DisplayDataSource() for _ in xrange(8 - len(self._settings)) ] + [ s.label_source for s in self._settings ]
-        self._bottom_data_sources = [ DisplayDataSource() for _ in xrange(8 - len(self._settings)) ] + [ s.value_source for s in self._settings ]
+        self._top_data_sources = [ s.label_source for s in self._settings ] + [ DisplayDataSource() for _ in range(8 - len(self._settings)) ]
+        self._bottom_data_sources = [ s.value_source for s in self._settings ] + [ DisplayDataSource() for _ in range(8 - len(self._settings)) ]
 
     def set_top_display_line(self, display):
         if self.is_enabled() and display:
@@ -331,7 +393,7 @@ class NoteEditorSettingsComponent(ModesComponent):
 
     @listenable_property
     def is_touched(self):
-        return any(imap(lambda e: e and e.is_touched, ifilter(lambda e: self._can_notify_is_touched(e), self.encoders)))
+        return any(map(lambda e: e and e.is_touched, filter(lambda e: self._can_notify_is_touched(e), self.encoders)))
 
     def _is_step_held(self):
         return len(self._active_note_regions()) > 0
@@ -385,6 +447,10 @@ class NoteEditorSettingsComponent(ModesComponent):
             editor.set_length_offset(value)
         elif index == 3:
             editor.set_velocity_offset(value)
+        elif index == 4:
+            editor.set_velocity_deviation_offset(value)
+        elif index == 5:
+            editor.set_probability_offset(value)
 
     def _set_envelope_view_visible(self, visible):
         clip = self.song.view.detail_clip
@@ -403,7 +469,7 @@ class NoteEditorSettingsComponent(ModesComponent):
             self._hide_settings()
 
     def _active_note_regions(self):
-        all_active_regions = imap(lambda e: e.active_note_regions, self._editors)
+        all_active_regions = list(map(lambda e: e.active_note_regions, self._editors))
         return list(set(chain.from_iterable(all_active_regions)))
 
     @listens_group(u'active_note_regions')
@@ -458,7 +524,7 @@ class NoteEditorSettingsComponent(ModesComponent):
 
     def _can_notify_is_touched(self, encoder):
         if self.is_enabled():
-            return self._settings_modes.selected_mode != u'note_settings' or encoder.index >= self.encoders.control_count - self.settings.number_of_settings
+            return self._settings_modes.selected_mode != u'note_settings' or encoder.index < self.settings.number_of_settings
         return False
 
     def _is_edit_all_notes_active(self):
@@ -471,16 +537,18 @@ class NoteEditorSettingsComponent(ModesComponent):
     def _update_note_infos(self):
         if self.settings.is_enabled():
 
-            def min_max((l_min, l_max), (r_min, r_max)):
+            def min_max(l_min_max, r_min_max):
+                l_min, l_max = l_min_max
+                r_min, r_max = r_min_max
                 return (min(l_min, r_min), max(l_max, r_max))
 
-            all_min_max_attributes = filter(None, imap(lambda e: e.get_min_max_note_values(), self._editors))
-            min_max_values = [(99999, -99999)] * 4 if len(all_min_max_attributes) > 0 else None
+            all_min_max_attributes = [ _f for _f in map(lambda e: e.get_min_max_note_values(), self._editors) if _f ]
+            min_max_values = [(99999, -99999)] * self.settings.number_of_settings if len(all_min_max_attributes) > 0 else None
             for min_max_attribute in all_min_max_attributes:
-                for i, attribute in enumerate(min_max_attribute):
+                for i, attribute in enumerate(min_max_attribute[:self.settings.number_of_settings]):
                     min_max_values[i] = min_max(min_max_values[i], attribute)
 
-            for i in xrange(4):
+            for i in range(self.settings.number_of_settings):
                 self.settings.set_min_max(i, min_max_values[i] if min_max_values else None)
 
             self.settings.set_info_message(u'Tweak to add note' if not self._is_edit_all_notes_active() and not min_max_values else u'')

@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 from ableton.v2.base import depends, recursive_map
 from ableton.v2.control_surface import MIDI_NOTE_TYPE, PrioritizedResource
 from ableton.v2.control_surface.elements import ButtonMatrixElement, DoublePressElement, FineGrainWithModifierEncoderElement, FullVelocityElement, MultiElement, PlayheadElement, VelocityLevelsElement
@@ -59,18 +62,18 @@ class Elements(object):
         self.create_track_button = create_button(53, u'Create_Track_Button', undo_step_handler=undo_handler)
         self.double_button = create_button(117, u'Double_Button', undo_step_handler=undo_handler)
         self.user_button = create_button(59, u'User_Button', undo_step_handler=undo_handler)
-        self.select_buttons_raw = [ create_button(20 + idx, u'Track_Select_Button' + str(idx)) for idx in xrange(8) ]
+        self.select_buttons_raw = [ create_button(20 + idx, u'Track_Select_Button' + str(idx)) for idx in range(8) ]
         self.select_buttons = ButtonMatrixElement(name=u'Track_Select_Buttons', rows=[self.select_buttons_raw])
-        self.track_state_buttons_raw = [ create_button(102 + idx, u'Track_State_Button' + str(idx), is_rgb=True) for idx in xrange(8) ]
+        self.track_state_buttons_raw = [ create_button(102 + idx, u'Track_State_Button' + str(idx), is_rgb=True) for idx in range(8) ]
         self.track_state_buttons = ButtonMatrixElement(name=u'Track_State_Buttons', rows=[self.track_state_buttons_raw])
-        self.side_buttons_raw = [ create_button(36 + idx, u'Scene_Launch_Button' + str(idx)) for idx in reversed(xrange(8)) ]
+        self.side_buttons_raw = [ create_button(36 + idx, u'Scene_Launch_Button' + str(idx)) for idx in reversed(range(8)) ]
         self.side_buttons = ButtonMatrixElement(name=u'Scene_Launch_Buttons', rows=[self.side_buttons_raw])
 
         @depends(skin=None)
         def create_pad_button(pad_id, name, skin = None, **k):
             return PadButtonElement(pad_id, pad_sensitivity_update, True, MIDI_NOTE_TYPE, 0, (36 + pad_id), skin=skin, name=name, **k)
 
-        self.matrix_rows_raw = [ [ create_pad_button((7 - row) * 8 + column, str(column) + u'_Clip_' + str(row) + u'_Button', is_rgb=True) for column in xrange(8) ] for row in xrange(8) ]
+        self.matrix_rows_raw = [ [ create_pad_button((7 - row) * 8 + column, str(column) + u'_Clip_' + str(row) + u'_Button', is_rgb=True) for column in range(8) ] for row in range(8) ]
         double_press_rows = recursive_map(DoublePressElement, self.matrix_rows_raw)
         self.matrix = ButtonMatrixElement(name=u'Button_Matrix', rows=self.matrix_rows_raw)
         self.double_press_matrix = ButtonMatrixElement(name=u'Double_Press_Matrix', rows=double_press_rows)
@@ -86,7 +89,7 @@ class Elements(object):
         self.global_param_touch_buttons_raw = [ create_note_button(index, u'Track_Control_Touch_' + str(index), resource_type=PrioritizedResource) for index in range(8) ]
         self.global_param_touch_buttons = ButtonMatrixElement(name=u'Track_Control_Touches', rows=[self.global_param_touch_buttons_raw])
         undo_group = object()
-        self.parameter_controls_raw = [ TouchEncoderElement(channel=0, identifier=71 + index, map_mode=consts.GLOBAL_MAP_MODE, undo_step_handler=undo_handler, undo_group=undo_group, delete_handler=deleter, encoder_sensitivity=BASE_ENCODER_SENSITIVITY, name=u'Track_Control_' + str(index), touch_element=self.global_param_touch_buttons_raw[index]) for index in xrange(8) ]
+        self.parameter_controls_raw = [ TouchEncoderElement(channel=0, identifier=71 + index, map_mode=consts.GLOBAL_MAP_MODE, undo_step_handler=undo_handler, undo_group=undo_group, delete_handler=deleter, encoder_sensitivity=BASE_ENCODER_SENSITIVITY, name=u'Track_Control_' + str(index), touch_element=self.global_param_touch_buttons_raw[index]) for index in range(8) ]
         self.global_param_controls = ButtonMatrixElement(name=u'Track_Controls', rows=[self.parameter_controls_raw])
         self.fine_grain_param_controls_raw = [ FineGrainWithModifierEncoderElement(encoder, self.shift_button, fine_grained_continuous_mapping_sensitivity, continuous_mapping_sensitivity) for encoder in self.parameter_controls_raw ]
         self.fine_grain_param_controls = ButtonMatrixElement(rows=[self.fine_grain_param_controls_raw])

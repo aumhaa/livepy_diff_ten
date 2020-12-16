@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
 import Live
 from .control import ControlManager
 from ..base import BooleanContext, depends, lazy_attribute, task, is_iterable
@@ -48,7 +49,7 @@ class Component(ControlManager):
         return self._parent is None
 
     def add_children(self, *a):
-        components = map(self._add_child, a)
+        components = list(map(self._add_child, a))
         if len(components) == 1:
             return components[0]
         return components

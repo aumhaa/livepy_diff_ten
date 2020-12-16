@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.control_surface import DelayDeviceDecorator as DelayDeviceDecoratorBase, get_parameter_by_name
 from .device_options import DeviceOnOffOption, DeviceSwitchOption
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData

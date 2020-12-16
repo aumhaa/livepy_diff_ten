@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-from itertools import izip_longest
+from future.moves.itertools import zip_longest
 from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
 
 class MixerComponent(MixerComponentBase):
@@ -20,7 +20,7 @@ class MixerComponent(MixerComponentBase):
         raise AttributeError
 
     def _set_controls_on_all_channel_strips(self, attr_name, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             getattr(strip, attr_name).set_control_element(control)
 
     def set_static_color_value(self, value):

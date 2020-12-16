@@ -1,7 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import object
 from functools import partial
 from .Proxy import Proxy
 from .Util import index_if, nop, first, NamedTuple
+from functools import reduce
 DEFAULT_PRIORITY = 0
 
 class Resource(object):
@@ -94,10 +97,10 @@ class ExclusiveResource(Resource):
         return self._owner
 
     def on_received(self, client, *a, **k):
-        raise NotImplemented, u'Override or pass callback'
+        raise NotImplemented(u'Override or pass callback')
 
     def on_lost(self, client):
-        raise NotImplemented, u'Override or pass callback'
+        raise NotImplemented(u'Override or pass callback')
 
 
 class SharedResource(Resource):
@@ -134,10 +137,10 @@ class SharedResource(Resource):
         assert False, u'Shared resource has no owner'
 
     def on_received(self, client, *a, **k):
-        raise NotImplemented, u'Override or pass callback'
+        raise NotImplemented(u'Override or pass callback')
 
     def on_lost(self, client):
-        raise NotImplemented, u'Override or pass callback'
+        raise NotImplemented(u'Override or pass callback')
 
 
 class StackingResource(Resource):
@@ -211,11 +214,11 @@ class StackingResource(Resource):
             self.release(client)
 
     def _add_client(self, client, priority):
-        idx = index_if(lambda (_, p): p > priority, self._clients)
+        idx = index_if(lambda _StackingResource__p: __p[1] > priority, self._clients)
         self._clients.insert(idx, (client, priority))
 
     def _remove_client(self, client):
-        idx = index_if(lambda (c, _): c == client, self._clients)
+        idx = index_if(lambda c__: c__[0] == client, self._clients)
         if idx != len(self._clients):
             del self._clients[idx]
             return True
@@ -242,17 +245,17 @@ class StackingResource(Resource):
 
     @property
     def clients(self):
-        return map(first, self._clients)
+        return list(map(first, self._clients))
 
     @property
     def owners(self):
         return self._owners
 
     def on_received(self, client):
-        raise NotImplemented, u'Override or pass callback'
+        raise NotImplemented(u'Override or pass callback')
 
     def on_lost(self, client):
-        raise NotImplemented, u'Override or pass callback'
+        raise NotImplemented(u'Override or pass callback')
 
     def release_stacked(self):
         clients = self.clients
@@ -302,4 +305,4 @@ class ProxyResource(Proxy):
 
     @property
     def owners(self):
-        return map(self._client_wrapper.unwrap, self.__getattr__(u'owners'))
+        return list(map(self._client_wrapper.unwrap, self.__getattr__(u'owners')))

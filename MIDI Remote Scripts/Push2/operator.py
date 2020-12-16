@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from collections import namedtuple
 import re
 from ableton.v2.base import const, EventObject, listenable_property, listens, liveobj_valid
@@ -168,5 +169,5 @@ class OperatorDeviceComponent(DeviceComponentWithTrackColorViewData):
     def _shrink_parameters(self):
         if self._visualisation_visible:
             config = self._bank_configuration[self._bank.index]
-            return [ config.button_range.left_index <= index <= config.button_range.right_index for index in xrange(8) ]
+            return [ config.button_range.left_index <= index <= config.button_range.right_index for index in range(8) ]
         return self.LARGE_PARAMETERS_LIST

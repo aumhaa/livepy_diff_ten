@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import range
+from past.utils import old_div
 from ableton.v2.base import NamedTuple, lazy_attribute, memoize, find_if
 from . import consts
 from .matrix_maps import FEEDBACK_CHANNELS
@@ -8,8 +12,8 @@ ROOT_NOTES = CIRCLE_OF_FIFTHS[0:6] + CIRCLE_OF_FIFTHS[-1:5:-1]
 NOTE_NAMES = (u'C', u'D\u266d', u'D', u'E\u266d', u'E', u'F', u'G\u266d', u'G', u'A\u266d', u'A', u'B\u266d', u'B')
 
 def pitch_index_to_string(index):
-    if 0 <= index < 128:
-        return NOTE_NAMES[index % 12] + str(index / 12 - 2)
+    if index is not None and 0 <= index < 128:
+        return NOTE_NAMES[index % 12] + str(old_div(index, 12) - 2)
     return consts.CHAR_ELLIPSIS
 
 
@@ -28,12 +32,15 @@ class Scale(NamedTuple):
         return self.name
 
     def __str__(self):
-        return unicode(self).encode(u'utf-8')
+        return str(self.name)
 
     def __eq__(self, other):
         if isinstance(other, Scale):
             return self.name == other.name and self.notes == other.notes
         return False
+
+    def __hash__(self):
+        return hash((self.name,))
 
 
 SCALES = tuple([ Scale(name=x[0], notes=x[1]) for x in Live.Song.get_all_scales_ordered() ])
@@ -50,7 +57,7 @@ class NoteInfo(NamedTuple):
 
 class MelodicPattern(NamedTuple):
     steps = [0, 0]
-    scale = range(12)
+    scale = list(range(12))
     root_note = 0
     origin = [0, 0]
     chromatic_mode = False
@@ -61,7 +68,7 @@ class MelodicPattern(NamedTuple):
     def extended_scale(self):
         if self.chromatic_mode:
             first_note = self.scale[0]
-            return range(first_note, first_note + 12)
+            return list(range(first_note, first_note + 12))
         else:
             return self.scale
 
@@ -87,7 +94,7 @@ class MelodicPattern(NamedTuple):
     def _octave_and_note_by_index(self, index):
         scale = self.extended_scale
         scale_size = len(scale)
-        octave = index / scale_size
+        octave = old_div(index, scale_size)
         note = scale[index % scale_size]
         return (octave, note)
 
@@ -103,7 +110,8 @@ class MelodicPattern(NamedTuple):
         else:
             return u'NoteNotScale'
 
-    def _get_note_info(self, (octave, note), root_note, channel = 0):
+    def _get_note_info(self, octave_note, root_note, channel = 0):
+        octave, note = octave_note
         note_index = 12 * octave + note + root_note
         if 0 <= note_index <= 127:
             return NoteInfo(index=note_index, channel=channel, color=self._color_for_note(note))

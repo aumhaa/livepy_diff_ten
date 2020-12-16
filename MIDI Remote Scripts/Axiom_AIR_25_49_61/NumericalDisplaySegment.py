@@ -31,7 +31,7 @@ class NumericalDisplaySegment(LogicalDisplaySegment):
         LogicalDisplaySegment.__init__(self, width, update_callback)
 
     def display_string(self):
-        resulting_string = u' ' * self._width
+        resulting_string = u' ' * int(self._width)
         if self._data_source != None:
             resulting_string = NumericalDisplaySegment.adjust_string(self._data_source.display_string(), self._width)
         return resulting_string

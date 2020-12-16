@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.InputControlElement import *
@@ -91,8 +93,8 @@ class Launchpad(ControlSurface):
     def handle_sysex(self, midi_bytes):
         if len(midi_bytes) == 8:
             if midi_bytes[1:5] == (0, 32, 41, 6):
-                response = long(midi_bytes[5])
-                response += long(midi_bytes[6]) << 8
+                response = int(midi_bytes[5])
+                response += int(midi_bytes[6]) << 8
                 if response == Live.Application.encrypt_challenge2(self._challenge):
                     self._on_handshake_successful()
 

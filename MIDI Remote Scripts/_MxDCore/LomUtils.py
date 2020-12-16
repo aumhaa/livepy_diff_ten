@@ -1,13 +1,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.builtins import basestring
+from builtins import filter
+from builtins import object
 import sys
 import types
-from itertools import chain, ifilter
+from itertools import chain
+from ableton.v2.base import old_hasattr
 from .MxDUtils import TupleWrapper
 from .LomTypes import cs_base_classes, TUPLE_TYPES, PROPERTY_TYPES, EXTRA_CS_FUNCTIONS, ENUM_TYPES, ROOT_KEYS, LIVE_APP, MFLPropertyFormats, LomObjectError, LomAttributeError, get_exposed_property_names_for_type, get_exposed_property_info, is_class, get_root_prop, is_lom_object, is_cplusplus_lom_object, is_object_iterable
 
 def create_lom_doc_string(lom_object):
     description = u''
-    if hasattr(lom_object, u'__doc__') and isinstance(lom_object.__doc__, basestring) and len(lom_object.__doc__) > 0:
+    if old_hasattr(lom_object, u'__doc__') and isinstance(lom_object.__doc__, basestring) and len(lom_object.__doc__) > 0:
         description = u'description %s' % lom_object.__doc__.replace(u'\n', u' ').replace(u',', u'\\,')
     return description
 
@@ -54,7 +58,7 @@ class LomInformation(object):
 
     def _generate_object_info(self, lom_object, epii_version):
         if isinstance(lom_object, cs_base_classes()):
-            property_names = ifilter(lambda prop: not prop.startswith(u'_'), dir(lom_object))
+            property_names = list(filter(lambda prop: not prop.startswith(u'_'), dir(lom_object)))
             functions_implemented_by_mxdcore = EXTRA_CS_FUNCTIONS
         else:
             property_names = get_exposed_property_names_for_type(type(lom_object), epii_version)
@@ -78,7 +82,7 @@ class LomInformation(object):
                     self._properties.append((prop_name, u'dict'))
                 elif prop_name in TUPLE_TYPES:
                     self._add_list_of_children(prop_name)
-                elif prop_name in PROPERTY_TYPES.keys():
+                elif prop_name in list(PROPERTY_TYPES.keys()):
                     self._add_child(real_prop, prop_name)
                 elif prop_name == u'canonical_parent':
                     if real_prop != None:
@@ -86,7 +90,7 @@ class LomInformation(object):
                 elif callable(real_prop):
                     if not prop_name.endswith(u'_listener'):
                         self._functions.append((prop_name,))
-                elif prop_type == u'unicode':
+                elif prop_type == u'unicode' or prop_type == u'str':
                     self._properties.append((prop_name, u'str'))
                 elif prop_type not in (u'type', u'Enum'):
                     info_type = u'int' if isinstance(real_prop, ENUM_TYPES) else prop_type
@@ -109,7 +113,7 @@ class LomIntrospection(object):
         return self._lom_classes
 
     def _is_relevant_class(self, class_object):
-        return is_class(class_object) and hasattr(class_object, u'__module__') and sys.modules.get(class_object.__module__) in self._lom_modules and class_object not in self._lom_classes and class_object not in self._excluded
+        return is_class(class_object) and old_hasattr(class_object, u'__module__') and sys.modules.get(class_object.__module__) in self._lom_modules and class_object not in self._lom_classes and class_object not in self._excluded
 
     def _process_class(self, class_object):
         processed = False
@@ -190,8 +194,8 @@ class LomPathCalculator(object):
 
     def _find_property_object_path(self, lom_object, parent):
         component = None
-        for key in PROPERTY_TYPES.keys():
-            if isinstance(lom_object, PROPERTY_TYPES[key]) and hasattr(parent, key):
+        for key in list(PROPERTY_TYPES.keys()):
+            if isinstance(lom_object, PROPERTY_TYPES[key]) and old_hasattr(parent, key):
                 if lom_object == getattr(parent, key):
                     component = key
                     break
@@ -201,7 +205,7 @@ class LomPathCalculator(object):
     def _find_tuple_element_object_path(self, lom_object, parent):
         component = None
         for key in sorted(list(TUPLE_TYPES.keys())):
-            if hasattr(parent, key):
+            if old_hasattr(parent, key):
                 property = getattr(parent, key)
                 if lom_object in property:
                     index = list(property).index(lom_object)
@@ -255,7 +259,7 @@ class LomPathResolver(object):
             parent = self._calculate_object_from_path(path_components[:-1])
         if is_control_surfaces_list(attribute):
             lom_object = wrap_control_surfaces_list(parent)
-        elif parent != None and hasattr(parent, attribute):
+        elif parent != None and old_hasattr(parent, attribute):
             selector = self._list_manager.get_list_wrapper if is_cplusplus_lom_object(parent) else TupleWrapper.get_tuple_wrapper
             lom_object = selector(parent, attribute)
         return lom_object
@@ -268,7 +272,7 @@ class LomPathResolver(object):
             try:
                 if component.isdigit():
                     assert is_object_iterable(lom_object)
-                    assert prev_component in TUPLE_TYPES.keys()
+                    assert prev_component in list(TUPLE_TYPES.keys())
                     index = int(component)
                     if is_control_surfaces_list(prev_component):
                         parent = components[-2] if len(components) > 1 else None
@@ -294,6 +298,6 @@ class LomPathResolver(object):
         lom_object = None
         if len(path_components) > 0:
             assert path_components[0] in ROOT_KEYS
-            selector = self._tuple_element_from_path if path_components[-1] in TUPLE_TYPES.keys() else self._property_object_from_path
+            selector = self._tuple_element_from_path if path_components[-1] in list(TUPLE_TYPES.keys()) else self._property_object_from_path
             lom_object = selector(path_components)
         return lom_object

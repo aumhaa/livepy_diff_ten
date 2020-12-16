@@ -36,11 +36,11 @@ def make_slider(name, channel, number, midi_message_type, skin = None):
 class SpecialMidiMap(MidiMap):
 
     def add_button(self, name, channel, number, midi_message_type, default_states = None, element_factory = make_button, **k):
-        assert name not in self.keys()
+        assert name not in list(self.keys())
         self[name] = element_factory(name, channel, number, midi_message_type, default_states=default_states, **k)
 
     def add_matrix(self, name, element_factory, channel, numbers, midi_message_type):
-        assert name not in self.keys()
+        assert name not in list(self.keys())
 
         def one_dimensional_name(base_name, x, _y):
             return u'%s_%d' % (base_name, x)
@@ -64,5 +64,5 @@ class SpecialMidiMap(MidiMap):
         self[name] = ButtonMatrixElement(rows=elements, name=name)
 
     def add_modifier_button(self, name, channel, number, midi_message_type, default_states = None, element_factory = make_button):
-        assert name not in self.keys()
+        assert name not in list(self.keys())
         self.add_button(name, channel, number, midi_message_type, default_states=default_states, element_factory=element_factory, resource_type=PrioritizedResource)

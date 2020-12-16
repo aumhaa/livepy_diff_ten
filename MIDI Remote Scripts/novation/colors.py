@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface.elements import AnimatedColor, Color
 BLINK_CHANNEL = 1
 PULSE_CHANNEL = 2
@@ -11,7 +12,7 @@ class Blink(AnimatedColor):
     _channel = BLINK_CHANNEL
 
 
-class Rgb:
+class Rgb(object):
     BLACK = Color(0)
     DARK_GREY = Color(1)
     GREY = Color(2)
@@ -53,7 +54,7 @@ class Rgb:
     YELLOW_HALF = Color(125)
 
 
-class Mono:
+class Mono(object):
     OFF = Color(0)
     HALF = Color(63)
     ON = Color(127)

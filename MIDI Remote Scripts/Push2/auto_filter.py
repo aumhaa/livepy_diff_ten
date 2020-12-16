@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.base import EventObject, listens, liveobj_valid
 from ableton.v2.control_surface import LiveObjectDecorator, get_parameter_by_name
 from .device_decoration import DeviceSwitchOption
@@ -66,4 +67,4 @@ class AutoFilterDeviceComponent(DeviceComponentWithTrackColorViewData):
 
     @property
     def _shrink_parameters(self):
-        return [ self._visualisation_visible and index < 3 for index in xrange(8) ]
+        return [ self._visualisation_visible and index < 3 for index in range(8) ]

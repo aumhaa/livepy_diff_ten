@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 from functools import partial
 import Live
 from ...base import in_range, clamp, listens, task
@@ -185,7 +186,7 @@ class TransportComponent(Component):
     @listens(u'value')
     def __tempo_value(self, value):
         if self.is_enabled():
-            fraction = (TEMPO_TOP - TEMPO_BOTTOM) / 127.0
+            fraction = old_div(TEMPO_TOP - TEMPO_BOTTOM, 127.0)
             self.song.tempo = fraction * value + TEMPO_BOTTOM
 
     @listens(u'value')
@@ -200,7 +201,7 @@ class TransportComponent(Component):
             else:
                 assert in_range(self._prior_fine_tempo_value, 0, 128)
                 difference = value - self._prior_fine_tempo_value
-                ratio = 127.0 / TEMPO_FINE_RANGE
-                new_tempo = clamp(self.song.tempo + difference / ratio, TEMPO_BOTTOM, TEMPO_TOP)
+                ratio = old_div(127.0, TEMPO_FINE_RANGE)
+                new_tempo = clamp(self.song.tempo + old_div(difference, ratio), TEMPO_BOTTOM, TEMPO_TOP)
                 self.song.tempo = new_tempo
         self._prior_fine_tempo_value = value

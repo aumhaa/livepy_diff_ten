@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from _Framework.Skin import Skin
 from _Framework.ButtonElement import Color
 from pushbase.colors import Rgb, Pulse, Blink
@@ -8,17 +9,17 @@ RED = Color(3)
 RED_BLINK = Color(4)
 AMBER = Color(5)
 
-class Defaults:
+class Defaults(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Color(127)
         Off = Color(0)
         Disabled = Color(0)
 
 
-class BiLedColors:
+class BiLedColors(object):
 
-    class Session:
+    class Session(object):
         ClipStopped = AMBER
         ClipStarted = GREEN
         ClipRecording = RED
@@ -32,16 +33,16 @@ class BiLedColors:
         StopClipTriggered = GREEN_BLINK
         RecordButton = Color(0)
 
-    class Zooming:
+    class Zooming(object):
         Selected = AMBER
         Stopped = RED
         Playing = GREEN
         Empty = Color(0)
 
 
-class RgbColors:
+class RgbColors(object):
 
-    class Session:
+    class Session(object):
         Scene = Rgb.GREEN
         SceneTriggered = Blink(Rgb.GREEN, Rgb.BLACK, 24)
         NoScene = Rgb.BLACK
@@ -53,25 +54,25 @@ class RgbColors:
         ClipEmpty = Rgb.BLACK
         RecordButton = Rgb.BLACK
 
-    class Zooming:
+    class Zooming(object):
         Selected = Rgb.AMBER
         Stopped = Rgb.RED
         Playing = Rgb.GREEN
         Empty = Rgb.BLACK
 
 
-class StopButtons:
+class StopButtons(object):
 
-    class Session:
+    class Session(object):
         StopClip = Color(1)
         StopClipTriggered = Color(2)
 
 
-class CrossfadeButtons:
+class CrossfadeButtons(object):
 
-    class Mixer:
+    class Mixer(object):
 
-        class Crossfade:
+        class Crossfade(object):
             Off = Color(0)
             A = Color(1)
             B = Color(2)

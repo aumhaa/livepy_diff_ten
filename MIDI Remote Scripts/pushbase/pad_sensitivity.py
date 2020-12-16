@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import zip
 from itertools import repeat
 from ableton.v2.base import find_if, second, nop, task
 from ableton.v2.control_surface import Component
@@ -24,7 +25,7 @@ class PadUpdateComponent(Component):
         self._all_pads = set(all_pads)
         self._modified_pads = set(all_pads)
         self._profiles = {u'default': default_profile}
-        self._profile_for = dict(zip(all_pads, repeat(u'default')))
+        self._profile_for = dict(list(zip(all_pads, repeat(u'default'))))
         self._profile_count = {u'default': len(all_pads)}
         self._update_task = self._tasks.add(task.sequence(task.wait(update_delay), task.run(self._update_modified)))
         self._update_task.restart()
@@ -32,7 +33,7 @@ class PadUpdateComponent(Component):
     def set_profile(self, profile_id, parameters):
         self._profiles[profile_id] = parameters
         self._profile_count.setdefault(profile_id, 0)
-        affected = [ k for k, v in self._profile_for.iteritems() if v == profile_id ]
+        affected = [ k for k, v in self._profile_for.items() if v == profile_id ]
         self._add_modified_pads(affected)
 
     def get_profile(self, profile_id):
@@ -55,8 +56,8 @@ class PadUpdateComponent(Component):
 
     def _update_modified(self):
         if self.is_enabled() and self._modified_pads:
-            assert sum(self._profile_count.itervalues()) == len(self._all_pads)
-            largest_profile, largest_count = max(self._profile_count.iteritems(), key=second)
+            assert sum(self._profile_count.values()) == len(self._all_pads)
+            largest_profile, largest_count = max(iter(self._profile_count.items()), key=second)
             if len(self._all_pads) - largest_count + 1 < len(self._modified_pads):
                 self.parameter_sender(self._profiles[largest_profile])
                 for pad in self._all_pads:

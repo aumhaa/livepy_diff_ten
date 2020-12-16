@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
 from ableton.v2.base import listens
 from ableton.v2.control_surface.control import TextDisplayControl
 from pushbase.quantization_component import QuantizationSettingsComponent as QuantizationSettingsComponentBase, QUANTIZATION_NAMES, quantize_amount_to_string

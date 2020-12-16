@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 import Live
 import MidiRemoteScript
 NOTE_OFF_STATUS = 128
@@ -19,10 +22,10 @@ FIRE_ONE_TRANSPORT = [RWD_NOTE,
  STOP_NOTE,
  PLAY_NOTE,
  REC_NOTE]
-FIRE_ONE_F_KEYS = range(54, 64)
+FIRE_ONE_F_KEYS = list(range(54, 64))
 FIRE_ONE_CHANNEL = 0
 
-class FireOne:
+class FireOne(object):
     u""" Small script for the Tascam FireOne mapping transport, jog dial, and shift """
 
     def __init__(self, c_instance):

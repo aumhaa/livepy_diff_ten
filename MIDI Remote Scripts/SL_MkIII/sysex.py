@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
 SYSEX_START_BYTE = 240
 SYSEX_END_BYTE = 247
 NOVATION_MANUFACTURER_ID = (0, 32, 41)
@@ -45,4 +46,4 @@ def collate_message_segments(segments):
 
 
 def make_sysex_from_segments(segments):
-    return map(wrap_message, collate_message_segments(segments))
+    return list(map(wrap_message, collate_message_segments(segments)))

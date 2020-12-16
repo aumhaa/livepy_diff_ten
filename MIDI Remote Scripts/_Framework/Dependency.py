@@ -9,6 +9,8 @@ identifiers.  Dependencies are provided via accessor functions, that
 in general will be called whenever they are needed.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import object
 __all__ = (u'inject', u'depends', u'dependency')
 from functools import wraps
 from .Util import union
@@ -65,7 +67,7 @@ class dependency(object):
 
     def __init__(self, **k):
         assert len(k) == 1
-        self._dependency_name, self._dependency_default = k.items()[0]
+        self._dependency_name, self._dependency_default = list(k.items())[0]
 
     def __get__(self, obj, cls = None):
         if obj is None:
@@ -102,7 +104,7 @@ def depends(**dependencies):
 
         @wraps(func)
         def wrapper(self, *a, **explicit):
-            deps = dict([ (k, get_dependency_for(self, k, v)) for k, v in dependencies.iteritems() if k not in explicit ])
+            deps = dict([ (k, get_dependency_for(self, k, v)) for k, v in dependencies.items() if k not in explicit ])
             return func(self, *a, **union(deps, explicit))
 
         return wrapper

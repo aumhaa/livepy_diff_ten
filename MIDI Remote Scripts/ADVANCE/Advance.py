@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.Layer import Layer
@@ -28,7 +29,7 @@ class Advance(ControlSurface):
     def __init__(self, *a, **k):
         super(Advance, self).__init__(*a, **k)
         with self.component_guard():
-            encoders = ButtonMatrixElement(rows=[[ make_encoder(index + 22, u'Encoder_%d' % index) for index in xrange(8) ]])
+            encoders = ButtonMatrixElement(rows=[[ make_encoder(index + 22, u'Encoder_%d' % index) for index in range(8) ]])
             pads = ButtonMatrixElement(rows=[ [ make_button(identifier, u'Pad_%d_%d' % (col, row)) for col, identifier in enumerate(row_ids) ] for row, row_ids in enumerate(PAD_IDS) ])
             device = DeviceComponent(is_enabled=False, layer=Layer(parameter_controls=encoders), device_selection_follows_track_selection=True)
             device.set_enabled(True)

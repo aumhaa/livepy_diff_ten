@@ -1,11 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from builtins import round
+from past.utils import old_div
+from builtins import object
 import math
 from ableton.v2.base import SerializableListenableProperties, chunks, clamp, listenable_property, task
 from ableton.v2.control_surface import Component
 NUM_VELOCITY_CURVE_ENTRIES = 128
 LAST_INDEX_FOR_DISPLAY = 58
 
-class LookupTable:
+class LookupTable(object):
     MAXW = [1700.0,
      1660.0,
      1590.0,
@@ -90,8 +95,8 @@ def gamma_func(x, gamma):
 
 
 def calculate_points(alpha):
-    a1 = (225.0 - alpha) * math.pi / 180.0
-    a2 = (45.0 - alpha) * math.pi / 180.0
+    a1 = (225.0 - alpha) * old_div(math.pi, 180.0)
+    a2 = (45.0 - alpha) * old_div(math.pi, 180.0)
     r = 0.4
     p1x = 0.5 + r * math.cos(a1)
     p1y = 0.5 + r * math.sin(a1)
@@ -131,17 +136,17 @@ def generate_velocity_curve(sensitivity, gain, dynamics):
     alpha = LookupTable.ALPHA[dynamics]
     p1x, p1y, p2x, p2y = calculate_points(alpha)
     curve = []
-    minw_index = int(minw) / 32
-    maxw_index = int(maxw) / 32
+    minw_index = old_div(int(minw), 32)
+    maxw_index = old_div(int(maxw), 32)
     t = 0.0
-    for index in xrange(NUM_VELOCITY_CURVE_ENTRIES):
+    for index in range(NUM_VELOCITY_CURVE_ENTRIES):
         w = index * 32.0
         if w <= minw:
-            velocity = 1.0 + (minv - 1.0) * float(index) / float(minw_index)
+            velocity = 1.0 + (minv - 1.0) * old_div(float(index), float(minw_index))
         elif w >= maxw:
-            velocity = maxv + (127.0 - maxv) * float(index - maxw_index) / float(128 - maxw_index)
+            velocity = maxv + (127.0 - maxv) * old_div(float(index - maxw_index), float(128 - maxw_index))
         else:
-            wnorm = (w - minw) / (maxw - minw)
+            wnorm = old_div(w - minw, maxw - minw)
             b, t = bezier(wnorm, t, p1x, p1y, p2x, p2y)
             velonorm = gamma_func(b, gamma)
             velocity = minv + velonorm * (maxv - minv)

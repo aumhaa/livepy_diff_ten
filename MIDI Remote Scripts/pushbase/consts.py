@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 import sys
 import Live
 from ableton.v2.control_surface import DEFAULT_PRIORITY
@@ -38,7 +39,7 @@ GRAPH_PAN = (u'\x05\x05\x05\x05\x06\x06\x06\x06', u'\x04\x05\x05\x05\x06\x06\x06
 GRAPH_SIN = (u'\x03\x06\x06\x06\x06\x06\x06\x06', u'\x04\x06\x06\x06\x06\x06\x06\x06', u'\x06\x03\x06\x06\x06\x06\x06\x06', u'\x06\x04\x06\x06\x06\x06\x06\x06', u'\x06\x06\x03\x06\x06\x06\x06\x06', u'\x06\x06\x04\x06\x06\x06\x06\x06', u'\x06\x06\x06\x03\x06\x06\x06\x06', u'\x06\x06\x06\x04\x06\x06\x06\x06', u'\x06\x06\x06\x06\x03\x06\x06\x06', u'\x06\x06\x06\x06\x04\x06\x06\x06', u'\x06\x06\x06\x06\x06\x03\x06\x06', u'\x06\x06\x06\x06\x06\x04\x06\x06', u'\x06\x06\x06\x06\x06\x06\x03\x06', u'\x06\x06\x06\x06\x06\x06\x04\x06', u'\x06\x06\x06\x06\x06\x06\x06\x03', u'\x06\x06\x06\x06\x06\x06\x06\x04')
 DISTANT_FUTURE = 999999
 
-class MessageBoxText:
+class MessageBoxText(object):
     LIVE_DIALOG = u'\n                    Live is showing a dialog' + u'\n                    that needs your attention.'
     CLIP_DUPLICATION_FAILED = u'\n                     The clip could not be duplicated' + u'\n                      because it is recording'
     SCENE_LIMIT_REACHED = u'\n                  No more scene can be inserted' + u'\n                   for this version of Live'
@@ -120,10 +121,10 @@ _test_mode = __builtins__.get(u'TEST_MODE', False)
 if not _test_mode:
     try:
         _this_module = sys.modules[__name__]
-        _proto_list = filter(lambda a: a.startswith(u'PROTO_'), dir(_this_module))
+        _proto_list = [ a for a in dir(_this_module) if a.startswith(u'PROTO_') ]
         for attr in _proto_list:
             try:
-                _local_consts = __import__(u'local_consts', globals(), locals(), [attr], -1)
+                _local_consts = __import__(u'local_consts', globals(), locals(), [attr])
                 setattr(_this_module, attr, getattr(_local_consts, attr))
             except AttributeError:
                 pass

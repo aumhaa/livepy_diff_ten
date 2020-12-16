@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface.elements import Color
 from . import midi
 BLINK_VALUE = 1
@@ -20,12 +21,12 @@ class RgbColor(Color):
         interface.send_value(self._on_value if self._red or self._green or self._blue else 0)
 
 
-class Mono:
+class Mono(object):
     OFF = Color(0)
     ON = Color(127)
 
 
-class Rgb:
+class Rgb(object):
     BLACK = RgbColor(0, 0, 0)
     WHITE = RgbColor(109, 80, 27)
     RED = RgbColor(127, 0, 0)

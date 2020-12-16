@@ -2,6 +2,7 @@ u"""
 Object that encapsulates selection in the Push controller.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 import Live
 
 class Selection(object):

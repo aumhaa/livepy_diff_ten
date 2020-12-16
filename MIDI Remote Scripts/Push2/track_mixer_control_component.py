@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.base import clamp, depends, listens, liveobj_valid
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.components import SimpleItemSlot
@@ -131,7 +132,7 @@ class TrackMixerControlComponent(Component):
         return self._items
 
     def _update_view_slots(self):
-        self._items = [ IconItemSlot() for _ in xrange(6) ]
+        self._items = [ IconItemSlot() for _ in range(6) ]
         self._items.append(IconItemSlot(icon=u'page_left.svg' if self.scroll_left_button.enabled else u''))
         self._items.append(IconItemSlot(icon=u'page_right.svg' if self.scroll_right_button.enabled else u''))
         self.notify_items()

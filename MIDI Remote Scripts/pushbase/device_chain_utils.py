@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from itertools import imap, chain
+from itertools import chain
 from functools import partial
 from ableton.v2.base import find_if, liveobj_valid
 

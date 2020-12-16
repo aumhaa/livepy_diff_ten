@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter, izip_longest
+from builtins import chr
+from builtins import filter
+from future.moves.itertools import zip_longest
 from _Framework.Control import RadioButtonControl, control_list
 from _Framework.Dependency import depends
 from _Framework.Util import nop
@@ -21,7 +23,7 @@ class ChannelStripComponent(ChannelStripComponentBase):
 
 
 def _set_channel(controls, channel):
-    for control in ifilter(None, controls or []):
+    for control in filter(None, controls or []):
         control.set_channel(channel)
 
 
@@ -81,7 +83,7 @@ class MixerComponent(MixerComponentBase):
             self._show_message(u'Controlling User Mappings')
 
     def set_crossfade_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_crossfade_toggle(button)
 
     def _update_pan_controls(self):

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 
 class LogicalDisplaySegment(object):
     u"""
@@ -55,7 +56,7 @@ class LogicalDisplaySegment(object):
             assert width >= 0
             return self._data_source.adjust_string(width) + separator
         else:
-            return u' ' * self._width
+            return u' ' * int(self._width)
 
     def display_string(self):
         if self._display_string is None:

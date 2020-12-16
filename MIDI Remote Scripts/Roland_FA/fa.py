@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
 from ableton.v2.base import const, inject
 from ableton.v2.control_surface import ControlSurface, Layer, MIDI_NOTE_TYPE
@@ -31,14 +32,14 @@ class FA(ControlSurface):
         self._stop_button = make_button(25, u'Stop_Button')
         self._play_button = make_button(26, u'Play_Button')
         self._record_button = make_button(28, u'Record_Button')
-        self._encoders = ButtonMatrixElement(rows=[[ make_encoder(index + 70, u'Encoder_%d' % (index,)) for index in xrange(6) ]], name=u'Encoders')
+        self._encoders = ButtonMatrixElement(rows=[[ make_encoder(index + 70, u'Encoder_%d' % (index,)) for index in range(6) ]], name=u'Encoders')
         self._volume_mode_button = make_button(16, u'Volume_Mode_Button')
         self._pan_mode_button = make_button(17, u'Pan_Mode_Button')
         self._send_a_mode_button = make_button(18, u'Send_A_Mode_Button')
         self._send_b_mode_button = make_button(19, u'Send_B_Mode_Button')
         self._s1_button = make_button(14, u'S1_Button')
         self._s2_button = make_button(15, u'S2_Button')
-        self._pads = ButtonMatrixElement(rows=[ [ make_button(col_index + offset, u'Pad_%d_%d' % (col_index, row_index), msg_type=MIDI_NOTE_TYPE) for col_index in xrange(4) ] for row_index, offset in enumerate(xrange(72, 59, -4)) ], name=u'Pads')
+        self._pads = ButtonMatrixElement(rows=[ [ make_button(col_index + offset, u'Pad_%d_%d' % (col_index, row_index), msg_type=MIDI_NOTE_TYPE) for col_index in range(4) ] for row_index, offset in enumerate(range(72, 59, -4)) ], name=u'Pads')
 
     def _create_transport(self):
         self._transport = TransportComponent(name=u'Transport', is_enabled=False, layer=Layer(play_button=self._play_button, stop_button=self._stop_button, seek_backward_button=self._rwd_button, seek_forward_button=self._ff_button, jump_to_start_button=self._jump_to_start_button))

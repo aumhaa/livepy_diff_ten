@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from _Framework.MixerComponent import MixerComponent
 from .DefChannelStripComponent import DefChannelStripComponent

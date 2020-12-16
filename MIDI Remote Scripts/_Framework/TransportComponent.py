@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from past.utils import old_div
 from functools import partial
 import Live
 from . import Task
@@ -195,7 +197,7 @@ class TransportComponent(CompoundComponent):
                 assert in_range(self._prior_fine_tempo_value, 0, 128)
                 difference = value - self._prior_fine_tempo_value
                 ratio = 127.0 / TEMPO_FINE_RANGE
-                new_tempo = clamp(self.song().tempo + difference / ratio, TEMPO_BOTTOM, TEMPO_TOP)
+                new_tempo = clamp(self.song().tempo + old_div(difference, ratio), TEMPO_BOTTOM, TEMPO_TOP)
                 self.song().tempo = new_tempo
         self._prior_fine_tempo_value = value
 

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 from ableton.v2.base import clamp, liveobj_valid
 from ableton.v2.control_surface.components import find_nearest_color
 from ableton.v2.control_surface.elements import Color
@@ -8,7 +9,7 @@ def normalized_parameter_value(param):
     value = 0.0
     if liveobj_valid(param):
         param_range = param.max - param.min
-        value = float(param.value - param.min) / param_range
+        value = old_div(float(param.value - param.min), param_range)
     return clamp(value, 0.0, 1.0)
 
 

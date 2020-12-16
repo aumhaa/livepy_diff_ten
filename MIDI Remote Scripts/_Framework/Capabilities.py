@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.builtins import basestring
 GENERIC_SCRIPT_KEY = u'generic_script'
 PORTS_KEY = u'ports'
 CONTROLLER_ID_KEY = u'controller_id'

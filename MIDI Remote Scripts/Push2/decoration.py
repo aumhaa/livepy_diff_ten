@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ableton.v2.base import find_if, liveobj_changed, liveobj_valid
+from ableton.v2.base import find_if, liveobj_changed, liveobj_valid, old_hasattr
 from ableton.v2.control_surface import DecoratorFactory
 
 def find_decorated_object(proxied_object, decorator_factory):
     decorated_obj = None
     if liveobj_valid(proxied_object):
-        decorated_obj = find_if(lambda obj: not liveobj_changed(obj.proxied_object, proxied_object), decorator_factory.decorated_objects.itervalues())
+        decorated_obj = find_if(lambda obj: not liveobj_changed(obj.proxied_object, proxied_object), iter(decorator_factory.decorated_objects.values()))
     return decorated_obj
 
 
@@ -29,9 +29,9 @@ class TrackDecoratorFactory(DecoratorFactory):
 
     def _get_chain_nesting_level(self, chain):
         parent_chain_or_track = chain.canonical_parent.canonical_parent
-        if hasattr(parent_chain_or_track, u'group_track'):
+        if old_hasattr(parent_chain_or_track, u'group_track'):
             return self._get_nesting_level(parent_chain_or_track) + 1
-        elif hasattr(parent_chain_or_track, u'canonical_parent') and hasattr(parent_chain_or_track.canonical_parent, u'canonical_parent'):
+        elif old_hasattr(parent_chain_or_track, u'canonical_parent') and old_hasattr(parent_chain_or_track.canonical_parent, u'canonical_parent'):
             return self._get_chain_nesting_level(parent_chain_or_track) + 1
         else:
             return 0

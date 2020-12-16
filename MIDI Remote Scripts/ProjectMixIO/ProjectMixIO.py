@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 from MackieControl.consts import *
 from MackieControl.MainDisplay import MainDisplay
 from MackieControl.MainDisplayController import MainDisplayController
@@ -9,7 +11,7 @@ from MackieControl.SoftwareController import SoftwareController
 from MackieControl.Transport import Transport
 import Live
 
-class ProjectMixIO:
+class ProjectMixIO(object):
     u"""Subset of the Mackie Control Script, that works with the ProjectMix in
        Live Mackie Control Mode.
     """

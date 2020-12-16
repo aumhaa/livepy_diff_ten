@@ -1,15 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from _Framework.Skin import Skin
 from .Colors import Rgb
 
-class Colors:
+class Colors(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Rgb.GREEN
         Off = Rgb.GREEN_HALF
         Disabled = Rgb.BLACK
 
-    class Session:
+    class Session(object):
         SceneTriggered = Rgb.GREEN_BLINK
         NoScene = Rgb.BLACK
         ClipStarted = Rgb.GREEN_PULSE
@@ -24,13 +25,13 @@ class Colors:
         Enabled = Rgb.GREEN
         Off = Rgb.GREEN_HALF
 
-    class Zooming:
+    class Zooming(object):
         Selected = Rgb.AMBER
         Stopped = Rgb.RED
         Playing = Rgb.GREEN
         Empty = Rgb.BLACK
 
-    class Mixer:
+    class Mixer(object):
         ArmOn = Rgb.RED
         ArmOff = Rgb.RED_HALF
         SoloOn = Rgb.BLUE
@@ -43,7 +44,7 @@ class Colors:
         Pan = Rgb.ORANGE
         Sends = Rgb.WHITE
 
-    class Sends:
+    class Sends(object):
         A = Rgb.DARK_BLUE
         AAvail = Rgb.DARK_BLUE_HALF
         B = Rgb.BLUE
@@ -61,17 +62,17 @@ class Colors:
         H = Rgb.RED
         HAvail = Rgb.RED_HALF
 
-    class Device:
+    class Device(object):
         On = Rgb.PURPLE
         Off = Rgb.PURPLE_HALF
         Disabled = Rgb.BLACK
 
-    class Recording:
+    class Recording(object):
         On = Rgb.RED
         Off = Rgb.RED_HALF
         Transition = Rgb.RED_BLINK
 
-    class DrumGroup:
+    class DrumGroup(object):
         PadEmpty = Rgb.BLACK
         PadFilled = Rgb.YELLOW
         PadSelected = Rgb.LIGHT_BLUE
@@ -83,70 +84,70 @@ class Colors:
         PadInvisible = Rgb.BLACK
         PadAction = Rgb.RED
 
-    class Instrument:
+    class Instrument(object):
         FeedbackRecord = Rgb.RED
         Feedback = Rgb.GREEN
 
-    class Mode:
+    class Mode(object):
 
-        class Session:
+        class Session(object):
             On = Rgb.GREEN
             Off = Rgb.GREEN_HALF
 
-        class Chromatic:
+        class Chromatic(object):
             On = Rgb.LIGHT_BLUE
             Off = Rgb.LIGHT_BLUE_HALF
 
-        class Drum:
+        class Drum(object):
             On = Rgb.YELLOW
             Off = Rgb.YELLOW_HALF
 
-        class Device:
+        class Device(object):
             On = Rgb.PURPLE
             Off = Rgb.PURPLE_HALF
 
-        class User:
+        class User(object):
             On = Rgb.DARK_BLUE
             Off = Rgb.DARK_BLUE_HALF
 
-        class RecordArm:
+        class RecordArm(object):
             On = Rgb.RED
             Off = Rgb.RED_HALF
 
-        class TrackSelect:
+        class TrackSelect(object):
             On = Rgb.LIGHT_BLUE
             Off = Rgb.LIGHT_BLUE_HALF
 
-        class Mute:
+        class Mute(object):
             On = Rgb.YELLOW
             Off = Rgb.YELLOW_HALF
 
-        class Solo:
+        class Solo(object):
             On = Rgb.BLUE
             Off = Rgb.BLUE_HALF
 
-        class Volume:
+        class Volume(object):
             On = Rgb.GREEN
             Off = Rgb.GREEN_HALF
 
-        class Pan:
+        class Pan(object):
             On = Rgb.ORANGE
             Off = Rgb.ORANGE_HALF
 
-        class Sends:
+        class Sends(object):
             On = Rgb.WHITE
             Off = Rgb.DARK_GREY
 
-        class StopClip:
+        class StopClip(object):
             On = Rgb.RED
             Off = Rgb.RED_HALF
 
-    class Scrolling:
+    class Scrolling(object):
         Enabled = Rgb.YELLOW_HALF
         Pressed = Rgb.YELLOW
         Disabled = Rgb.BLACK
 
-    class Misc:
+    class Misc(object):
         UserMode = Rgb.DARK_BLUE
         Shift = Rgb.DARK_GREY
         ShiftOn = Rgb.WHITE

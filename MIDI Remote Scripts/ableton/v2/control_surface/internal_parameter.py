@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.builtins import unicode
 from Live import DeviceParameter
-from ..base import clamp, listenable_property, liveobj_valid, nop, EventError, EventObject, Slot
+from ..base import clamp, listenable_property, liveobj_valid, nop, old_hasattr, EventError, EventObject, Slot
 
 def identity(value, _parent):
     return value
@@ -158,7 +159,7 @@ class WrappingParameter(InternalParameter, PropertyHostMixin):
         assert source_property is not None
         super(WrappingParameter, self).__init__(display_value_conversion=display_value_conversion, *a, **k)
         self._property_host = property_host
-        assert self._property_host == None or hasattr(self._property_host, source_property) or source_property in dir(self._property_host)
+        assert self._property_host == None or old_hasattr(self._property_host, source_property) or source_property in dir(self._property_host)
         self._source_property = source_property
         self._value_items = value_items
         self.set_scaling_functions(to_property_value, from_property_value)
@@ -386,4 +387,4 @@ class IntegerParameter(InternalParameter):
 
     @property
     def value_items(self):
-        return range(self._min_value, self._max_value + 1)
+        return list(range(self._min_value, self._max_value + 1))

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 import math
 from ableton.v2.base import clamp, const, depends, listens, task
 from ableton.v2.control_surface import NotifyingControlElement
@@ -20,7 +21,7 @@ def truncate_to_n_least_significant_digits(num, n):
     for i in range(n):
         num_up_to_digit_n = num % pow(10, i + 1)
         divisor = pow(10, i)
-        digits.append((num_up_to_digit_n - num_up_to_digit_n_minus_one) / divisor)
+        digits.append(old_div(num_up_to_digit_n - num_up_to_digit_n_minus_one, divisor))
 
     return digits[::-1]
 

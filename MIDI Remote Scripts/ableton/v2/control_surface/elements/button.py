@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ...base import BooleanContext, const, in_range, has_event, listens
+from past.builtins import long
+from ...base import BooleanContext, const, in_range, has_event, listens, old_hasattr
 from ..input_control_element import InputControlElement, MIDI_CC_TYPE
 from ..skin import Skin
 from .color import Color
@@ -67,7 +68,7 @@ class ButtonElement(InputControlElement, ButtonElementMixin):
         return self._is_momentary and int(self._last_received_value) > 0
 
     def set_light(self, value):
-        if hasattr(value, u'draw'):
+        if old_hasattr(value, u'draw'):
             value.draw(self)
         elif type(value) in (int, long) and in_range(value, 0, 128):
             self.send_value(value)

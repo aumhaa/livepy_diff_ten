@@ -10,6 +10,7 @@ in general will be called whenever they are needed.
 """
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import wraps
+from future.utils import iteritems
 from .util import union
 __all__ = (u'inject', u'depends', u'dependency')
 
@@ -68,7 +69,7 @@ class dependency(object):
 
     def __init__(self, **k):
         assert len(k) == 1
-        self._dependency_name, self._dependency_default = k.items()[0]
+        self._dependency_name, self._dependency_default = next(iter(k.items()))
 
     def __get__(self, _, cls = None):
         return get_dependency_for(self._dependency_name, self._dependency_default)
@@ -103,7 +104,7 @@ def depends(**dependencies):
 
         @wraps(func)
         def wrapper(*a, **explicit):
-            deps = dict([ (k, get_dependency_for(k, v)) for k, v in dependencies.iteritems() if k not in explicit ])
+            deps = dict([ (k, get_dependency_for(k, v)) for k, v in iteritems(dependencies) if k not in explicit ])
             return func(*a, **union(deps, explicit))
 
         return wrapper

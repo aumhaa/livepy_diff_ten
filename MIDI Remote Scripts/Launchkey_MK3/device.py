@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from future.moves.itertools import zip_longest
+from past.builtins import unicode
 from _Generic.Devices import parameter_bank_names
 from ableton.v2.base import listens_group, liveobj_valid, task
 from ableton.v2.control_surface.control import control_list
@@ -59,10 +60,10 @@ class DeviceComponent(SimpleDeviceNavigationComponent, SimpleDeviceParameterComp
 
     def _update_parameter_name_displays(self):
         if self.is_enabled():
-            for parameter, display in izip_longest(self.selected_bank, self.parameter_name_displays):
+            for parameter, display in zip_longest(self.selected_bank, self.parameter_name_displays):
                 display.message = parameter.name if liveobj_valid(parameter) else u'-'
 
     def _update_parameter_value_displays(self):
         if self.is_enabled():
-            for parameter, display in izip_longest(self.selected_bank, self.parameter_value_displays):
+            for parameter, display in zip_longest(self.selected_bank, self.parameter_value_displays):
                 display.message = unicode(parameter) if liveobj_valid(parameter) else u'-'

@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import imap
+from builtins import range
+from builtins import map
 from ...base import depends, find_if, first, clamp, listens_group, listens, liveobj_changed, liveobj_valid
 from ..control import ButtonControl
 from .slide import SlideComponent, Slideable
@@ -30,12 +31,12 @@ class DrumGroupComponent(PlayableComponent, SlideComponent, Slideable):
         pos_count = self.position_count
         first_pos = max(int(pmin - 0.05), 0)
         last_pos = min(int(pmax + 0.2), pos_count)
-        return xrange(first_pos, last_pos)
+        return list(range(first_pos, last_pos))
 
     def contents(self, index):
         drum = self._drum_group_device
         if liveobj_valid(drum):
-            return any(imap(lambda pad: pad.chains, drum.drum_pads[index * 4:index * 4 + 4]))
+            return any(map(lambda pad: pad.chains, drum.drum_pads[index * 4:index * 4 + 4]))
         return False
 
     @property

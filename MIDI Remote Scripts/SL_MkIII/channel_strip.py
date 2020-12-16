@@ -1,6 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from past.utils import old_div
 import Live
-from ableton.v2.base import clamp, listens, liveobj_valid
+from ableton.v2.base import clamp, listens, liveobj_valid, old_round
 from ableton.v2.control_surface.components import ChannelStripComponent as ChannelStripComponentBase
 from ableton.v2.control_surface.elements import DisplayDataSource, SysexRGBColor
 from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl
@@ -84,7 +87,7 @@ class ChannelStripComponent(ChannelStripComponentBase, Messenger):
         track = self.track
         value = (0, 0, 0)
         if liveobj_valid(track):
-            value = tuple([ clamp(int(round(channel * normalized_parameter_value(track.mixer_device.volume) / 2)), 0, 127) for channel in hex_to_channels(track.color) ])
+            value = tuple([ clamp(int(old_round(old_div(channel * normalized_parameter_value(track.mixer_device.volume), 2))), 0, 127) for channel in hex_to_channels(track.color) ])
         self.volume_led.color = SysexRGBColor(value)
 
     def _message_volume_value(self):

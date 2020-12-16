@@ -1,7 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from past.utils import old_div
 from functools import partial
-from itertools import izip_longest
-from ...base import clamp, first, second, mixin, product, flatten, is_matrix, find_if
+from future.moves.itertools import zip_longest
+from ...base import clamp, first, second, mixin, old_hasattr, product, flatten, is_matrix, find_if
 from .control import Connectable, Control
 from .radio_button import RadioButtonControl
 _DYNAMIC_CONTROL_COUNT = None
@@ -45,13 +47,13 @@ class ControlList(Control):
         def unavailable_color(self, value):
             self._unavailable_color = value
             control_elements = self._control_elements or []
-            for control, element in izip_longest(self._controls, control_elements):
+            for control, element in zip_longest(self._controls, control_elements):
                 if not control and element:
                     self._send_unavailable_color(element)
 
         def _create_controls(self, count):
             if count > len(self._controls):
-                self._controls.extend([ self._make_control(i) for i in xrange(len(self._controls), count) ])
+                self._controls.extend([ self._make_control(i) for i in range(len(self._controls), count) ])
             elif count < len(self._controls):
                 self._disconnect_controls(self._controls[count:])
                 self._controls = self._controls[:count]
@@ -65,7 +67,7 @@ class ControlList(Control):
             control = self._control_type(*self._extra_args, **self._extra_kws)
             control._event_listeners = self._event_listeners
             control_state = control._get_state(self._manager)
-            if not hasattr(control_state, u'index'):
+            if not old_hasattr(control_state, u'index'):
                 control_state.index = index
             else:
                 raise RuntimeError(u"Cannot set 'index' attribute. Attribute already set.")
@@ -79,7 +81,7 @@ class ControlList(Control):
 
         def _update_controls(self):
             control_elements = self._control_elements or []
-            for control, element in izip_longest(self._controls, control_elements):
+            for control, element in zip_longest(self._controls, control_elements):
                 if control:
                     control._get_state(self._manager).set_control_element(element)
                 elif element:
@@ -87,7 +89,7 @@ class ControlList(Control):
                     self._send_unavailable_color(element)
 
         def _send_unavailable_color(self, element):
-            if hasattr(element, u'set_light'):
+            if old_hasattr(element, u'set_light'):
                 element.set_light(self._unavailable_color)
 
         def __getitem__(self, index):
@@ -195,21 +197,21 @@ class MatrixControl(ControlList):
 
         def _make_control(self, index):
             control = super(MatrixControl.State, self)._make_control(index)
-            if hasattr(control._get_state(self._manager), u'coordinate'):
+            if old_hasattr(control._get_state(self._manager), u'coordinate'):
                 raise RuntimeError(u"Cannot set 'coordinate' attribute. Attribute already set.")
             return control
 
         def _update_coordinates(self):
             for index, control in enumerate(self._controls):
                 control_state = control._get_state(self._manager)
-                control_state.coordinate = (int(index / self.width), index % self.width)
+                control_state.coordinate = (int(old_div(index, self.width)), index % self.width)
 
         def set_control_element(self, control_elements):
             dimensions = (None, None)
-            if hasattr(control_elements, u'width') and hasattr(control_elements, u'height'):
+            if old_hasattr(control_elements, u'width') and old_hasattr(control_elements, u'height'):
                 dimensions = (control_elements.height(), control_elements.width())
                 if not self._dynamic_create:
-                    control_elements = [ control_elements.get_button(row, col) for row, col in product(xrange(self.height), xrange(self.width)) ]
+                    control_elements = [ control_elements.get_button(row, col) for row, col in product(range(self.height), range(self.width)) ]
             elif is_matrix(control_elements):
                 dimensions = (len(control_elements), len(first(control_elements)))
                 if not self._dynamic_create:

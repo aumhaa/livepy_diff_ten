@@ -1,17 +1,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface.elements import Color
 LIVE_COLOR_TABLE_INDEX_OFFSET = 8
 ON_COLOR = Color(127)
 OFF_COLOR = Color(0)
 
-class ColorsBase:
+class ColorsBase(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = ON_COLOR
         Off = OFF_COLOR
         Disabled = OFF_COLOR
 
-    class Mixer:
+    class Mixer(object):
         SoloOn = Color(2)
         SoloOff = OFF_COLOR
         MuteOn = Color(1)
@@ -20,7 +21,7 @@ class ColorsBase:
         CrossfadeAssignA = Color(1)
         CrossfadeAssignB = Color(3)
 
-    class Session:
+    class Session(object):
         RecordButton = ON_COLOR
         ClipTriggeredPlay = Color(3)
         ClipTriggeredRecord = Color(6)
@@ -40,14 +41,14 @@ class ColorsBase:
         SceneOn = Color(2)
         SceneDefault = Color(21)
 
-    class Action:
+    class Action(object):
         Available = OFF_COLOR
         On = Color(1)
         Off = Color(0)
         QuantizeOn = Color(5)
         QuantizeOff = Color(0)
 
-    class Transport:
+    class Transport(object):
         PlayOn = ON_COLOR
         PlayOff = OFF_COLOR
         StopOn = ON_COLOR
@@ -56,22 +57,22 @@ class ColorsBase:
         MetronomeOff = Color(0)
         TapTempo = Color(1)
 
-    class Recording:
+    class Recording(object):
         On = ON_COLOR
         Off = OFF_COLOR
         Transition = ON_COLOR
 
-    class Automation:
+    class Automation(object):
         On = Color(2)
         Off = OFF_COLOR
 
-    class Navigation:
+    class Navigation(object):
         Enabled = Color(1)
 
-    class Background:
+    class Background(object):
         On = Color(1)
 
-    class Mode:
+    class Mode(object):
         On = Color(1)
         Off = OFF_COLOR
 

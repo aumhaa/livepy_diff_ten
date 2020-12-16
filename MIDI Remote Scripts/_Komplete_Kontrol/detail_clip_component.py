@@ -39,4 +39,4 @@ class DetailClipComponent(Component):
     @delete_notes_button.pressed
     def delete_notes_button(self, _):
         clip = self.song.view.detail_clip
-        clip.remove_notes(0, 0, clip.loop_end, 128)
+        clip.remove_notes_extended(from_time=0, from_pitch=0, time_span=clip.loop_end, pitch_span=128)

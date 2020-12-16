@@ -2,6 +2,9 @@ u"""
 Task management.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import filter
+from past.utils import old_div
 import functools
 import logging
 import traceback
@@ -175,7 +178,7 @@ class GeneratorTask(Task):
         super(GeneratorTask, self).do_update(delta)
         self._param.delta = delta
         try:
-            action = self._iter.next()
+            action = next(self._iter)
         except StopIteration:
             action = KILLED
 
@@ -226,7 +229,7 @@ class TaskGroup(Task):
 
         if self.auto_remove:
             self._tasks = remove_if(lambda t: t.is_killed, self._tasks)
-        all_killed = len(filter(lambda t: t.is_killed, self._tasks)) == self.count
+        all_killed = len(list(filter(lambda t: t.is_killed, self._tasks))) == self.count
         if self.auto_kill and all_killed:
             self.kill()
         elif self.loop and all_killed:
@@ -326,7 +329,7 @@ class FadeTask(Task):
 
     def do_update(self, delta):
         super(FadeTask, self).do_update(delta)
-        self.func(self.curr / self.duration)
+        self.func(old_div(self.curr, self.duration))
         self.curr += delta
         if self.curr >= self.duration:
             if self.loop:
@@ -334,7 +337,7 @@ class FadeTask(Task):
             else:
                 self.curr = self.duration
                 self.kill()
-                self.func(self.curr / self.duration)
+                self.func(old_div(self.curr, self.duration))
 
     def do_restart(self):
         super(FadeTask, self).do_restart()
@@ -352,7 +355,7 @@ class SequenceTask(Task):
 
     def _advance_sequence(self):
         try:
-            self._current = self._iter.next()
+            self._current = next(self._iter)
         except StopIteration:
             self.kill()
 
@@ -410,7 +413,7 @@ def generator(orig):
 
 
 def sequence(*tasks):
-    return SequenceTask(map(totask, tasks))
+    return SequenceTask(list(map(totask, tasks)))
 
 
 def parallel(*tasks):
@@ -437,7 +440,7 @@ try:
     import math
 
     def sinusoid(f, min = 0.0, max = 1.0, *a, **k):
-        return fade((lambda x: f(min + (max - min) * math.sin(x * math.pi / 2.0))), *a, **k)
+        return fade((lambda x: f(min + (max - min) * math.sin(x * old_div(math.pi, 2.0)))), *a, **k)
 
 
 except ImportError as err:

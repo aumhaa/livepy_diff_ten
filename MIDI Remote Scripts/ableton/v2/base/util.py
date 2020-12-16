@@ -2,10 +2,18 @@ u"""
 Various utilities.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from future.builtins import range
+from future.moves.itertools import zip_longest
+from future.utils import iteritems
+from future.builtins import map
+from math import ceil, floor
 from contextlib import contextmanager
-from functools import wraps, partial
-from itertools import chain, imap, izip_longest
+from functools import wraps, partial, reduce
+from itertools import chain
+from numbers import Number
 import sys
+PY2 = sys.version_info[0] < 3
+PY3 = sys.version_info[0] >= 3
 
 def clamp(val, minv, maxv):
     return max(minv, min(val, maxv))
@@ -24,11 +32,22 @@ def negate(value):
     return not value
 
 
+def old_round(value):
+    u"""
+    Mimics the behavior of `round` in python 2
+    """
+    if round(value + 1) - round(value) != 1:
+        return value + abs(value) / value * 0.5
+    return round(value)
+
+
 def const(value):
     return lambda *a, **k: value
 
 
 def in_range(value, lower_bound, upper_open_bound):
+    if not isinstance(value, Number):
+        return False
     return value >= lower_bound and value < upper_open_bound
 
 
@@ -51,7 +70,7 @@ def slice_size(slice, width):
 
 
 def chunks(l, chunk_size):
-    for i in xrange(0, len(l), chunk_size):
+    for i in range(0, len(l), chunk_size):
         yield l[i:i + chunk_size]
 
 
@@ -151,7 +170,7 @@ def monkeypatch(target, name = None, override = False, doc = None):
 
     def patcher(func):
         patchname = func.__name__ if name is None else name
-        if not override and hasattr(target, patchname):
+        if not override and old_hasattr(target, patchname):
             raise TypeError(u'Class %s already has method %s' % (target.__name__, patchname))
         setattr(target, patchname, func)
         try:
@@ -202,7 +221,7 @@ def monkeypatch_extend(target, name = None):
     def patcher(func):
         newfunc = func
         patchname = func.__name__ if name is None else name
-        if hasattr(target, patchname):
+        if old_hasattr(target, patchname):
             oldfunc = getattr(target, patchname)
             if not callable(oldfunc):
                 raise TypeError(u'Can not extend non callable attribute')
@@ -354,7 +373,8 @@ def group(lst, n):
     Returns a list of lists with elements from 'lst' grouped in blocks
     of 'n' elements.
     """
-    return list(izip_longest(*[ lst[i::n] for i in range(n) ]))
+    n = int(n)
+    return list(zip_longest(*[ lst[i::n] for i in range(n) ]))
 
 
 def find_if(predicate, seq):
@@ -436,7 +456,7 @@ def recursive_map(fn, element, sequence_type = None):
     if sequence_type is None:
         return recursive_map(fn, element, type(element))
     elif isinstance(element, sequence_type):
-        return map(lambda x: recursive_map(fn, x, sequence_type), element)
+        return list(map(lambda x: recursive_map(fn, x, sequence_type), element))
     else:
         return fn(element)
 
@@ -447,7 +467,7 @@ def is_matrix(iterable):
     not empty
     """
     if is_iterable(iterable) and len(iterable) > 0:
-        return all(imap(lambda x: is_iterable(x) and len(iterable[0]) == len(x) and len(x) > 0, iterable))
+        return all(map(lambda x: is_iterable(x) and len(iterable[0]) == len(x) and len(x) > 0, iterable))
     else:
         return False
 
@@ -482,7 +502,7 @@ def compose(*funcs):
 
 
 def is_contextmanager(value):
-    return callable(getattr(value, u'__enter__')) and callable(getattr(value, u'__exit__'))
+    return callable(getattr(value, u'__enter__', None)) and callable(getattr(value, u'__exit__', None))
 
 
 def infinite_context_manager(generator):
@@ -516,8 +536,9 @@ def aggregate_contexts(handlers):
     exc_info = (None, None, None)
     try:
         yield
-    except BaseException as err:
+    except BaseException as e:
         exc_info = sys.exc_info()
+        err = e
 
     for handler in reversed(handlers):
         if handler.__exit__(*exc_info):
@@ -559,6 +580,9 @@ class BooleanContext(object):
 
     def __nonzero__(self):
         return bool(self._current_value)
+
+    def __bool__(self):
+        return self.__nonzero__()
 
     def __call__(self, update_value = None):
         u"""
@@ -613,7 +637,7 @@ def dict_diff(left, right):
     not or different in the left.
     """
     dummy = object()
-    return dict(filter(lambda (k, v): left.get(k, dummy) != v, right.iteritems()))
+    return dict(filter(lambda kv: left.get(kv[0], dummy) != kv[1], iteritems(right)))
 
 
 class NamedTuple(object):
@@ -652,12 +676,15 @@ class NamedTuple(object):
     def _eq_dict(self):
 
         def public(objdict):
-            return dict(filter(lambda (k, _): not k.startswith(u'_'), objdict.iteritems()))
+            return dict(filter(lambda kv: not kv[0].startswith(u'_'), iteritems(objdict)))
 
         return reduce(lambda a, b: union(b, a), map(lambda c: public(c.__dict__), self.__class__.__mro__), public(self.__dict__))
 
     def __eq__(self, other):
         return isinstance(other, NamedTuple) and self._eq_dict == other._eq_dict
+
+    def __hash__(self):
+        return hash(id(self))
 
     def __getstate__(self):
         res = dict(self.__dict__)
@@ -730,7 +757,18 @@ def slicer(dimensions):
 
 
 def print_message(*messages):
-    print(u' '.join(map(str, messages)))
+    print(u' '.join(list(map(str, messages))))
+
+
+def old_hasattr(obj, attr):
+    u"""
+    Mimic the behavior of python 2 `old_hasattr` by returning `False`
+    if a  `RuntimeError` is raised
+    """
+    try:
+        return hasattr(obj, attr)
+    except RuntimeError:
+        return False
 
 
 class overlaymap(object):

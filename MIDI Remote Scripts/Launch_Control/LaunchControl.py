@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import chr
+from builtins import str
+from builtins import range
 from functools import partial
 import Live
 from _Framework import Task
@@ -37,15 +40,15 @@ def make_launch_control_encoder(identifier, name, channel = 0):
 
 
 def make_all_encoders(name_prefix = u'', make_encoder = make_launch_control_encoder):
-    return ([ make_encoder(41 + index, name_prefix + u'_Bottom_Encoder_' + str(index)) for index in xrange(8) ], [ make_encoder(21 + index, name_prefix + u'_Top_Encoder_' + str(index)) for index in xrange(8) ])
+    return ([ make_encoder(41 + index, name_prefix + u'_Bottom_Encoder_' + str(index)) for index in range(8) ], [ make_encoder(21 + index, name_prefix + u'_Top_Encoder_' + str(index)) for index in range(8) ])
 
 
-pad_identifiers = [ (9 + i if i < 4 else 21 + i) for i in xrange(8) ]
+pad_identifiers = [ (9 + i if i < 4 else 21 + i) for i in range(8) ]
 CC_STATUS = 176
 MODE_SYSEX_MAP = {u'mixer': Sysex.MIXER_MODE,
  u'session': Sysex.SESSION_MODE,
  u'device': Sysex.DEVICE_MODE}
-SYSEX_MODE_MAP = dict([ (v, k) for k, v in MODE_SYSEX_MAP.iteritems() ])
+SYSEX_MODE_MAP = dict([ (v, k) for k, v in MODE_SYSEX_MAP.items() ])
 
 class LaunchControl(ControlSurface):
 
@@ -62,7 +65,7 @@ class LaunchControl(ControlSurface):
 
     def disconnect(self):
         super(LaunchControl, self).disconnect()
-        for channel in xrange(16):
+        for channel in range(16):
             self._send_midi((CC_STATUS + channel, 0, 0))
 
     def refresh_state(self):
@@ -74,7 +77,7 @@ class LaunchControl(ControlSurface):
         self.schedule_message(3, super(LaunchControl, self).refresh_state)
 
     def _update_hardware(self):
-        for channel in xrange(8, 11):
+        for channel in range(8, 11):
             self._send_midi(Sysex.make_automatic_flashing_message(channel))
 
     def _send_current_mode(self):
@@ -96,7 +99,7 @@ class LaunchControl(ControlSurface):
         self._mixer.selected_strip().name = u'Selected_Channel_Strip'
         self._mixer.master_strip().name = u'Master_Channel_Strip'
         self._mixer_track_nav_layer = Layer(track_bank_left_button=make_button(116, u'Mixer_Track_Left_Button'), track_bank_right_button=make_button(117, u'Mixer_Track_Right_Button'))
-        for index in xrange(8):
+        for index in range(8):
             strip = self._mixer.channel_strip(index)
             strip.name = u'Channel_Strip_' + str(index)
             strip.empty_color = Colors.LED_OFF

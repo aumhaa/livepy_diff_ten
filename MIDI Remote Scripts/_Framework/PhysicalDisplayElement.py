@@ -1,5 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter, izip, starmap, chain, imap
+from __future__ import division
+from builtins import zip
+from builtins import map
+from builtins import range
+from past.utils import old_div
+from future.utils import raise_
+from itertools import starmap, chain
 from functools import partial
 from . import Task
 from .ControlElement import ControlElement
@@ -25,12 +31,13 @@ class _DisplayCentralResource(StackingResource):
     def _actual_owners(self):
         remaining_indexes = set(self._root_display.display_indexes)
 
-        def filter_client(((display, _), __)):
+        def filter_client(client):
+            (display, _), __ = client
             result = remaining_indexes & display.display_indexes
             remaining_indexes.difference_update(display.display_indexes)
             return bool(result)
 
-        return list(reversed(map(first, ifilter(filter_client, reversed(self._clients)))))
+        return list(reversed(list(map(first, filter(filter_client, reversed(self._clients))))))
 
 
 class DisplayError(Exception):
@@ -64,7 +71,7 @@ class DisplayElement(ControlElement):
 
     @property
     def display_string(self):
-        return u''.join(imap(unicode, self._logical_segments))
+        return u''.join(map(str, self._logical_segments))
 
     @property
     def width(self):
@@ -96,11 +103,11 @@ class DisplayElement(ControlElement):
     def set_num_segments(self, num_segments):
         width = self._width
         if not in_range(num_segments, 1, width) or width % num_segments != 0:
-            raise DisplaySegmentationError, u'Can not split display of size %d into %d segments' % (self.width, num_segments)
+            raise_(DisplaySegmentationError, u'Can not split display of size %d into %d segments' % (self.width, num_segments))
         if num_segments != len(self._logical_segments):
             self._disconnect_segments()
-            self._width_per_segment = width / num_segments
-            self._logical_segments = [ LogicalDisplaySegment(self._width_per_segment, self.update) for _ in xrange(num_segments) ]
+            self._width_per_segment = old_div(width, num_segments)
+            self._logical_segments = [ LogicalDisplaySegment(self._width_per_segment, self.update) for _ in range(num_segments) ]
 
     def set_data_sources(self, sources):
         u"""
@@ -243,11 +250,13 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
         wrapper = ClientWrapper(wrap=lambda c: (display, c), unwrap=partial(maybe(second)))
         return const(ProxyResource(proxied_resource=self._central_resource, client_wrapper=wrapper))
 
-    def _on_central_resource_received(self, (display, client)):
+    def _on_central_resource_received(self, display_client):
+        display, client = display_client
         client.set_control_element(display, True)
         self.update()
 
-    def _on_central_resource_lost(self, (display, client)):
+    def _on_central_resource_lost(self, display_client):
+        display, client = display_client
         client.set_control_element(display, False)
         self.update()
 
@@ -308,7 +317,7 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
             if self._message_clear_all != None:
                 self._message_to_send = self._message_clear_all
             else:
-                self._message_to_send = tuple(chain(self._message_header, self._translate_string(u' ' * self._width), self._message_tail))
+                self._message_to_send = tuple(chain(self._message_header, self._translate_string(u' ' * int(self._width)), self._message_tail))
             self._request_send_message()
 
     def send_midi(self, midi_bytes):
@@ -322,19 +331,19 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
     def _send_message(self):
         if not self._block_messages:
             if self._message_to_send is None:
-                self._message_to_send = self._build_message(map(first, self._central_resource.owners))
+                self._message_to_send = self._build_message(list(map(first, self._central_resource.owners)))
             self.send_midi(self._message_to_send)
 
     def _translate_char(self, char_to_translate):
         result = 63
-        if char_to_translate in self._translation_table.keys():
+        if char_to_translate in list(self._translation_table.keys()):
             result = self._translation_table[char_to_translate]
         else:
             result = self._translation_table[u'?']
         return result
 
     def _translate_string(self, string):
-        return map(self._translate_char, string)
+        return list(map(self._translate_char, string))
 
     def _build_display_message(self, display):
         message_string = display.display_string
@@ -344,7 +353,7 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
         def wrap_segment_message(message, segment):
             return chain(segment.position_identifier(), self._translate_string(message))
 
-        return chain(*starmap(wrap_segment_message, izip(group(message_string, width_per_segment), segments)))
+        return chain(*starmap(wrap_segment_message, zip(group(message_string, width_per_segment), segments)))
 
     def _build_inner_message(self, displays):
         message = list(self._build_display_message(self))
@@ -373,7 +382,7 @@ class SubDisplayElement(DisplayElement):
         return set(range(*self._sub_display_slice.indices(self._parent_display.width)))
 
     def _is_visible(self):
-        return self in map(first, self.resource.proxied_object.owners)
+        return self in list(map(first, self.resource.proxied_object.owners))
 
     def update(self):
         if self._is_visible():

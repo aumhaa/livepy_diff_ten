@@ -36,7 +36,7 @@ class FocusFollowComponent(Component):
 
     def _update_listeners(self):
         devices = list(find_instrument_devices(self._track))
-        racks = filter(lambda d: d.can_have_chains, devices)
+        racks = [ d for d in devices if d.can_have_chains ]
         chains = list(chain([self._track], *[ d.chains for d in racks ]))
         self.__on_chains_changed.replace_subjects(racks)
         self.__on_devices_changed.replace_subjects(chains)

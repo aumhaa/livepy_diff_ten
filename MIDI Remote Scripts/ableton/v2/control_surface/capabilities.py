@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.utils import string_types
 GENERIC_SCRIPT_KEY = u'generic_script'
 PORTS_KEY = u'ports'
 CONTROLLER_ID_KEY = u'controller_id'
@@ -21,14 +22,14 @@ REMOTE = u'remote'
 PLAIN_OLD_MIDI = u'plain_old_midi'
 
 def __create_port_dict(direction, port_name, mac_name, props):
-    assert isinstance(direction, basestring)
-    assert isinstance(port_name, basestring)
+    assert isinstance(direction, string_types)
+    assert isinstance(port_name, string_types)
     assert props == None or type(props) is list
     if props:
         for prop in props:
-            assert isinstance(prop, basestring)
+            assert isinstance(prop, string_types)
 
-    assert mac_name == None or isinstance(mac_name, basestring)
+    assert mac_name == None or isinstance(mac_name, string_types)
     capabilities = {DIRECTIONKEY: direction,
      PORTNAMEKEY: port_name,
      PROPSKEY: props}
@@ -54,7 +55,7 @@ def controller_id(vendor_id, product_ids, model_name):
     for product_id in product_ids:
         assert type(product_id) is int
 
-    assert isinstance(model_name, (basestring, list))
+    assert isinstance(model_name, (string_types, list))
     model_names = model_name if type(model_name) is list else [model_name]
     return {VENDORID: vendor_id,
      PRODUCTIDS: product_ids,

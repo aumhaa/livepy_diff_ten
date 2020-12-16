@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from future.moves.itertools import zip_longest
 from ableton.v2.base import liveobj_valid
 from ableton.v2.control_surface.control import ControlList, SendValueControl
 from novation.launchpad_elements import SESSION_WIDTH
@@ -31,7 +31,7 @@ class SimpleDeviceParameterComponent(SimpleDeviceParameterComponentBase):
 
     def _update_static_color_controls(self):
         if liveobj_valid(self._device) and self.selected_bank:
-            for control, param in izip_longest(self.static_color_controls, self.selected_bank):
+            for control, param in zip_longest(self.static_color_controls, self.selected_bank):
                 color = self._static_color_value if liveobj_valid(param) else 0
                 control.value = color
 

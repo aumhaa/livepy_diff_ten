@@ -114,7 +114,7 @@ class GenericDeviceComponent(DeviceComponentBase):
         visualisation = self._visualisation_real_time_data.device_visualisation()
         if liveobj_valid(visualisation):
             visualisation_view_data = visualisation.get_view_data()
-            for key, value in view_data.iteritems():
+            for key, value in view_data.items():
                 visualisation_view_data[key] = value
 
             visualisation.set_view_data(visualisation_view_data)

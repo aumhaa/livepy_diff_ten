@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from functools import partial
 from ableton.v2.base import task
 from ableton.v2.control_surface.control import ButtonControl

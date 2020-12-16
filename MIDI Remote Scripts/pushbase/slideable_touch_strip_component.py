@@ -2,8 +2,10 @@ u"""
 Component that navigates a series of pages.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from math import ceil
-from itertools import imap
 from ableton.v2.base import clamp, listens
 from ableton.v2.control_surface import Component
 from .touch_strip_element import DraggingBehaviour, MAX_PITCHBEND, SelectingBehaviour, TouchStripStates, TouchStripHandle
@@ -39,27 +41,27 @@ class SlideableTouchStripComponent(Component):
     def _scroll_to_led_position(self, scroll_pos, num_leds):
         scroll_pos += 1
         pos_count = self._slideable.position_count
-        return min(int(float(scroll_pos) / pos_count * num_leds), num_leds)
+        return min(int(old_div(float(scroll_pos), pos_count) * num_leds), num_leds)
 
     def _touch_strip_to_scroll_position(self, value):
         bank_size = self._slideable.page_length
         num_pad_rows = self._slideable.position_count
         max_pad_row = num_pad_rows - bank_size
-        return min(int(float(value) / MAX_PITCHBEND * num_pad_rows), max_pad_row)
+        return min(int(old_div(float(value), MAX_PITCHBEND) * num_pad_rows), max_pad_row)
 
     def _touch_strip_to_page_position(self, value):
         bank_size = self._slideable.page_length
         num_pad_rows = self._slideable.position_count
         max_pad_row = num_pad_rows - bank_size
         offset = bank_size - self._slideable.page_offset
-        return clamp(int(int(value / MAX_PITCHBEND * num_pad_rows + offset) / float(bank_size)) * bank_size - offset, 0, max_pad_row)
+        return clamp(int(old_div(int(old_div(value, MAX_PITCHBEND) * num_pad_rows + offset), float(bank_size))) * bank_size - offset, 0, max_pad_row)
 
     def _scroll_to_touch_strip_position(self, scroll_pos):
         num_pad_rows = self._slideable.position_count
-        return min(int(float(scroll_pos) / num_pad_rows * MAX_PITCHBEND), int(MAX_PITCHBEND))
+        return min(int(old_div(float(scroll_pos), num_pad_rows) * MAX_PITCHBEND), int(MAX_PITCHBEND))
 
     def _touch_strip_led_page_length(self, num_leds):
-        return int(ceil(float(self._slideable.page_length) / self._slideable.position_count * num_leds))
+        return int(ceil(old_div(float(self._slideable.page_length), self._slideable.position_count) * num_leds))
 
     def _update_touch_strip_state(self, strip):
         if strip and self.is_enabled():
@@ -72,7 +74,7 @@ class SlideableTouchStripComponent(Component):
             array = list(self._touch_strip_array)
             led_page_length = self._touch_strip_led_page_length(strip.state_count)
             array[led_pos:led_pos + led_page_length] = [TouchStripStates.STATE_FULL] * led_page_length
-            led_size = MAX_PITCHBEND / strip.state_count
+            led_size = old_div(MAX_PITCHBEND, strip.state_count)
             self._behaviour.handle = TouchStripHandle(range=(-led_size, led_size * led_page_length), position=strip_pos)
             strip.send_state(array[:strip.state_count])
 
@@ -81,11 +83,11 @@ class SlideableTouchStripComponent(Component):
             model = self._slideable
 
             def led_contents(i):
-                pmin = float(i) / num_leds * model.position_count
-                pmax = pmin + float(model.position_count) / num_leds
-                return any(imap(model.contents, model.contents_range(pmin, pmax)))
+                pmin = old_div(float(i), num_leds) * model.position_count
+                pmax = pmin + old_div(float(model.position_count), num_leds)
+                return any(map(model.contents, model.contents_range(pmin, pmax)))
 
-            array = [ (TouchStripStates.STATE_HALF if led_contents(i) else TouchStripStates.STATE_OFF) for i in xrange(num_leds) ]
+            array = [ (TouchStripStates.STATE_HALF if led_contents(i) else TouchStripStates.STATE_OFF) for i in range(num_leds) ]
             self._touch_strip_array = array
 
     @listens(u'value')

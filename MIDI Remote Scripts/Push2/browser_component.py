@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from past.utils import old_div
 from contextlib import contextmanager
-from itertools import imap
 from math import ceil
 import Live
 from ableton.v2.base import BooleanContext, depends, index_if, lazy_attribute, listenable_property, listens, liveobj_changed, liveobj_valid, nop, task
@@ -303,7 +304,7 @@ class BrowserComponent(Component, Messenger):
         self._update_horizontal_navigation()
 
     def _on_encoder_released(self):
-        any_encoder_touched = any(imap(lambda e: e.is_touched, self.scroll_encoders)) or self.scroll_focused_encoder.is_touched
+        any_encoder_touched = any(map(lambda e: e.is_touched, self.scroll_encoders)) or self.scroll_focused_encoder.is_touched
         if not any_encoder_touched and self._unexpand_with_scroll_encoder:
             self._unexpand_task.restart()
         self._update_scrolling()
@@ -519,7 +520,7 @@ class BrowserComponent(Component, Messenger):
             if text_length > self.MAX_TIME_TEXT_LENGTH:
                 notification_time = self.MAX_TIME
             else:
-                notification_time = self.MIN_TIME + (self.MAX_TIME - self.MIN_TIME) * float(text_length - self.MIN_TIME_TEXT_LENGTH) / (self.MAX_TIME_TEXT_LENGTH - self.MIN_TIME_TEXT_LENGTH)
+                notification_time = self.MIN_TIME + (self.MAX_TIME - self.MIN_TIME) * old_div(float(text_length - self.MIN_TIME_TEXT_LENGTH), self.MAX_TIME_TEXT_LENGTH - self.MIN_TIME_TEXT_LENGTH)
         self.show_notification(notification_text, notification_time=notification_time)
         self._commit_model_changes()
 
@@ -582,7 +583,7 @@ class BrowserComponent(Component, Messenger):
             self.left_button.enabled = self.back_button.enabled
             self.right_button.enabled = can_enter or self._can_auto_expand()
         else:
-            num_columns = int(ceil(float(len(self.focused_list.items)) / self.NUM_ITEMS_PER_COLUMN))
+            num_columns = int(ceil(old_div(float(len(self.focused_list.items)), self.NUM_ITEMS_PER_COLUMN)))
             last_column_start_index = (num_columns - 1) * self.NUM_ITEMS_PER_COLUMN
             self.left_button.enabled = self._focused_list_index > 0
             self.right_button.enabled = can_enter or self.focused_list.selected_index < last_column_start_index
@@ -590,7 +591,7 @@ class BrowserComponent(Component, Messenger):
         self.can_exit = can_exit
 
     def _update_scrolling(self):
-        self.scrolling = self.up_button.is_pressed or self.down_button.is_pressed or self.scroll_focused_encoder.is_touched or any(imap(lambda e: e.is_touched, self.scroll_encoders)) or self.right_button.is_pressed and self._expanded or self.left_button.is_pressed and self._expanded
+        self.scrolling = self.up_button.is_pressed or self.down_button.is_pressed or self.scroll_focused_encoder.is_touched or any(map(lambda e: e.is_touched, self.scroll_encoders)) or self.right_button.is_pressed and self._expanded or self.left_button.is_pressed and self._expanded
 
     def _update_horizontal_navigation(self):
         self.horizontal_navigation = self.right_button.is_pressed or self.left_button.is_pressed
@@ -677,7 +678,7 @@ class BrowserComponent(Component, Messenger):
 
     def _crop_browser_lists(self, length):
         num_items_to_crop = len(self._lists) - length
-        for _ in xrange(num_items_to_crop):
+        for _ in range(num_items_to_crop):
             l = self._lists.pop()
             self.unregister_disconnectable(l)
 
@@ -915,7 +916,7 @@ class UserFilesBrowserItem(BrowserItem):
 
     @property
     def is_selected(self):
-        return any(imap(lambda c: c.is_selected, self.children))
+        return any(map(lambda c: c.is_selected, self.children))
 
     @lazy_attribute
     def children(self):
@@ -932,7 +933,7 @@ class CollectionsBrowserItem(BrowserItem):
 
     @property
     def is_selected(self):
-        return any(imap(lambda c: c.is_selected, self.children))
+        return any(map(lambda c: c.is_selected, self.children))
 
     @lazy_attribute
     def children(self):

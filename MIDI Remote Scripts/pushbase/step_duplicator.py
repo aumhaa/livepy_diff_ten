@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from functools import partial
 from ableton.v2.base import liveobj_valid, nop
 from ableton.v2.control_surface import Component
@@ -80,7 +81,7 @@ class StepDuplicatorComponent(Component, Messenger):
         if from_pitch == ALL_NOTES:
             from_pitch = 0
             pitch_span = 127
-        notes = self._clip.get_notes(source_step[1], from_pitch, source_step[2], pitch_span)
+        notes = self._clip.get_notes_extended(from_time=source_step[1], from_pitch=from_pitch, time_span=source_step[2], pitch_span=pitch_span)
         if len(notes) > 0:
             message = MessageBoxText.COPIED_PAGE if source_step[4] else MessageBoxText.COPIED_STEP
             self._source_step = source_step

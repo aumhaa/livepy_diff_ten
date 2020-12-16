@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from _Komplete_Kontrol.komplete_kontrol_base import NUM_TRACKS, KompleteKontrolBase, ButtonMatrixElement, Layer, create_button, create_encoder, create_sysex_element, sysex
 from _Komplete_Kontrol.control_element_util import create_slider_element
 from .channel_strip_component import ChannelStripComponent
@@ -26,7 +27,7 @@ class Komplete_Kontrol_S_Mk2(KompleteKontrolBase):
         self._selection_control = create_slider_element(66, u'Selection_Control')
         self._mute_control = create_slider_element(67, u'Mute_Control')
         self._solo_control = create_slider_element(68, u'Solo_Control')
-        self._track_arm_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_ARM_DISPLAY_HEADER, index, u'Track_Arm_Display_{}'.format(index)) for index in xrange(NUM_TRACKS) ]], name=u'Track_Arm_Displays')
+        self._track_arm_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_ARM_DISPLAY_HEADER, index, u'Track_Arm_Display_{}'.format(index)) for index in range(NUM_TRACKS) ]], name=u'Track_Arm_Displays')
         self._track_meter_display = MeterDisplayElement(sysex.TRACK_METER_DISPLAY_HEADER, NUM_TRACKS, name=u'Track_Meter_Display')
 
     def _create_components(self):

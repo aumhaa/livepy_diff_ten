@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.InputControlElement import InputControlElement, MIDI_CC_TYPE, MIDI_NOTE_TYPE
@@ -206,7 +209,7 @@ class Launchkey(ControlSurface):
         self._transport_view_modes.name = u'Transport_View_Modes'
 
     def _setup_device(self):
-        encoders = [ make_encoder(21 + index, u'Device_Control_%d' % index) for index in xrange(8) ]
+        encoders = [ make_encoder(21 + index, u'Device_Control_%d' % index) for index in range(8) ]
         self._encoders = tuple(encoders)
         device = DeviceComponent(device_selection_follows_track_selection=True)
         device.name = u'Device_Component'

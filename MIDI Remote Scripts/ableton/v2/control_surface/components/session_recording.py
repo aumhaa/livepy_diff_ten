@@ -166,7 +166,7 @@ class SessionRecordingComponent(Component):
             playing_slot_index = selected_track.playing_slot_index
             if playing_slot_index >= 0:
                 playing_clip = selected_track.clip_slots[playing_slot_index].clip
-        except RuntimeError:
+        except (RuntimeError, AttributeError):
             pass
 
         return playing_clip

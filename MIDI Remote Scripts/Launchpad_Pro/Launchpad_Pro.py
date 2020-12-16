@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 from functools import partial
 import Live
 from _Framework.Util import const
@@ -84,17 +86,17 @@ class MidiMap(SpecialMidiMap):
          False: u'Mode.Device.Off'}, element_factory=make_multi_button)
         self.add_button(u'User_Mode_Button', 0, 98, MIDI_CC_TYPE, default_states={True: u'Mode.User.On',
          False: u'Mode.User.Off'}, element_factory=make_multi_button, color_slaves=True)
-        self.add_matrix(u'Scene_Launch_Button_Matrix', make_button, 0, [[ identifier for identifier in xrange(89, 18, -10) ]], MIDI_CC_TYPE)
+        self.add_matrix(u'Scene_Launch_Button_Matrix', make_button, 0, [[ identifier for identifier in range(89, 18, -10) ]], MIDI_CC_TYPE)
         self[u'Scene_Stop_Button_Matrix'] = self[u'Scene_Launch_Button_Matrix'].submatrix[:7, :]
         self[u'Scene_Stop_Button_Matrix'].name = u'Scene_Stop_Button_Matrix'
         self[u'Stop_All_Clips_Button'] = self[u'Scene_Launch_Button_Matrix_Raw'][0][7]
-        self.add_matrix(u'Main_Button_Matrix', make_button, 0, [ [ identifier for identifier in xrange(start, start + NUM_TRACKS) ] for start in xrange(81, 10, -10) ], MIDI_NOTE_TYPE)
+        self.add_matrix(u'Main_Button_Matrix', make_button, 0, [ [ identifier for identifier in range(start, start + NUM_TRACKS) ] for start in range(81, 10, -10) ], MIDI_NOTE_TYPE)
         self[u'Mixer_Button_Matrix'] = self[u'Main_Button_Matrix'].submatrix[:, 7:]
         self[u'Mixer_Button_Matrix'].name = u'Mixer_Button_Matrix'
-        matrix_rows_with_session_button_raw = [ [ self.with_session_button(self[u'Main_Button_Matrix_Raw'][row][column]) for column in xrange(8) ] for row in xrange(8) ]
+        matrix_rows_with_session_button_raw = [ [ self.with_session_button(self[u'Main_Button_Matrix_Raw'][row][column]) for column in range(8) ] for row in range(8) ]
         self[u'Main_Button_Matrix_With_Session_Button'] = ButtonMatrixElement(rows=matrix_rows_with_session_button_raw, name=u'Main_Button_Matrix_With_Session_Button')
         note_buttons_raw = []
-        for identifier in xrange(128):
+        for identifier in range(128):
             if identifier not in self[u'Main_Button_Matrix_Ids']:
                 button = make_button(u'Note_Button_' + str(identifier), 0, identifier, MIDI_NOTE_TYPE)
                 button.set_enabled(False)
@@ -105,10 +107,10 @@ class MidiMap(SpecialMidiMap):
 
         def make_raw_drum_matrix():
             result = []
-            for row in xrange(7, -1, -1):
+            for row in range(7, -1, -1):
                 button_row = []
                 row_offset = 8 + (7 - row) * 4
-                for column in xrange(8):
+                for column in range(8):
                     column_offset = 28 if column >= 4 else 0
                     identifier = row * 8 + column + row_offset + column_offset
                     matrix_coords = self[u'Main_Button_Matrix_Ids'].get(identifier)
@@ -122,7 +124,7 @@ class MidiMap(SpecialMidiMap):
             return result
 
         self[u'Drum_Button_Matrix'] = ButtonMatrixElement(rows=make_raw_drum_matrix(), name=u'Drum_Button_Matrix')
-        self.add_matrix(u'Slider_Button_Matrix', make_slider, 0, [[ identifier for identifier in xrange(21, 29) ]], MIDI_CC_TYPE)
+        self.add_matrix(u'Slider_Button_Matrix', make_slider, 0, [[ identifier for identifier in range(21, 29) ]], MIDI_CC_TYPE)
         for index, slider in enumerate(self[u'Slider_Button_Matrix_Raw'][0]):
             slider.set_index(index)
 
@@ -137,10 +139,10 @@ class MidiMap(SpecialMidiMap):
         for channel in consts.USER_MODE_CHANNELS:
             channel_name = channel + 1
             self.add_matrix(u'User_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, consts.USER_MATRIX_IDENTIFIERS, MIDI_NOTE_TYPE)
-            self.add_matrix(u'User_Left_Side_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, [ [identifier] for identifier in xrange(108, 116) ], MIDI_NOTE_TYPE)
-            self.add_matrix(u'User_Right_Side_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, [ [identifier] for identifier in xrange(100, 108) ], MIDI_NOTE_TYPE)
-            self.add_matrix(u'User_Bottom_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, [[ identifier for identifier in xrange(116, 124) ]], MIDI_NOTE_TYPE)
-            self.add_matrix(u'User_Arrow_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, [[ identifier for identifier in xrange(91, 95) ]], MIDI_CC_TYPE)
+            self.add_matrix(u'User_Left_Side_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, [ [identifier] for identifier in range(108, 116) ], MIDI_NOTE_TYPE)
+            self.add_matrix(u'User_Right_Side_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, [ [identifier] for identifier in range(100, 108) ], MIDI_NOTE_TYPE)
+            self.add_matrix(u'User_Bottom_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, [[ identifier for identifier in range(116, 124) ]], MIDI_NOTE_TYPE)
+            self.add_matrix(u'User_Arrow_Button_Matrix_Ch_%d' % (channel_name,), make_button, channel, [[ identifier for identifier in range(91, 95) ]], MIDI_CC_TYPE)
 
     def with_shift(self, button_name):
         return ComboElement(self[button_name], modifiers=[self[u'Shift_Button']], name=u'Shifted_' + button_name)
@@ -194,10 +196,10 @@ class Launchpad_Pro(IdentifiableControlSurface, OptimizedControlSurface):
         self._session.set_enabled(True)
         self._session.set_rgb_mode(LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE)
         SpecialClipSlotComponent.quantization_component = self._actions_component
-        for scene_index in xrange(NUM_SCENES):
+        for scene_index in range(NUM_SCENES):
             scene = self._session.scene(scene_index)
             scene.layer = Layer(select_button=self._midimap[u'Shift_Button'], delete_button=self._midimap[u'Delete_Button'], duplicate_button=self._midimap[u'Duplicate_Button'])
-            for track_index in xrange(NUM_TRACKS):
+            for track_index in range(NUM_TRACKS):
                 slot = scene.clip_slot(track_index)
                 slot.layer = Layer(select_button=self._midimap[u'Shift_Button'], delete_button=self._midimap[u'Delete_Button'], duplicate_button=self._midimap[u'Duplicate_Button'], double_loop_button=self._midimap[u'Double_Loop_Button'], quantize_button=self._midimap[u'Quantize_Button'])
 
@@ -557,8 +559,8 @@ class Launchpad_Pro(IdentifiableControlSurface, OptimizedControlSurface):
         return len(midi_bytes) == 10 and midi_bytes[:7] == consts.SYSEX_STANDARD_PREFIX + consts.SYSEX_CHALLENGE_RESPONSE_BYTE
 
     def _is_response_valid(self, midi_bytes):
-        response = long(midi_bytes[7])
-        response += long(midi_bytes[8] << 8)
+        response = int(midi_bytes[7])
+        response += int(midi_bytes[8] << 8)
         return response == Live.Application.encrypt_challenge2(self._challenge)
 
     def handle_sysex(self, midi_bytes):

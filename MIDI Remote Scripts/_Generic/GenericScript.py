@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 from functools import partial
 from _Framework.ButtonElement import ButtonElement
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
@@ -50,7 +52,7 @@ class GenericScript(ControlSurface):
         pass
 
     def _init_mixer_component(self, volume_controls, trackarm_controls, mixer_options, global_channel, volume_map_mode):
-        momentary_buttons = mixer_options is not None and u'NOTOGGLE' in mixer_options.keys()
+        momentary_buttons = mixer_options is not None and u'NOTOGGLE' in list(mixer_options.keys())
         MixerButton = partial(ButtonElement, momentary_buttons, MIDI_CC_TYPE, global_channel)
 
         def make_mixer_encoder(cc, channel, name):
@@ -69,7 +71,7 @@ class GenericScript(ControlSurface):
             if mixer_options != None:
                 if has_specification_for(u'MASTERVOLUME', mixer_options) and is_valid_midi_identifier(mixer_options[u'MASTERVOLUME']):
                     mixer.master_strip().layer = Layer(volume_control=make_mixer_encoder(mixer_options[u'MASTERVOLUME'], global_channel, u'Master_Volume_Control'))
-                for send in xrange(mixer_options.get(u'NUMSENDS', 0)):
+                for send in range(mixer_options.get(u'NUMSENDS', 0)):
                     send_info.append(mixer_options[u'SEND%d' % (send + 1)])
 
                 layer_specs = {}
@@ -78,7 +80,7 @@ class GenericScript(ControlSurface):
                 if has_specification_for(u'PREVBANK', mixer_options):
                     layer_specs[u'bank_down_button'] = make_mixer_button(u'PREVBANK', u'Mixer_Previous_Bank_Button')
                 mixer.layer = Layer(**layer_specs)
-            for track in xrange(num_strips):
+            for track in range(num_strips):
                 strip = mixer.channel_strip(track)
                 strip.name = u'Channel_Strip_' + str(track)
                 layer_specs = {}
@@ -127,9 +129,9 @@ class GenericScript(ControlSurface):
                 if has_specification_for(u'TOGGLELOCK', bank_controls):
                     layer_specs[u'lock_button'] = make_bank_button(u'TOGGLELOCK', u'Device_Lock_Button')
                 bank_buttons_raw = []
-                for index in xrange(8):
+                for index in range(8):
                     key = u'BANK' + str(index + 1)
-                    if key in bank_controls.keys():
+                    if key in list(bank_controls.keys()):
                         control_info = bank_controls[key]
                         channel = global_channel
                         cc = control_info
@@ -166,7 +168,7 @@ class GenericScript(ControlSurface):
             return ButtonElement(is_momentary, MIDI_CC_TYPE, global_channel, transport_controls[control], name=name)
 
         if transport_controls:
-            momentary_seek = u'NORELEASE' not in transport_controls.keys()
+            momentary_seek = u'NORELEASE' not in list(transport_controls.keys())
             layer_specs = {}
             if has_specification_for(u'STOP', transport_controls):
                 layer_specs[u'stop_button'] = make_transport_button(u'STOP', u'Stop_Button')

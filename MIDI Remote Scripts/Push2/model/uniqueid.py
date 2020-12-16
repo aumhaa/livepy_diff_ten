@@ -6,4 +6,4 @@ class UniqueIdMixin(object):
 
     def __init__(self, *a, **k):
         super(UniqueIdMixin, self).__init__(*a, **k)
-        self.__id__ = self._idgen.next()
+        self.__id__ = next(self._idgen)

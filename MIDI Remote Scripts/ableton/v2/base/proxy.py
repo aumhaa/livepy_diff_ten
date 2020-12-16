@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from .util import BooleanContext
+from .util import BooleanContext, old_hasattr
 
 class ProxyBase(object):
     u"""
@@ -31,18 +31,18 @@ class ProxyBase(object):
         super(ProxyBase, self).__init__(*a, **k)
         self._skip_wrapper_lookup = BooleanContext()
 
-    def proxy_hasattr(self, attr):
+    def proxy_old_hasattr(self, attr):
         u"""
         Returns whether the proxy, not the proxied, has an attribute.
         """
         with self._skip_wrapper_lookup():
-            return hasattr(self, attr)
+            return old_hasattr(self, attr)
 
     def __getattr__(self, name):
         if not self._skip_wrapper_lookup:
             obj = self.proxied_object
             interface = self.proxied_interface
-            if obj and hasattr(interface, name):
+            if obj and old_hasattr(interface, name):
                 return getattr(obj, name)
             return getattr(interface, name)
         raise AttributeError(u'Does not have attribute %s' % name)
@@ -50,12 +50,12 @@ class ProxyBase(object):
     def __setattr__(self, name, value):
         obj = self.proxied_object
         interface = self.proxied_interface
-        if obj and hasattr(interface, name):
-            if self.proxy_hasattr(name):
+        if obj and old_hasattr(interface, name):
+            if self.proxy_old_hasattr(name):
                 raise AttributeError(u'Ambiguous set attribute: %s proxied: %s' % (name, obj))
             setattr(obj, name, value)
         else:
-            if hasattr(interface, name):
+            if old_hasattr(interface, name):
                 raise AttributeError(u'Ambiguous set attribute: %s proxied: %s' % (name, obj))
             self.__dict__[name] = value
 

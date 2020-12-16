@@ -1,5 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from builtins import str
+from builtins import map
+from past.utils import old_div
+from future.moves.itertools import zip_longest
 import Live
 from ableton.v2.base import is_parameter_bipolar, listens_group
 from ableton.v2.control_surface.components import DisplayingDeviceParameterComponent as DeviceParameterComponentBase
@@ -20,7 +23,7 @@ def convert_parameter_value_to_graphic(param, param_to_value = lambda p: p.value
         param_range = param.max - param.min
         param_bar = graphic_bar_for_parameter(param)
         graph_range = len(param_bar) - 1
-        value = int(float(param_to_value(param) - param.min) / param_range * graph_range)
+        value = int(old_div(float(param_to_value(param) - param.min), param_range) * graph_range)
         graphic_display_string = param_bar[value]
     else:
         graphic_display_string = u' '
@@ -34,7 +37,7 @@ class DeviceParameterComponent(DeviceParameterComponentBase):
     """
 
     def __init__(self, *a, **k):
-        self._parameter_graphic_data_sources = map(DisplayDataSource, (u'', u'', u'', u'', u'', u'', u'', u''))
+        self._parameter_graphic_data_sources = list(map(DisplayDataSource, (u'', u'', u'', u'', u'', u'', u'', u'')))
         super(DeviceParameterComponent, self).__init__(*a, **k)
 
     def set_graphic_display_line(self, line):
@@ -58,7 +61,7 @@ class DeviceParameterComponent(DeviceParameterComponentBase):
     def _update_parameter_values(self):
         super(DeviceParameterComponent, self)._update_parameter_values()
         if self.is_enabled():
-            for param, data_source in izip_longest(self.parameters, self._parameter_graphic_data_sources):
+            for param, data_source in zip_longest(self.parameters, self._parameter_graphic_data_sources):
                 graph = convert_parameter_value_to_graphic(param, self.parameter_to_value)
                 if data_source:
                     data_source.set_display_string(graph)
@@ -71,7 +74,7 @@ class DeviceParameterComponent(DeviceParameterComponentBase):
         return name
 
     def parameter_to_string(self, parameter):
-        s = u'' if parameter == None else unicode(parameter)
+        s = u'' if parameter == None else str(parameter)
         if parameter and parameter.automation_state == AutomationState.overridden:
             s = u'[%s]' % s
         return s

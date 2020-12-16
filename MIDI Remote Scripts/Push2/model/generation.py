@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from collections import namedtuple
 from operator import attrgetter
 from functools import partial
+from future.utils import iteritems
 from ableton.v2.base import Disconnectable, EventObject, Slot, has_event
 from .repr import ModelAdapter
 from .declaration import ViewModelsCantContainRefs, ViewModelCantContainListModels, UndeclaredReferenceClass, ModelVisitor
@@ -148,7 +149,7 @@ class BoundObjectWrapper(EventObject, SimpleWrapper):
     def to_json(self):
         if self._value is not None and self._value.is_valid():
             res = {}
-            for name, wrapper in self.values.iteritems():
+            for name, wrapper in iteritems(self.values):
                 res[name] = wrapper.to_json()
 
             return res
@@ -262,11 +263,11 @@ class ModelMixin(WrapperBase):
     def __init__(self, *a, **k):
         super(ModelMixin, self).__init__(*a, **k)
         self.data = {}
-        for name, wrapper in self.wrappers.iteritems():
+        for name, wrapper in iteritems(self.wrappers):
             value = self.default_data[name]
             self.data[name] = wrapper(value, notifier=self._notifier.step(name))
 
-        for name, child in self.children.iteritems():
+        for name, child in iteritems(self.children):
             self.data[name] = child(notifier=self._notifier.step(name))
 
     def disconnect(self):
@@ -275,7 +276,7 @@ class ModelMixin(WrapperBase):
             child.disconnect()
 
     def to_json(self):
-        return dict(((name, obj.to_json()) for name, obj in self.data.iteritems()))
+        return dict(((name, obj.to_json()) for name, obj in iteritems(self.data)))
 
     def get(self):
         return self
@@ -469,7 +470,7 @@ class ModelFingerprintVisitor(ModelVisitor):
     @property
     def fingerprint(self):
         if self._fingerprint is None:
-            self._fingerprint = u';'.join((u'%s(%s)' % (classname, u','.join(property_prints)) for classname, property_prints in sorted(self._class2proplist.iteritems(), key=lambda item: item[0])))
+            self._fingerprint = u';'.join((u'%s(%s)' % (classname, u','.join(property_prints)) for classname, property_prints in sorted(iteritems(self._class2proplist), key=lambda item: item[0])))
         return self._fingerprint
 
     def visit_class(self, class_):
@@ -506,7 +507,7 @@ class ModelFingerprintVisitor(ModelVisitor):
 
 
 def generate_model_fingerprint(cls):
-    return md5(ModelFingerprintVisitor(cls).fingerprint).hexdigest()
+    return md5(ModelFingerprintVisitor(cls).fingerprint.encode(u'utf-8')).hexdigest()
 
 
 def generate_mrs_model(cls):

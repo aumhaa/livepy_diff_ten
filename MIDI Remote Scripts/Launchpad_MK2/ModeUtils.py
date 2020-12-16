@@ -3,7 +3,7 @@ from _Framework.Dependency import depends
 from _Framework.ModesComponent import ModesComponent, ModeButtonBehaviour, ImmediateBehaviour
 
 def to_class_name(mode_name):
-    return u''.join(map(lambda s: s.capitalize(), mode_name.split(u'_')))
+    return u''.join([ s.capitalize() for s in mode_name.split(u'_') ])
 
 
 class SkinableBehaviourMixin(ModeButtonBehaviour):

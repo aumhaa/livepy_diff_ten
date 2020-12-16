@@ -1,5 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ConfigParser import ConfigParser
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
+from past.utils import old_div
+from ableton.v2.base import PY3
+if PY3:
+    from configparser import ConfigParser
+else:
+    from ConfigParser import ConfigParser
 from _Generic.GenericScript import GenericScript
 import Live
 HIDE_SCRIPT = True
@@ -178,7 +188,7 @@ def create_instance(c_instance, user_path = u''):
                                     channel = controller_descriptions[u'CHANNEL']
                                 if channel in range(16):
                                     pad_info.append(pad % 4)
-                                    pad_info.append(int(pad / 4))
+                                    pad_info.append(int(old_div(pad, 4)))
                                     pad_info.append(note)
                                     pad_info.append(channel)
                                     pad_translation.append(tuple(pad_info))

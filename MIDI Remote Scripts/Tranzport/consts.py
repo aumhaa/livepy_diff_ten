@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 NOTE_OFF_STATUS = 128
 NOTE_ON_STATUS = 144
 CC_STATUS = 176
@@ -12,7 +13,7 @@ PAGES_NAMES = ((u'P', u'o', u's', u'i', u't', u'i', u'o', u'n', u' ', u'&', u' '
  (u'L', u'o', u'o', u'p', u' ', u'S', u'e', u't', u't', u'i', u'n', u'g', u's'),
  (u'S', u'e', u'n', u'd', u' ', u'S', u'e', u't', u't', u'i', u'n', u'g', u's'))
 TRANZ_NATIVE_MODE = (240, 0, 1, 64, 16, 1, 0, 247)
-TRANZ_TRANS_SECTION = range(91, 96)
+TRANZ_TRANS_SECTION = list(range(91, 96))
 TRANZ_RWD = 91
 TRANZ_FFWD = 92
 TRANZ_STOP = 93

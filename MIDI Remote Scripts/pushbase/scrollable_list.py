@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from past.utils import old_div
+from builtins import object
 from functools import partial
 from ableton.v2.base import BooleanContext, EventObject, clamp, forward_property, in_range, index_if, listens, task
 from ableton.v2.control_surface import Component, defaults
@@ -18,7 +22,7 @@ class ScrollableListItem(object):
         self._scrollable_list = scrollable_list
 
     def __str__(self):
-        return unicode(self._content)
+        return str(self._content)
 
     @property
     def content(self):
@@ -127,7 +131,7 @@ class ScrollableList(EventObject, Scrollable):
 
     def next_page(self):
         if self.can_scroll_down():
-            current_page = self.selected_item_index / self.num_visible_items
+            current_page = old_div(self.selected_item_index, self.num_visible_items)
             last_page_index = len(self.items) - self.num_visible_items
             if self.selected_item_index < last_page_index:
                 index = clamp((current_page + 1) * self.num_visible_items, 0, len(self.items) - self.num_visible_items)
@@ -137,7 +141,7 @@ class ScrollableList(EventObject, Scrollable):
 
     def prev_page(self):
         if self.can_scroll_up():
-            current_page = self.selected_item_index / self.num_visible_items
+            current_page = old_div(self.selected_item_index, self.num_visible_items)
             last_page_index = len(self.items) - self.num_visible_items
             if self.selected_item_index <= last_page_index:
                 index = clamp((current_page - 1) * self.num_visible_items, 0, len(self.items) - self.num_visible_items)
@@ -174,13 +178,13 @@ class ScrollableList(EventObject, Scrollable):
         return self._items
 
     def assign_items(self, items):
-        old_selection = unicode(self.selected_item)
+        old_selection = str(self.selected_item)
         for item in self._items:
             item._scrollable_list = None
 
         self._items = tuple([ self.item_type(index=index, content=item, scrollable_list=self) for index, item in enumerate(items) ])
         if self._items:
-            new_selection = index_if(lambda item: unicode(item) == old_selection, self._items)
+            new_selection = index_if(lambda item: str(item) == old_selection, self._items)
             self._selected_item_index = new_selection if in_range(new_selection, 0, len(self._items)) else 0
             self._normalize_offset(self._selected_item_index)
         else:
@@ -235,7 +239,7 @@ class DefaultItemFormatter(object):
         display_string = u''
         if item:
             display_string += consts.CHAR_SELECT if item.is_selected else u' '
-            display_string += self.action_message if action_in_progress else unicode(item)
+            display_string += self.action_message if action_in_progress else str(item)
         return display_string
 
 

@@ -1,7 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter
+from builtins import map
+from builtins import filter
 from Live import DeviceParameter
-from ableton.v2.base import liveobj_valid, listenable_property, listens
+from ableton.v2.base import liveobj_valid, listenable_property, listens, old_hasattr
 from ableton.v2.control_surface import InternalParameterBase, ParameterInfo, PitchParameter
 from pushbase.automation_component import AutomationComponent as AutomationComponentBase
 
@@ -88,7 +89,7 @@ class AutomationComponent(AutomationComponentBase):
     @listenable_property
     def device(self):
         device = None
-        if hasattr(self.parameter_provider, u'device'):
+        if old_hasattr(self.parameter_provider, u'device'):
             device = self.parameter_provider.device()
         return device
 
@@ -98,7 +99,7 @@ class AutomationComponent(AutomationComponentBase):
 
     @listenable_property
     def parameters(self):
-        return map(lambda info: (info.parameter if info else None), self._parameter_infos)
+        return [ (info.parameter if info else None) for info in self._parameter_infos ]
 
     @property
     def parameter_infos(self):
@@ -124,10 +125,10 @@ class AutomationComponent(AutomationComponentBase):
         super(AutomationComponent, self)._update_parameters()
 
     def _rebuild_parameter_list(self):
-        self._parameter_infos = map(make_automation_parameter, self._parameter_infos_to_use()) if self.is_enabled() else []
+        self._parameter_infos = list(map(make_automation_parameter, self._parameter_infos_to_use())) if self.is_enabled() else []
 
     def _update_parameter_values(self):
-        for info in ifilter(lambda p: p is not None, self._parameter_infos):
+        for info in filter(lambda p: p is not None, self._parameter_infos):
             if len(self._selected_time) > 0:
                 wrapped_parameter = info.parameter
                 wrapped_parameter.value = self.parameter_to_value(wrapped_parameter.original_parameter)

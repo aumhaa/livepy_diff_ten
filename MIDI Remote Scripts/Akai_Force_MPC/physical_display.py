@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import chain, izip, starmap
+from itertools import chain, starmap
 from ableton.v2.base import clamp, group
 from ableton.v2.control_surface.elements import PhysicalDisplayElement as PhysicalDisplayElementBase
 

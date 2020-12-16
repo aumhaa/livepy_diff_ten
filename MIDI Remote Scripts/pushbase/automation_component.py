@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import map
+from past.utils import old_div
 import Live
 from ableton.v2.base import clamp, task, liveobj_valid
 from ableton.v2.control_surface.control import EncoderControl, control_list
@@ -43,14 +46,14 @@ class AutomationComponent(DeviceParameterComponent):
 
     @property
     def parameters(self):
-        return map(lambda info: (info.parameter if info else None), self._parameter_infos_to_use())
+        return [ (info.parameter if info else None) for info in self._parameter_infos_to_use() ]
 
     @property
     def parameter_infos(self):
         return self._parameter_infos_to_use()
 
     def _parameter_infos_to_use(self):
-        return map(lambda info: (info if self.parameter_is_automateable(info.parameter if info else None) else None), self._parameter_provider.parameters)
+        return list(map(lambda info: (info if self.parameter_is_automateable(info.parameter if info else None) else None), self._parameter_provider.parameters))
 
     @property
     def can_automate_parameters(self):
@@ -86,7 +89,7 @@ class AutomationComponent(DeviceParameterComponent):
         return 0.0
 
     def _value_at_time(self, envelope, time_range):
-        return envelope.value_at_time((time_range[0] + time_range[1]) / 2)
+        return envelope.value_at_time(old_div(time_range[0] + time_range[1], 2))
 
     def _can_edit_clip_envelope(self, parameter_index):
         parameters = self.parameters
@@ -145,7 +148,7 @@ class AutomationComponent(DeviceParameterComponent):
         envelope_value = self._parameter_floats[time_index][param_index]
         sensitivity = self.parameter_infos[param_index].default_encoder_sensitivity * self.ENCODER_SENSITIVITY_FACTOR
         if param.is_quantized:
-            value_to_insert = clamp(envelope_value + value / EnumerableSetting.STEP_SIZE, param.min, param.max)
+            value_to_insert = clamp(envelope_value + old_div(value, EnumerableSetting.STEP_SIZE), param.min, param.max)
         else:
             value_range = param.max - param.min
             value_to_insert = clamp(envelope_value + value * value_range * sensitivity, param.min, param.max)

@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter
+from builtins import map
+from builtins import object
+from future.utils import string_types
 from functools import partial
 from ableton.v2.base import first, find_if, const
 from .browser_model import VirtualBrowserItem
@@ -64,10 +68,10 @@ class TagBrowserQuery(BrowserQuery):
         self.root_name = root_name
 
     def query(self, browser):
-        return filter(lambda item: item.name not in self.exclude, sum(map(partial(self._extract_path, browser=browser), self.include), tuple()))
+        return list(filter(lambda item: item.name not in self.exclude, sum(list(map(partial(self._extract_path, browser=browser), self.include)), tuple())))
 
     def _extract_path(self, path, items = None, browser = None):
-        if isinstance(path, (str, unicode)):
+        if isinstance(path, string_types):
             path = [path]
         if items is None:
             items = [getattr(browser, self.root_name)]
@@ -93,7 +97,7 @@ class SourceBrowserQuery(TagBrowserQuery):
         for item in root:
             groups.setdefault(item.source, []).append(item)
 
-        return map(lambda (k, g): VirtualBrowserItem(name=k if k is not None else u'', children_query=const(g)), sorted(groups.items(), key=first))
+        return list(map(lambda k_g: VirtualBrowserItem(name=k_g[0] if k_g[0] is not None else u'', children_query=const(k_g[1])), sorted(list(groups.items()), key=first)))
 
 
 class PlacesBrowserQuery(BrowserQuery):

@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from functools import partial
+from builtins import map
+from functools import partial, reduce
 from ..base import Proxy, index_if, nop, first, NamedTuple
 DEFAULT_PRIORITY = 0
 
@@ -210,11 +211,11 @@ class StackingResource(Resource):
             self.release(client)
 
     def _add_client(self, client, priority):
-        idx = index_if(lambda (_, p): p > priority, self._clients)
+        idx = index_if(lambda client_and_priority: client_and_priority[1] > priority, self._clients)
         self._clients.insert(idx, (client, priority))
 
     def _remove_client(self, client):
-        idx = index_if(lambda (c, _): c == client, self._clients)
+        idx = index_if(lambda client_and_priority: client_and_priority[0] == client, self._clients)
         if idx != len(self._clients):
             del self._clients[idx]
             return True
@@ -241,7 +242,7 @@ class StackingResource(Resource):
 
     @property
     def clients(self):
-        return map(first, self._clients)
+        return list(map(first, self._clients))
 
     @property
     def owners(self):
@@ -301,4 +302,4 @@ class ProxyResource(Proxy):
 
     @property
     def owners(self):
-        return map(self._client_wrapper.unwrap, self.__getattr__(u'owners'))
+        return list(map(self._client_wrapper.unwrap, self.__getattr__(u'owners')))

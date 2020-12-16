@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from ableton.v2.control_surface import ControlSurface, Layer, MIDI_CC_TYPE, MIDI_NOTE_TYPE
 from ableton.v2.control_surface.components import TransportComponent
@@ -20,7 +21,7 @@ class IRigKeysIO(ControlSurface):
             self._create_transport()
 
     def _create_controls(self):
-        self._encoders = ButtonMatrixElement(rows=[[ EncoderElement(MIDI_CC_TYPE, 0, identifier, map_mode=Live.MidiMap.MapMode.absolute, name=u'Volume_Encoder_{}'.format(index)) for index, identifier in enumerate(xrange(12, 20)) ]], name=u'Volume_Encoders')
+        self._encoders = ButtonMatrixElement(rows=[[ EncoderElement(MIDI_CC_TYPE, 0, identifier, map_mode=Live.MidiMap.MapMode.absolute, name=u'Volume_Encoder_{}'.format(index)) for index, identifier in enumerate(range(12, 20)) ]], name=u'Volume_Encoders')
         self._data_encoder = EncoderElement(MIDI_CC_TYPE, 0, 22, map_mode=Live.MidiMap.MapMode.relative_smooth_two_compliment, name=u'Data_Encoder')
         self._data_encoder_button = ButtonElement(True, MIDI_CC_TYPE, 0, 23, name=u'Data_Encoder_Button', skin=skin)
         self._play_button = ButtonElement(False, MIDI_CC_TYPE, 0, 118, name=u'Play_Button', skin=skin)

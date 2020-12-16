@@ -1,7 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
+from past.utils import old_div
 from colorsys import rgb_to_hsv, hsv_to_rgb
 import MidiRemoteScript
-from ableton.v2.base import depends, in_range, listens, liveobj_valid, nop
+from ableton.v2.base import depends, in_range, listens, liveobj_valid, nop, old_round
 from ableton.v2.control_surface.elements.color import DynamicColorBase, DynamicColorFactory
 from pushbase.colors import Blink, FallbackColor, Pulse, PushColor, TransparentColor
 from .device_util import find_chain_or_track
@@ -156,7 +158,7 @@ def make_color_factory_func(factory_class):
     return make_color_factory
 
 
-class Rgb:
+class Rgb(object):
     AMBER = IndexedColor(3)
     AMBER_SHADE = IndexedColor(69)
     AMBER_SHADE_TWO = IndexedColor(70)
@@ -180,7 +182,7 @@ class Rgb:
     WHITE = IndexedColor(WHITE_MIDI_VALUE)
 
 
-class Basic:
+class Basic(object):
     HALF = FallbackColor(Rgb.DARK_GREY, HALFLIT_WHITE_MIDI)
     OFF = FallbackColor(Rgb.BLACK, 0)
     ON = FallbackColor(Rgb.WHITE, 127)
@@ -245,21 +247,21 @@ class ScreenColor(object):
         is black.
         """
         scale = 1.0 - amount
-        return self.map_channels(lambda component: int(round(component * scale)))
+        return self.map_channels(lambda component: int(old_round(component * scale)))
 
     def normalise(self):
         u"""
         Returns a new colour with this color's components normalised
         with an assumed range 0..255
         """
-        return self.map_channels(lambda component: float(component) / 255.0)
+        return self.map_channels(lambda component: old_div(float(component), 255.0))
 
     def denormalise(self):
         u"""
         Returns a new colour with this color's components denormalised
         to a range of 0..255
         """
-        return self.map_channels(lambda component: int(round(255 * component)))
+        return self.map_channels(lambda component: int(old_round(255 * component)))
 
     def adjust_saturation(self, amount):
         u"""

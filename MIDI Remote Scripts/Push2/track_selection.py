@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 import Live
-from ableton.v2.base import EventObject, ObservablePropertyAlias, const, depends, flatten, nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid
+from ableton.v2.base import EventObject, ObservablePropertyAlias, const, depends, flatten, nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, old_hasattr
 from ableton.v2.control_surface import find_instrument_devices
 from ableton.v2.control_surface.components import ItemProvider, SessionRingComponent, RightAlignTracksTrackAssigner
 from ableton.v2.control_surface.components.view_control import has_next_item, next_item, TrackScroller as TrackScrollerBase, ViewControlComponent as ViewControlComponentBase
@@ -10,11 +10,11 @@ from .decoration import TrackDecoratorFactory
 def get_chains_recursive(track_or_chain):
     instruments = list(find_instrument_devices(track_or_chain))
     chains = []
-    if instruments and hasattr(instruments[0], u'chains'):
+    if instruments and old_hasattr(instruments[0], u'chains'):
         for chain in instruments[0].chains:
             chains.append(chain)
             instruments = list(find_instrument_devices(chain))
-            if instruments and hasattr(instruments[0], u'chains'):
+            if instruments and old_hasattr(instruments[0], u'chains'):
                 if instruments[0].is_showing_chains:
                     nested_chains = get_chains_recursive(chain)
                     chains.extend(nested_chains)
@@ -25,11 +25,11 @@ def get_chains_recursive(track_or_chain):
 def get_racks_recursive(track_or_chain):
     instruments = list(find_instrument_devices(track_or_chain))
     racks = []
-    if instruments and hasattr(instruments[0], u'chains'):
+    if instruments and old_hasattr(instruments[0], u'chains'):
         racks.append(instruments[0])
         for chain in instruments[0].chains:
             instruments = list(find_instrument_devices(chain))
-            if instruments and hasattr(instruments[0], u'chains'):
+            if instruments and old_hasattr(instruments[0], u'chains'):
                 if instruments[0].can_have_chains:
                     nested_racks = get_racks_recursive(chain)
                     racks.extend(nested_racks)

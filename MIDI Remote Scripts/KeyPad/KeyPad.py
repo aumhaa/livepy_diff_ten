@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import map
+from builtins import range
+from past.utils import old_div
 import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.Layer import Layer
@@ -31,9 +35,9 @@ pads = [1,
  15,
  16]
 PAD_TRANSLATIONS = tuple([ (n % 4,
- 3 - n / 4,
+ 3 - old_div(n, 4),
  pads[n] + 35,
- 4) for n in xrange(16) ])
+ 4) for n in range(16) ])
 
 def make_slider(channel, cc, name):
     element = SliderElement(MIDI_CC_TYPE, channel, cc)
@@ -54,7 +58,7 @@ class KeyPad(ControlSurface):
     u"""
     Reloop KeyPad controller script.
     """
-    _encoder_range = range(73, 81)
+    _encoder_range = list(range(73, 81))
     _product_model_id = 101
 
     def __init__(self, c_instance):
@@ -85,10 +89,10 @@ class KeyPad(ControlSurface):
         if midi_bytes != self._preset_message(2):
             super(KeyPad, self).handle_sysex(midi_bytes)
         else:
-            map(lambda x: x.set_enabled(True), (self._mixer,
+            list(map(lambda x: x.set_enabled(True), (self._mixer,
              self._session,
              self._transport,
-             self._cue_control))
+             self._cue_control)))
 
     def _create_controls(self):
 
@@ -97,7 +101,7 @@ class KeyPad(ControlSurface):
             return [ maker(1, cc, label % index) for index, cc in ccs ] + [ maker(2, cc, label % (index + len(ccs))) for index, cc in ccs ]
 
         def make_controls(maker, label, cc_offset):
-            return make_controls_range(maker, label, xrange(cc_offset, cc_offset + 8))
+            return make_controls_range(maker, label, range(cc_offset, cc_offset + 8))
 
         make_non_momentary_button = partial(make_button, is_momentary=False)
         self._encoders = make_controls(make_encoder, u'Encoder_%d', 57)
@@ -114,7 +118,7 @@ class KeyPad(ControlSurface):
         self._shifted_mute_buttons = make_controls(make_non_momentary_button, u'Shifted_Mute_%d_Button', 16)
         self._shifted_solo_buttons = make_controls(make_button, u'Shifted_Solo_%d_Button', 32)
         self._all_shifted_arm_buttons = make_controls(make_button, u'Shifted_Arm_%d_Button', 49)
-        self._shifted_arm_buttons = [ CombinedButtonsElement(buttons=(self._all_shifted_arm_buttons[index], self._all_shifted_arm_buttons[index + 8])) for index in xrange(8) ]
+        self._shifted_arm_buttons = [ CombinedButtonsElement(buttons=(self._all_shifted_arm_buttons[index], self._all_shifted_arm_buttons[index + 8])) for index in range(8) ]
         self._shifted_play_button = make_button(1, 108, u'Shifted_Play_Button')
         self._shifted_stop_button = make_button(1, 109, u'Shifted_Stop_Button')
         self._shifted_record_button = make_button(1, 110, u'Shifted_Record_Button')
@@ -125,7 +129,7 @@ class KeyPad(ControlSurface):
         self._mixer = MixerComponent(NUM_CHANNEL_STRIPS)
         self._mixer.name = u'Mixer'
         self._mixer.set_enabled(False)
-        for index in xrange(NUM_CHANNEL_STRIPS):
+        for index in range(NUM_CHANNEL_STRIPS):
             strip = self._mixer.channel_strip(index)
             strip.set_invert_mute_feedback(True)
             sends = ButtonMatrixElement(name=u'%d_Send_Controls' % (index + 1), rows=[(self._rotaries_a[index], self._rotaries_b[index])])
@@ -143,7 +147,7 @@ class KeyPad(ControlSurface):
         self._session.layer = Layer(stop_all_clips_button=self._shifted_stop_button, stop_track_clip_buttons=stop_buttons, select_prev_button=self._shifted_octave_down_button, select_next_button=self._shifted_octave_up_button)
         self._session.selected_scene().name = u'Selected_Scene_Control'
         self._session.selected_scene().layer = Layer(launch_button=self._shifted_play_button)
-        for index in xrange(NUM_CHANNEL_STRIPS):
+        for index in range(NUM_CHANNEL_STRIPS):
             slot = self._session.selected_scene().clip_slot(index)
             slot.layer = Layer(launch_button=self._shifted_mute_buttons[index])
 

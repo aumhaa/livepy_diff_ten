@@ -1,23 +1,24 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface import Skin
 from ableton.v2.control_surface.elements import Color
 
-class Colors:
+class Colors(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Color(127)
         Off = Color(0)
         Disabled = Color(0)
 
-    class Transport:
+    class Transport(object):
         PlayOn = Color(127)
         PlayOff = Color(0)
 
-    class Automation:
+    class Automation(object):
         On = Color(127)
         Off = Color(0)
 
-    class Mixer:
+    class Mixer(object):
         MuteOn = Color(0)
         MuteOff = Color(1)
         SoloOn = Color(1)

@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from ableton.v2.base import listens, liveobj_valid
 from ableton.v2.control_surface import Component
 
@@ -7,7 +10,7 @@ class PlayheadComponent(Component):
     Updates the contents of the Live playhead object.
     """
 
-    def __init__(self, paginator = None, grid_resolution = None, follower = None, notes = range(8), triplet_notes = range(6), feedback_channels = [], *a, **k):
+    def __init__(self, paginator = None, grid_resolution = None, follower = None, notes = list(range(8)), triplet_notes = list(range(6)), feedback_channels = [], *a, **k):
         super(PlayheadComponent, self).__init__(*a, **k)
         self._playhead = None
         self._clip = None
@@ -66,4 +69,4 @@ class PlayheadComponent(Component):
                 self._playhead.notes = list(notes)
                 self._playhead.wrap_around = self._follower.is_following and self._paginator.can_change_page
                 self._playhead.start_time = self._paginator.page_length * self._paginator.page_index
-                self._playhead.step_length = self._paginator.page_length / len(notes)
+                self._playhead.step_length = old_div(self._paginator.page_length, len(notes))

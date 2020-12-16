@@ -1,13 +1,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.utils import itervalues
 import logging
 import traceback
+from builtins import filter
+from builtins import map
+from future.utils import iteritems, itervalues
 from collections import OrderedDict
 from contextlib import contextmanager
 from functools import partial
-from itertools import chain, ifilter, imap
+from itertools import chain
 from pickle import loads, dumps
 import Live
-from ..base import BooleanContext, EventObject, const, find_if, first, in_range, inject, lazy_attribute, liveobj_valid, task
+from ..base import BooleanContext, EventObject, const, find_if, first, in_range, inject, lazy_attribute, liveobj_valid, old_hasattr, task
 from . import defaults
 from . import midi
 from .control_element import OptimizedOwnershipHandler
@@ -31,7 +35,7 @@ def get_control_surfaces():
             __builtins__[CS_LIST_KEY] = []
         return __builtins__[CS_LIST_KEY]
     else:
-        if not hasattr(__builtins__, CS_LIST_KEY):
+        if not old_hasattr(__builtins__, CS_LIST_KEY):
             setattr(__builtins__, CS_LIST_KEY, [])
         return getattr(__builtins__, CS_LIST_KEY)
 
@@ -327,7 +331,7 @@ class SimpleControlSurface(EventObject):
             self.mxd_midi_scheduler.handle_message(midi_bytes)
             self.process_midi_bytes(midi_bytes, partial(self._merge_midi_data, midi_data=midi_data_for_recipient))
 
-        for recipient, data in midi_data_for_recipient.itervalues():
+        for recipient, data in itervalues(midi_data_for_recipient):
             if recipient.allow_receiving_chunks:
                 recipient.receive_chunk(tuple(data))
             else:
@@ -358,7 +362,7 @@ class SimpleControlSurface(EventObject):
             return self._forwarding_registry[forwarding_key]
 
     def get_registry_entry_for_sysex_midi_message(self, midi_bytes):
-        return find_if(lambda (identifier, _): midi_bytes[:len(identifier)] == identifier, self._forwarding_long_identifier_registry.iteritems())
+        return find_if(lambda identifier_recipient: midi_bytes[:len(identifier_recipient[0])] == identifier_recipient[0], iteritems(self._forwarding_long_identifier_registry))
 
     @contextmanager
     def suppressing_rebuild_requests(self):
@@ -393,7 +397,7 @@ class SimpleControlSurface(EventObject):
             assert in_range(translation[3], -1, 16)
             return True
 
-        assert pad_translations is None or all(imap(check_translation, pad_translations)) and len(pad_translations) <= 16
+        assert pad_translations is None or all(map(check_translation, pad_translations)) and len(pad_translations) <= 16
         self._pad_translations = pad_translations
 
     def set_enabled(self, enable):
@@ -448,7 +452,7 @@ class SimpleControlSurface(EventObject):
         control.canonical_parent = self
         if isinstance(control, PhysicalDisplayElement):
             self._displays.append(control)
-        if hasattr(control, u'_is_resource_based'):
+        if old_hasattr(control, u'_is_resource_based'):
             control._is_resource_based = True
 
     def _register_component(self, component):
@@ -491,7 +495,7 @@ class SimpleControlSurface(EventObject):
     @profile
     def call_listeners(self, listeners):
         with self.component_guard():
-            for listener in ifilter(liveobj_valid, listeners):
+            for listener in filter(liveobj_valid, listeners):
                 listener()
 
     @contextmanager
@@ -533,7 +537,7 @@ class SimpleControlSurface(EventObject):
 
     def _flush_midi_messages(self):
         assert self._accumulate_midi_messages
-        sorted_messages = sorted(chain(self._midi_message_list, self._midi_message_dict.itervalues()), key=first)
+        sorted_messages = sorted(chain(self._midi_message_list, itervalues(self._midi_message_dict)), key=first)
         for _, message in sorted_messages:
             self._do_send_midi(message)
 
@@ -634,7 +638,7 @@ class SimpleControlSurface(EventObject):
         preferences = self._c_instance.preferences(self.preferences_key)
         pref_dict = {}
         try:
-            pref_dict = loads(str(preferences))
+            pref_dict = loads(bytes(preferences))
         except Exception:
             pass
 

@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
+from past.utils import old_div
 from collections import OrderedDict
 from pushbase.setting import OnOffSetting, EnumerableSetting
 from .pad_sensitivity import PadParameters
@@ -17,7 +20,7 @@ def make_pad_parameters(curve_value, threshold_value):
     and threshold settings.
     """
     threshold_range = MAX_THRESHOLD_STEP - MIN_THRESHOLD_STEP
-    t = float(threshold_value - MIN_THRESHOLD_STEP) / float(threshold_range)
+    t = old_div(float(threshold_value - MIN_THRESHOLD_STEP), float(threshold_range))
     return PadParameters(curve_value, on_threshold=int((1 - t) * MIN_ON_THRESHOLD + t * MAX_ON_THRESHOLD), off_threshold=int((1 - t) * MIN_OFF_THRESHOLD + t * MAX_OFF_THRESHOLD))
 
 
@@ -41,7 +44,8 @@ def _threshold_formatter(value):
 def create_settings(preferences = None):
     preferences = preferences if preferences is not None else {}
     pad_settings = _create_pad_settings()
-    return OrderedDict([(u'threshold', EnumerableSetting(name=u'Pad Threshold', values=range(MIN_THRESHOLD_STEP, MAX_THRESHOLD_STEP + 1), default_value=0, preferences=preferences, value_formatter=_threshold_formatter)),
+    return OrderedDict([(u'threshold', EnumerableSetting(name=u'Pad Threshold', values=list(range(MIN_THRESHOLD_STEP, MAX_THRESHOLD_STEP + 1)), default_value=0, preferences=preferences, value_formatter=_threshold_formatter)),
      (u'curve', EnumerableSetting(name=u'Velocity Curve', values=pad_settings, default_value=pad_settings[1], preferences=preferences)),
      (u'workflow', OnOffSetting(name=u'Workflow', value_labels=[u'Scene', u'Clip'], default_value=True, preferences=preferences)),
-     (u'aftertouch_threshold', EnumerableSetting(name=u'Aftertouch Threshold', values=range(128), default_value=INSTRUMENT_AFTERTOUCH_THRESHOLD, preferences=preferences))])
+     (u'aftertouch_mode', OnOffSetting(name=u'Pressure', value_labels=[u'Mono', u'Polyphonic'], default_value=True, preferences=preferences)),
+     (u'aftertouch_threshold', EnumerableSetting(name=u'Threshold', values=list(range(128)), default_value=INSTRUMENT_AFTERTOUCH_THRESHOLD, preferences=preferences))])

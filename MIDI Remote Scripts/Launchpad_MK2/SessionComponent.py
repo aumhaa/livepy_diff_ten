@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
 from _Framework.Util import in_range
 from _Framework.SubjectSlot import subject_slot_group
 from _Framework.SessionComponent import SessionComponent as SessionComponentBase
@@ -17,7 +18,7 @@ class SessionComponent(SessionComponentBase):
          self._horizontal_paginator,
          self._vertical_banking,
          self._vertical_paginator)
-        map(skin_scroll_component, scroll_components)
+        list(map(skin_scroll_component, scroll_components))
 
     def set_stopped_clip_value(self, value):
         self._stopped_clip_value = value

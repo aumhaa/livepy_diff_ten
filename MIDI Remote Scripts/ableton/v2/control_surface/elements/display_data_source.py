@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 
 def adjust_string_crop(original, length):
+    length = int(length)
     return original[:length].ljust(length)
 
 
@@ -11,6 +12,7 @@ def adjust_string(original, length):
     characters or adding spaces. The algorithm is adopted from ede's
     old implementation for the Mackie.
     """
+    length = int(length)
     assert length > 0
     resulting_string = original
     if len(resulting_string) > length:

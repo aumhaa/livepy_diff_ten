@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter
 from contextlib import contextmanager
-from itertools import ifilter, imap, chain
-from functools import partial
-from multipledispatch import dispatch
+from itertools import chain
+from functools import partial, update_wrapper
 import Live
-from ableton.v2.base import find_if, first, index_if, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, EventObject, SlotGroup, task
+from ableton.v2.base import find_if, first, index_if, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, PY3, EventObject, SlotGroup, task
 from ableton.v2.control_surface import DecoratorFactory, device_to_appoint
 from ableton.v2.control_surface.components import DeviceNavigationComponent as DeviceNavigationComponentBase, FlattenedDeviceChain, ItemSlot, ItemProvider, is_empty_rack, nested_device_parent
 from ableton.v2.control_surface.control import control_list, StepEncoderControl
@@ -15,20 +15,38 @@ from .chain_selection_component import ChainSelectionComponent
 from .colors import DISPLAY_BUTTON_SHADE_LEVEL, IndexedColor
 from .device_util import is_drum_pad, find_chain_or_track
 from .item_lister import IconItemSlot, ItemListerComponent
+if PY3:
+    from functools import singledispatch
+else:
+    from singledispatch import singledispatch
+
+def singledispatchmethod(func):
+    u"""
+    TODO(lsp) Replace with builtin decorator when we update to python 3.8+
+    """
+    dispatcher = singledispatch(func)
+
+    def wrapper(*args, **kw):
+        return dispatcher.dispatch(args[1].__class__)(*args, **kw)
+
+    wrapper.register = dispatcher.register
+    update_wrapper(wrapper, func)
+    return wrapper
+
 
 def find_drum_pad(items):
-    elements = imap(lambda i: i.item, items)
+    elements = map(lambda i: i.item, items)
     return find_if(lambda e: is_drum_pad(e), elements)
 
 
-@dispatch(Live.DrumPad.DrumPad)
-def is_active_element(drum_pad):
-    return not drum_pad.mute and drum_pad.canonical_parent.is_active
-
-
-@dispatch(object)
+@singledispatch
 def is_active_element(device):
     return device.is_active
+
+
+@is_active_element.register(Live.DrumPad.DrumPad)
+def _(drum_pad):
+    return not drum_pad.mute and drum_pad.canonical_parent.is_active
 
 
 def set_enabled(device, is_on):
@@ -39,11 +57,79 @@ def is_on(device):
     return bool(device.parameters[0].value)
 
 
+class RackBank2Device(EventObject):
+
+    def __init__(self, rack_device, *a, **k):
+        super(EventObject, self).__init__(*a, **k)
+        self._rack_device = rack_device
+        self.__on_is_active_changed.subject = rack_device
+
+    @property
+    def rack_device(self):
+        assert liveobj_valid(self._rack_device)
+        return self._rack_device
+
+    @listenable_property
+    def name(self):
+        assert liveobj_valid(self._rack_device)
+        return self._rack_device.name
+
+    @listenable_property
+    def is_active(self):
+        assert liveobj_valid(self._rack_device)
+        return self._rack_device.is_active
+
+    @listens(u'is_active')
+    def __on_is_active_changed(self):
+        self.notify_is_active()
+
+    @listenable_property
+    def can_have_drum_pads(self):
+        return False
+
+    @listenable_property
+    def can_have_chains(self):
+        return False
+
+    @listenable_property
+    def class_name(self):
+        return u'Rack bank 2'
+
+    @listenable_property
+    def parameters(self):
+        assert liveobj_valid(self._rack_device)
+        return self._rack_device.parameters
+
+    @listenable_property
+    def bank_index(self):
+        return 1
+
+    @listenable_property
+    def canonical_parent(self):
+        assert liveobj_valid(self._rack_device)
+        return self._rack_device
+
+    @property
+    def _live_ptr(self):
+        assert liveobj_valid(self._rack_device)
+        return self._rack_device._live_ptr + 1
+
+
+def is_bank_rack_2(device):
+    return isinstance(device, RackBank2Device)
+
+
+def is_rack_with_bank_2(device):
+    return getattr(device, u'can_have_chains', False) and any(device.macros_mapped[8:])
+
+
 def collect_devices(track_or_chain, nesting_level = 0):
     chain_devices = track_or_chain.devices if liveobj_valid(track_or_chain) else []
     devices = []
     for device in chain_devices:
         devices.append((device, nesting_level))
+        if is_rack_with_bank_2(device) and device.view.is_showing_chain_devices:
+            devices.append((RackBank2Device(rack_device=device), nesting_level + 1))
         if device.can_have_drum_pads and device.view.selected_drum_pad:
             devices.append((device.view.selected_drum_pad, nesting_level + 1))
         devices.extend(collect_devices(nested_device_parent(device), nesting_level=nesting_level + 1))
@@ -92,15 +178,15 @@ class DeviceChainStateWatcher(EventObject):
         self.notify_state()
 
     def _navigation_items(self):
-        return ifilter(lambda i: not i.is_scrolling_indicator, self._device_navigation.items)
+        return list(filter(lambda i: not i.is_scrolling_indicator, self._device_navigation.items))
 
     def _devices(self):
-        device_items = ifilter(lambda i: not is_drum_pad(i.item), self._navigation_items())
-        return map(lambda i: i.item, device_items)
+        device_items = filter(lambda i: not is_drum_pad(i.item), self._navigation_items())
+        return [ i.item for i in device_items ]
 
     def _update_listeners_and_notify(self):
         items = list(self._navigation_items())
-        chains = set(filter(liveobj_valid, imap(lambda i: find_chain_or_track(i.item), items)))
+        chains = set(filter(liveobj_valid, map(lambda i: find_chain_or_track(i.item), items)))
         self.__on_is_active_changed.replace_subjects(self._devices())
         self.__on_mute_changed.subject = find_drum_pad(items)
         self.__on_chain_color_index_changed.replace_subjects(chains)
@@ -233,7 +319,7 @@ class DeviceNavigationComponent(DeviceNavigationComponentBase):
             device_or_pad = self.items[button.index].item
             if self._delete_handler and self._delete_handler.is_deleting:
                 self._delete_item(device_or_pad)
-            elif self.selected_object == device_or_pad and device_or_pad != self._selected_on_previous_press:
+            elif self.selected_object == device_or_pad and device_or_pad != self._selected_on_previous_press and not is_bank_rack_2(device_or_pad):
                 self._on_reselecting_object(device_or_pad)
             self._selected_on_previous_press = None
 
@@ -247,15 +333,15 @@ class DeviceNavigationComponent(DeviceNavigationComponentBase):
             self._last_pressed_button_index = -1
             self._end_move_device()
 
-    @dispatch(Live.DrumPad.DrumPad)
-    def _toggle_device(self, drum_pad):
-        if liveobj_valid(drum_pad):
-            drum_pad.mute = not drum_pad.mute
-
-    @dispatch(object)
+    @singledispatchmethod
     def _toggle_device(self, device):
         if liveobj_valid(device) and device.parameters[0].is_enabled:
             set_enabled(device, not is_on(device))
+
+    @_toggle_device.register(Live.DrumPad.DrumPad)
+    def _(self, drum_pad):
+        if liveobj_valid(drum_pad):
+            drum_pad.mute = not drum_pad.mute
 
     @listens(u'state')
     def __on_device_item_state_changed(self):
@@ -263,7 +349,7 @@ class DeviceNavigationComponent(DeviceNavigationComponentBase):
 
     @listens(u'items')
     def __on_items_changed(self):
-        new_items = map(lambda x: x.item, self.items)
+        new_items = [ x.item for x in self.items ]
         lost_selection_on_empty_pad = new_items and is_drum_pad(new_items[-1]) and self._flattened_chain.selected_item not in new_items
         if self._should_select_drum_pad() or lost_selection_on_empty_pad:
             self._select_item(self._current_drum_pad())
@@ -377,8 +463,21 @@ class DeviceNavigationComponent(DeviceNavigationComponentBase):
         selected_item = self.item_provider.selected_item
         return getattr(selected_item, u'proxied_object', selected_item)
 
-    @dispatch(Live.DrumPad.DrumPad)
-    def _do_select_item(self, pad):
+    @singledispatchmethod
+    def _do_select_item(self, device):
+        self._current_track().drum_pad_selected = False
+        appointed_device = device_to_appoint(device)
+        self._appoint_device(appointed_device)
+        self.song.view.select_device(device, False)
+        self.song.appointed_device = appointed_device
+
+    @_do_select_item.register(RackBank2Device)
+    def _(self, bank_2_device):
+        self._current_track().drum_pad_selected = False
+        self._appoint_device(bank_2_device)
+
+    @_do_select_item.register(Live.DrumPad.DrumPad)
+    def _(self, pad):
         self._current_track().drum_pad_selected = True
         device = self._first_device_on_pad(pad)
         self._appoint_device(device)
@@ -392,25 +491,7 @@ class DeviceNavigationComponent(DeviceNavigationComponentBase):
         if self._device_component.device_changed(device):
             self._device_component.set_device(device)
 
-    @dispatch(object)
-    def _do_select_item(self, device):
-        self._current_track().drum_pad_selected = False
-        appointed_device = device_to_appoint(device)
-        self._appoint_device(appointed_device)
-        self.song.view.select_device(device, False)
-        self.song.appointed_device = appointed_device
-
-    @dispatch(Live.DrumPad.DrumPad)
-    def _on_reselecting_object(self, drum_pad):
-        rack = drum_rack_for_pad(drum_pad)
-        self._toggle(rack)
-        if rack.view.is_showing_chain_devices:
-            first_device = self._first_device_on_pad(drum_pad)
-            if first_device:
-                self._select_item(first_device)
-        self.notify_drum_pad_selection()
-
-    @dispatch(object)
+    @singledispatchmethod
     def _on_reselecting_object(self, device):
         if liveobj_valid(device) and device.can_have_chains:
             if not device.can_have_drum_pads:
@@ -419,22 +500,32 @@ class DeviceNavigationComponent(DeviceNavigationComponentBase):
             self.bank_selection.set_device(device)
             self._modes.selected_mode = u'bank_selection'
 
-    @dispatch(Live.DrumPad.DrumPad)
-    def _on_pressed_delayed(self, _):
-        pass
+    @_on_reselecting_object.register(Live.DrumPad.DrumPad)
+    def _(self, drum_pad):
+        rack = drum_rack_for_pad(drum_pad)
+        self._toggle(rack)
+        if rack.view.is_showing_chain_devices:
+            first_device = self._first_device_on_pad(drum_pad)
+            if first_device:
+                self._select_item(first_device)
+        self.notify_drum_pad_selection()
 
-    @dispatch(object)
+    @singledispatchmethod
     def _on_pressed_delayed(self, device):
         self._show_chains(device)
         self._begin_move_device(device)
 
-    @dispatch(Live.DrumPad.DrumPad)
-    def _delete_item(self, pad):
+    @_on_pressed_delayed.register(Live.DrumPad.DrumPad)
+    def _(self, _):
         pass
 
-    @dispatch(object)
+    @singledispatchmethod
     def _delete_item(self, device):
         delete_device(device)
+
+    @_delete_item.register(Live.DrumPad.DrumPad)
+    def _(self, pad):
+        pass
 
     def _show_chains(self, device):
         if device.can_have_chains:

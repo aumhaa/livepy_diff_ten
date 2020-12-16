@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import object
 import Live
 from ableton.v2.control_surface.components import PlayableComponent, Slideable, SlideComponent
 from ableton.v2.control_surface.control import ButtonControl
@@ -164,9 +166,9 @@ class SlicedSimplerComponent(PlayableComponent, SlideableTouchStripComponent, Sl
     def _try_delete_notes_for_slice(self, index):
         clip = self.song.view.detail_clip
         pitch = BASE_SLICING_NOTE + index
-        has_notes = liveobj_valid(clip) and not clip.is_audio_clip and len(clip.get_notes(0, pitch, DISTANT_FUTURE, 1)) > 0
+        has_notes = liveobj_valid(clip) and not clip.is_audio_clip and len(clip.get_notes_extended(from_time=0, from_pitch=pitch, time_span=DISTANT_FUTURE, pitch_span=1)) > 0
         if has_notes:
-            clip.remove_notes(0, pitch, DISTANT_FUTURE, 1)
+            clip.remove_notes_extended(from_time=0, from_pitch=pitch, time_span=DISTANT_FUTURE, pitch_span=1)
             slice_label = u'Slice %d' % (index + 1)
             self.show_notification(MessageBoxText.DELETE_NOTES % slice_label)
         return has_notes

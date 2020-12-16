@@ -1,10 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 from ableton.v2.control_surface import is_parameter_quantized
 DEFAULT_SENSITIVITY_KEY = u'normal_sensitivity'
 FINE_GRAINED_SENSITIVITY_KEY = u'fine_grained_sensitivity'
 CONTINUOUS_MAPPING_SENSITIVITY = 1.0
 FINE_GRAINED_CONTINUOUS_MAPPING_SENSITIVITY = 0.01
-QUANTIZED_MAPPING_SENSITIVITY = 1.0 / 15.0
+QUANTIZED_MAPPING_SENSITIVITY = old_div(1.0, 15.0)
 
 def parameter_mapping_sensitivity(parameter):
     is_quantized = is_parameter_quantized(parameter, parameter and parameter.canonical_parent)

@@ -1,8 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 import Live
 from .consts import *
 
-class Transport:
+class Transport(object):
     u""" Class representing the transport section on the Axiom controllers """
 
     def __init__(self, parent):

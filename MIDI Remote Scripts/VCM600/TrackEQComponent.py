@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
 from _Framework.EncoderElement import EncoderElement
@@ -34,7 +35,7 @@ class TrackEQComponent(ControlSurfaceComponent):
         self._device = None
         if self._device != None:
             device_dict = EQ_DEVICES[self._device.class_name]
-            if u'Cuts' in device_dict.keys():
+            if u'Cuts' in list(device_dict.keys()):
                 cut_names = device_dict[u'Cuts']
                 for cut_name in cut_names:
                     parameter = get_parameter_by_name(self._device, cut_name)
@@ -98,7 +99,7 @@ class TrackEQComponent(ControlSurfaceComponent):
                         if parameter != None:
                             self._gain_controls[index].connect_to(parameter)
 
-            if self._cut_buttons != None and u'Cuts' in device_dict.keys():
+            if self._cut_buttons != None and u'Cuts' in list(device_dict.keys()):
                 cut_names = device_dict[u'Cuts']
                 for index in range(len(self._cut_buttons)):
                     self._cut_buttons[index].turn_off()
@@ -126,7 +127,7 @@ class TrackEQComponent(ControlSurfaceComponent):
         if self.is_enabled() and self._device != None:
             if not sender.is_momentary() or value is not 0:
                 device_dict = EQ_DEVICES[self._device.class_name]
-                if u'Cuts' in device_dict.keys():
+                if u'Cuts' in list(device_dict.keys()):
                     cut_names = device_dict[u'Cuts']
                     index = list(self._cut_buttons).index(sender)
                     if index in range(len(cut_names)):
@@ -137,7 +138,7 @@ class TrackEQComponent(ControlSurfaceComponent):
     def _on_devices_changed(self):
         if self._device != None:
             device_dict = EQ_DEVICES[self._device.class_name]
-            if u'Cuts' in device_dict.keys():
+            if u'Cuts' in list(device_dict.keys()):
                 cut_names = device_dict[u'Cuts']
                 for cut_name in cut_names:
                     parameter = get_parameter_by_name(self._device, cut_name)
@@ -148,7 +149,7 @@ class TrackEQComponent(ControlSurfaceComponent):
         if self._track != None:
             for index in range(len(self._track.devices)):
                 device = self._track.devices[-1 * (index + 1)]
-                if device.class_name in EQ_DEVICES.keys():
+                if device.class_name in list(EQ_DEVICES.keys()):
                     self._device = device
                     break
 
@@ -156,7 +157,7 @@ class TrackEQComponent(ControlSurfaceComponent):
 
     def _on_cut_changed(self):
         assert self._device != None
-        assert u'Cuts' in EQ_DEVICES[self._device.class_name].keys()
+        assert u'Cuts' in list(EQ_DEVICES[self._device.class_name].keys())
         if self.is_enabled() and self._cut_buttons != None:
             cut_names = EQ_DEVICES[self._device.class_name][u'Cuts']
             for index in range(len(self._cut_buttons)):

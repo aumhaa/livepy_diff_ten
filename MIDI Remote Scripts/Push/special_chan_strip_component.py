@@ -1,6 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import zip
+from builtins import map
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import Live
-from ableton.v2.base import flatten, listens, listens_group, liveobj_valid, task
+from ableton.v2.base import flatten, listens, listens_group, liveobj_valid, old_hasattr, task
 from ableton.v2.control_surface import components, ParameterSlot
 from ableton.v2.control_surface.elements import DisplayDataSource
 from pushbase import consts
@@ -16,7 +22,7 @@ def param_value_to_graphic(param, graphic):
     if param != None:
         param_range = param.max - param.min
         graph_range = len(graphic) - 1
-        value = int((param.value - param.min) / param_range * graph_range)
+        value = int(old_div(param.value - param.min, param_range) * graph_range)
         graphic_display_string = graphic[value]
     else:
         graphic_display_string = u' '
@@ -36,9 +42,9 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
         self._duplicate_button = None
         self._selector_button = None
         self._delete_handler = None
-        self._track_parameter_name_sources = [ DisplayDataSource(u' ') for _ in xrange(14) ]
-        self._track_parameter_data_sources = [ DisplayDataSource(u' ') for _ in xrange(14) ]
-        self._track_parameter_graphic_sources = [ DisplayDataSource(u' ') for _ in xrange(14) ]
+        self._track_parameter_name_sources = [ DisplayDataSource(u' ') for _ in range(14) ]
+        self._track_parameter_data_sources = [ DisplayDataSource(u' ') for _ in range(14) ]
+        self._track_parameter_graphic_sources = [ DisplayDataSource(u' ') for _ in range(14) ]
         self._on_return_tracks_changed.subject = self.song
         self._on_selected_track_changed.subject = self.song.view
         self._fold_task = self._tasks.add(task.sequence(task.wait(TRACK_FOLD_DELAY), task.run(self._do_fold_track))).kill()
@@ -49,7 +55,7 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
 
     def _update_control_sensitivities(self, control):
         if control:
-            if hasattr(control, u'set_sensitivities'):
+            if old_hasattr(control, u'set_sensitivities'):
                 control.set_sensitivities(CONTINUOUS_MAPPING_SENSITIVITY, FINE_GRAINED_CONTINUOUS_MAPPING_SENSITIVITY)
             else:
                 control.mapping_sensitivity = CONTINUOUS_MAPPING_SENSITIVITY
@@ -255,13 +261,13 @@ class SpecialChanStripComponent(components.ChannelStripComponent, Messenger):
             graph.set_display_string(param_value_to_graphic(send, consts.GRAPH_VOL))
 
     def _update_parameter_values(self):
-        for source in flatten(zip(self._track_parameter_data_sources, self._track_parameter_graphic_sources)):
+        for source in flatten(list(zip(self._track_parameter_data_sources, self._track_parameter_graphic_sources))):
             source.set_display_string(u' ')
 
         self._on_volume_value_changed()
         self._on_panning_value_changed()
         if self._track and self._track != self.song.master_track:
-            map(self._on_sends_value_changed, self._track.mixer_device.sends)
+            list(map(self._on_sends_value_changed, self._track.mixer_device.sends))
 
     def update(self):
         super(SpecialChanStripComponent, self).update()

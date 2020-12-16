@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from ableton.v2.base import old_hasattr
 from ...base.dependency import depends
 from ..input_control_element import InputControlElement, MIDI_SYSEX_TYPE
 from .. import midi
@@ -32,7 +33,7 @@ class SysexElement(InputControlElement):
     def send_value(self, *arguments):
         assert self._send_message_generator is not None
         message = self._send_message_generator(*arguments)
-        assert midi.is_valid_sysex(message), u'Trying to send sysex message %r, which is not valid.' % map(hex, message)
+        assert midi.is_valid_sysex(message), u'Trying to send sysex message %r, which is not valid.' % list(map(hex, message))
         self._do_send_value(message)
 
     def enquire_value(self):
@@ -66,7 +67,7 @@ class ColorSysexElement(SysexElement):
 
     def set_light(self, value):
         color = None
-        if hasattr(value, u'draw'):
+        if old_hasattr(value, u'draw'):
             color = value
         else:
             color = self._skin[value]

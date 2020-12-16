@@ -1,32 +1,33 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface import Skin
 from .colors import Basic, Rgb, Pulse, Blink, BiLed
 
-class Colors:
+class Colors(object):
 
-    class Option:
+    class Option(object):
         Selected = BiLed.AMBER
         Unselected = BiLed.YELLOW_HALF
         On = BiLed.YELLOW
         Off = BiLed.OFF
         Unused = BiLed.OFF
 
-    class List:
+    class List(object):
         ScrollerOn = BiLed.AMBER
         ScrollerOff = BiLed.AMBER_HALF
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Basic.FULL
         Off = Basic.HALF
         Disabled = Basic.OFF
         Alert = Basic.FULL_BLINK_SLOW
         Transparent = Basic.TRANSPARENT
 
-    class DefaultMatrix:
+    class DefaultMatrix(object):
         On = Rgb.WHITE
         Off = Rgb.BLACK
 
-    class Scales:
+    class Scales(object):
         Selected = BiLed.YELLOW
         Unselected = BiLed.GREEN_HALF
         FixedOn = BiLed.AMBER
@@ -34,7 +35,7 @@ class Colors:
         Diatonic = BiLed.AMBER
         Chromatic = BiLed.YELLOW_HALF
 
-    class Instrument:
+    class Instrument(object):
         NoteBase = Rgb.OCEAN
         NoteScale = Rgb.WHITE
         NoteNotScale = Rgb.BLACK
@@ -44,7 +45,7 @@ class Colors:
         NoteAction = Rgb.RED
         SelectedNote = Rgb.TURQUOISE
 
-    class Recording:
+    class Recording(object):
         On = Basic.FULL
         Off = Basic.HALF
         Transition = Basic.FULL_BLINK_FAST
@@ -52,11 +53,11 @@ class Colors:
         FixedLengthRecordingOn = BiLed.YELLOW
         FixedLengthRecordingOff = BiLed.OFF
 
-    class Automation:
+    class Automation(object):
         On = Basic.FULL
         Off = Basic.HALF
 
-    class Session:
+    class Session(object):
         Scene = BiLed.GREEN
         SceneTriggered = BiLed.GREEN_BLINK_FAST
         NoScene = BiLed.OFF
@@ -71,18 +72,18 @@ class Colors:
         StopClipTriggered = Blink(Rgb.RED, Rgb.BLACK, 24)
         StoppedClip = Rgb.DARK_GREY
 
-    class Zooming:
+    class Zooming(object):
         Selected = Rgb.AMBER
         Stopped = Rgb.RED
         Playing = Rgb.GREEN
         Empty = Rgb.BLACK
 
-    class TrackState:
+    class TrackState(object):
         Common = Rgb.BLACK
         Stopped = Rgb.RED
         Disabled = Basic.OFF
 
-    class DrumGroup:
+    class DrumGroup(object):
         PadSelected = Rgb.OCEAN
         PadSelectedNotSoloed = Rgb.OCEAN
         PadFilled = Rgb.YELLOW
@@ -94,13 +95,13 @@ class Colors:
         PadInvisible = Rgb.BLACK
         PadAction = Rgb.RED
 
-    class SlicedSimpler:
+    class SlicedSimpler(object):
         SliceSelected = Rgb.OCEAN
         SliceUnselected = Rgb.YELLOW
         NoSlice = Rgb.YELLOW.shade(2)
         NextSlice = Pulse(Rgb.YELLOW.shade(2), Rgb.OCEAN.highlight(), 48)
 
-    class LoopSelector:
+    class LoopSelector(object):
         Playhead = Rgb.GREEN
         PlayheadRecord = Rgb.RED
         SelectedPage = Rgb.YELLOW.highlight()
@@ -108,21 +109,21 @@ class Colors:
         InsideLoop = Rgb.WHITE
         OutsideLoop = Rgb.BLACK
 
-    class VelocityLevels:
+    class VelocityLevels(object):
         LowLevel = Rgb.DARK_GREY
         MidLevel = Rgb.GREY
         HighLevel = Rgb.WHITE
         SelectedLevel = Rgb.OCEAN
 
-    class NoteEditor:
+    class NoteEditor(object):
 
-        class Step:
+        class Step(object):
             Low = Rgb.SKY.highlight()
             High = Rgb.OCEAN
             Full = Rgb.BLUE
             Muted = Rgb.AMBER.shade(2)
 
-        class StepEditing:
+        class StepEditing(object):
             Low = Rgb.YELLOW.highlight()
             High = Rgb.YELLOW
             Full = Rgb.AMBER
@@ -140,15 +141,15 @@ class Colors:
         NoteNotScale = Rgb.BLACK
         NoteInvalid = Rgb.RED.shade(2)
 
-    class Melodic:
+    class Melodic(object):
         Playhead = Rgb.GREEN.shade(1)
         PlayheadRecord = Rgb.RED.shade(1)
 
-    class NoteRepeat:
+    class NoteRepeat(object):
         RateSelected = BiLed.RED
         RateUnselected = BiLed.YELLOW
 
-    class Mixer:
+    class Mixer(object):
         SoloOn = Rgb.BLUE
         SoloOff = Rgb.DARK_GREY
         MuteOn = Rgb.DARK_GREY
@@ -156,7 +157,7 @@ class Colors:
         ArmSelected = BiLed.RED
         ArmUnselected = BiLed.RED_HALF
 
-    class Browser:
+    class Browser(object):
         Load = BiLed.GREEN
         LoadNext = BiLed.YELLOW
         LoadNotPossible = BiLed.OFF
@@ -164,24 +165,24 @@ class Colors:
         Prehear = Rgb.BLUE
         PrehearOff = Rgb.WHITE
 
-    class MessageBox:
+    class MessageBox(object):
         Cancel = BiLed.GREEN
 
-    class Transport:
+    class Transport(object):
         PlayOn = Basic.FULL
         PlayOff = Basic.HALF
 
-    class Metronome:
+    class Metronome(object):
         On = Basic.FULL_BLINK_SLOW
         Off = Basic.FULL
 
-    class FixedLength:
+    class FixedLength(object):
         On = Basic.FULL
         Off = Basic.HALF
         PhraseAlignedOn = BiLed.AMBER
         PhraseAlignedOff = BiLed.YELLOW_HALF
 
-    class Accent:
+    class Accent(object):
         On = Basic.FULL
         Off = Basic.HALF
 

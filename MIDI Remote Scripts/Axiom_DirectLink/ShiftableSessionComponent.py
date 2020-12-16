@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from _Framework.SessionComponent import SessionComponent
 from _Framework.ButtonElement import ButtonElement
 
@@ -37,7 +40,7 @@ class ShiftableSessionComponent(SessionComponent):
         if selected_track in tracks:
             track_index = list(tracks).index(selected_track)
             new_offset = track_index - track_index % self._num_tracks
-            assert new_offset / self._num_tracks == int(new_offset / self._num_tracks)
+            assert old_div(new_offset, self._num_tracks) == int(old_div(new_offset, self._num_tracks))
             self.set_offsets(new_offset, self.scene_offset())
 
     def _shift_value(self, value):

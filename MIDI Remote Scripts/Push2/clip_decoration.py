@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import zip
+from builtins import object
 from ableton.v2.base import liveobj_valid, listenable_property, listens, EventObject
 from ableton.v2.control_surface import InternalParameter, DecoratorFactory, LiveObjectDecorator
 from .decoration import find_decorated_object
@@ -101,8 +103,8 @@ class ClipPositions(EventObject):
         self._update_start_end()
 
     def _update_start_end_note_times(self):
-        all_notes = self._clip.get_notes(self.MIN_TIME, 0, self.MAX_TIME, 128)
-        start_times, end_times = zip(*[ (start_time, start_time + duration) for _, start_time, duration, _, _ in all_notes ]) if len(all_notes) > 0 else ([self.MAX_TIME], [self.MIN_TIME])
+        all_notes = self._clip.get_notes_extended(from_time=self.MIN_TIME, from_pitch=0, time_span=self.MAX_TIME, pitch_span=128)
+        start_times, end_times = list(zip(*[ (note.start_time, note.start_time + note.duration) for note in all_notes ])) if len(all_notes) > 0 else ([self.MAX_TIME], [self.MIN_TIME])
         self.start_of_first_note = min(start_times)
         self.end_of_last_note = max(end_times)
 

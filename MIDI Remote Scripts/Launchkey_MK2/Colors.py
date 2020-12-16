@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from _Framework.ButtonElement import Color
 from .consts import BLINK_LED_CHANNEL, PULSE_LED_CHANNEL
 
@@ -22,7 +23,7 @@ class Pulse(Color):
         interface.send_value(self.midi_value, channel=PULSE_LED_CHANNEL)
 
 
-class Rgb:
+class Rgb(object):
     BLACK = Color(0)
     DARK_GREY = Color(1)
     GREY = Color(2)

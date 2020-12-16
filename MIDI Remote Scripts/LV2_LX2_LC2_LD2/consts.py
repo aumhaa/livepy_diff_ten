@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 TRACK_CHANNEL_SETUP1 = 9
 AUX_CHANNEL_SETUP1 = 10
 CHANNEL_SETUP1 = 11
@@ -9,8 +10,8 @@ SEND_CCS = [ [ x + i for x in [40,
  60,
  80,
  100] ] for i in range(0, 16) ]
-PAN_X_CC = range(20, 36)
-PAN_Y_CC = range(0, 16)
+PAN_X_CC = list(range(20, 36))
+PAN_Y_CC = list(range(0, 16))
 PAN_X_MASTER_CC = 36
 PAN_Y_MASTER_CC = 16
 LAUNCH_NOTES = [0,
@@ -150,7 +151,7 @@ SCENE_UP_NOTE = 33
 SCENE_DOWN_NOTE = 34
 CROSSFADER_CC = 18
 LV1_CROSSFADER_CC = 19
-TRACK_SELECT_NOTES = range(16, 32)
+TRACK_SELECT_NOTES = list(range(16, 32))
 MASTER_TRACK_SELECT_NOTE = 32
 CLIP_SELECT_NOTE = 103
 SCENE_LAUNCH_NOTE = 0
@@ -201,7 +202,7 @@ MASTER_EQ_CCS = [56,
  76,
  96,
  116]
-VOLUME_CCS = range(0, 16)
+VOLUME_CCS = list(range(0, 16))
 SCENE_LAUNCH_NOTES = [8,
  9,
  10,
@@ -230,7 +231,7 @@ EQ_CCS = [ [ x + i for x in [40,
  60,
  80,
  100] ] for i in range(0, 16) ]
-SLOT_LAUNCH_NOTES1 = [ range(i * 8, i * 8 + 6) for i in range(0, 16) ]
+SLOT_LAUNCH_NOTES1 = [ list(range(i * 8, i * 8 + 6)) for i in range(0, 16) ]
 SLOT_LAUNCH_NOTES2 = [[6,
   7,
   55,

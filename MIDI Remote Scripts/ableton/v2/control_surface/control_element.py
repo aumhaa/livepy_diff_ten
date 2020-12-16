@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.utils import iteritems, string_types
 import logging
 import traceback
 import re
@@ -45,7 +46,7 @@ class OptimizedOwnershipHandler(ElementOwnershipHandler):
     def commit_ownership_changes(self, traceback = None):
         notify = super(OptimizedOwnershipHandler, self).handle_ownership_change
         while self._ownership_changes:
-            notifications = sorted(self._ownership_changes.iteritems(), key=second)
+            notifications = sorted(iteritems(self._ownership_changes), key=second)
             self._ownership_changes.clear()
             for (control, client, status), _ in notifications:
                 try:
@@ -71,7 +72,7 @@ def get_element(obj, element_container = None):
         get_element('buttons[0]')
     Slicing is not supported.
     """
-    if isinstance(obj, basestring):
+    if isinstance(obj, string_types):
         if element_container is None:
             raise RuntimeError(u'Control elements can only be accessed by name, if an element container is available')
         match = _element_list_access_expr.match(obj)

@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import range
 from functools import partial
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
 from _Framework.ComboElement import ComboElement
@@ -57,10 +59,10 @@ class APC40(APC, OptimizedControlSurface):
         self._up_button = make_button(0, 94, name=u'Bank_Select_Up_Button')
         self._down_button = make_button(0, 95, name=u'Bank_Select_Down_Button')
         self._session_matrix = ButtonMatrixElement(name=u'Button_Matrix')
-        self._scene_launch_buttons_raw = [ make_color_button(0, index + 82, name=u'Scene_%d_Launch_Button' % index) for index in xrange(SESSION_HEIGHT) ]
-        self._track_stop_buttons = [ make_color_button(index, 52, name=u'Track_%d_Stop_Button' % index) for index in xrange(SESSION_WIDTH) ]
+        self._scene_launch_buttons_raw = [ make_color_button(0, index + 82, name=u'Scene_%d_Launch_Button' % index) for index in range(SESSION_HEIGHT) ]
+        self._track_stop_buttons = [ make_color_button(index, 52, name=u'Track_%d_Stop_Button' % index) for index in range(SESSION_WIDTH) ]
         self._stop_all_button = make_color_button(0, 81, name=u'Stop_All_Clips_Button')
-        self._matrix_rows_raw = [ [ make_color_button(track_index, scene_index + 53, name=u'%d_Clip_%d_Button' % (track_index, scene_index)) for track_index in xrange(SESSION_WIDTH) ] for scene_index in xrange(SESSION_HEIGHT) ]
+        self._matrix_rows_raw = [ [ make_color_button(track_index, scene_index + 53, name=u'%d_Clip_%d_Button' % (track_index, scene_index)) for track_index in range(SESSION_WIDTH) ] for scene_index in range(SESSION_HEIGHT) ]
         for row in self._matrix_rows_raw:
             self._session_matrix.add_row(row)
 
@@ -71,7 +73,7 @@ class APC40(APC, OptimizedControlSurface):
         self._solo_buttons = []
         self._mute_buttons = []
         self._select_buttons = []
-        for index in xrange(MIXER_SIZE):
+        for index in range(MIXER_SIZE):
             self._volume_controls.append(make_slider(index, 7, name=u'%d_Volume_Control' % index))
             self._arm_buttons.append(make_on_off_button(index, 48, name=u'%d_Arm_Button' % index))
             self._solo_buttons.append(make_on_off_button(index, 49, name=u'%d_Solo_Button' % index))
@@ -115,7 +117,7 @@ class APC40(APC, OptimizedControlSurface):
         self._metronome_button = self._device_bank_buttons[7]
 
         def wrap_matrix(control_list, wrapper = nop):
-            return ButtonMatrixElement(rows=[map(wrapper, control_list)])
+            return ButtonMatrixElement(rows=[list(map(wrapper, control_list))])
 
         self._scene_launch_buttons = wrap_matrix(self._scene_launch_buttons_raw)
         self._track_stop_buttons = wrap_matrix(self._track_stop_buttons)

@@ -2,6 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from collections import namedtuple
 from math import ceil
 from functools import partial
+from past.utils import old_div
 from ableton.v2.base import clamp, index_if, listens, listenable_property
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, RadioButtonControl, StepEncoderControl, ToggleButtonControl, control_list
@@ -22,14 +23,14 @@ class ScalesComponent(Component):
     direction_encoder = StepEncoderControl()
     horizontal_navigation = listenable_property.managed(False)
     NUM_DISPLAY_ROWS = 4
-    NUM_DISPLAY_COLUMNS = int(ceil(float(len(SCALES)) / NUM_DISPLAY_ROWS))
+    NUM_DISPLAY_COLUMNS = int(ceil(old_div(float(len(SCALES)), NUM_DISPLAY_ROWS)))
 
     def __init__(self, note_layout = None, *a, **k):
         assert note_layout is not None
         super(ScalesComponent, self).__init__(*a, **k)
         self._note_layout = note_layout
         self._scale_list = list(SCALES)
-        self._scale_name_list = map(lambda m: m.name, self._scale_list)
+        self._scale_name_list = [ m.name for m in self._scale_list ]
         self._selected_scale_index = -1
         self._selected_root_note_index = -1
         self._layouts = (Layout(u'4ths', 3), Layout(u'3rds', 2), Layout(u'Sequential', None))

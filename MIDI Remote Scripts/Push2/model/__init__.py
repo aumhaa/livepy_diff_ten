@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.builtins import unicode
 from .declaration import Binding, custom_property, id_property, listmodel, listof, view_property, ViewModel, ModelVisitor
 from .repr import BrowserItemAdapter, BrowserListWrapper, ClipAdapter, DeviceAdapter, DeviceParameterAdapter, EditModeOptionAdapter, ItemListAdapter, ItemSlotAdapter, LiveDialogAdapter, OptionsListAdapter, RoutingAdapter, SimplerDeviceAdapter, TrackAdapter, TrackControlAdapter, TrackListAdapter, TrackMixAdapter, VisibleAdapter
 __all__ = (ModelVisitor,)
@@ -460,6 +461,9 @@ class NoteSettingsModel(Binding):
     coarse = view_property(NoteSettingModel)
     fine = view_property(NoteSettingModel)
     velocity = view_property(NoteSettingModel)
+    velocity_deviation = view_property(NoteSettingModel)
+    probability = view_property(NoteSettingModel)
+    show_velocity_ranges_and_probabilities = view_property(bool, True)
     color_index = view_property(int, -1)
     visible = view_property(bool, False)
 
@@ -519,6 +523,7 @@ class MixerViewModel(ViewModel):
 
 class GeneralSettingsModel(Binding):
     workflow = view_property(unicode, u'scene')
+    aftertouch_mode = view_property(unicode, u'mono')
 
 
 class PadSettingsModel(Binding):

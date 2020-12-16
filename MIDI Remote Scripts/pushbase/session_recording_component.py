@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter
+from builtins import filter
 import Live
 from ableton.v2.base import listens, liveobj_valid, EventObject
 from ableton.v2.control_surface.control import ButtonControl
@@ -23,7 +23,7 @@ def get_clip_slot_from_index(song, track, clip_slot_index):
 
 
 def have_other_recording_clips(tracks, recording_clip):
-    for track in ifilter(lambda t: t.can_be_armed and (t.arm or t.implicit_arm), tracks):
+    for track in filter(lambda t: t.can_be_armed and (t.arm or t.implicit_arm), tracks):
         index = track.playing_slot_index
         slot = track.clip_slots[index] if 0 <= index < len(track.clip_slots) else None
         clip = getattr(slot, u'clip', None)

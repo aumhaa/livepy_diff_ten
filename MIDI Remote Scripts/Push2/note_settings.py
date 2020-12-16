@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+import Live
+from builtins import round
+from past.utils import old_div
 from ableton.v2.base import listenable_property, listens
 from ableton.v2.control_surface.control import StepEncoderControl
 from ableton.v2.control_surface.elements.color import SelectedClipColor
@@ -45,7 +49,7 @@ class NoteLengthCoarseSetting(NoteSetting):
     encoder = StepEncoderControl()
 
     def transform_value(self, value):
-        return int(value / self.step_length)
+        return int(old_div(value, self.step_length))
 
     @encoder.value
     def encoder(self, value, _):
@@ -69,6 +73,26 @@ class NoteVelocitySetting(NoteSetting):
         return round(value)
 
 
+class NoteVelocityDeviationSetting(NoteSetting):
+    attribute_index = 4
+
+    def encoder_value_to_attribute(self, value):
+        return value * 128
+
+    def transform_value(self, value):
+        return round(value)
+
+
+class NoteProbabilitySetting(NoteSetting):
+    attribute_index = 5
+
+    def encoder_value_to_attribute(self, value):
+        return value * 128
+
+    def transform_value(self, value):
+        return round(value * 100)
+
+
 class NoteSettingsComponent(NoteSettingsComponentBase):
 
     def __init__(self, *a, **k):
@@ -84,10 +108,15 @@ class NoteSettingsComponent(NoteSettingsComponentBase):
         self._coarse = NoteLengthCoarseSetting(**args)
         self._fine = NoteLengthFineSetting(**args)
         self._velocity = NoteVelocitySetting(**args)
+        self._velocity_deviation = NoteVelocityDeviationSetting(**args)
+        self._probability = NoteProbabilitySetting(**args)
         self._add_setting(self._nudge)
         self._add_setting(self._coarse)
         self._add_setting(self._fine)
         self._add_setting(self._velocity)
+        if self.show_velocity_ranges_and_probabilities:
+            self._add_setting(self._velocity_deviation)
+            self._add_setting(self._probability)
 
     def set_color_mode(self, color_mode):
         self._color = self.get_color_for_mode(color_mode)
@@ -115,6 +144,14 @@ class NoteSettingsComponent(NoteSettingsComponentBase):
     @property
     def velocity(self):
         return self._velocity
+
+    @property
+    def velocity_deviation(self):
+        return self._velocity_deviation
+
+    @property
+    def probability(self):
+        return self._probability
 
     @listenable_property
     def color_index(self):

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.base import task
 from ableton.v2.control_surface import ControlElement, midi
 METERS_PER_SEGMENT = 2
@@ -9,7 +10,7 @@ class MeterDisplayElement(ControlElement):
     def __init__(self, header, num_segments, *a, **k):
         super(MeterDisplayElement, self).__init__(*a, **k)
         self._header = header
-        self._clear_values = [ CLEAR_VALUE for _ in xrange(num_segments * METERS_PER_SEGMENT) ]
+        self._clear_values = [ CLEAR_VALUE for _ in range(num_segments * METERS_PER_SEGMENT) ]
         self._meter_values = list(self._clear_values)
         self._last_sent_message = None
         self._send_message_task = self._tasks.add(task.run(self._send_message))

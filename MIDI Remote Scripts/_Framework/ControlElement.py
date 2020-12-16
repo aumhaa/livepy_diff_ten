@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 import traceback
 from . import Task
 from .Dependency import depends
@@ -45,7 +46,7 @@ class OptimizedOwnershipHandler(ElementOwnershipHandler):
     def commit_ownership_changes(self, log_message = None, traceback = None):
         notify = super(OptimizedOwnershipHandler, self).handle_ownership_change
         while self._ownership_changes:
-            notifications = sorted(self._ownership_changes.iteritems(), key=second)
+            notifications = sorted(iter(self._ownership_changes.items()), key=second)
             self._ownership_changes.clear()
             for (control, client, status), _ in notifications:
                 try:

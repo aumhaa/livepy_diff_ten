@@ -1,7 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import map
+from builtins import range
+from past.utils import old_div
 from contextlib import contextmanager
 from functools import partial
-from itertools import izip
 from ableton.v2.base import EventObject, clamp, listenable_property, listens, liveobj_changed, liveobj_valid, nop, task
 from ableton.v2.control_surface import defaults, Component
 from ableton.v2.control_surface.control import ButtonControl, control_matrix, PlayableControl
@@ -231,7 +234,7 @@ class LoopSelectorComponent(Component, Messenger):
 
         if self.is_enabled() and self._has_running_clip():
             position = self._sequencer_clip.playing_position
-            visible_page = int(position / self._page_length_in_beats) - self.page_offset
+            visible_page = int(old_div(position, self._page_length_in_beats)) - self.page_offset
             page_colors = self._page_colors
             if 0 <= visible_page < len(page_colors):
                 with save_page_color(page_colors, visible_page):
@@ -250,16 +253,16 @@ class LoopSelectorComponent(Component, Messenger):
 
     def _get_loop_in_pages(self):
         page_length = self._page_length_in_beats
-        loop_start = int(self._loop_start / page_length)
-        loop_end = int(self._loop_end / page_length)
+        loop_start = int(old_div(self._loop_start, page_length))
+        loop_end = int(old_div(self._loop_end, page_length))
         loop_length = loop_end - loop_start + int(self._loop_end % page_length != 0)
         return (loop_start, loop_length)
 
     def _selected_pages_range(self):
         size = self._get_size()
         page_length = self._page_length_in_beats
-        seq_page_length = max(self._paginator.page_length / page_length, 1)
-        seq_page_start = int(self._paginator.page_index * self._paginator.page_length / page_length)
+        seq_page_length = max(old_div(self._paginator.page_length, page_length), 1)
+        seq_page_start = int(old_div(self._paginator.page_index * self._paginator.page_length, page_length))
         seq_page_end = int(min(seq_page_start + seq_page_length, self.page_offset + size))
         return (seq_page_start, seq_page_end)
 
@@ -273,7 +276,7 @@ class LoopSelectorComponent(Component, Messenger):
         def calculate_page_colors():
             l_start, l_length = self._get_loop_in_pages()
             page_offset = self.page_offset
-            pages_per_measure = int(self._one_measure_in_beats / page_length)
+            pages_per_measure = int(old_div(self._one_measure_in_beats, page_length))
 
             def color_for_page(absolute_page):
                 if l_start <= absolute_page < l_start + l_length:
@@ -283,10 +286,10 @@ class LoopSelectorComponent(Component, Messenger):
                 else:
                     return u'LoopSelector.OutsideLoop'
 
-            return map(color_for_page, xrange(page_offset, page_offset + size))
+            return list(map(color_for_page, range(page_offset, page_offset + size)))
 
         def mark_selected_pages(page_colors):
-            for page_index in xrange(*self._selected_pages_range()):
+            for page_index in range(*self._selected_pages_range()):
                 button_index = page_index - self.page_offset
                 if page_colors[button_index].startswith(u'LoopSelector.InsideLoop'):
                     page_colors[button_index] = u'LoopSelector.SelectedPage'
@@ -303,7 +306,7 @@ class LoopSelectorComponent(Component, Messenger):
     def _update_page_leds_in_matrix(self, matrix):
         u""" update hardware leds to match precomputed map """
         if self.is_enabled() and matrix:
-            for button, color in izip(matrix, self._page_colors):
+            for button, color in zip(matrix, self._page_colors):
                 button.color = color
 
     def _jump_to_page(self, next_page):
@@ -367,13 +370,13 @@ class LoopSelectorComponent(Component, Messenger):
 
     def _quantize_page_index(self, page_index, quant):
         page_length = self._page_length_in_beats
-        return quant * float(int(page_length * page_index / quant))
+        return quant * float(int(old_div(page_length * page_index, quant)))
 
     def _clear_page(self, page):
         page_start, page_end = self._selected_pages_time_range(page)
-        notes = self._sequencer_clip.get_notes(page_start, 0, page_end, 128)
+        notes = self._sequencer_clip.get_notes_extended(from_time=page_start, from_pitch=0, time_span=page_end, pitch_span=128)
         if len(notes) > 0:
-            self._sequencer_clip.remove_notes(page_start, 0, page_end - page_start, 128)
+            self._sequencer_clip.remove_notes_extended(from_time=page_start, from_pitch=0, time_span=page_end - page_start, pitch_span=128)
             self._notification_reference = self.show_notification(MessageBoxText.PAGE_CLEARED)
         else:
             self._notification_reference = self.show_notification(MessageBoxText.CANNOT_CLEAR_EMPTY_PAGE)
@@ -459,7 +462,7 @@ class LoopSelectorComponent(Component, Messenger):
 
     @property
     def _one_measure_in_beats(self):
-        return self._measure_length * self.song.signature_numerator / self.song.signature_denominator
+        return old_div(self._measure_length * self.song.signature_numerator, self.song.signature_denominator)
 
     @property
     def page_offset(self):
@@ -474,5 +477,5 @@ class LoopSelectorComponent(Component, Messenger):
         size = max(width * height, 1)
         page_index = self._paginator.page_index
         page_length = self._paginator.page_length
-        selected_page_index = int(page_index * page_length / self._page_length_in_beats)
-        return size * int(selected_page_index / size)
+        selected_page_index = int(old_div(page_index * page_length, self._page_length_in_beats))
+        return size * int(old_div(selected_page_index, size))

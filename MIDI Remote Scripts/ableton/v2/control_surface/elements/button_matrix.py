@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import range
 from ...base import in_range, product, const, slicer, to_slice
 from ..compound_element import CompoundElement
 
@@ -18,7 +20,8 @@ class ButtonMatrixElement(CompoundElement):
         self._orig_buttons = []
         self._button_coordinates = {}
         self._max_row_width = 0
-        map(self.add_row, rows)
+        for row in rows:
+            self.add_row(row)
 
     @property
     @slicer(2)
@@ -64,6 +67,7 @@ class ButtonMatrixElement(CompoundElement):
     def get_button(self, row, column):
         assert in_range(column, 0, self.width())
         assert in_range(row, 0, self.height())
+        row = int(row)
         if len(self._buttons[row]) > column:
             return self._buttons[row][column]
 
@@ -78,14 +82,14 @@ class ButtonMatrixElement(CompoundElement):
                 button.reset()
 
     def __iter__(self):
-        for j, i in product(xrange(self.height()), xrange(self.width())):
+        for j, i in product(range(self.height()), range(self.width())):
             button = self.get_button(j, i)
             yield button
 
     def __getitem__(self, index):
         if isinstance(index, slice):
             indices = index.indices(len(self))
-            return map(self._do_get_item, range(*indices))
+            return list(map(self._do_get_item, range(*indices)))
         else:
             if index < 0:
                 index += len(self)
@@ -100,7 +104,7 @@ class ButtonMatrixElement(CompoundElement):
         return self.width() * self.height()
 
     def iterbuttons(self):
-        for j, i in product(xrange(self.height()), xrange(self.width())):
+        for j, i in product(range(self.height()), range(self.width())):
             button = self.get_button(j, i)
             yield (button, (i, j))
 

@@ -1,8 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from .ParamMap import ParamMap
 from .FaderfoxMixerController import FaderfoxMixerController
 from .consts import *
+from ableton.v2.base import old_hasattr
 
 class LV2MixerController(FaderfoxMixerController):
     __module__ = __name__
@@ -41,7 +43,7 @@ class LV2MixerController(FaderfoxMixerController):
                     track.remove_arm_listener(self.on_track_arm_changed)
                 track.remove_mute_listener(self.on_track_mute_changed)
                 track.remove_solo_listener(self.on_track_solo_changed)
-                if hasattr(track, u'current_monitoring_state'):
+                if old_hasattr(track, u'current_monitoring_state'):
                     track.remove_current_monitoring_state_listener(self.on_track_monitoring_changed)
 
         self.tracks_with_listener = []
@@ -79,7 +81,7 @@ class LV2MixerController(FaderfoxMixerController):
                     track.add_arm_listener(self.on_track_arm_changed)
                 track.add_mute_listener(self.on_track_mute_changed)
                 track.add_solo_listener(self.on_track_solo_changed)
-                if hasattr(track, u'current_monitoring_state'):
+                if old_hasattr(track, u'current_monitoring_state'):
                     track.add_current_monitoring_state_listener(self.on_track_monitoring_changed)
                     self.log(u'added track %s to monitoring')
                 self.tracks_with_listener += [track]
@@ -99,7 +101,7 @@ class LV2MixerController(FaderfoxMixerController):
             status = 0
             if len(tracks) > idx:
                 track = tracks[idx]
-                if not hasattr(track, attr):
+                if not old_hasattr(track, attr):
                     continue
                 if not track.can_be_armed and attr == u'arm':
                     continue

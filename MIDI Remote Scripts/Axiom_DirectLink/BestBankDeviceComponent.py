@@ -15,10 +15,10 @@ class BestBankDeviceComponent(DeviceComponent):
         self._device_banks = DEVICE_DICT
         self._device_bank_names = BANK_NAME_DICT
         self._device_best_banks = DEVICE_BOB_DICT
-        for device_name, current_banks in self._device_banks.iteritems():
+        for device_name, current_banks in self._device_banks.items():
             if len(current_banks) > 1:
-                assert device_name in self._device_best_banks.keys(), u"Could not find best-of-banks for '%s'" % device_name
-                assert device_name in self._device_bank_names.keys(), u"Could not find bank names for '%s'" % device_name
+                assert device_name in list(self._device_best_banks.keys()), u"Could not find best-of-banks for '%s'" % device_name
+                assert device_name in list(self._device_bank_names.keys()), u"Could not find bank names for '%s'" % device_name
                 current_banks = self._device_best_banks[device_name] + current_banks
                 new_bank_names[device_name] = (BOP_BANK_NAME,) + self._device_bank_names[device_name]
             new_banks[device_name] = current_banks
@@ -57,7 +57,7 @@ class BestBankDeviceComponent(DeviceComponent):
     def _number_of_parameter_banks(self):
         result = 0
         if self._device != None:
-            if self._device.class_name in self._device_banks.keys():
+            if self._device.class_name in list(self._device_banks.keys()):
                 result = len(self._device_banks[self._device.class_name])
             else:
                 result = DeviceComponent._number_of_parameter_banks(self)

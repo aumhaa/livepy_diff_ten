@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 from .consts import *
 from .MainDisplay import MainDisplay
 from .MainDisplayController import MainDisplayController
@@ -10,7 +12,7 @@ from .Transport import Transport
 import Live
 import MidiRemoteScript
 
-class MackieControl:
+class MackieControl(object):
     u"""Main class that establishes the Mackie Control <-> Live interaction. It acts
        as a container/manager for all the Mackie Control sub-components like ChannelStrips,
        Displays and so on.

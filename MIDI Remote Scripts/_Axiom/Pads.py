@@ -1,8 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 import Live
 from .consts import *
 
-class Pads:
+class Pads(object):
     u""" Class representing the Pads section on the Axiom controllers """
 
     def __init__(self, parent):

@@ -17,7 +17,7 @@ class DeviceBankRegistry(EventObject):
         self._device_bank_listeners = []
 
     def compact_registry(self):
-        newreg = dict(filter(lambda (k, _): k != None, self._device_bank_registry.items()))
+        newreg = dict(filter(lambda kv: kv[0] != None, self._device_bank_registry.items()))
         self._device_bank_registry = newreg
 
     def set_device_bank(self, device, bank):
@@ -28,9 +28,11 @@ class DeviceBankRegistry(EventObject):
             self.notify_device_bank(device, bank)
 
     def get_device_bank(self, device):
+        if hasattr(device, u'bank_index'):
+            return device.bank_index
         return self._device_bank_registry.get(self._find_device_bank_key(device), 0)
 
     def _find_device_bank_key(self, device):
-        for k in self._device_bank_registry.iterkeys():
+        for k in self._device_bank_registry:
             if k == device:
                 return k

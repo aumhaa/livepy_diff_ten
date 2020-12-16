@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 from itertools import chain
 from _Framework.Util import const
 from _Framework.Dependency import inject
@@ -13,9 +15,9 @@ from .MixerComponent import MixerComponent
 NUM_TRACKS = 8
 SEND_IDS = ((16, 20, 24, 28, 46, 50, 54, 58), (17, 21, 25, 29, 47, 51, 55, 59))
 
-class Colors:
+class Colors(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Color(127)
         Off = Color(0)
         Disabled = Color(0)
@@ -32,12 +34,12 @@ class MIDI_Mix(APC, OptimizedControlSurface):
             self._create_mixer()
 
     def _create_controls(self):
-        self._sliders = make_button_row(chain(xrange(19, 32, 4), xrange(49, 62, 4)), make_slider, u'Volume_Slider')
-        self._rec_arm_buttons = make_button_row(xrange(3, 25, 3), make_button, u'Record_Arm_Button')
-        self._mute_buttons = make_button_row(xrange(1, 23, 3), make_button, u'Mute_Button')
-        self._solo_buttons = make_button_row(xrange(2, 24, 3), make_button, u'Solo_Button')
+        self._sliders = make_button_row(chain(range(19, 32, 4), range(49, 62, 4)), make_slider, u'Volume_Slider')
+        self._rec_arm_buttons = make_button_row(range(3, 25, 3), make_button, u'Record_Arm_Button')
+        self._mute_buttons = make_button_row(range(1, 23, 3), make_button, u'Mute_Button')
+        self._solo_buttons = make_button_row(range(2, 24, 3), make_button, u'Solo_Button')
         self._send_encoders = ButtonMatrixElement(rows=[ [ make_encoder(id, u'Send_Encoder_%d' % (id_index + row_index * NUM_TRACKS)) for id_index, id in enumerate(row) ] for row_index, row in enumerate(SEND_IDS) ])
-        self._pan_encoders = make_button_row(chain(xrange(18, 31, 4), xrange(48, 61, 4)), make_encoder, u'Pan_Encoder')
+        self._pan_encoders = make_button_row(chain(range(18, 31, 4), range(48, 61, 4)), make_encoder, u'Pan_Encoder')
         self._bank_left_button = make_button(25, u'Bank_Left_Button')
         self._bank_right_button = make_button(26, u'Bank_Right_Button')
         self._solo_mode_button = make_button(27, u'Solo_Mode_Button')

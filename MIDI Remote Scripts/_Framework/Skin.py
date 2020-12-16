@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import str
+from builtins import object
+from future.utils import raise_
 from itertools import chain
 
 class SkinColorMissingError(Exception):
@@ -14,12 +18,11 @@ class Skin(object):
             self._fill_colors(colors)
 
     def _fill_colors(self, colors, pathname = u''):
-        try:
-            self._fill_colors(super(colors))
-        except TypeError:
-            map(self._fill_colors, colors.__bases__)
+        if getattr(colors, u'__bases__', None):
+            for base in colors.__bases__:
+                self._fill_colors(base)
 
-        for k, v in colors.__dict__.iteritems():
+        for k, v in colors.__dict__.items():
             if k[:1] != u'_':
                 if callable(v):
                     self._fill_colors(v, pathname + k + u'.')
@@ -30,13 +33,13 @@ class Skin(object):
         try:
             return self._colors[key]
         except KeyError:
-            raise SkinColorMissingError, u'Skin color missing: %s' % str(key)
+            raise_(SkinColorMissingError, u'Skin color missing: %s' % str(key))
 
     def iteritems(self):
-        return self._colors.iteritems()
+        return iter(self._colors.items())
 
 
 def merge_skins(*skins):
     skin = Skin()
-    skin._colors = dict(chain(*map(lambda s: s._colors.items(), skins)))
+    skin._colors = dict(chain(*[ list(s._colors.items()) for s in skins ]))
     return skin

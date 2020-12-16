@@ -1,4 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import Live
 from .RemoteSLComponent import RemoteSLComponent
 from .consts import *
@@ -233,11 +238,11 @@ class EffectController(RemoteSLComponent):
         result = 0
         if self.__assigned_device != None:
             param_count = len(self.__assigned_device.parameters)
-            result = int(param_count / 8) + int(param_count % 8 != 0)
+            result = int(old_div(param_count, 8)) + int(param_count % 8 != 0)
         return result
 
 
-class EffectChannelStrip():
+class EffectChannelStrip(object):
     u"""Represents one of the 8 strips in the Effect controls that we use for parameter
     controlling (one button, one encoder)
     """

@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import object
 import Live
 import sys
 from .consts import *
@@ -6,8 +8,9 @@ from .FaderfoxHelper import FaderfoxHelper
 from .ParamMap import ParamMap
 from .Devices import *
 from _Generic.util import DeviceAppointer
+from ableton.v2.base import old_hasattr
 
-class FaderfoxScript:
+class FaderfoxScript(object):
     __filter_funcs__ = [u'update_display', u'log', u'song']
     __module__ = __name__
     __doc__ = u'Automap script for Faderfox controllers'
@@ -35,7 +38,7 @@ class FaderfoxScript:
         self._device_appointer = DeviceAppointer(song=self.song(), appointed_device_setter=self._set_appointed_device)
 
     def is_live_5(self):
-        return hasattr(Live, u'is_live_5')
+        return old_hasattr(Live, u'is_live_5')
 
     def log(self, string):
         pass
@@ -86,7 +89,7 @@ class FaderfoxScript:
         pass
 
     def show_message(self, message):
-        if hasattr(self.c_instance, u'show_message'):
+        if old_hasattr(self.c_instance, u'show_message'):
             self.c_instance.show_message(message)
 
     def instance_identifier(self):

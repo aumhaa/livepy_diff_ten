@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 from .MackieControlComponent import *
 
 class MainDisplayController(MackieControlComponent):
@@ -98,7 +100,7 @@ class MainDisplayController(MackieControlComponent):
             if self.__channel_strip_mode:
                 upper_string = u''
                 lower_string = u''
-                track_index_range = range(self.__bank_channel_offset + display.stack_offset(), self.__bank_channel_offset + display.stack_offset() + NUM_CHANNEL_STRIPS)
+                track_index_range = list(range(self.__bank_channel_offset + display.stack_offset(), self.__bank_channel_offset + display.stack_offset() + NUM_CHANNEL_STRIPS))
                 if self.__show_return_tracks:
                     tracks = self.song().return_tracks
                 else:
@@ -116,7 +118,7 @@ class MainDisplayController(MackieControlComponent):
                     upper_string += u' '
                     if self.__parameters and self.__parameters[strip_index]:
                         if self.__parameters[strip_index][0]:
-                            lower_string += self.__generate_6_char_string(unicode(self.__parameters[strip_index][0]))
+                            lower_string += self.__generate_6_char_string(str(self.__parameters[strip_index][0]))
                         else:
                             lower_string += self.__generate_6_char_string(u'')
                     elif self.__channel_strip_strings and self.__channel_strip_strings[strip_index]:

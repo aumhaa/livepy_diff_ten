@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ToggleButtonControl
 from . import consts
@@ -101,7 +102,7 @@ class TouchStripPitchModComponent(Component, Messenger):
     def _update_touch_strip_indication(self):
         if self._touch_strip_indication:
             self._touch_strip_indication.set_mode(TouchStripModes.CUSTOM_FREE)
-            self._touch_strip_indication.send_state([ (TouchStripStates.STATE_FULL if self.touch_strip_toggle.is_toggled else TouchStripStates.STATE_HALF) for _ in xrange(self._touch_strip_indication.state_count) ])
+            self._touch_strip_indication.send_state([ (TouchStripStates.STATE_FULL if self.touch_strip_toggle.is_toggled else TouchStripStates.STATE_HALF) for _ in range(self._touch_strip_indication.state_count) ])
 
     def update(self):
         super(TouchStripPitchModComponent, self).update()

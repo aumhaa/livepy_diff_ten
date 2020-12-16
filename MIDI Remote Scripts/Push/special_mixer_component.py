@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from builtins import map
+from future.moves.itertools import zip_longest
 from ableton.v2.base import listens
 from ableton.v2.control_surface import components
 from ableton.v2.control_surface.elements import DisplayDataSource
@@ -21,7 +22,7 @@ class SpecialMixerComponent(components.MixerComponent):
         self._pan_send_values_display = None
         self._pan_send_graphics_display = None
         self._pan_send_toggle_skip = False
-        self._selected_track_data_sources = map(DisplayDataSource, (u'',) * self.num_label_segments)
+        self._selected_track_data_sources = list(map(DisplayDataSource, (u'',) * self.num_label_segments))
         self._selected_track_data_sources[0].set_display_string(u'Track Selection:')
         self._selected_track_name_data_source = self._selected_track_data_sources[1]
         self._on_selected_track_name_changed.subject = self.song.view
@@ -43,15 +44,15 @@ class SpecialMixerComponent(components.MixerComponent):
             display.set_data_sources(self._selected_track_data_sources)
 
     def set_track_select_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_select_button(button)
 
     def set_solo_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_solo_button(button)
 
     def set_mute_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_mute_button(button)
 
     def set_track_names_display(self, display):
@@ -69,7 +70,7 @@ class SpecialMixerComponent(components.MixerComponent):
         self._set_parameter_graphics_display(display, 0)
 
     def set_volume_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.set_volume_control(control)
 
     def set_pan_send_names_display(self, display):
@@ -96,18 +97,18 @@ class SpecialMixerComponent(components.MixerComponent):
             self.set_pan_controls(controls)
         else:
             sends = self._pan_send_index - 1
-            self.set_send_controls(map(lambda ctl: (None,) * sends + (ctl,), controls or []))
+            self.set_send_controls([ (None,) * sends + (ctl,) for ctl in controls or [] ])
 
     @listens(u'visible_tracks')
     def _on_track_list_changed(self):
         self._update_pan_sends()
 
     def set_pan_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.set_pan_control(control)
 
     def set_send_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.set_send_controls(control)
 
     def _set_parameter_names_display(self, display, parameter):

@@ -2,8 +2,10 @@ u"""
 Mode handling components.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import object
 from functools import partial
-from itertools import imap
+from ableton.v2.base import old_hasattr
 from . import Defaults
 from . import Task
 from .CompoundComponent import CompoundComponent
@@ -28,14 +30,14 @@ def tomode(thing):
             mode = Mode()
             mode.enter_mode, mode.leave_mode = thing
             return mode
-    if callable(thing):
-        mode = Mode()
-        mode.enter_mode = thing
-        return mode
     if is_iterable(thing):
         return CompoundMode(*thing)
     if is_contextmanager(thing):
         return ContextManagerMode(thing)
+    if callable(thing):
+        mode = Mode()
+        mode.enter_mode = thing
+        return mode
     return thing
 
 
@@ -185,7 +187,7 @@ class CompoundMode(Mode):
 
     def __init__(self, *modes, **k):
         super(CompoundMode, self).__init__(**k)
-        self._modes = map(tomode, modes)
+        self._modes = list(map(tomode, modes))
 
     def enter_mode(self):
         for mode in self._modes:
@@ -373,7 +375,7 @@ class CancellableBehaviour(ModeButtonBehaviour):
     def press_immediate(self, component, mode):
         active_modes = component.active_modes
         groups = component.get_mode_groups(mode)
-        can_cancel_mode = mode in active_modes or any(imap(lambda other: groups & component.get_mode_groups(other), active_modes))
+        can_cancel_mode = mode in active_modes or any(map(lambda other: groups & component.get_mode_groups(other), active_modes))
         if can_cancel_mode:
             if groups:
                 component.pop_groups(groups)
@@ -664,7 +666,7 @@ class ModesComponent(CompoundComponent):
           * Any of the group buttons will cancel the current mode when
             the current mode belongs to the group.
         """
-        assert name not in self._mode_map.keys()
+        assert name not in list(self._mode_map.keys())
         if not isinstance(groups, set):
             groups = set(groups)
         mode = tomode(mode_or_component)
@@ -674,7 +676,7 @@ class ModesComponent(CompoundComponent):
         self._mode_list.append(name)
         self._mode_map[name] = _ModeEntry(mode=mode, toggle_value=toggle_value, behaviour=behaviour, subject_slot=slot, momentary_task=task, groups=groups)
         button_setter = u'set_' + name + u'_button'
-        if not hasattr(self, button_setter):
+        if not old_hasattr(self, button_setter):
             setattr(self, button_setter, partial(self.set_mode_button, name))
 
     def _get_mode_behaviour(self, name):
@@ -709,7 +711,7 @@ class ModesComponent(CompoundComponent):
 
     def _update_buttons(self, selected):
         if self.is_enabled():
-            for name, entry in self._mode_map.iteritems():
+            for name, entry in self._mode_map.items():
                 if entry.subject_slot.subject != None:
                     self._get_mode_behaviour(name).update_button(self, name, selected)
 
@@ -785,7 +787,7 @@ class DisplayingModesComponent(ModesComponent):
 
     def _update_data_sources(self, selected):
         if self.is_enabled():
-            for name, (source, string) in self._mode_data_sources.iteritems():
+            for name, (source, string) in self._mode_data_sources.items():
                 source.set_display_string(u'*' + string if name == selected else string)
 
 

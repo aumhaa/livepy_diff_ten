@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from _Framework.ButtonElement import ButtonElement
 from _Framework.SessionZoomingComponent import DeprecatedSessionZoomingComponent
 
@@ -51,7 +54,7 @@ class ShiftableZoomingComponent(DeprecatedSessionZoomingComponent):
                 self._is_zoomed_out = not self._is_zoomed_out
             if not self._ignore_buttons:
                 if self._is_zoomed_out:
-                    self._scene_bank_index = int(self._session.scene_offset() / self._session.height() / self._buttons.height())
+                    self._scene_bank_index = int(old_div(old_div(self._session.scene_offset(), self._session.height()), self._buttons.height()))
                 else:
                     self._scene_bank_index = 0
                 self._session.set_enabled(not self._is_zoomed_out)

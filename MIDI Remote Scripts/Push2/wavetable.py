@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import re
 import Live
 AutomationState = Live.DeviceParameter.AutomationState

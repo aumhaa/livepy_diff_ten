@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip
+from builtins import range
 import Live
 from _Arturia.ArturiaControlSurface import ArturiaControlSurface
 from _Arturia.SessionComponent import SessionComponent
@@ -11,7 +11,7 @@ from _Framework.ButtonMatrixElement import ButtonMatrixElement
 from _Framework.ButtonElement import ButtonElement
 from _Framework.EncoderElement import EncoderElement
 HARDWARE_ENCODER_IDS = (48, 1, 2, 9, 11, 12, 13, 14, 51, 3, 4, 10, 5, 6, 7, 8)
-HARDWARE_BUTTON_IDS = xrange(112, 128)
+HARDWARE_BUTTON_IDS = list(range(112, 128))
 PAD_IDENTIFIER_OFFSET = 36
 
 class MiniLab(ArturiaControlSurface):
@@ -40,7 +40,7 @@ class MiniLab(ArturiaControlSurface):
         self._return_a_encoder = EncoderElement(MIDI_CC_TYPE, self.encoder_msg_channel, self.encoder_msg_ids[6], Live.MidiMap.MapMode.relative_smooth_two_compliment, name=u'Return_A_Encoder')
         self._return_b_encoder = EncoderElement(MIDI_CC_TYPE, self.encoder_msg_channel, self.encoder_msg_ids[14], Live.MidiMap.MapMode.relative_smooth_two_compliment, name=u'Return_B_Encoder')
         self._return_encoders = ButtonMatrixElement(rows=[[self._return_a_encoder, self._return_b_encoder]])
-        self._pads = ButtonMatrixElement(rows=[ [ ButtonElement(True, MIDI_NOTE_TYPE, self.pad_channel, col + 36 + 8 * row, name=u'Pad_%d_%d' % (col, row)) for col in xrange(8) ] for row in xrange(2) ])
+        self._pads = ButtonMatrixElement(rows=[ [ ButtonElement(True, MIDI_NOTE_TYPE, self.pad_channel, col + 36 + 8 * row, name=u'Pad_%d_%d' % (col, row)) for col in range(8) ] for row in range(2) ])
 
     def _create_device(self):
         self._device = DeviceComponent(name=u'Device', is_enabled=False, layer=Layer(parameter_controls=self._device_controls), device_selection_follows_track_selection=True)
@@ -56,7 +56,7 @@ class MiniLab(ArturiaControlSurface):
         self._mixer.set_enabled(True)
 
     def _collect_setup_messages(self):
-        for cc_id, encoder_id in izip(self.encoder_msg_ids, HARDWARE_ENCODER_IDS):
+        for cc_id, encoder_id in zip(self.encoder_msg_ids, HARDWARE_ENCODER_IDS):
             self._setup_hardware_encoder(encoder_id, cc_id, channel=self.encoder_msg_channel)
 
         for index, pad_id in enumerate(HARDWARE_BUTTON_IDS):

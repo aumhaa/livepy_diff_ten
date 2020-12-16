@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.utils import raise_
 from functools import partial
 from .ControlSurfaceComponent import ControlSurfaceComponent
 from .SubjectSlot import SubjectSlotError
@@ -20,7 +21,7 @@ class BackgroundComponent(ControlSurfaceComponent):
     def __getattr__(self, name):
         if len(name) > 4 and name[:4] == u'set_':
             return partial(self._clear_control, name[4:])
-        raise AttributeError, name
+        raise_(AttributeError, name)
 
     def _clear_control(self, name, control):
         slot = self._control_slots.get(name, None)
@@ -39,7 +40,7 @@ class BackgroundComponent(ControlSurfaceComponent):
     def update(self):
         super(BackgroundComponent, self).update()
         if self.is_enabled():
-            for control in self._control_map.itervalues():
+            for control in self._control_map.values():
                 self._reset_control(control)
 
 

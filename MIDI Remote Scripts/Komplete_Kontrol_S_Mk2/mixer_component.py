@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from builtins import range
+from future.moves.itertools import zip_longest
 from functools import partial
 from ableton.v2.control_surface.control.control import InputControl
 from _Komplete_Kontrol.mixer_component import MixerComponent as MixerComponentBase
@@ -28,20 +29,20 @@ class MixerComponent(MixerComponentBase):
             strip.set_meter_display_callback(partial(display.update_meter_display, index * METERS_PER_SEGMENT) if display else None)
 
     def set_track_arm_displays(self, displays):
-        for strip, display in izip_longest(self._channel_strips, displays or []):
+        for strip, display in zip_longest(self._channel_strips, displays or []):
             strip.track_arm_display.set_control_element(display)
 
     @selection_control.value
     def selection_control(self, index, _):
-        if index in xrange(self._provider.num_tracks):
+        if index in range(self._provider.num_tracks):
             self._channel_strips[index].select_track()
 
     @mute_control.value
     def mute_control(self, index, _):
-        if index in xrange(self._provider.num_tracks):
+        if index in range(self._provider.num_tracks):
             self._channel_strips[index].mute_track()
 
     @solo_control.value
     def solo_control(self, index, _):
-        if index in xrange(self._provider.num_tracks):
+        if index in range(self._provider.num_tracks):
             self._channel_strips[index].solo_track()

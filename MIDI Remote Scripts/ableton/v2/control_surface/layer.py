@@ -3,7 +3,9 @@ Module implementing a way to resource-based access to controls in an
 unified interface dynamic.
 """
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import repeat, izip
+from builtins import zip
+from future.utils import iteritems
+from itertools import repeat
 from .control_element import ControlElementClient, get_element
 from .resource import ExclusiveResource, CompoundResource
 from ..base import Disconnectable, nop
@@ -146,10 +148,10 @@ class Layer(LayerBase):
     def __init__(self, priority = None, **elements):
         super(Layer, self).__init__()
         self._priority = priority
-        self._name_to_elements = dict(izip(elements.iterkeys(), repeat(None)))
+        self._name_to_elements = dict(zip([ key for key in elements ], repeat(None)))
         self._element_to_names = dict()
         self._element_clients = dict()
-        for name, element in elements.iteritems():
+        for name, element in iteritems(elements):
             assert get_element(element) is not None, name
             self._element_to_names.setdefault(get_element(element), []).append(name)
 
@@ -162,13 +164,13 @@ class Layer(LayerBase):
 
     def on_received(self, client, *a, **k):
         u""" Override from ExclusiveResource """
-        for element in self._element_to_names.iterkeys():
+        for element in self._element_to_names:
             k.setdefault(u'priority', self._priority)
             element.resource.grab(self._get_control_client(client), *a, **k)
 
     def on_lost(self, client):
         u""" Override from ExclusiveResource """
-        for element in self._element_to_names.iterkeys():
+        for element in self._element_to_names:
             element.resource.release(self._get_control_client(client))
 
     def _get_control_client(self, client):

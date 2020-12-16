@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
 from ableton.v2.base import clamp, listenable_property, liveobj_valid, nop, EventError, EventObject, forward_property, Proxy, Slot
 from ableton.v2.control_surface import EnumWrappingParameter, InternalParameter, InternalParameterBase, RelativeInternalParameter, WrappingParameter, to_percentage_display
 
@@ -54,7 +55,10 @@ class ProxyParameter(Proxy):
         raise AttributeError(u'Does not have attribute %s' % name)
 
     def __unicode__(self):
-        return unicode(self.proxied_object)
+        return str(self.proxied_object)
+
+    def __str__(self):
+        return str(self.proxied_object)
 
     def __eq__(self, other):
         if isinstance(other, ProxyParameter):
@@ -65,3 +69,6 @@ class ProxyParameter(Proxy):
         if isinstance(other, ProxyParameter):
             return self.proxied_object != other.proxied_object or self.proxied_interface != other.proxied_interface
         return self.proxied_object != other
+
+    def __hash__(self):
+        return hash((self.proxied_object, self.proxied_interface))

@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import imap
+from past.utils import old_div
 import Live
 from ableton.v2.base import clamp, listens, sign
 from ableton.v2.control_surface.components import TransportComponent as TransportComponentBase
@@ -22,7 +22,7 @@ def is_valid_launch_quantize_value(value):
 
 
 def num_beats_in_bar(song):
-    return 4.0 / song.signature_denominator * song.signature_numerator
+    return old_div(4.0, song.signature_denominator) * song.signature_numerator
 
 
 def format_beat_time(beat_time):
@@ -83,7 +83,7 @@ class TransportComponent(TransportComponentBase):
 
     @tempo_control.value
     def tempo_control(self, value, _):
-        self.song.tempo = clamp(float(u''.join(imap(chr, value[2:]))), TEMPO_MIN, TEMPO_MAX)
+        self.song.tempo = clamp(float(u''.join(map(chr, value[2:]))), TEMPO_MIN, TEMPO_MAX)
 
     @play_button.pressed
     def play_button(self, _):

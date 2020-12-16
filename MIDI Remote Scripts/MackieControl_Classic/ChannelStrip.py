@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from .MackieControlComponent import *
 from itertools import chain
 from ableton.v2.base import liveobj_valid

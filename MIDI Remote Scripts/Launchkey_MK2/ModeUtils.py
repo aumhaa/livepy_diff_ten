@@ -4,7 +4,7 @@ from _Framework.ModesComponent import ModesComponent, ModeButtonBehaviour
 from . import consts
 
 def to_class_name(mode_name):
-    return u''.join(map(lambda s: s.capitalize(), mode_name.replace(u'_', u' ').split()))
+    return u''.join([ s.capitalize() for s in mode_name.replace(u'_', u' ').split() ])
 
 
 class MomentaryBehaviour(ModeButtonBehaviour):
@@ -59,7 +59,7 @@ class DisablingModesComponent(ModesComponent):
 
     def _update_buttons(self, selected):
         if self.is_enabled():
-            for name, entry in self._mode_map.iteritems():
+            for name, entry in self._mode_map.items():
                 if entry.subject_slot.subject != None:
                     if self._enabled_modes[name]:
                         self._get_mode_behaviour(name).update_button(self, name, selected)

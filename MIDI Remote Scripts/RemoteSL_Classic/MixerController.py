@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 import Live
 from .RemoteSLComponent import RemoteSLComponent
 from .consts import *
@@ -294,7 +297,7 @@ class MixerController(RemoteSLComponent):
                     t.arm = False
 
 
-class MixerChannelStrip():
+class MixerChannelStrip(object):
     u"""Represents one of the 8 track related strips in the Mixer controls (one slider,
     two buttons)
     """

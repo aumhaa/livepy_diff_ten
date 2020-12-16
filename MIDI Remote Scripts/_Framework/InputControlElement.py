@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 import contextlib
 import logging
 from . import Task
@@ -252,7 +254,7 @@ class InputControlElement(NotifyingControlElement):
                 value_map = tuple(range(128))
             else:
                 value_pairs = []
-                for value in xrange(16384):
+                for value in range(16384):
                     value_pairs.append((value >> 7 & 127, value & 127))
 
                 value_map = tuple(value_pairs)

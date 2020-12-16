@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
+from past.utils import old_div
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, control_list
 from .fixed_length_recording import FixedLengthRecording
@@ -34,7 +36,7 @@ class FixedLengthSetting(object):
         u""" Returns the current fixed length setting in absolute beat time """
         fixed_length_in_bars = self._selected_index + 1
         fixed_length_in_beats = fixed_length_in_bars * 4
-        return fixed_length_in_beats * float(song.signature_numerator) / song.signature_denominator
+        return fixed_length_in_beats * old_div(float(song.signature_numerator), song.signature_denominator)
 
 
 class FixedLengthComponent(Component):

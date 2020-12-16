@@ -1,7 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip, count
+from __future__ import division
+from builtins import str
+from builtins import range
+from past.utils import old_div
+from itertools import count
 import Live
-from ableton.v2.base import forward_property, listens, listens_group, liveobj_changed, liveobj_valid
+from ableton.v2.base import forward_property, listens, listens_group, liveobj_changed, liveobj_valid, old_hasattr
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.components import UndoRedoComponent as UndoRedoComponentBase
 from ableton.v2.control_surface.control import control_list, ButtonControl
@@ -16,7 +20,7 @@ _Q = Live.Song.Quantization
 def convert_length_to_mins_secs(length_in_secs):
     if length_in_secs is None:
         return u'-'
-    mins = int(length_in_secs / 60.0)
+    mins = int(old_div(length_in_secs, 60.0))
     secs = int(length_in_secs % 60.0)
     return str(mins) + u':' + str(u'%02d' % secs)
 
@@ -24,7 +28,7 @@ def convert_length_to_mins_secs(length_in_secs):
 def convert_beats_to_mins_secs(length_in_beats, tempo = 120.0):
     if length_in_beats is None:
         return u'-'
-    length_in_secs = length_in_beats / tempo * 60.0
+    length_in_secs = old_div(length_in_beats, tempo) * 60.0
     return convert_length_to_mins_secs(length_in_secs)
 
 
@@ -167,7 +171,7 @@ class SelectionDisplayComponent(Component):
     def set_display_line(self, display_line):
         if display_line != None:
             display_line.set_num_segments(self.num_segments)
-            for idx in xrange(self.num_segments):
+            for idx in range(self.num_segments):
                 display_line.segment(idx).set_data_source(self._data_sources[idx])
 
     def set_display_string(self, string, segment = 0):
@@ -175,11 +179,11 @@ class SelectionDisplayComponent(Component):
             self._data_sources[segment].set_display_string(string)
 
     def reset_display(self):
-        for idx in xrange(self.num_segments):
+        for idx in range(self.num_segments):
             self._data_sources[idx].set_display_string(u' ')
 
     def reset_display_right(self):
-        for idx in xrange(self.num_segments / 2, self.num_segments):
+        for idx in range(old_div(self.num_segments, 2), self.num_segments):
             self._data_sources[idx].set_display_string(u' ')
 
 
@@ -253,7 +257,7 @@ class SelectComponent(Component):
         if liveobj_valid(clip) and (clip.is_triggered or clip.is_playing):
             if clip.is_recording:
                 label = u'Record Count:'
-                length = (clip.playing_position - clip.loop_start) * clip.signature_denominator / clip.signature_numerator
+                length = old_div((clip.playing_position - clip.loop_start) * clip.signature_denominator, clip.signature_numerator)
                 time = convert_beat_length_to_bars_beats_sixteenths((clip.signature_numerator, clip.signature_denominator), length)
             else:
                 label = u'Time Remaining:'
@@ -328,7 +332,7 @@ class DeleteComponent(Component, Messenger):
         playing_clip = None
         song = self.song
         selected_track = song.view.selected_track
-        if hasattr(selected_track, u'playing_slot_index'):
+        if old_hasattr(selected_track, u'playing_slot_index'):
             playing_slot_index = selected_track.playing_slot_index
             if playing_slot_index >= 0:
                 playing_clip = selected_track.clip_slots[playing_slot_index].clip
@@ -398,7 +402,7 @@ class StopClipComponent(Component):
     def _update_all_stop_buttons(self):
         tracks = self._track_provider.controlled_tracks()
         self.stop_track_clips_buttons.control_count = len(tracks)
-        for track, button in izip(tracks, self.stop_track_clips_buttons):
+        for track, button in zip(tracks, self.stop_track_clips_buttons):
             self._update_stop_button(track, button)
 
     def _update_stop_button_by_index(self, index):

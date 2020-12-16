@@ -1,8 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import zip
+from builtins import filter
+from builtins import range
 from functools import partial
-from itertools import izip
 import Live
-from ableton.v2.base import nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid
+from ableton.v2.base import nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, old_hasattr
 from ableton.v2.control_surface import Component, find_instrument_devices
 from ableton.v2.control_surface.control import ButtonControl, control_list
 from ableton.v2.control_surface.mode import ModeButtonBehaviour, ModesComponent
@@ -79,7 +81,7 @@ def toggle_mixable_solo(mixable, song):
 
 
 def playing_clip(track):
-    if hasattr(track, u'playing_slot_index'):
+    if old_hasattr(track, u'playing_slot_index'):
         try:
             if track.playing_slot_index >= 0:
                 playing_clip_slot = track.clip_slots[track.playing_slot_index]
@@ -118,7 +120,7 @@ class TrackListComponent(ModesComponent, Messenger):
         self._button_feedback_provider = mixable_button_color
         self._color_chooser = color_chooser
         self._track_selected_when_pressed = [False] * self.track_action_buttons.control_count
-        self._playheads_real_time_data = [ RealTimeDataComponent(parent=self, channel_type=u'playhead', is_enabled=False) for _ in xrange(8) ]
+        self._playheads_real_time_data = [ RealTimeDataComponent(parent=self, channel_type=u'playhead', is_enabled=False) for _ in range(8) ]
         self.clip_phase_enabler = Component(parent=self)
         self.__on_clip_phase_enabler_changed.subject = self.clip_phase_enabler
         self._setup_action_mode(u'select', handler=self._select_mixable)
@@ -226,7 +228,7 @@ class TrackListComponent(ModesComponent, Messenger):
         self.__on_track_mute_state_changed.replace_subjects(tracks)
         self.__on_track_muted_via_solo_changed.replace_subjects(tracks)
         self.__on_track_solo_state_changed.replace_subjects(tracks)
-        tracks_without_chains = filter(can_play_clips, tracks)
+        tracks_without_chains = list(filter(can_play_clips, tracks))
         self.__on_track_fired_slot_changed.replace_subjects(tracks_without_chains)
         self.__on_track_playing_slot_changed.replace_subjects(tracks_without_chains)
         self.__on_track_is_frozen_state_changed.replace_subjects(tracks_without_chains)
@@ -235,7 +237,7 @@ class TrackListComponent(ModesComponent, Messenger):
 
     def _update_button_enabled_state(self):
         tracks = self.tracks
-        for track, control in izip(tracks, self.track_action_buttons):
+        for track, control in zip(tracks, self.track_action_buttons):
             control.enabled = liveobj_valid(track)
 
     @listens_group(u'color_index')
@@ -280,15 +282,15 @@ class TrackListComponent(ModesComponent, Messenger):
             self._toggle_track_fold(self.tracks[button.index])
 
     def _toggle_track_fold(self, track):
-        if hasattr(track, u'is_foldable') and track.is_foldable:
+        if old_hasattr(track, u'is_foldable') and track.is_foldable:
             track.fold_state = not track.fold_state
-        elif hasattr(track, u'is_showing_chains') and track.can_show_chains:
+        elif old_hasattr(track, u'is_showing_chains') and track.can_show_chains:
             track.is_showing_chains = not track.is_showing_chains
         else:
             instruments = list(find_instrument_devices(track))
             if instruments:
                 instrument = instruments[0]
-                if hasattr(instrument, u'is_showing_chains') and instrument.can_show_chains:
+                if old_hasattr(instrument, u'is_showing_chains') and instrument.can_show_chains:
                     instrument.is_showing_chains = not instrument.is_showing_chains
 
     def _select_mixable(self, track):

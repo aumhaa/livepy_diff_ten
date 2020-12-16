@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from _Framework.CompoundComponent import CompoundComponent
 from _Framework.ScrollComponent import ScrollComponent
 from _Framework import Task

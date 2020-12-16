@@ -1,10 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from past.builtins import cmp
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import Live
 from .ParamMap import Callable
 from .Devices import *
 from .Params import *
+from ableton.v2.base import old_hasattr
 
-class FaderfoxHelper:
+class FaderfoxHelper(object):
     __module__ = __name__
     __doc__ = u'General Live helper'
 
@@ -17,7 +23,7 @@ class FaderfoxHelper:
     def selected_scene_idx(self):
 
         def tuple_idx(tuple, obj):
-            for i in xrange(0, len(tuple)):
+            for i in range(0, len(tuple)):
                 if tuple[i] == obj:
                     return i
 
@@ -78,11 +84,11 @@ class FaderfoxHelper:
         return -1
 
     def switch_monitor_track(self, track):
-        if hasattr(track, u'current_monitoring_state'):
+        if old_hasattr(track, u'current_monitoring_state'):
             track.current_monitoring_state = (track.current_monitoring_state + 1) % len(track.monitoring_states.values)
 
     def switch_crossfader_ab(self, track):
-        if hasattr(track.mixer_device, u'crossfade_assign'):
+        if old_hasattr(track.mixer_device, u'crossfade_assign'):
             track.mixer_device.crossfade_assign = (track.mixer_device.crossfade_assign - 1) % len(track.mixer_device.crossfade_assignments.values)
 
     def toggle_track_attribute(self, track, attr):
@@ -116,7 +122,7 @@ class FaderfoxHelper:
             track.arm = 1
 
     def is_master_track_selected(self):
-        return not cmp(self.song().view.selected_track, self.song().master_track)
+        return self.song().view.selected_track is not self.song().master_track
 
     def get_track(self, idx):
         real_idx = idx
@@ -132,16 +138,16 @@ class FaderfoxHelper:
     def selected_track_idx(self):
 
         def tuple_idx(tuple, obj):
-            for i in xrange(0, len(tuple)):
-                if not cmp(tuple[i], obj):
+            for i in range(0, len(tuple)):
+                if tuple[i] is not obj:
                     return i
 
         return tuple_idx(tuple(self.song().tracks) + tuple(self.song().return_tracks), self.song().view.selected_track)
 
     def device_name(self, device):
-        if hasattr(device, u'class_name'):
+        if old_hasattr(device, u'class_name'):
             return device.class_name
-        elif FIVETOSIX_DICT.has_key(device.name):
+        elif device.name in FIVETOSIX_DICT:
             return FIVETOSIX_DICT[device.name]
         else:
             return device.name
@@ -185,36 +191,36 @@ class FaderfoxHelper:
          Live.Song.Quantization.q_2_bars: 8.0,
          Live.Song.Quantization.q_bar: 4.0,
          Live.Song.Quantization.q_half: 2.0,
-         Live.Song.Quantization.q_half_triplet: 1.0 + 1.0 / 3,
+         Live.Song.Quantization.q_half_triplet: 1.0 + old_div(1.0, 3),
          Live.Song.Quantization.q_quarter: 1.0,
-         Live.Song.Quantization.q_quarter_triplet: 2 * (1.0 / 3),
+         Live.Song.Quantization.q_quarter_triplet: 2 * old_div(1.0, 3),
          Live.Song.Quantization.q_eight: 0.5,
-         Live.Song.Quantization.q_eight_triplet: 1.0 / 3,
+         Live.Song.Quantization.q_eight_triplet: old_div(1.0, 3),
          Live.Song.Quantization.q_sixtenth: 0.25,
-         Live.Song.Quantization.q_sixtenth_triplet: 1.0 / 6,
+         Live.Song.Quantization.q_sixtenth_triplet: old_div(1.0, 6),
          Live.Song.Quantization.q_thirtytwoth: 0.125}
         return q_map[self.song().clip_trigger_quantization]
 
     def number_of_parameter_banks(self, device):
         result = 0
-        if self.device_name(device) in DEVICE_DICT.keys():
+        if self.device_name(device) in list(DEVICE_DICT.keys()):
             device_bank = DEVICE_DICT[self.device_name(device)]
             result = len(device_bank)
         else:
             param_count = len(list(device.parameters))
-            result = param_count / 8
+            result = old_div(param_count, 8)
             if not param_count % 8 == 0:
                 result += 1
         return result
 
     def get_parameter_by_name(self, device, name):
         for i in device.parameters:
-            if hasattr(i, u'original_name'):
+            if old_hasattr(i, u'original_name'):
                 if i.original_name == name:
                     return i
             else:
                 device_name = self.device_name(device)
-                if FIVETOSIX_PARAMS_DICT.has_key(device_name) and FIVETOSIX_PARAMS_DICT[device_name].has_key(name):
+                if device_name in FIVETOSIX_PARAMS_DICT and name in FIVETOSIX_PARAMS_DICT[device_name]:
                     name = FIVETOSIX_PARAMS_DICT[device_name][name]
                 if i.name == name:
                     return i

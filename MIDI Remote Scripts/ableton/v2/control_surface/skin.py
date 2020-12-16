@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.utils import iteritems
 from itertools import chain
 from ableton.v2.base import depends, const, liveobj_valid, EventObject
 from ableton.v2.control_surface.elements.color import is_dynamic_color_factory
@@ -22,13 +23,11 @@ class Skin(EventObject):
             self._fill_colors(colors, song=song)
 
     def _fill_colors(self, colors, pathname = u'', song = None):
-        try:
-            self._fill_colors(super(colors), song=song, pathname=pathname)
-        except TypeError:
+        if getattr(colors, u'__bases__', None):
             for base in colors.__bases__:
                 self._fill_colors(base, song=song, pathname=pathname)
 
-        for k, v in colors.__dict__.iteritems():
+        for k, v in iteritems(colors.__dict__):
             if k[:1] != u'_':
                 if callable(v):
                     self._fill_colors(v, pathname + k + u'.', song=song)
@@ -44,7 +43,7 @@ class Skin(EventObject):
             raise SkinColorMissingError(u'Skin color missing: %s' % str(key))
 
     def iteritems(self):
-        return self._colors.iteritems()
+        return iteritems(self._colors)
 
     def _get_dynamic_color(self, color_factory, song):
         if not liveobj_valid(song):

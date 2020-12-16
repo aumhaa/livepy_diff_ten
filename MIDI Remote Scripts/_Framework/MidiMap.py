@@ -21,11 +21,11 @@ def make_encoder(name, channel, number, midi_message_type):
 class MidiMap(dict):
 
     def add_button(self, name, channel, number, midi_message_type):
-        assert name not in self.keys()
+        assert name not in list(self.keys())
         self[name] = make_button(name, channel, number, midi_message_type)
 
     def add_matrix(self, name, element_factory, channel, numbers, midi_message_type):
-        assert name not in self.keys()
+        assert name not in list(self.keys())
 
         def one_dimensional_name(base_name, x, _y):
             return u'%s[%d]' % (base_name, x)

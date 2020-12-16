@@ -1,7 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.builtins import round
+from future.builtins import map
+from past.builtins import unicode
 import re
 from functools import partial
-from ableton.v2.base import EventObject, Slot, EventError, find_if, listenable_property, listens, liveobj_valid
+from ableton.v2.base import EventObject, Slot, EventError, find_if, listenable_property, listens, liveobj_valid, old_hasattr
 from ..device_parameter_icons import get_image_filenames, get_image_filenames_from_ids
 DEVICE_TYPES_WITH_PRESET_NAME = [u'InstrumentGroupDevice',
  u'DrumGroupDevice',
@@ -35,7 +38,8 @@ def _try_to_round_number(parameter_string):
 
 
 note_pattern = re.compile(u'^([CDEFGAB].?)((?:-[1-2])|[0-8])$')
-large_pattern = re.compile(u'\\d|\xb0|/|\\%|\\.|\\:|\\-|\\+|inf')
+hybrid_rate_pattern = re.compile(u'1/[0-9]+ (T|D)')
+large_pattern = re.compile(u'\\d|\\xb0|/|\\%|\\.|\\:|\\-|\\+|inf')
 
 def get_parameter_display_large(parameter):
     u"""
@@ -50,6 +54,8 @@ def get_parameter_display_large(parameter):
     parameter_string = unicode(parameter)
     if note_pattern.search(parameter_string) is not None:
         return parameter_string
+    if hybrid_rate_pattern.search(parameter_string) is not None:
+        return parameter_string[0:-2]
     large_string = u''.join(large_pattern.findall(parameter_string))
     if large_string in (u'inf', u'-inf'):
         return large_string
@@ -117,7 +123,7 @@ class ModelAdapter(EventObject):
 
     @property
     def _live_ptr(self):
-        if hasattr(self._adaptee, u'_live_ptr'):
+        if old_hasattr(self._adaptee, u'_live_ptr'):
             return self._adaptee._live_ptr
         return id(self._adaptee)
 
@@ -174,7 +180,7 @@ class DeviceParameterAdapter(ModelAdapter):
 
     def _get_image_filenames(self, small_images = False):
         device = self.canonical_parent
-        if not hasattr(device, u'class_name'):
+        if not old_hasattr(device, u'class_name'):
             return []
         custom_images = None
         if liveobj_valid(device):
@@ -225,7 +231,7 @@ class EditModeOptionAdapter(ModelAdapter):
 
     def __init__(self, *a, **k):
         super(EditModeOptionAdapter, self).__init__(*a, **k)
-        if hasattr(self._adaptee, u'active_index'):
+        if old_hasattr(self._adaptee, u'active_index'):
             self._alias_observable_property(u'active_index', u'activeIndex', getter=lambda self_: getattr(self_._adaptee, u'active_index', 0))
         self._alias_observable_property(u'default_label', u'choices', getter=lambda self_: self_._choices)
 
@@ -386,14 +392,18 @@ class DeviceAdapter(ModelAdapter):
 
     def __init__(self, *a, **k):
         from ..device_util import is_drum_pad, find_chain_or_track, find_rack
+        from ..device_navigation import is_bank_rack_2
         super(DeviceAdapter, self).__init__(*a, **k)
         item = self._unwrapped_item()
-        if hasattr(item, u'is_active'):
-            self.__on_is_active_changed.subject = item
+        if old_hasattr(item, u'is_active'):
+            if is_bank_rack_2(item):
+                self.__on_is_active_changed.subject = item.rack_device
+            else:
+                self.__on_is_active_changed.subject = item
         elif is_drum_pad(item):
             self.__on_is_active_changed.subject = item.canonical_parent
             self.__on_mute_changed.subject = item
-        if hasattr(item, u'name'):
+        if old_hasattr(item, u'name'):
             self.__on_name_changed.subject = item
         self._chain = find_chain_or_track(item)
         self._rack_chain = find_chain_or_track(find_rack(item))
@@ -405,12 +415,17 @@ class DeviceAdapter(ModelAdapter):
 
     @listenable_property
     def navigation_name(self):
+        from ..device_navigation import is_rack_with_bank_2, is_bank_rack_2
         item = self._unwrapped_item()
         name = getattr(item, u'name', u'')
-        if hasattr(item, u'class_name') and item.class_name in DEVICE_TYPES_WITH_PRESET_NAME:
-            return name
-        else:
-            return getattr(item, u'class_display_name', name)
+        class_name = getattr(item, u'class_name', None)
+        if class_name not in DEVICE_TYPES_WITH_PRESET_NAME:
+            name = getattr(item, u'class_display_name', name)
+        if is_bank_rack_2(item):
+            name = u'\u2022\u2022' + name
+        elif is_rack_with_bank_2(item):
+            name = u'\u2022' + name
+        return name
 
     @property
     def class_name(self):
@@ -478,16 +493,16 @@ class TrackAdapter(ModelAdapter):
 
     def __init__(self, *a, **k):
         super(TrackAdapter, self).__init__(*a, **k)
-        if hasattr(self._adaptee, u'mute'):
+        if old_hasattr(self._adaptee, u'mute'):
             self.__on_mute_changed.subject = self._adaptee
             self.__on_solo_changed.subject = self._adaptee
             self.__on_muted_via_solo_changed.subject = self._adaptee
         self.has_playing_clip = False
         self._update_has_playing_clip()
-        if hasattr(self._adaptee, u'playing_slot_index'):
+        if old_hasattr(self._adaptee, u'playing_slot_index'):
             self.__on_playing_slot_index_changed.subject = self._adaptee
         try:
-            if hasattr(self._adaptee.parent_track, u'is_frozen'):
+            if old_hasattr(self._adaptee.parent_track, u'is_frozen'):
                 self.__on_is_frozen_changed.subject = self._adaptee.parent_track
         except AttributeError:
             pass
@@ -541,7 +556,7 @@ class TrackAdapter(ModelAdapter):
     def activated(self):
         try:
             return not (self._adaptee.muted_via_solo or self._adaptee.mute and not self._adaptee.solo)
-        except RuntimeError:
+        except (RuntimeError, AttributeError):
             return True
 
     @listenable_property
@@ -589,13 +604,13 @@ class TrackAdapter(ModelAdapter):
         self.notify_playingClip()
 
     def _update_has_playing_clip(self):
-        has_playing_clip = self._adaptee.playing_slot_index >= 0 if hasattr(self._adaptee, u'playing_slot_index') else False
+        has_playing_clip = self._adaptee.playing_slot_index >= 0 if old_hasattr(self._adaptee, u'playing_slot_index') else False
         if has_playing_clip != self.has_playing_clip:
             self.has_playing_clip = has_playing_clip
             self.notify_hasPlayingClip()
 
     def _playing_clip_slot(self):
-        if hasattr(self._adaptee, u'playing_slot_index'):
+        if old_hasattr(self._adaptee, u'playing_slot_index'):
             try:
                 if self._adaptee.playing_slot_index >= 0:
                     return self._adaptee.clip_slots[self._adaptee.playing_slot_index]
@@ -702,7 +717,7 @@ class BrowserListWrapper(EventObject):
          u'color_label_index': determine_color_label_index(item)}
 
     def to_json(self):
-        return map(self._serialize_browser_item, self._browser_list.items)
+        return list(map(self._serialize_browser_item, self._browser_list.items))
 
     def notify(self):
         self._notifier.structural_change()

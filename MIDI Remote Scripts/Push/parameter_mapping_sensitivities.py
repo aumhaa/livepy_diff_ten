@@ -1,11 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 from ableton.v2.base import liveobj_valid
 from ableton.v2.control_surface import is_parameter_quantized
 DEFAULT_SENSITIVITY_KEY = u'normal_sensitivity'
 FINE_GRAINED_SENSITIVITY_KEY = u'fine_grained_sensitivity'
 CONTINUOUS_MAPPING_SENSITIVITY = 2.0
 FINE_GRAINED_CONTINUOUS_MAPPING_SENSITIVITY = 0.01
-QUANTIZED_MAPPING_SENSITIVITY = 1.0 / 15.0
+QUANTIZED_MAPPING_SENSITIVITY = old_div(1.0, 15.0)
 PARAMETER_SENSITIVITIES = {u'UltraAnalog': {u'OSC1 Octave': {DEFAULT_SENSITIVITY_KEY: 0.05},
                   u'OSC2 Octave': {DEFAULT_SENSITIVITY_KEY: 0.05},
                   u'OSC1 Semi': {DEFAULT_SENSITIVITY_KEY: 0.05},

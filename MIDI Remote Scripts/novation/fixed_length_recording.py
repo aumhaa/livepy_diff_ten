@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 NUM_LENGTHS = 8
 
 def track_can_record(track):

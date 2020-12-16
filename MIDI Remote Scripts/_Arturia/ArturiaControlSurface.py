@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
 from _Framework import Task
 from _Framework.ControlSurface import ControlSurface
@@ -37,7 +38,7 @@ LIVE_MODE_MSG_HEAD = SETUP_MSG_PREFIX + (WRITE_COMMAND,
  LIVE_MODE_MSG_HARDWARE_ID_BYTE)
 
 def split_list(l, size):
-    for i in xrange(0, len(l), size):
+    for i in range(0, len(l), size):
         yield l[i:i + size]
 
 
@@ -77,7 +78,7 @@ class ArturiaControlSurface(ControlSurface):
         u"""
         Set up a momentary button sending MIDI notes
         """
-        assert msg_type in BUTTON_MSG_TYPES.keys()
+        assert msg_type in list(BUTTON_MSG_TYPES.keys())
         self._set_button_msg_type(hardware_id, msg_type)
         self._set_identifier(hardware_id, identifier)
         self._set_channel(hardware_id, channel)

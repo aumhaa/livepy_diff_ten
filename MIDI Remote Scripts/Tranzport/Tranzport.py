@@ -1,9 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import Live
 from .consts import *
 from itertools import chain
 
-class Tranzport:
+class Tranzport(object):
     u""" A simple script to enable control over Live with the Tranzport controller """
 
     def __init__(self, c_instance):
@@ -572,7 +577,7 @@ class Tranzport:
         if self.application().view.is_view_visible(u'Session') or index > 0:
             index = index + 1
         pages_list = (u'<',) + PAGES_NAMES[index] + (u'>',)
-        position = 10 - len(pages_list) / 2
+        position = 10 - old_div(len(pages_list), 2)
         message = ()
         for i in range(position):
             message = message + (32,)

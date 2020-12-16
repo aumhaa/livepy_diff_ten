@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ...base import clamp, listens, liveobj_valid
+from ...base import clamp, listens, liveobj_valid, old_hasattr
 from ...control_surface.internal_parameter import InternalParameterBase
 from .control import InputControl
 from .encoder import ValueStepper
@@ -66,7 +66,7 @@ def is_zoom_parameter(parameter):
     u""" Returns true for parameters, that provide a zoom method, i.e. Push 2's
         waveform zooming parameter.
     """
-    return hasattr(parameter, u'zoom')
+    return old_hasattr(parameter, u'zoom')
 
 
 class MappedSensitivitySettingControl(MappedControl):
@@ -106,7 +106,7 @@ class MappedSensitivitySettingControl(MappedControl):
             self._quantized_stepper.reset()
 
         def _update_control_sensitivity(self):
-            if hasattr(self._control_element, u'set_sensitivities'):
+            if old_hasattr(self._control_element, u'set_sensitivities'):
                 self._control_element.set_sensitivities(self.default_sensitivity, self.fine_sensitivity)
             else:
                 self._control_element.mapping_sensitivity = self.default_sensitivity

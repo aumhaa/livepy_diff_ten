@@ -1,7 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from past.utils import old_div
 from contextlib import contextmanager
 from functools import partial
-from itertools import imap
 from ableton.v2.base import clamp, const, inject, listens, listens_group, liveobj_valid, NamedTuple, nop
 from ableton.v2.control_surface import BackgroundLayer, BankingInfo, ClipCreator, ControlSurface, DeviceBankRegistry, PercussionInstrumentFinder, Layer, midi
 from ableton.v2.control_surface.components import BackgroundComponent, ModifierBackgroundComponent, SessionNavigationComponent, SessionRingComponent, SessionOverviewComponent, ViewControlComponent
@@ -384,11 +385,11 @@ class PushBase(ControlSurface):
     def _create_session(self):
         session = self._instantiate_session()
         self._set_session_skin(session)
-        for scene_index in xrange(8):
+        for scene_index in range(8):
             scene = session.scene(scene_index)
             scene.layer = Layer(select_button=u'select_button', delete_button=u'delete_button')
             scene._do_select_scene = self.on_select_scene
-            for track_index in xrange(8):
+            for track_index in range(8):
                 clip_slot = scene.clip_slot(track_index)
                 clip_slot._do_select_clip = self.on_select_clip_slot
                 clip_slot.layer = Layer(delete_button=u'delete_button', select_button=u'select_button', duplicate_button=u'duplicate_button')
@@ -597,10 +598,10 @@ class PushBase(ControlSurface):
         return Layer(priority=consts.MOMENTARY_DIALOG_PRIORITY)
 
     def _create_sequence_instrument_layer(self):
-        return Layer(accent_button=u'accent_button', full_velocity=u'full_velocity_element', playhead=u'playhead_element', mute_button=u'global_mute_button', quantization_buttons=u'side_buttons', note_editor_matrices=ButtonMatrixElement([[ self.elements.matrix.submatrix[:, 7 - row] for row in xrange(8) ]]), duplicate_button=u'duplicate_button', delete_button=u'delete_button')
+        return Layer(accent_button=u'accent_button', full_velocity=u'full_velocity_element', playhead=u'playhead_element', mute_button=u'global_mute_button', quantization_buttons=u'side_buttons', note_editor_matrices=ButtonMatrixElement([[ self.elements.matrix.submatrix[:, 7 - row] for row in range(8) ]]), duplicate_button=u'duplicate_button', delete_button=u'delete_button')
 
     def _create_sequence_instrument_layer_with_loop(self):
-        return Layer(playhead=u'playhead_element', mute_button=u'global_mute_button', quantization_buttons=u'side_buttons', loop_selector_matrix=self.elements.double_press_matrix.submatrix[:, 0], short_loop_selector_matrix=self.elements.double_press_event_matrix.submatrix[:, 0], note_editor_matrices=ButtonMatrixElement([[ self.elements.matrix.submatrix[:, 7 - row] for row in xrange(7) ]]), duplicate_button=u'duplicate_button', delete_button=u'delete_button')
+        return Layer(playhead=u'playhead_element', mute_button=u'global_mute_button', quantization_buttons=u'side_buttons', loop_selector_matrix=self.elements.double_press_matrix.submatrix[:, 0], short_loop_selector_matrix=self.elements.double_press_event_matrix.submatrix[:, 0], note_editor_matrices=ButtonMatrixElement([[ self.elements.matrix.submatrix[:, 7 - row] for row in range(7) ]]), duplicate_button=u'duplicate_button', delete_button=u'delete_button')
 
     def _create_play_instrument_with_loop_layer(self):
         return Layer(playhead=u'playhead_element', mute_button=u'global_mute_button', quantization_buttons=u'side_buttons', loop_selector_matrix=self.elements.double_press_matrix.submatrix[:, 0], short_loop_selector_matrix=self.elements.double_press_event_matrix.submatrix[:, 0], duplicate_button=u'duplicate_button', delete_button=u'delete_button')
@@ -738,7 +739,7 @@ class PushBase(ControlSurface):
         raise NotImplementedError
 
     def _init_value_components(self):
-        self._swing_amount = ValueComponent(u'swing_amount', self.song, display_label=u'Swing Amount:', display_format=u'%d%%', model_transform=lambda x: clamp(x / 200.0, 0.0, 0.5), view_transform=lambda x: x * 200.0, encoder_factor=100.0, encoder_touch_delay=TEMPO_SWING_TOUCH_DELAY)
+        self._swing_amount = ValueComponent(u'swing_amount', self.song, display_label=u'Swing Amount:', display_format=u'%d%%', model_transform=lambda x: clamp(old_div(x, 200.0), 0.0, 0.5), view_transform=lambda x: x * 200.0, encoder_factor=100.0, encoder_touch_delay=TEMPO_SWING_TOUCH_DELAY)
         self._swing_amount.layer = Layer(encoder=u'swing_control')
         tempo_param = self.song.master_track.mixer_device.song_tempo
         self._tempo = ValueComponent(u'tempo', self.song, display_label=u'Tempo:', display_format=u'%0.2f BPM', encoder_factor=128.0, encoder_touch_delay=TEMPO_SWING_TOUCH_DELAY, model_transform=lambda x: clamp(x, tempo_param.min, tempo_param.max))
@@ -922,7 +923,7 @@ class PushBase(ControlSurface):
         By stealing the touch buttons from the encoders, we ensure they are not triggered
         while using any of the parameter encoders.
         """
-        if any(imap(lambda e: e.is_pressed(), self.elements.global_param_touch_buttons_raw)):
+        if any(map(lambda e: e.is_pressed(), self.elements.global_param_touch_buttons_raw)):
             self._accidental_touch_prevention_layer.grab(self)
         else:
             self._accidental_touch_prevention_layer.release(self)

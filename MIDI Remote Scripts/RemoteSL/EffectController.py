@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import Live
 from .RemoteSLComponent import RemoteSLComponent
 from .consts import *
@@ -71,7 +75,7 @@ class EffectController(RemoteSLComponent):
                     feedback_rule.cc_no = fx_encoder_feedback_ccs[strip_index]
                     feedback_rule.channel = SL_MIDI_CHANNEL
                     feedback_rule.delay_in_ms = 0
-                    feedback_rule.cc_value_map = tuple([ int(1.5 + float(index) / 127.0 * 10.0) for index in range(128) ])
+                    feedback_rule.cc_value_map = tuple([ int(1.5 + old_div(float(index), 1270.0)) for index in range(128) ])
                     ring_mode_value = FX_RING_VOL_VALUE
                     if parameter.min == -1 * parameter.max:
                         ring_mode_value = FX_RING_PAN_VALUE
@@ -215,8 +219,8 @@ class EffectController(RemoteSLComponent):
     def __report_bank(self):
         if self.__show_bank:
             self.__show_bank = False
-            if self.__assigned_device.class_name in DEVICE_DICT.keys():
-                if self.__assigned_device.class_name in BANK_NAME_DICT.keys():
+            if self.__assigned_device.class_name in list(DEVICE_DICT.keys()):
+                if self.__assigned_device.class_name in list(BANK_NAME_DICT.keys()):
                     bank_names = BANK_NAME_DICT[self.__assigned_device.class_name]
                     if bank_names and len(bank_names) > self.__bank:
                         bank_name = bank_names[self.__bank]
@@ -249,7 +253,7 @@ class EffectController(RemoteSLComponent):
         self.__reassign_strips()
 
 
-class EffectChannelStrip():
+class EffectChannelStrip(object):
     u"""Represents one of the 8 strips in the Effect controls that we use for parameter
     controlling (one button, one encoder)
     """

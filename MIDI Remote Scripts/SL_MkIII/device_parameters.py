@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from builtins import range
+from future.moves.itertools import zip_longest
 from ableton.v2.control_surface import InternalParameterBase
 from ableton.v2.control_surface.components import DisplayingDeviceParameterComponent
 from ableton.v2.control_surface.control import ColorSysexControl, control_list
@@ -25,7 +26,7 @@ class DeviceParameterComponent(DisplayingDeviceParameterComponent):
 
     def _update_parameter_values(self):
         super(DeviceParameterComponent, self)._update_parameter_values()
-        for parameter, control in izip_longest(self.parameters, self._parameter_controls or []):
+        for parameter, control in zip_longest(self.parameters, self._parameter_controls or []):
             if is_internal_parameter(parameter) and control:
                 control.send_value(convert_parameter_value_to_midi_value(parameter))
 
@@ -34,7 +35,7 @@ class DeviceParameterComponent(DisplayingDeviceParameterComponent):
         self._update_color_fields()
 
     def _update_color_fields(self):
-        for color_field_index, parameter_info in izip_longest(xrange(WIDTH), self._parameter_provider.parameters[:WIDTH]):
+        for color_field_index, parameter_info in zip_longest(range(WIDTH), self._parameter_provider.parameters[:WIDTH]):
             parameter = parameter_info.parameter if parameter_info else None
             color = u'Device.On' if parameter else u'DefaultButton.Disabled'
             self.parameter_color_fields[color_field_index].color = color

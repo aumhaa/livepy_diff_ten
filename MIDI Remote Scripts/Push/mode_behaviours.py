@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import imap
 from ableton.v2.control_surface.mode import ModeButtonBehaviour
 
 class CancellableBehaviour(ModeButtonBehaviour):
@@ -13,7 +12,7 @@ class CancellableBehaviour(ModeButtonBehaviour):
     def press_immediate(self, component, mode):
         active_modes = component.active_modes
         groups = component.get_mode_groups(mode)
-        can_cancel_mode = mode in active_modes or any(imap(lambda other: groups & component.get_mode_groups(other), active_modes))
+        can_cancel_mode = mode in active_modes or any(map(lambda other: groups & component.get_mode_groups(other), active_modes))
         if can_cancel_mode:
             if groups:
                 component.pop_groups(groups)

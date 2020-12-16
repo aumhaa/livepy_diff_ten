@@ -1,6 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import map
+from builtins import round
+from past.utils import old_div
 from contextlib import contextmanager
-from itertools import ifilter
 from ableton.v2.base import EventObject, index_if, listenable_property, listens, liveobj_valid, find_if, task
 from ableton.v2.control_surface import defaults
 from ableton.v2.control_surface.control import ButtonControl, control_matrix, PlayableControl
@@ -125,6 +128,7 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
         self._has_notes = [False] * 128
         self._has_notes_pattern = self._get_pattern(0)
         self._aftertouch_control = None
+        self._aftertouch_mode = u'mono'
         self._show_notifications = True
         self.__on_detail_clip_changed.subject = self.song.view
         self.__on_detail_clip_changed()
@@ -154,9 +158,9 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
             self._has_notes = [False] * 128
             loop_start = self._detail_clip.loop_start
             loop_length = self._detail_clip.loop_end - loop_start
-            notes = self._detail_clip.get_notes(loop_start, 0, loop_length, 128)
+            notes = self._detail_clip.get_notes_extended(from_time=loop_start, from_pitch=0, time_span=loop_length, pitch_span=128)
             for note in notes:
-                self._has_notes[note[0]] = True
+                self._has_notes[note.pitch] = True
 
         self.notify_contents()
 
@@ -264,7 +268,7 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
         if clip:
             note_name = pitch_index_to_string(pitch)
             loop_length = clip.loop_end - clip.loop_start
-            clip.remove_notes(clip.loop_start, pitch, loop_length, 1)
+            clip.remove_notes_extended(from_time=clip.loop_start, from_pitch=pitch, time_span=loop_length, pitch_span=1)
             self.show_notification(consts.MessageBoxText.DELETE_NOTES % note_name)
 
     @delete_button.pressed
@@ -297,8 +301,13 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
         self._aftertouch_control = control
         self._update_aftertouch()
 
+    def set_aftertouch_mode(self, mode):
+        if self._aftertouch_mode != mode:
+            self._aftertouch_mode = mode
+            self._update_aftertouch()
+
     def _align_first_note(self):
-        self._first_note = self.page_offset + (self._first_note - self._last_page_offset) * float(self.page_length) / float(self._last_page_length)
+        self._first_note = self.page_offset + (self._first_note - self._last_page_offset) * old_div(float(self.page_length), float(self._last_page_length))
         if self._first_note >= self.position_count:
             self._first_note -= self.page_length
         self._last_page_length = self.page_length
@@ -364,7 +373,7 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
         notes = self._note_layout.notes
         width = None
         height = None
-        octave = first_note / self.page_length
+        octave = old_div(first_note, self.page_length)
         offset = first_note % self.page_length - self._first_scale_note_offset()
         if interval == None:
             if self._note_layout.is_in_key:
@@ -394,7 +403,7 @@ class InstrumentComponent(PlayableComponent, Slideable, Messenger):
 
     def _update_aftertouch(self):
         if self.is_enabled() and self._aftertouch_control != None:
-            self._aftertouch_control.send_value(u'mono')
+            self._aftertouch_control.send_value(self._aftertouch_mode)
 
 
 class SelectedNotesProvider(EventObject):
@@ -449,7 +458,7 @@ class SelectedNotesInstrumentComponent(InstrumentComponent):
 
     def _commit_pressed_notes(self):
         with self._updating_selected_notes_model():
-            held_notes = map(lambda button: self._get_note_info_for_coordinate(button.coordinate).index, ifilter(lambda button: button.is_pressed, self.matrix))
+            held_notes = list(map(lambda button: self._get_note_info_for_coordinate(button.coordinate).index, [ button for button in self.matrix if button.is_pressed ]))
             if len(held_notes) > 0:
                 self.selected_notes_provider.selected_notes = held_notes
                 self._pitches = held_notes

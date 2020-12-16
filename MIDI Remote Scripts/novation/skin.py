@@ -1,21 +1,22 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface import Skin
 from .colors import Mono, Rgb
 
-class Colors:
+class Colors(object):
 
-    class DefaultButton:
+    class DefaultButton(object):
         On = Rgb.GREEN
         Off = Rgb.BLACK
         Disabled = Rgb.BLACK
 
-    class Recording:
+    class Recording(object):
         On = Rgb.RED
         Off = Rgb.RED_HALF
         Transition = Rgb.RED_BLINK
         CaptureTriggered = Rgb.WHITE
 
-    class FixedLength:
+    class FixedLength(object):
         On = Rgb.BLUE
         Off = Rgb.WHITE_HALF
         Held = Rgb.BLUE_PULSE
@@ -23,7 +24,7 @@ class Colors:
         OptionInRange = Rgb.BLUE_PULSE
         OptionHeld = Rgb.BLUE
 
-    class Transport:
+    class Transport(object):
         PlayOff = Mono.OFF
         PlayOn = Mono.ON
         ContinueOff = Mono.OFF
@@ -33,7 +34,7 @@ class Colors:
         MetronomeOff = Rgb.RED_HALF
         MetronomeOn = Rgb.AQUA
 
-    class Action:
+    class Action(object):
         Undo = Rgb.CREAM
         UndoPressed = Rgb.WHITE
         Redo = Rgb.CREAM
@@ -47,7 +48,7 @@ class Colors:
         Double = Rgb.CREAM
         DoublePressed = Rgb.WHITE
 
-    class Session:
+    class Session(object):
         RecordButton = Rgb.RED_HALF
         ClipTriggeredPlay = Rgb.GREEN_BLINK
         ClipTriggeredRecord = Rgb.RED_BLINK
@@ -74,13 +75,13 @@ class Colors:
         DoublePressed = Rgb.WHITE
         ActionTriggered = Rgb.WHITE
 
-    class Zooming:
+    class Zooming(object):
         Selected = Rgb.OFF_WHITE
         Stopped = Rgb.LIGHT_BLUE_HALF
         Playing = Rgb.GREEN_PULSE
         Empty = Rgb.BLACK
 
-    class Mixer:
+    class Mixer(object):
         SoloOn = Rgb.BLUE
         SoloOff = Rgb.BLUE_HALF
         MuteOn = Rgb.YELLOW_HALF
@@ -91,7 +92,7 @@ class Colors:
         TrackSelected = Rgb.WHITE
         TrackNotSelected = Rgb.WHITE_HALF
 
-    class DrumGroup:
+    class DrumGroup(object):
         PadEmpty = Rgb.BLACK
         PadFilled = Rgb.YELLOW
         PadSelected = Rgb.LIGHT_BLUE
@@ -104,41 +105,41 @@ class Colors:
         Navigation = Rgb.YELLOW_HALF
         NavigationPressed = Rgb.YELLOW
 
-    class Mode:
+    class Mode(object):
 
-        class Volume:
+        class Volume(object):
             On = Rgb.GREEN
             Off = Rgb.WHITE_HALF
 
-        class Pan:
+        class Pan(object):
             On = Rgb.ORANGE
             Off = Rgb.WHITE_HALF
 
-        class SendA:
+        class SendA(object):
             On = Rgb.VIOLET
             Off = Rgb.WHITE_HALF
 
-        class SendB:
+        class SendB(object):
             On = Rgb.DARK_BLUE
             Off = Rgb.WHITE_HALF
 
-        class Stop:
+        class Stop(object):
             On = Rgb.RED
             Off = Rgb.WHITE_HALF
 
-        class Mute:
+        class Mute(object):
             On = Rgb.YELLOW
             Off = Rgb.WHITE_HALF
 
-        class Solo:
+        class Solo(object):
             On = Rgb.BLUE
             Off = Rgb.WHITE_HALF
 
-        class Arm:
+        class Arm(object):
             On = Rgb.RED
             Off = Rgb.WHITE_HALF
 
-        class Launch:
+        class Launch(object):
             On = Rgb.WHITE_HALF
 
 

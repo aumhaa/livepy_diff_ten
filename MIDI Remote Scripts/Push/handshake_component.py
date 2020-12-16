@@ -2,6 +2,7 @@ u"""
 Component for handling the initialization process of Push.
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
 import Live
 from ableton.v2.base import NamedTuple, listens, task
@@ -13,12 +14,12 @@ DONGLE_DELAY = 0.2
 DONGLE_SIZE = 16
 
 def to_bytes(dongle):
-    return tuple([ dongle >> 4 * (7 - index) & 15 for index in xrange(8) ])
+    return tuple([ dongle >> 4 * (7 - index) & 15 for index in range(8) ])
 
 
 def to_integral(dongle):
     length = len(dongle)
-    return sum([ long(dongle[index] & 15) << 4 * (length - 1 - index) for index in xrange(length) ])
+    return sum([ int(dongle[index] & 15) << 4 * (length - 1 - index) for index in range(length) ])
 
 
 def make_dongle_message(dongle_prefix, random_generator = Live.Application):

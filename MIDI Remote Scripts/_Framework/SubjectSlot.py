@@ -2,11 +2,15 @@ u"""
 Family of classes for maintaining connections with optional subjects.
 """
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip, repeat
+from past.builtins import basestring
+from builtins import object
+from itertools import repeat
 from functools import partial, wraps
 from .Disconnectable import Disconnectable, CompoundDisconnectable
 from .Signal import Signal
 from .Util import instance_decorator, monkeypatch, monkeypatch_extend, NamedTuple, mixin
+from future.utils import with_metaclass
+from ableton.v2.base import old_hasattr
 
 class SubjectSlotError(Exception):
     pass
@@ -83,16 +87,16 @@ class SubjectMeta(type):
         if events and u'disconnect' not in dct:
             dct[u'disconnect'] = lambda self: super(cls, self).disconnect()
         cls = super(SubjectMeta, cls).__new__(cls, name, bases, dct)
-        assert not events or hasattr(cls, u'disconnect')
+        assert not events or old_hasattr(cls, u'disconnect')
         setup_subject(cls, events)
         return cls
 
 
-class Subject(Disconnectable):
+class Subject(with_metaclass(SubjectMeta, Disconnectable)):
     u"""
     Base class that installs the SubjectMeta metaclass
     """
-    __metaclass__ = SubjectMeta
+    pass
 
 
 class SlotManager(CompoundDisconnectable):
@@ -259,7 +263,7 @@ class SubjectSlotGroup(SlotManager):
 
     def replace_subjects(self, subjects, identifiers = repeat(None)):
         self.disconnect()
-        for subject, identifier in izip(subjects, identifiers):
+        for subject, identifier in zip(subjects, identifiers):
             self.add_subject(subject, identifier=identifier)
 
     def add_subject(self, subject, identifier = None):

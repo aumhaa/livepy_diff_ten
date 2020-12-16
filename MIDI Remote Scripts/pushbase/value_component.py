@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from past.utils import old_div
 from ableton.v2.base import listenable_property, listens
 from ableton.v2.control_surface import Component, ParameterSlot
 from ableton.v2.control_surface.control import EncoderControl, ButtonControl
@@ -180,11 +183,11 @@ class ValueComponent(ValueComponentBase):
         Transform a value 'x' from the model domain to [0..1] range to
         be used in the slider-representation of the value.
         """
-        return self.view_transform(x) / self.encoder_factor
+        return old_div(self.view_transform(x), self.encoder_factor)
 
     @shift_button.pressed
     def shift_button(self, button):
-        self.encoder_factor = self._original_encoder_factor / 10.0
+        self.encoder_factor = old_div(self._original_encoder_factor, 10.0)
 
     @shift_button.released
     def shift_button(self, button):

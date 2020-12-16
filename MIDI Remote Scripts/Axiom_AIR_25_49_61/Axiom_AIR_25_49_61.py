@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import Live
 from Live import MidiMap
 from _Framework.ControlSurface import ControlSurface
@@ -496,7 +500,7 @@ class Axiom_AIR_25_49_61(ControlSurface):
                     name_string = self._mixer_for_faders.channel_strip(self._faders.index(sender)).track_name_data_source().display_string() + u'   Vol'
             else:
                 name_string = param.name
-                value = int((param.value - param.min) / param_range * 127)
+                value = int(old_div(param.value - param.min, param_range) * 127)
             value_string = str(value)
         else:
             name_string = u'<unmapped>'
@@ -511,10 +515,10 @@ class Axiom_AIR_25_49_61(ControlSurface):
             param_range = param.max - param.min
             if param.name == u'Track Volume':
                 name_string = self._mixer_for_encoders.channel_strip(self._encoders.index(sender)).track_name_data_source().display_string() + u'   Vol'
-                value = int((param.value - param.min) / param_range * 127)
+                value = int(old_div(param.value - param.min, param_range) * 127)
             elif param.name == u'Track Panning':
                 name_string = self._mixer_for_encoders.channel_strip(self._encoders.index(sender)).track_name_data_source().display_string() + u'   Pan'
-                value = int(param.value / param_range * 127)
+                value = int(old_div(param.value, param_range) * 127)
                 if value < 0:
                     name_string += u'  L'
                 elif value > 0:
@@ -523,7 +527,7 @@ class Axiom_AIR_25_49_61(ControlSurface):
                     name_string += u'  C'
             else:
                 name_string = param.name
-                value = int((param.value - param.min) / param_range * 127)
+                value = int(old_div(param.value - param.min, param_range) * 127)
             value_string = str(value)
         else:
             name_string = u'<unmapped>'
@@ -557,7 +561,7 @@ class Axiom_AIR_25_49_61(ControlSurface):
             self._bank_display.reset()
 
     def _update_bank_value(self):
-        bank = (self._session.track_offset() + 1) / self._session.width() + 1
+        bank = old_div(self._session.track_offset() + 1, self._session.width()) + 1
         self._set_bank_string(str(bank))
 
     def _install_mapping(self, midi_map_handle, control, parameter, feedback_delay, feedback_map):

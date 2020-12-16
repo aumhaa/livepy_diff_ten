@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
+from ableton.v2.base import old_hasattr
 from ableton.v2.control_surface import find_instrument_meeting_requirement
 
 def is_chain(track_or_chain):
@@ -15,7 +16,7 @@ def is_audio_track(track):
 
 
 def can_play_clips(mixable):
-    return hasattr(mixable, u'fired_slot_index')
+    return old_hasattr(mixable, u'fired_slot_index')
 
 
 def find_drum_rack_instrument(track):
@@ -23,4 +24,4 @@ def find_drum_rack_instrument(track):
 
 
 def find_simpler(track_or_chain):
-    return find_instrument_meeting_requirement(lambda i: hasattr(i, u'playback_mode'), track_or_chain)
+    return find_instrument_meeting_requirement(lambda i: old_hasattr(i, u'playback_mode'), track_or_chain)

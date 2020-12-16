@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.base import listens
 from ableton.v2.control_surface import PercussionInstrumentFinder
 from ableton.v2.control_surface.components import TargetTrackComponent

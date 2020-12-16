@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import range
 from functools import partial
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
 from _Framework.ControlSurface import OptimizedControlSurface
@@ -27,7 +29,7 @@ class APC_Key_25(APC, OptimizedControlSurface):
 
     @classmethod
     def wrap_matrix(cls, control_list, wrapper = nop):
-        return ButtonMatrixElement(rows=[map(wrapper, control_list)])
+        return ButtonMatrixElement(rows=[list(map(wrapper, control_list))])
 
     def __init__(self, *a, **k):
         super(APC_Key_25, self).__init__(*a, **k)
@@ -56,8 +58,8 @@ class APC_Key_25(APC, OptimizedControlSurface):
         make_color_button = partial(make_button, skin=self._color_skin)
         make_stop_button = partial(make_button, skin=self._stop_button_skin)
         self._shift_button = make_button(0, 98, resource_type=SharedResource, name=u'Shift_Button')
-        self._parameter_knobs = [ make_knob(0, index + 48, name=u'Parameter_Knob_%d' % (index + 1)) for index in xrange(self.SESSION_WIDTH) ]
-        self._select_buttons = [ make_stop_button(0, 64 + index, name=u'Track_Select_%d' % (index + 1)) for index in xrange(self.SESSION_WIDTH) ]
+        self._parameter_knobs = [ make_knob(0, index + 48, name=u'Parameter_Knob_%d' % (index + 1)) for index in range(self.SESSION_WIDTH) ]
+        self._select_buttons = [ make_stop_button(0, 64 + index, name=u'Track_Select_%d' % (index + 1)) for index in range(self.SESSION_WIDTH) ]
         self._up_button = self.make_shifted_button(self._select_buttons[0])
         self._down_button = self.make_shifted_button(self._select_buttons[1])
         self._left_button = self.make_shifted_button(self._select_buttons[2])
@@ -73,9 +75,9 @@ class APC_Key_25(APC, OptimizedControlSurface):
         def matrix_note(x, y):
             return x + self.SESSION_WIDTH * (self.SESSION_HEIGHT - y - 1)
 
-        self._matrix_buttons = [ [ make_color_button(0, matrix_note(track, scene), name=u'%d_Clip_%d_Button' % (track, scene)) for track in xrange(self.SESSION_WIDTH) ] for scene in xrange(self.SESSION_HEIGHT) ]
+        self._matrix_buttons = [ [ make_color_button(0, matrix_note(track, scene), name=u'%d_Clip_%d_Button' % (track, scene)) for track in range(self.SESSION_WIDTH) ] for scene in range(self.SESSION_HEIGHT) ]
         self._session_matrix = ButtonMatrixElement(name=u'Button_Matrix', rows=self._matrix_buttons)
-        self._scene_launch_buttons = [ make_color_button(0, index + 82, name=u'Scene_Launch_%d' % (index + 1)) for index in xrange(self.SESSION_HEIGHT) ]
+        self._scene_launch_buttons = [ make_color_button(0, index + 82, name=u'Scene_Launch_%d' % (index + 1)) for index in range(self.SESSION_HEIGHT) ]
         self._stop_button = self.make_shifted_button(self._scene_launch_buttons[0])
         self._solo_button = self.make_shifted_button(self._scene_launch_buttons[1])
         self._arm_button = self.make_shifted_button(self._scene_launch_buttons[2])
@@ -88,8 +90,8 @@ class APC_Key_25(APC, OptimizedControlSurface):
 
     def _create_session(self):
         session = SessionComponent(self.SESSION_WIDTH, self.SESSION_HEIGHT, auto_name=True, enable_skinning=True, is_enabled=False, layer=Layer(scene_launch_buttons=self.wrap_matrix(self._scene_launch_buttons), clip_launch_buttons=self._session_matrix, stop_all_clips_button=self._stop_all_button, track_bank_left_button=self._left_button, track_bank_right_button=self._right_button, scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button))
-        for scene_index in xrange(self.SESSION_HEIGHT):
-            for track_index in xrange(self.SESSION_WIDTH):
+        for scene_index in range(self.SESSION_HEIGHT):
+            for track_index in range(self.SESSION_WIDTH):
                 slot = session.scene(scene_index).clip_slot(track_index)
                 slot.layer = Layer(select_button=self._shift_button)
 

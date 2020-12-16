@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter
 from ableton.v2.base import listens, listens_group, liveobj_valid
 from ableton.v2.control_surface import Component
 
@@ -52,7 +53,7 @@ class ArmedTargetTrackComponent(TargetTrackComponent):
 
     @property
     def tracks(self):
-        return filter(lambda t: liveobj_valid(t) and t.can_be_armed and t.has_midi_input, self.song.tracks)
+        return list(filter(lambda t: liveobj_valid(t) and t.can_be_armed and t.has_midi_input, self.song.tracks))
 
     @listens(u'visible_tracks')
     def __on_tracks_changed(self):

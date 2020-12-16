@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.base import const, inject
 from ableton.v2.control_surface import ControlSurface, Layer
 from ableton.v2.control_surface.components import MixerComponent, SessionRingComponent, TransportComponent
@@ -25,13 +26,13 @@ class Code(ControlSurface):
         self._stop_button = make_button(93, u'Stop_Button')
         self._play_button = make_button(94, u'Play_Button')
         self._record_button = make_button(95, u'Record_Button')
-        self._faders = ButtonMatrixElement(rows=[[ make_slider(index, u'Fader_%d' % (index + 1,)) for index in xrange(8) ]], name=u'Faders')
+        self._faders = ButtonMatrixElement(rows=[[ make_slider(index, u'Fader_%d' % (index + 1,)) for index in range(8) ]], name=u'Faders')
         self._master_fader = make_slider(8, u'Master_Fader')
-        self._encoders = ButtonMatrixElement(rows=[[ make_encoder(index + 16, u'Encoder_%d' % (index + 1,)) for index in xrange(8) ]], name=u'Encoders')
-        self._track_select_buttons = ButtonMatrixElement(rows=[[ make_button(index + 24, u'Track_Select_Button_%d' % (index + 1,)) for index in xrange(8) ]], name=u'Track_Select_Buttons')
-        self._mute_buttons = ButtonMatrixElement(rows=[[ make_button(index + 8, u'Mute_Button_%d' % (index + 1,)) for index in xrange(8) ]], name=u'Mute_Buttons')
-        self._solo_buttons = ButtonMatrixElement(rows=[[ make_button(index + 16, u'Solo_Button_%d' % (index + 1,)) for index in xrange(8) ]], name=u'Solo_Buttons')
-        self._arm_buttons = ButtonMatrixElement(rows=[[ make_button(index, u'Record_Arm_Button_%d' % (index + 1,)) for index in xrange(8) ]], name=u'Record_Arm_Buttons')
+        self._encoders = ButtonMatrixElement(rows=[[ make_encoder(index + 16, u'Encoder_%d' % (index + 1,)) for index in range(8) ]], name=u'Encoders')
+        self._track_select_buttons = ButtonMatrixElement(rows=[[ make_button(index + 24, u'Track_Select_Button_%d' % (index + 1,)) for index in range(8) ]], name=u'Track_Select_Buttons')
+        self._mute_buttons = ButtonMatrixElement(rows=[[ make_button(index + 8, u'Mute_Button_%d' % (index + 1,)) for index in range(8) ]], name=u'Mute_Buttons')
+        self._solo_buttons = ButtonMatrixElement(rows=[[ make_button(index + 16, u'Solo_Button_%d' % (index + 1,)) for index in range(8) ]], name=u'Solo_Buttons')
+        self._arm_buttons = ButtonMatrixElement(rows=[[ make_button(index, u'Record_Arm_Button_%d' % (index + 1,)) for index in range(8) ]], name=u'Record_Arm_Buttons')
         self._bank_up_button = make_button(47, u'Bank_Up_Button')
         self._bank_down_button = make_button(46, u'Bank_Down_Button')
 

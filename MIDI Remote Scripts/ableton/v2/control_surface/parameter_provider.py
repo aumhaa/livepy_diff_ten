@@ -24,7 +24,15 @@ class ParameterInfo(NamedTuple):
         return self._overriden_name or actual_name
 
     def __eq__(self, other_info):
+        if not isinstance(other_info, ParameterInfo):
+            return NotImplemented
         return super(ParameterInfo, self).__eq__(other_info) and self.name == other_info.name
+
+    def __hash__(self):
+        return hash((self._overridden_name,
+         self.parameter,
+         self.default_encoder_sensitivity,
+         self.fine_grain_encoder_sensitivity))
 
 
 class ParameterProvider(EventObject):

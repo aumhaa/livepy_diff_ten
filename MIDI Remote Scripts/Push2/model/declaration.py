@@ -1,5 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.utils import iteritems, with_metaclass
+from past.builtins import unicode
+from past.builtins import long
 from itertools import count
+from ableton.v2.base import old_hasattr
 
 class ModelDeclarationException(Exception):
     pass
@@ -72,7 +76,7 @@ class view_property(property_declaration):
         super(view_property, self).__init__(*a, **k)
         self.property_type = property_type
         self.default_value = default_value
-        self.order = self.GLOBAL_ORDER.next()
+        self.order = next(self.GLOBAL_ORDER)
         assert default_value is not self.sentinel or is_view_model_property_decl(self) or is_list_property_decl(self) or is_binding_property_decl(self) or is_reference_property_decl(self)
         depends = depends
 
@@ -105,9 +109,9 @@ class id_property(property_declaration):
 
     @staticmethod
     def id_attribute_getter(obj):
-        if hasattr(obj, u'__id__'):
+        if old_hasattr(obj, u'__id__'):
             return unicode(obj.__id__)
-        if hasattr(obj, u'_live_ptr'):
+        if old_hasattr(obj, u'_live_ptr'):
             return unicode(obj._live_ptr)
         return unicode(id(obj))
 
@@ -146,7 +150,7 @@ class ModelVisitor(object):
         self.visit_class_declarations(class_)
 
     def visit_class_declarations(self, class_):
-        view_properties = ((name, decl) for name, decl in class_.__dict__.iteritems() if isinstance(decl, property_declaration))
+        view_properties = ((name, decl) for name, decl in iteritems(class_.__dict__) if isinstance(decl, property_declaration))
         for name, decl in sorted(view_properties, key=lambda item: item[1].order):
             decl.visit(name, self)
 
@@ -213,8 +217,8 @@ class ModelMeta(type):
         visitor.visit_class(cls)
 
 
-class ViewModel(object):
-    __metaclass__ = ModelMeta
+class ViewModel(with_metaclass(ModelMeta, object)):
+    pass
 
 
 class Binding(ViewModel):

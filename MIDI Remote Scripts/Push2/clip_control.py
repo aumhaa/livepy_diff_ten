@@ -1,8 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import map
+from builtins import round
+from builtins import str
+from past.utils import old_div
 from itertools import chain
 from contextlib import contextmanager
 from MidiRemoteScript import MutableVector
-from ableton.v2.base import listens, listens_group, liveobj_valid, listenable_property, task
+from ableton.v2.base import listens, listens_group, liveobj_valid, listenable_property, old_hasattr, task
 from ableton.v2.control_surface import Component, WrappingParameter
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl, MappedSensitivitySettingControl, ToggleButtonControl
 from ableton.v2.control_surface.mode import ModesComponent
@@ -75,10 +80,10 @@ class LoopSetting(WrappingParameter):
     @property
     def display_value(self):
         if not liveobj_valid(self.canonical_parent.clip):
-            return unicode(u'-')
+            return str(u'-')
         if self.recording:
-            return unicode(u'...')
-        return unicode(self._conversion((self.canonical_parent.clip.signature_numerator, self.canonical_parent.clip.signature_denominator), self._get_property_value()))
+            return str(u'...')
+        return str(self._conversion((self.canonical_parent.clip.signature_numerator, self.canonical_parent.clip.signature_denominator), self._get_property_value()))
 
 
 class LoopSettingsControllerComponent(LoopSettingsControllerComponentBase):
@@ -234,7 +239,7 @@ class GainSetting(WrappingParameter):
 
     @property
     def display_value(self):
-        return unicode(self._property_host.clip.gain_display_string if self._property_host.clip else u'')
+        return str(self._property_host.clip.gain_display_string if self._property_host.clip else u'')
 
 
 class PitchSetting(WrappingParameter):
@@ -277,7 +282,7 @@ class WarpSetting(WrappingParameter):
 
     @property
     def value_items(self):
-        return map(lambda x: unicode(WARP_MODE_NAMES[x]), self._property_host.available_warp_modes)
+        return list(map(lambda x: str(WARP_MODE_NAMES[x]), self._property_host.available_warp_modes))
 
     def _get_property_value(self):
         return self._property_host.available_warp_modes.index(getattr(self._property_host, self._source_property))
@@ -383,7 +388,7 @@ class MatrixModeWatcherComponent(Component):
         self._matrix_mode_map = matrix_mode_map
 
         def connect_listeners(dct):
-            for key, value in dct.iteritems():
+            for key, value in dct.items():
                 if key == u'modes_component':
                     self.register_slot(value, self.__on_matrix_mode_changed, u'selected_mode')
                 else:
@@ -398,14 +403,14 @@ class MatrixModeWatcherComponent(Component):
         mode_path = []
 
         def create_mode_path_recursive(mode_map):
-            mode_entry = mode_map.keys()[0]
+            mode_entry = list(mode_map.keys())[0]
             mode_path.append(mode_entry)
             parent = mode_map[mode_entry]
             children = parent[u'children']
             modes_comp = parent[u'modes_component']
             selected_mode = modes_comp.selected_mode
             if selected_mode in children:
-                if len(children[selected_mode][u'children'].keys()) > 0:
+                if len(list(children[selected_mode][u'children'].keys())) > 0:
                     return create_mode_path_recursive({selected_mode: children[selected_mode]})
                 mode_path.append(selected_mode)
             return mode_path
@@ -745,7 +750,7 @@ class MidiClipControllerComponent(Component):
         return get_static_view_data(self._matrix_mode_watcher.matrix_mode_path)
 
     def _add_items_to_view_data(self, view_data):
-        for key, value in self.get_static_view_data().iteritems():
+        for key, value in self.get_static_view_data().items():
             view_data[key] = value
 
     def matrix_mode_path(self):
@@ -754,7 +759,7 @@ class MidiClipControllerComponent(Component):
 
     def _update_notification_mutes(self):
         for component in chain(self._sequencers, self._instruments):
-            if hasattr(component, u'show_notifications'):
+            if old_hasattr(component, u'show_notifications'):
                 component.show_notifications = not (self.is_enabled() and self.get_static_view_data()[u'ShowScrollbarCursor'])
 
     def mute_components_during_track_change(self, muted):
@@ -776,8 +781,8 @@ class MidiClipControllerComponent(Component):
             upper = self._most_recent_editable_pitches[-1]
             window_size = upper - lower
             base_note = self._loose_follow_base_note
-            if window_size >= num_visible_keys / 3:
-                base_note = (lower + upper) / 2 - num_visible_keys / 2
+            if window_size >= old_div(num_visible_keys, 3):
+                base_note = old_div(lower + upper, 2) - old_div(num_visible_keys, 2)
             else:
                 if lower - window_size < base_note:
                     base_note = lower - window_size
@@ -835,7 +840,7 @@ class MidiClipControllerComponent(Component):
             view_data = visualisation.get_view_data()
             if self._matrix_mode_watcher is not None:
                 self._add_items_to_view_data(view_data)
-            for key, value in new_data.iteritems():
+            for key, value in new_data.items():
                 view_data[key] = value
 
             visualisation.set_view_data(view_data)

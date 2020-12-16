@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-from ...base import lazy_attribute, mixin, nop, task, Disconnectable, EventObject, NamedTuple
+from ...base import lazy_attribute, mixin, nop, old_hasattr, task, Disconnectable, EventObject, NamedTuple
 __all__ = (u'Control', u'InputControl', u'ControlManager', u'control_event', u'control_color', u'Connectable')
 
 class ControlManager(EventObject):
@@ -18,7 +18,7 @@ class ControlManager(EventObject):
         Dynamically adds a Control to the object. The Control will be added to the object
         as an attribute with the given `name`.
         """
-        if hasattr(self, name):
+        if old_hasattr(self, name):
             raise AttributeError(u'Control would overwrite an existing property')
         control_state = control._get_state(self)
         setattr(self, name, control_state)

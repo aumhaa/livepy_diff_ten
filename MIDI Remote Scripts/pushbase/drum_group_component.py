@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from functools import partial
 from ableton.v2.base import find_if, nop, listens, liveobj_valid, listenable_property, NamedTuple
 from ableton.v2.control_surface.control import control_matrix, ButtonControl
@@ -136,8 +137,8 @@ class DrumGroupComponent(SlideableTouchStripComponent, DrumGroupComponent, Messe
 
     def delete_pitch(self, drum_pad):
         clip = self.song.view.detail_clip
-        if clip and any(clip.get_notes(0, drum_pad.note, DISTANT_FUTURE, 1)):
-            clip.remove_notes(0, drum_pad.note, DISTANT_FUTURE, 1)
+        if clip and len(clip.get_notes_extended(from_time=0, from_pitch=drum_pad.note, time_span=DISTANT_FUTURE, pitch_span=1)) > 0:
+            clip.remove_notes_extended(from_time=0, from_pitch=drum_pad.note, time_span=DISTANT_FUTURE, pitch_span=1)
             self.show_notification(MessageBoxText.DELETE_NOTES % drum_pad.name)
         else:
             self.show_notification(MessageBoxText.DELETE_DRUM_RACK_PAD % drum_pad.name)

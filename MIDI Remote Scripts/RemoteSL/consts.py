@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 NOTE_OFF_STATUS = 128
 NOTE_ON_STATUS = 144
 CC_STATUS = 176
@@ -41,7 +42,7 @@ NUM_CHARS_PER_DISPLAY_STRIP = 9
 NUM_CHARS_PER_DISPLAY_LINE = NUM_CHARS_PER_DISPLAY_STRIP * NUM_CONTROLS_PER_ROW
 
 def __create_row_range(cc_base):
-    return range(cc_base, cc_base + NUM_CONTROLS_PER_ROW)
+    return list(range(cc_base, cc_base + NUM_CONTROLS_PER_ROW))
 
 
 FX_DISPLAY_PAGE_UP = 88
@@ -52,7 +53,7 @@ FX_SELECT_ENCODER_ROW = 81
 FX_SELECT_SECOND_BUTTON_ROW = 82
 FX_SELECT_POTIE_ROW = 83
 FX_SELECT_DRUM_PAD_ROW = 84
-fx_select_button_ccs = range(FX_SELECT_FIRST_BUTTON_ROW, FX_SELECT_DRUM_PAD_ROW + 1)
+fx_select_button_ccs = list(range(FX_SELECT_FIRST_BUTTON_ROW, FX_SELECT_DRUM_PAD_ROW + 1))
 FX_RING_VOL_VALUE = 0
 FX_RING_PAN_VALUE = 32
 FX_RING_SIN_VALUE = 64
@@ -80,7 +81,7 @@ mx_display_button_ccs = [MX_DISPLAY_PAGE_UP, MX_DISPLAY_PAGE_DOWN]
 MX_SELECT_SLIDER_ROW = 85
 MX_SELECT_FIRST_BUTTON_ROW = 86
 MX_SELECT_SECOND_BUTTON_ROW = 87
-mx_select_button_ccs = range(MX_SELECT_SLIDER_ROW, MX_SELECT_SECOND_BUTTON_ROW + 1)
+mx_select_button_ccs = list(range(MX_SELECT_SLIDER_ROW, MX_SELECT_SECOND_BUTTON_ROW + 1))
 MX_SLIDER_ROW_BASE_CC = 16
 mx_slider_row_ccs = __create_row_range(MX_SLIDER_ROW_BASE_CC)
 MX_FIRST_BUTTON_ROW_BASE_CC = 40

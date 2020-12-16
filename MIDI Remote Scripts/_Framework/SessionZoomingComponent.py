@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from .CompoundComponent import CompoundComponent
 from .ScrollComponent import ScrollComponent
 from .SubjectSlot import subject_slot, subject_slot_group
@@ -104,24 +107,24 @@ class SessionZoomingComponent(CompoundComponent):
         if self._buttons != None:
             tracks = self._session.tracks_to_use()
             scenes = self.song().scenes
-            slots_registry = [ None for index in xrange(len(scenes)) ]
+            slots_registry = [ None for index in range(len(scenes)) ]
             width = self._session.width()
             height = self._session.height()
-            for x in xrange(self._buttons.width()):
-                for y in xrange(self._buttons.height()):
+            for x in range(self._buttons.width()):
+                for y in range(self._buttons.height()):
                     value_to_send = self._empty_value
                     scene_bank_offset = self._scene_bank_index * self._buttons.height() * height
                     track_offset = x * width
                     scene_offset = y * height + scene_bank_offset
-                    if track_offset in xrange(len(tracks)) and scene_offset in xrange(len(scenes)):
+                    if track_offset in range(len(tracks)) and scene_offset in range(len(scenes)):
                         value_to_send = self._stopped_value
-                        if self._session.track_offset() in xrange(width * (x - 1) + 1, width * (x + 1)) and self._session.scene_offset() - scene_bank_offset in xrange(height * (y - 1) + 1, height * (y + 1)):
+                        if self._session.track_offset() in range(width * (x - 1) + 1, width * (x + 1)) and self._session.scene_offset() - scene_bank_offset in range(height * (y - 1) + 1, height * (y + 1)):
                             value_to_send = self._selected_value
                         else:
                             playing = False
-                            for track in xrange(track_offset, track_offset + width):
-                                for scene in xrange(scene_offset, scene_offset + height):
-                                    if track in xrange(len(tracks)) and scene in xrange(len(scenes)):
+                            for track in range(track_offset, track_offset + width):
+                                for scene in range(scene_offset, scene_offset + height):
+                                    if track in range(len(tracks)) and scene in range(len(scenes)):
                                         if slots_registry[scene] == None:
                                             slots_registry[scene] = scenes[scene].clip_slots
                                         slot = slots_registry[scene][track] if len(slots_registry[scene]) > track else None
@@ -146,7 +149,7 @@ class SessionZoomingComponent(CompoundComponent):
 
     def _on_session_offset_changes(self):
         if self._buttons:
-            self._scene_bank_index = int(self._session.scene_offset() / self._session.height() / self._buttons.height())
+            self._scene_bank_index = int(old_div(old_div(self._session.scene_offset(), self._session.height()), self._buttons.height()))
         self.update()
 
     @subject_slot(u'value')
@@ -155,7 +158,7 @@ class SessionZoomingComponent(CompoundComponent):
             if value != 0 or not is_momentary:
                 track_offset = x * self._session.width()
                 scene_offset = (y + self._scene_bank_index * self._buttons.height()) * self._session.height()
-                if track_offset in xrange(len(self._session.tracks_to_use())) and scene_offset in xrange(len(self.song().scenes)):
+                if track_offset in range(len(self._session.tracks_to_use())) and scene_offset in range(len(self.song().scenes)):
                     self._session.set_offsets(track_offset, scene_offset)
 
     @subject_slot_group(u'value')
@@ -164,7 +167,7 @@ class SessionZoomingComponent(CompoundComponent):
             if value != 0 or not sender.is_momentary():
                 button_offset = list(self._scene_bank_buttons).index(sender)
                 scene_offset = button_offset * self._buttons.height() * self._session.height()
-                if scene_offset in xrange(len(self.song().scenes)):
+                if scene_offset in range(len(self.song().scenes)):
                     self._scene_bank_index = button_offset
                     self.update()
 
@@ -258,7 +261,7 @@ class DeprecatedSessionZoomingComponent(SessionZoomingComponent):
             else:
                 self._is_zoomed_out = not self._is_zoomed_out
             if self._is_zoomed_out and self._buttons:
-                self._scene_bank_index = int(self._session.scene_offset() / self._session.height() / self._buttons.height())
+                self._scene_bank_index = int(old_div(old_div(self._session.scene_offset(), self._session.height()), self._buttons.height()))
             else:
                 self._scene_bank_index = 0
             self._session_set_enabled(not self._is_zoomed_out)

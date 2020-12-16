@@ -1,11 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import Live
 from operator import itemgetter
 from ableton.v2.base import listens, liveobj_valid, task
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import InputControl, SendValueControl
 
-class MessageType:
+class MessageType(object):
     u"""
     The type of SysEx messages used in content transfers.
     """
@@ -14,7 +18,7 @@ class MessageType:
     end = 3
 
 
-class Note:
+class Note(object):
     u"""
     The indexes of information about notes within note tuples.
     """
@@ -46,7 +50,7 @@ def sum_multi_byte_value(data_bytes, bits_per_byte = 7):
 
 
 def to_absolute_beat_time(data_bytes):
-    return sum_multi_byte_value(data_bytes) / TIME_FACTOR
+    return old_div(sum_multi_byte_value(data_bytes), TIME_FACTOR)
 
 
 def create_note(note_data, start_offset):
@@ -181,7 +185,7 @@ class PrintToClipComponent(Component):
             payload = payload[BYTES_PER_GROUP_OFFSET:]
             payload_length = len(payload)
             if payload_length % BYTES_PER_NOTE == 0:
-                self._clip_data[u'notes'].extend([ create_note(payload[i:i + BYTES_PER_NOTE], group_offset) for i in xrange(0, payload_length, BYTES_PER_NOTE) ])
+                self._clip_data[u'notes'].extend([ create_note(payload[i:i + BYTES_PER_NOTE], group_offset) for i in range(0, payload_length, BYTES_PER_NOTE) ])
 
     def _reset_last_packet_id(self):
         self._last_packet_id = -1
@@ -191,7 +195,9 @@ class PrintToClipComponent(Component):
             clip = self._create_clip(self._clip_data[u'length'])
             if liveobj_valid(clip):
                 self._wrap_trailing_notes()
-                clip.set_notes(tuple(sorted(self._clip_data[u'notes'], key=itemgetter(1))))
+                note_data = sorted(self._clip_data[u'notes'], key=itemgetter(1))
+                notes = tuple((Live.Clip.MidiNoteSpecification(pitch=note[Note.pitch], start_time=note[Note.start], duration=note[Note.length], velocity=note[Note.velocity], mute=note[Note.mute]) for note in note_data))
+                clip.add_new_notes(notes)
 
     def _create_clip(self, length):
         song = self.song

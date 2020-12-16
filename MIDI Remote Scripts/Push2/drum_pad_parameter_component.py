@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import map
+from builtins import range
 from ableton.v2.base import clamp, listenable_property, listens, liveobj_valid
 from ableton.v2.control_surface import Component, EnumWrappingParameter, InternalParameterBase, ParameterInfo, ParameterProvider
 from ableton.v2.control_surface.control import StepEncoderControl
@@ -15,7 +18,7 @@ def get_first_chain(drum_pad):
 
 class ChokeParameter(InternalParameterBase):
     is_quantized = True
-    value_items = [NO_CHOKE_GROUP] + map(unicode, range(1, NUM_CHOKE_GROUPS))
+    value_items = [NO_CHOKE_GROUP] + list(map(str, list(range(1, NUM_CHOKE_GROUPS))))
     min = 0
     max = MAX_CHOKE_GROUP
 
@@ -50,7 +53,7 @@ class ChokeParameter(InternalParameterBase):
 
     @property
     def display_value(self):
-        return unicode(self.value)
+        return str(self.value)
 
 
 DEFAULT_OUT_NOTE = 60
@@ -61,7 +64,7 @@ class DrumPadTransposeParameter(EnumWrappingParameter):
         super(DrumPadTransposeParameter, self).__init__(name=u'Transpose', values_host=self, values_property=u'available_transpose_steps', index_property_host=get_first_chain(drum_pad), index_property=u'out_note', *a, **k)
 
     @property
-    def available_transpose_steps(self, steps = range(128)):
+    def available_transpose_steps(self, steps = list(range(128))):
         return steps
 
     @property
@@ -84,7 +87,7 @@ class DrumPadTransposeParameter(EnumWrappingParameter):
     def display_value(self):
         difference = self.value - DEFAULT_OUT_NOTE
         sign = u'-' if difference < 0 else (u'+' if difference > 0 else u'')
-        return sign + unicode(abs(difference)) + u' st'
+        return sign + str(abs(difference)) + u' st'
 
     def set_drum_pad(self, drum_pad):
         self.set_property_host(get_first_chain(drum_pad))

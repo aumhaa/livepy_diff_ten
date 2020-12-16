@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import zip
+from builtins import map
 from functools import partial
 from ableton.v2.base import EventObject, forward_property, listens, listens_group, recursive_map
 from ableton.v2.control_surface import Component
@@ -37,7 +40,7 @@ class DisplayingModesComponent(ModesComponent):
 
     def _update_data_sources(self, selected):
         if self.is_enabled():
-            for name, (source, string) in self._mode_data_sources.iteritems():
+            for name, (source, string) in self._mode_data_sources.items():
                 source.set_display_string(u'*' + string if name == selected else string)
 
 
@@ -57,7 +60,7 @@ class InstrumentPresetsComponent(DisplayingModesComponent):
 
     def _update_data_sources(self, selected):
         if self.is_enabled():
-            for name, (source, string) in self._mode_data_sources.iteritems():
+            for name, (source, string) in self._mode_data_sources.items():
                 source.set_display_string(consts.CHAR_SELECT + string if name == selected else string)
 
     def _set_scale_mode(self, is_horizontal, interval):
@@ -112,9 +115,9 @@ class InstrumentScalesComponent(Component):
         self._bottom_key_center_buttons = None
         self._absolute_relative_button = None
         self._diatonic_chromatic_button = None
-        self._info_sources = map(DisplayDataSource, (u'Scale selection:', u'', u''))
+        self._info_sources = list(map(DisplayDataSource, (u'Scale selection:', u'', u'')))
         self._line_sources = recursive_map(DisplayDataSource, ((u'', u'', u'', u'', u'', u'', u''), (u'', u'', u'', u'', u'', u'', u'')))
-        self._scale_sources = map(partial(DisplayDataSource, adjust_string_fn=adjust_string_crop), (u'', u'', u'', u''))
+        self._scale_sources = list(map(partial(DisplayDataSource, adjust_string_fn=adjust_string_crop), (u'', u'', u'', u'')))
         self._presets = InstrumentPresetsComponent(self._note_layout, is_enabled=False, parent=self)
         self._presets.selected_mode = u'scale_p4_vertical'
         self._scale_list = ListComponent(parent=self, data_sources=self._scale_sources)

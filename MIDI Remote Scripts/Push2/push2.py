@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 from contextlib import contextmanager
 from functools import partial
 import json
@@ -367,9 +369,9 @@ class Push2(IdentifiableControlSurface, PushBase):
 
     def _create_session(self):
         session = super(Push2, self)._create_session()
-        for scene_ix in xrange(8):
+        for scene_ix in range(8):
             scene = session.scene(scene_ix)
-            for track_ix in xrange(8):
+            for track_ix in range(8):
                 clip_slot = scene.clip_slot(track_ix)
                 clip_slot.layer += Layer(select_color_button=u'shift_button')
                 clip_slot.set_decorator_factory(self._clip_decorator_factory)
@@ -725,9 +727,12 @@ class Push2(IdentifiableControlSurface, PushBase):
 
     def _init_setup_component(self):
         self._setup_settings.general.workflow = u'scene' if self._settings[u'workflow'].value else u'clip'
+        self._setup_settings.general.aftertouch_mode = u'mono' if self._settings[u'aftertouch_mode'].value else u'polyphonic'
         self.__on_workflow_setting_changed.subject = self._setup_settings.general
+        self.__on_aftertouch_mode_setting_changed.subject = self._setup_settings.general
+        self.__on_aftertouch_mode_setting_changed(self._setup_settings.general.aftertouch_mode)
         setup = SetupComponent(name=u'Setup', settings=self._setup_settings, pad_curve_sender=self._pad_curve_sender, firmware_switcher=self._firmware_switcher, is_enabled=False, layer=make_dialog_layer(category_radio_buttons=u'select_buttons', priority=consts.SETUP_DIALOG_PRIORITY, make_it_go_boom_button=u'track_state_buttons_raw[7]'))
-        setup.general.layer = Layer(workflow_encoder=u'parameter_controls_raw[0]', display_brightness_encoder=u'parameter_controls_raw[1]', led_brightness_encoder=u'parameter_controls_raw[2]', priority=consts.SETUP_DIALOG_PRIORITY)
+        setup.general.layer = Layer(workflow_encoder=u'parameter_controls_raw[0]', display_brightness_encoder=u'parameter_controls_raw[1]', led_brightness_encoder=u'parameter_controls_raw[2]', aftertouch_mode_encoder=u'parameter_controls_raw[3]', priority=consts.SETUP_DIALOG_PRIORITY)
         setup.info.layer = Layer(install_firmware_button=u'track_state_buttons_raw[6]', priority=consts.SETUP_DIALOG_PRIORITY)
         setup.pad_settings.layer = Layer(sensitivity_encoder=u'parameter_controls_raw[4]', gain_encoder=u'parameter_controls_raw[5]', dynamics_encoder=u'parameter_controls_raw[6]', priority=consts.SETUP_DIALOG_PRIORITY)
         setup.display_debug.layer = Layer(show_row_spaces_button=u'track_state_buttons_raw[0]', show_row_margins_button=u'track_state_buttons_raw[1]', show_row_middle_button=u'track_state_buttons_raw[2]', show_button_spaces_button=u'track_state_buttons_raw[3]', show_unlit_button_button=u'track_state_buttons_raw[4]', show_lit_button_button=u'track_state_buttons_raw[5]', priority=consts.SETUP_DIALOG_PRIORITY)
@@ -745,6 +750,12 @@ class Push2(IdentifiableControlSurface, PushBase):
     @listens(u'workflow')
     def __on_workflow_setting_changed(self, value):
         self._settings[u'workflow'].value = value == u'scene'
+
+    @listens(u'aftertouch_mode')
+    def __on_aftertouch_mode_setting_changed(self, value):
+        self._settings[u'aftertouch_mode'].value = value == u'mono'
+        self._instrument.instrument.set_aftertouch_mode(value)
+        self._selected_note_instrument.set_aftertouch_mode(value)
 
     def _create_controls(self):
         self._create_pad_sensitivity_update()
@@ -767,7 +778,7 @@ class Push2(IdentifiableControlSurface, PushBase):
         pad_sysex_control = SysexElement(sysex.make_pad_setting_message)
         aftertouch_enabled_control = SysexElement(send_message_generator=sysex.make_mono_aftertouch_enabled_message)
         sensitivity_sender = pad_parameter_sender(all_pad_sysex_control, pad_sysex_control, aftertouch_enabled_control)
-        self._pad_sensitivity_update = PadUpdateComponent(all_pads=range(64), parameter_sender=sensitivity_sender, default_profile=PadSettings(sensitivity=default_profile, aftertouch_enabled=MONO_AFTERTOUCH_ENABLED), update_delay=TIMER_DELAY)
+        self._pad_sensitivity_update = PadUpdateComponent(all_pads=list(range(64)), parameter_sender=sensitivity_sender, default_profile=PadSettings(sensitivity=default_profile, aftertouch_enabled=MONO_AFTERTOUCH_ENABLED), update_delay=TIMER_DELAY)
         self._pad_sensitivity_update.set_profile(u'drums', PadSettings(sensitivity=playing_profile, aftertouch_enabled=MONO_AFTERTOUCH_ENABLED))
         self._pad_sensitivity_update.set_profile(u'instrument', PadSettings(sensitivity=playing_profile, aftertouch_enabled=MONO_AFTERTOUCH_ENABLED))
         self._pad_sensitivity_update.set_profile(u'loop', PadSettings(sensitivity=loop_selector_profile, aftertouch_enabled=MONO_AFTERTOUCH_DISABLED))

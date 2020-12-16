@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from builtins import str
+from builtins import chr
+from future.moves.itertools import zip_longest
 from ableton.v2.base import liveobj_valid, listens, listens_group
 from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
 from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, control_list
@@ -60,23 +62,23 @@ class MixerComponent(MixerComponentBase):
             display.set_data_sources([self._selected_strip.track_name_data_source()])
 
     def set_pan_encoder_color_fields(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.pan_encoder_color_field.set_control_element(control)
 
     def set_track_color_fields(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.track_color_field.set_control_element(control)
 
     def set_track_selection_fields(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.track_selection_field.set_control_element(control)
 
     def set_volume_leds(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.volume_led.set_control_element(control)
 
     def set_monitoring_state_buttons(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.monitoring_state_button.set_control_element(control)
 
     def on_send_index_changed(self):

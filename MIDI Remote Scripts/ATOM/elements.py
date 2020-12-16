@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 from functools import partial
 import Live
 from ableton.v2.base import depends, recursive_map
@@ -40,7 +42,7 @@ class Elements(object):
         self.record_button = create_button(107, u'Record_Button')
         self.play_button = create_button(109, u'Play_Button')
         self.stop_button = create_button(111, u'Stop_Button')
-        self.pads_raw = [ [ create_button(offset + col_index, u'{}_Pad_{}'.format(col_index, row_index), msg_type=MIDI_NOTE_TYPE) for col_index in xrange(SESSION_WIDTH) ] for row_index, offset in enumerate(xrange(48, 32, -4)) ]
+        self.pads_raw = [ [ create_button(offset + col_index, u'{}_Pad_{}'.format(col_index, row_index), msg_type=MIDI_NOTE_TYPE) for col_index in range(SESSION_WIDTH) ] for row_index, offset in enumerate(range(48, 32, -4)) ]
         self.pads = ButtonMatrixElement(rows=self.pads_raw, name=u'Pads')
 
         def with_modifier(modifier_button, button):
@@ -50,4 +52,4 @@ class Elements(object):
         self.stop_button_with_shift = with_modifier(self.shift_button, self.stop_button)
         self.pads_with_shift = ButtonMatrixElement(name=u'Pads_With_Shift', rows=recursive_map(partial(with_modifier, self.shift_button), self.pads_raw))
         self.pads_with_zoom = ButtonMatrixElement(name=u'Pads_With_Zoom', rows=recursive_map(partial(with_modifier, self.zoom_button), self.pads_raw))
-        self.encoders = ButtonMatrixElement(rows=[[ create_encoder(index + 14, u'Encoder_{}'.format(index)) for index in xrange(4) ]], name=u'Encoders')
+        self.encoders = ButtonMatrixElement(rows=[[ create_encoder(index + 14, u'Encoder_{}'.format(index)) for index in range(4) ]], name=u'Encoders')

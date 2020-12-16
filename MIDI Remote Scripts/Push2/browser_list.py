@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
 import Live
 from itertools import islice
 from ableton.v2.base import EventObject, listenable_property, clamp, nop
@@ -61,9 +62,9 @@ class BrowserList(EventObject, UniqueIdMixin):
                 next_slice = islice(self._item_iterator, self.LAZY_ACCESS_COUNT - len(self._items))
             else:
                 next_slice = self._item_iterator
-            self._items.extend(map(self._item_wrapper, next_slice))
+            self._items.extend(list(map(self._item_wrapper, next_slice)))
         elif len(self._items) < len(self._item_iterator):
-            self._items = map(self._item_wrapper, self._item_iterator)
+            self._items = list(map(self._item_wrapper, self._item_iterator))
 
     @property
     def selected_item(self):

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 from ableton.v2.base import clamp, listens, liveobj_valid
 from ableton.v2.control_surface.control import InputControl, MappedControl, MappedSensitivitySettingControl, SendValueMixin, is_internal_parameter
 
@@ -52,7 +53,7 @@ class MappedAbsoluteControl(MappedControl):
             parameter = self.mapped_parameter
             parameter_min = parameter.min
             parameter_max = parameter.max
-            normalized_value = clamp(value / 127.0, 0.0, 1.0)
+            normalized_value = clamp(old_div(value, 127.0), 0.0, 1.0)
             return clamp((parameter_min + parameter_max) * normalized_value, parameter_min, parameter_max)
 
 

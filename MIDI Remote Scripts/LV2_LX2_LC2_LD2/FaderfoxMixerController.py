@@ -1,8 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from .ParamMap import ParamMap
 from .FaderfoxComponent import FaderfoxComponent
 from .consts import *
+from ableton.v2.base import old_hasattr
 
 class FaderfoxMixerController(FaderfoxComponent):
     __module__ = __name__
@@ -163,13 +165,13 @@ class FaderfoxMixerController(FaderfoxComponent):
         if self.parent.is_lv1:
             cc = LV1_MAIN_VOLUME_CC
         ParamMap.map_with_feedback(midi_map_handle, CHANNEL_SETUP2, cc, parameter, Live.MidiMap.MapMode.absolute)
-        if hasattr(track.mixer_device, u'cue_volume'):
+        if old_hasattr(track.mixer_device, u'cue_volume'):
             parameter = track.mixer_device.cue_volume
             cc = CUE_VOLUME_CC
             if self.parent.is_lv1:
                 cc = LV1_CUE_VOLUME_CC
             ParamMap.map_with_feedback(midi_map_handle, CHANNEL_SETUP2, cc, parameter, Live.MidiMap.MapMode.absolute)
-        if hasattr(track.mixer_device, u'crossfader'):
+        if old_hasattr(track.mixer_device, u'crossfader'):
             parameter = track.mixer_device.crossfader
             cc = CROSSFADER_CC
             ParamMap.map_with_feedback(midi_map_handle, CHANNEL_SETUP2, cc, parameter, Live.MidiMap.MapMode.absolute)

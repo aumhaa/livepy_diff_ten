@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
 from _Framework import Task
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
@@ -28,7 +29,7 @@ class MiniLabMk2(MiniLab):
         self._pad_leds = ButtonMatrixElement(rows=[ [ SysexValueControl(message_prefix=SETUP_MSG_PREFIX + (WRITE_COMMAND,
          WORKING_MEMORY_ID,
          COLOR_PROPERTY,
-         column + 112 + row * 8), default_value=(0,), name=u'Pad_LED_%d' % (column,)) for column in xrange(8) ] for row in xrange(2) ], name=u'Pad_LED_Matrix')
+         column + 112 + row * 8), default_value=(0,), name=u'Pad_LED_%d' % (column,)) for column in range(8) ] for row in range(2) ], name=u'Pad_LED_Matrix')
         self._memory_slot_selection = SysexValueControl(message_prefix=SETUP_MSG_PREFIX + (MEMORY_SLOT_PROPERTY,), name=u'Memory_Slot_Selection')
         self._hardware_live_mode_switch = SysexValueControl(message_prefix=LIVE_MODE_MSG_HEAD, default_value=(OFF_VALUE,), name=u'Hardware_Live_Mode_Switch')
 

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 from ableton.v2.base import listens
 from ableton.v2.control_surface.components import TransportComponent as TransportComponentBase
 from ableton.v2.control_surface.components import ToggleComponent
@@ -43,7 +44,7 @@ class TransportComponent(TransportComponentBase):
         self._calculate_distance_to_move()
 
     def _calculate_distance_to_move(self):
-        self._distance_to_move = 4.0 / self.song.signature_denominator * self.song.signature_numerator * 64
+        self._distance_to_move = old_div(4.0, self.song.signature_denominator) * self.song.signature_numerator * 64
 
     def _update_button_states(self):
         super(TransportComponent, self)._update_button_states()

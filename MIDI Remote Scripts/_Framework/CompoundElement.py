@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter
+from builtins import filter
+from builtins import map
 from .ControlElement import ControlElementClient
 from .SubjectSlot import subject_slot_group, SlotManager
 from .NotifyingControlElement import NotifyingControlElement
@@ -71,7 +72,7 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
         return priority
 
     def register_control_elements(self, *elements):
-        return map(self.register_control_element, elements)
+        return list(map(self.register_control_element, elements))
 
     def register_control_element(self, element):
         assert element not in self._nested_control_elements
@@ -88,7 +89,7 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
         return element
 
     def unregister_control_elements(self, *elements):
-        return map(self.unregister_control_element, elements)
+        return list(map(self.unregister_control_element, elements))
 
     def unregister_control_element(self, element):
         assert element in self._nested_control_elements
@@ -112,10 +113,10 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
         return self._nested_control_elements.get(control, False)
 
     def owned_control_elements(self):
-        return map(first, ifilter(second, self._nested_control_elements.iteritems()))
+        return list(map(first, filter(second, iter(self._nested_control_elements.items()))))
 
     def nested_control_elements(self):
-        return self._nested_control_elements.iterkeys()
+        return iter(self._nested_control_elements.keys())
 
     def reset(self):
         for element in self.owned_control_elements():
@@ -161,7 +162,7 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
         self._listen_nested_requests -= 1
 
     def _connect_nested_control_elements(self):
-        self._on_nested_control_element_value.replace_subjects(self._nested_control_elements.keys())
+        self._on_nested_control_element_value.replace_subjects(list(self._nested_control_elements.keys()))
 
     def _disconnect_nested_control_elements(self):
         self._on_nested_control_element_value.replace_subjects([])
@@ -197,7 +198,7 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
         self._is_resource_based = True
         nested_client = self._get_nested_client(client)
         with self._disable_notify_owner_on_button_ownership_change():
-            for element in self._nested_control_elements.keys():
+            for element in list(self._nested_control_elements.keys()):
                 if not was_resource_based:
                     element.notify_ownership_change(self, False)
                 nested_priority = self.get_control_element_priority(element, priority)
@@ -207,7 +208,7 @@ class CompoundElement(NotifyingControlElement, SlotManager, ControlElementClient
         assert self._is_resource_based
         nested_client = self._get_nested_client(client)
         with self._disable_notify_owner_on_button_ownership_change():
-            for element in self._nested_control_elements.keys():
+            for element in list(self._nested_control_elements.keys()):
                 element.resource.release(nested_client)
 
     def _get_nested_client(self, client):

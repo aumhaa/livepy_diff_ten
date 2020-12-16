@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip, izip_longest
+from future.moves.itertools import zip_longest
 from ableton.v2.base import clamp, listens
 from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, control_list
 from ableton.v2.control_surface.mode import ModesComponent, make_mode_button_control, to_camel_case_name
@@ -54,7 +54,7 @@ class DisplayingNavigatableModesComponent(NavigatableModesComponent):
 
     def _update_mode_displays(self):
         if self.selected_mode:
-            for display, color_field, name in izip_longest((self.display_1, self.display_2), (self.color_field_1, self.color_field_2), self.selected_mode.split(u'_')[:2]):
+            for display, color_field, name in zip_longest((self.display_1, self.display_2), (self.color_field_1, self.color_field_2), self.selected_mode.split(u'_')[:2]):
                 display[0] = name.capitalize() if name else u''
                 color_field.color = u'Mode.{}.On'.format(name.capitalize()) if name else u'DefaultButton.Disabled'
 
@@ -80,7 +80,7 @@ class DisplayingSkinableModesComponent(ModesComponent):
         self._update_selected_mode_color_field()
 
     def _update_selection_fields(self):
-        for field, mode in izip(self.mode_selection_fields, self._mode_list):
+        for field, mode in zip(self.mode_selection_fields, self._mode_list):
             field.is_on = mode == self.selected_mode
 
     def _update_selected_mode_color_field(self):

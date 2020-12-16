@@ -1,10 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import str
+from builtins import object
+from future.utils import string_types
 from collections import namedtuple
+from ableton.v2.base import old_hasattr
 from _MxDCore.LomTypes import is_control_surface, get_control_surfaces
 RECEIVE_MIDI_TIMEOUT = 0.2
 
 def midi_byte_to_int(byte):
-    if isinstance(byte, (str, unicode)):
+    if isinstance(byte, string_types):
         return int(byte, 0)
     return byte
 
@@ -14,7 +19,7 @@ def midi_bytes_are_sysex(bytes):
 
 
 def check_attribute(lom_object, actual_name, shown_name):
-    if not hasattr(lom_object, actual_name):
+    if not old_hasattr(lom_object, actual_name):
         raise AttributeError(u"object '{}' has no attribute '{}'".format(type(lom_object).__name__, shown_name))
 
 
@@ -71,7 +76,7 @@ class MxDControlSurfaceAPI(object):
 
     def release_control_surface_midi(self, device_id, object_id):
         for control_surface in get_control_surfaces():
-            if hasattr(control_surface, u'mxd_midi_scheduler'):
+            if old_hasattr(control_surface, u'mxd_midi_scheduler'):
                 control_surface.mxd_midi_scheduler.disconnect(self.MxDMidiOwner(device_id, object_id, self._mxdcore))
 
     def object_get_control_names(self, device_id, object_id, lom_object, parameters):
@@ -82,7 +87,7 @@ class MxDControlSurfaceAPI(object):
         self._mxdcore.manager.send_message(device_id, object_id, u'obj_call_result', result)
 
     def _get_cs_control_names(self, cs):
-        return [ control.name for control in cs.controls if hasattr(control, u'name') and control.name ]
+        return [ control.name for control in cs.controls if old_hasattr(control, u'name') and control.name ]
 
     def object_get_control(self, device_id, object_id, lom_object, parameters):
         if not is_control_surface(lom_object):
@@ -95,12 +100,12 @@ class MxDControlSurfaceAPI(object):
 
     def _get_cs_control(self, cs, name):
         for control in cs.controls:
-            if hasattr(control, u'name') and control.name == name:
+            if old_hasattr(control, u'name') and control.name == name:
                 return control
 
     def set_control_element(self, control, grabbed):
         u"""called back from control.resource.grab/release"""
-        if hasattr(control, u'release_parameter'):
+        if old_hasattr(control, u'release_parameter'):
             control.release_parameter()
         control.reset()
 
@@ -109,7 +114,7 @@ class MxDControlSurfaceAPI(object):
             raise AttributeError(u"object '{}' has no attribute {}".format(type(cs).__name__, command))
         if not control_or_name:
             raise AttributeError(u'control id or name required for {}'.format(command))
-        if isinstance(control_or_name, (str, unicode)):
+        if isinstance(control_or_name, string_types):
             control = self._get_cs_control(cs, control_or_name)
             if not control:
                 raise AttributeError(u"{} is not a control of '{}'".format(control_or_name, type(cs).__name__))
@@ -130,9 +135,9 @@ class MxDControlSurfaceAPI(object):
         grabbed_controls = self._grabbed_controls_per_cs[cs]
         if control not in grabbed_controls:
             with cs.component_guard():
-                priority = cs.mxd_grab_control_priority() if hasattr(cs, u'mxd_grab_control_priority') else 1
+                priority = cs.mxd_grab_control_priority() if old_hasattr(cs, u'mxd_grab_control_priority') else 1
                 control.resource.grab(self, priority=priority)
-                if hasattr(control, u'suppress_script_forwarding'):
+                if old_hasattr(control, u'suppress_script_forwarding'):
                     control.suppress_script_forwarding = False
                 grabbed_controls.append(control)
 

@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from past.utils import old_div
+from builtins import object
 import math
 from .colors import COLOR_INDEX_TO_SCREEN_COLOR, COLOR_INDEX_TO_SCREEN_COLOR_SHADES
 
@@ -37,14 +40,14 @@ class VisualisationGuides(object):
     def _guide_x(index, origin_x, guide_type):
         if origin_x == None:
             origin_x = VisualisationSettings.visualisation_left
-        origin_column = int(math.floor(origin_x / VisualisationSettings.button_spacing))
+        origin_column = int(math.floor(old_div(origin_x, VisualisationSettings.button_spacing)))
         return origin_column * VisualisationSettings.button_spacing + guide_type + index * VisualisationSettings.button_spacing - origin_x
 
     @staticmethod
     def _guide_y(index, origin_y, guide_type):
         if origin_y == None:
             origin_y = VisualisationSettings.visualisation_top
-        origin_row = int(math.floor(origin_y / VisualisationSettings.row_spacing))
+        origin_row = int(math.floor(old_div(origin_y, VisualisationSettings.row_spacing)))
         return origin_row * VisualisationSettings.row_spacing + guide_type + index * VisualisationSettings.row_spacing - origin_y
 
     @staticmethod

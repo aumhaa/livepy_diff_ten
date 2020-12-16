@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData
 from .visualisation_settings import VisualisationGuides
 

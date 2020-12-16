@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from _Framework.ButtonSliderElement import ButtonSliderElement
 from _Framework.InputControlElement import *
 SLIDER_MODE_SINGLE = 0
@@ -13,7 +16,7 @@ class PreciseButtonSliderElement(ButtonSliderElement):
         num_buttons = len(buttons)
         self._disabled = False
         self._mode = SLIDER_MODE_VOLUME
-        self._value_map = tuple([ float(index / num_buttons) for index in range(num_buttons) ])
+        self._value_map = tuple([ float(old_div(index, num_buttons)) for index in range(num_buttons) ])
 
     def set_disabled(self, disabled):
         assert isinstance(disabled, type(False))
@@ -66,7 +69,7 @@ class PreciseButtonSliderElement(ButtonSliderElement):
 
     def _send_value_volume(self, value):
         index_to_light = -1
-        normalised_value = float(value) / 127.0
+        normalised_value = old_div(float(value), 127.0)
         if normalised_value > 0.0:
             for index in range(len(self._value_map)):
                 if normalised_value <= self._value_map[index]:
@@ -78,7 +81,7 @@ class PreciseButtonSliderElement(ButtonSliderElement):
     def _send_value_pan(self, value):
         num_buttons = len(self._buttons)
         button_bits = [ False for index in range(num_buttons) ]
-        normalised_value = float(2 * value / 127.0) - 1.0
+        normalised_value = float(2 * old_div(value, 127.0)) - 1.0
         if value in (63, 64):
             normalised_value = 0.0
         if normalised_value < 0.0:
@@ -124,17 +127,17 @@ class PreciseButtonSliderElement(ButtonSliderElement):
         param_range = abs(self._parameter_to_map_to.max - self._parameter_to_map_to.min)
         param_value = self._parameter_to_map_to.value
         param_min = self._parameter_to_map_to.min
-        param_mid = param_range / 2 + param_min
+        param_mid = old_div(param_range, 2) + param_min
         midi_value = 0
         if self._mode == SLIDER_MODE_PAN:
             if param_value == param_mid:
                 midi_value = 64
             else:
-                diff = abs(param_value - param_mid) / param_range * 127
+                diff = old_div(abs(param_value - param_mid), param_range) * 127
                 if param_value > param_mid:
                     midi_value = 64 + int(diff)
                 else:
                     midi_value = 63 - int(diff)
         else:
-            midi_value = int(127 * abs(param_value - self._parameter_to_map_to.min) / param_range)
+            midi_value = int(old_div(127 * abs(param_value - self._parameter_to_map_to.min), param_range))
         self.send_value(midi_value)

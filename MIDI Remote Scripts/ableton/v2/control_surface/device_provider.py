@@ -96,9 +96,12 @@ class DeviceProvider(EventObject):
             self.song.appointed_device = None
             self.device = None
 
+    def _appoint_device_from_song(self):
+        self.device = device_to_appoint(self.song.appointed_device)
+
     @listens(u'appointed_device')
     def __on_appointed_device_changed(self):
-        self.device = device_to_appoint(self.song.appointed_device)
+        self._appoint_device_from_song()
 
     @listens(u'has_macro_mappings')
     def __on_has_macro_mappings_changed(self):

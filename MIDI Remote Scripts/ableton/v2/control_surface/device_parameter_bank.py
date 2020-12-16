@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ..base import EventObject, find_if, listens, listens_group, listenable_property, liveobj_valid, clamp
+from builtins import filter
+from ..base import EventObject, find_if, listens, listens_group, listenable_property, liveobj_valid, old_hasattr, clamp
 from .banking_util import BANK_FORMAT, BANK_MAIN_KEY, BANK_PARAMETERS_KEY, all_parameters
 
 class DeviceParameterBank(EventObject):
@@ -22,6 +23,8 @@ class DeviceParameterBank(EventObject):
         return clamp(index, 0, max(0, self.bank_count() - 1))
 
     def _is_index_valid(self, index):
+        if index is None:
+            return False
         return self.bank_count() > index
 
     def _get_index(self):
@@ -94,7 +97,7 @@ class DescribedDeviceParameterBank(DeviceParameterBank):
             slot.set_parameter_host(None)
             self.unregister_disconnectable(slot)
 
-        self._dynamic_slots = filter(lambda s: hasattr(s, u'notify_content'), self._content_slots())
+        self._dynamic_slots = list(filter(lambda s: old_hasattr(s, u'notify_content'), self._content_slots()))
         for slot in self._dynamic_slots:
             self.register_disconnectable(slot)
             slot.set_parameter_host(self.device)
@@ -118,7 +121,7 @@ class MaxDeviceParameterBank(DeviceParameterBank):
 
     def __init__(self, *a, **k):
         super(MaxDeviceParameterBank, self).__init__(*a, **k)
-        assert hasattr(self._device, u'get_bank_count')
+        assert old_hasattr(self._device, u'get_bank_count')
         self._on_bank_parameters_changed.subject = self.device
 
     def _calc_name(self):

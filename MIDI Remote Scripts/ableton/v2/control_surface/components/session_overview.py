@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from past.utils import old_div
 from ...base import in_range, listens, liveobj_valid
 from ..component import Component
 
@@ -63,25 +65,25 @@ class SessionOverviewComponent(Component):
         if self._buttons != None:
             tracks = self._session_ring.tracks_to_use()
             scenes = self.song.scenes
-            slots_registry = [ None for _ in xrange(len(scenes)) ]
+            slots_registry = [ None for index in range(len(scenes)) ]
             width = self._session_ring.num_tracks
             height = self._session_ring.num_scenes
-            for x in xrange(self._buttons.width()):
-                for y in xrange(self._buttons.height()):
+            for x in range(self._buttons.width()):
+                for y in range(self._buttons.height()):
                     value_to_send = self._empty_value
                     track_bank_offset = self._track_bank_index * self._buttons.width() * width
                     scene_bank_offset = self._scene_bank_index * self._buttons.height() * height
                     track_offset = x * width + track_bank_offset
                     scene_offset = y * height + scene_bank_offset
-                    if track_offset in xrange(len(tracks)) and scene_offset in xrange(len(scenes)):
+                    if track_offset in range(len(tracks)) and scene_offset in range(len(scenes)):
                         value_to_send = self._stopped_value
-                        if self._session_ring.track_offset - track_bank_offset in xrange(width * (x - 1) + 1, width * (x + 1)) and self._session_ring.scene_offset - scene_bank_offset in xrange(height * (y - 1) + 1, height * (y + 1)):
+                        if self._session_ring.track_offset - track_bank_offset in range(width * (x - 1) + 1, width * (x + 1)) and self._session_ring.scene_offset - scene_bank_offset in range(height * (y - 1) + 1, height * (y + 1)):
                             value_to_send = self._selected_value
                         else:
                             playing = False
-                            for track in xrange(track_offset, track_offset + width):
-                                for scene in xrange(scene_offset, scene_offset + height):
-                                    if track in xrange(len(tracks)) and scene in xrange(len(scenes)):
+                            for track in range(track_offset, track_offset + width):
+                                for scene in range(scene_offset, scene_offset + height):
+                                    if track in range(len(tracks)) and scene in range(len(scenes)):
                                         if not liveobj_valid(slots_registry[scene]):
                                             slots_registry[scene] = scenes[scene].clip_slots
                                         slot = slots_registry[scene][track] if len(slots_registry[scene]) > track else None
@@ -104,8 +106,8 @@ class SessionOverviewComponent(Component):
 
     def _update_bank_index(self, track_offset, scene_offset):
         if self._buttons and self.is_enabled():
-            self._track_bank_index = int(track_offset / self._session_ring.num_tracks / self._buttons.width())
-            self._scene_bank_index = int(scene_offset / self._session_ring.num_scenes / self._buttons.height())
+            self._track_bank_index = int(old_div(old_div(track_offset, self._session_ring.num_tracks), self._buttons.width()))
+            self._scene_bank_index = int(old_div(old_div(scene_offset, self._session_ring.num_scenes), self._buttons.height()))
         self.update()
 
     @listens(u'value')
@@ -114,5 +116,5 @@ class SessionOverviewComponent(Component):
             if value != 0 or not is_momentary:
                 track_offset = (x + self._track_bank_index * self._buttons.width()) * self._session_ring.num_tracks
                 scene_offset = (y + self._scene_bank_index * self._buttons.height()) * self._session_ring.num_scenes
-                if track_offset in xrange(len(self._session_ring.tracks_to_use())) and scene_offset in xrange(len(self.song.scenes)):
+                if track_offset in range(len(self._session_ring.tracks_to_use())) and scene_offset in range(len(self.song.scenes)):
                     self._session_ring.set_offsets(track_offset, scene_offset)

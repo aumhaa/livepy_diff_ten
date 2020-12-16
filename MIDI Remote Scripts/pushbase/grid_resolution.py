@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from past.utils import old_div
 import Live
 from ableton.v2.base import listenable_property, product
 from ableton.v2.control_surface.control import control_list, ControlManager, RadioButtonControl
@@ -37,7 +39,7 @@ class GridResolution(ControlManager):
 
     @property
     def step_length(self):
-        return QUANTIZATION_LIST[self.index] / QUANTIZATION_FACTOR
+        return old_div(QUANTIZATION_LIST[self.index], QUANTIZATION_FACTOR)
 
     @property
     def clip_grid(self):

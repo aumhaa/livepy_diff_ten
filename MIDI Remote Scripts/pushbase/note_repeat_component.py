@@ -1,4 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import range
+from builtins import object
+from past.utils import old_div
 from ableton.v2.base import listens, task
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl
@@ -9,17 +13,17 @@ def _make_triplet(base):
 
 
 def _frequency_to_repeat_rate(frequency):
-    return 1.0 / frequency * 4.0
+    return old_div(1.0, frequency) * 4.0
 
 
-NOTE_REPEAT_RATES = map(_frequency_to_repeat_rate, [_make_triplet(32),
+NOTE_REPEAT_RATES = list(map(_frequency_to_repeat_rate, [_make_triplet(32),
  32,
  _make_triplet(16),
  16,
  _make_triplet(8),
  8,
  _make_triplet(4),
- 4])
+ 4]))
 DEFAULT_INDEX = 5
 DEFAULT_RATE = NOTE_REPEAT_RATES[DEFAULT_INDEX]
 
@@ -41,7 +45,7 @@ class NoteRepeatComponent(Component):
         self._options = OptionsComponent(parent=self)
         self._options.selected_color = u'NoteRepeat.RateSelected'
         self._options.unselected_color = u'NoteRepeat.RateUnselected'
-        self._options.option_names = map(str, range(8))
+        self._options.option_names = list(map(str, list(range(8))))
         self._options.selected_option = DEFAULT_INDEX
         self._on_selected_option_changed.subject = self._options
         self.__on_selected_track_changed.subject = self.song.view

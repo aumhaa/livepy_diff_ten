@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
 from ableton.v2.control_surface import ControlSurface, Layer, midi
 from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, SessionRecordingComponent, SimpleTrackAssigner, UndoRedoComponent
@@ -79,16 +80,16 @@ class KompleteKontrolBase(ControlSurface):
         self._track_stop_button = create_button(97, u'Track_Stop_Button')
         self._jump_encoder = create_encoder(52, u'Jump_Encoder')
         self._loop_encoder = create_encoder(53, u'Loop_Encoder')
-        self._volume_encoders = ButtonMatrixElement(rows=[[ create_encoder(index + 80, u'Volume_Encoder_{}'.format(index), is_s_mk2=self.is_s_mk2) for index in xrange(NUM_TRACKS) ]], name=u'Volume_Encoders')
-        self._pan_encoders = ButtonMatrixElement(rows=[[ create_encoder(index + 88, u'Pan_Encoder_{}'.format(index), is_s_mk2=self.is_s_mk2) for index in xrange(NUM_TRACKS) ]], name=u'Pan_Encoders')
-        self._track_name_displays = ButtonMatrixElement(rows=[[ create_display_line(sysex.TRACK_NAME_DISPLAY_HEADER, index, u'Track_Name_Display_{}'.format(index), width=33 if self.is_s_mk2 else 11) for index in xrange(NUM_TRACKS) ]], name=u'Track_Name_Displays')
-        self._track_volume_displays = ButtonMatrixElement(rows=[[ create_display_line(sysex.TRACK_VOLUME_DISPLAY_HEADER, index, u'Track_Volume_Display_{}'.format(index), width=12) for index in xrange(NUM_TRACKS) ]], name=u'Track_Volume_Displays')
-        self._track_panning_displays = ButtonMatrixElement(rows=[[ create_display_line(sysex.TRACK_PANNING_DISPLAY_HEADER, index, u'Track_Panning_Display_{}'.format(index), width=12) for index in xrange(NUM_TRACKS) ]], name=u'Track_Panning_Displays')
-        self._track_type_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_TYPE_DISPLAY_HEADER, index, u'Track_Type_Display_{}'.format(index)) for index in xrange(NUM_TRACKS) ]], name=u'Track_Type_Displays')
-        self._track_mute_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_MUTE_DISPLAY_HEADER, index, u'Track_Mute_Display_{}'.format(index)) for index in xrange(NUM_TRACKS) ]], name=u'Track_Mute_Displays')
-        self._track_solo_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_SOLO_DISPLAY_HEADER, index, u'Track_Solo_Display_{}'.format(index)) for index in xrange(NUM_TRACKS) ]], name=u'Track_Solo_Displays')
-        self._track_muted_via_solo_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_MUTED_VIA_SOLO_DISPLAY_HEADER, index, u'Track_Muted_via_Solo_Display_{}'.format(index)) for index in xrange(NUM_TRACKS) ]], name=u'Track_Muted_via_Solo_Displays')
-        self._track_selection_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_SELECT_DISPLAY_HEADER, index, u'Track_Selection_Display_{}'.format(index)) for index in xrange(NUM_TRACKS) ]], name=u'Track_Selection_Displays')
+        self._volume_encoders = ButtonMatrixElement(rows=[[ create_encoder(index + 80, u'Volume_Encoder_{}'.format(index), is_s_mk2=self.is_s_mk2) for index in range(NUM_TRACKS) ]], name=u'Volume_Encoders')
+        self._pan_encoders = ButtonMatrixElement(rows=[[ create_encoder(index + 88, u'Pan_Encoder_{}'.format(index), is_s_mk2=self.is_s_mk2) for index in range(NUM_TRACKS) ]], name=u'Pan_Encoders')
+        self._track_name_displays = ButtonMatrixElement(rows=[[ create_display_line(sysex.TRACK_NAME_DISPLAY_HEADER, index, u'Track_Name_Display_{}'.format(index), width=33 if self.is_s_mk2 else 11) for index in range(NUM_TRACKS) ]], name=u'Track_Name_Displays')
+        self._track_volume_displays = ButtonMatrixElement(rows=[[ create_display_line(sysex.TRACK_VOLUME_DISPLAY_HEADER, index, u'Track_Volume_Display_{}'.format(index), width=12) for index in range(NUM_TRACKS) ]], name=u'Track_Volume_Displays')
+        self._track_panning_displays = ButtonMatrixElement(rows=[[ create_display_line(sysex.TRACK_PANNING_DISPLAY_HEADER, index, u'Track_Panning_Display_{}'.format(index), width=12) for index in range(NUM_TRACKS) ]], name=u'Track_Panning_Displays')
+        self._track_type_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_TYPE_DISPLAY_HEADER, index, u'Track_Type_Display_{}'.format(index)) for index in range(NUM_TRACKS) ]], name=u'Track_Type_Displays')
+        self._track_mute_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_MUTE_DISPLAY_HEADER, index, u'Track_Mute_Display_{}'.format(index)) for index in range(NUM_TRACKS) ]], name=u'Track_Mute_Displays')
+        self._track_solo_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_SOLO_DISPLAY_HEADER, index, u'Track_Solo_Display_{}'.format(index)) for index in range(NUM_TRACKS) ]], name=u'Track_Solo_Displays')
+        self._track_muted_via_solo_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_MUTED_VIA_SOLO_DISPLAY_HEADER, index, u'Track_Muted_via_Solo_Display_{}'.format(index)) for index in range(NUM_TRACKS) ]], name=u'Track_Muted_via_Solo_Displays')
+        self._track_selection_displays = ButtonMatrixElement(rows=[[ create_sysex_element(sysex.TRACK_SELECT_DISPLAY_HEADER, index, u'Track_Selection_Display_{}'.format(index)) for index in range(NUM_TRACKS) ]], name=u'Track_Selection_Displays')
         self._focus_follow_control = SysexElement(lambda value: sysex.TRACK_CHANGED_DISPLAY_HEADER + value + (midi.SYSEX_END,), name=u'Focus_Follow_Control')
         self._handshake_control = create_button(1, u'Handshake_Control')
         self._handshake_control.reset = nop

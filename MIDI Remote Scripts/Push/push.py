@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 from functools import partial
 import logging
 from copy import copy
@@ -6,6 +9,7 @@ from ableton.v2.base import task, nop, listens, listens_group, mixin, get_slice
 from ableton.v2.control_surface import BackgroundLayer, DeviceDecoratorFactory, Layer
 from ableton.v2.control_surface.default_bank_definitions import BANK_DEFINITIONS
 from ableton.v2.control_surface.defaults import TIMER_DELAY
+from ableton.v2.control_surface.device_provider import DeviceProvider as DeviceProviderBase, device_to_appoint
 from ableton.v2.control_surface.elements import ComboElement, NullFullVelocity, NullPlayhead, NullVelocityLevels
 from ableton.v2.control_surface.mode import AddLayerMode, EnablingModesComponent, LazyEnablingMode, ModesComponent
 from pushbase import consts
@@ -35,6 +39,7 @@ from .handshake_component import HandshakeComponent, make_dongle_message, Minimu
 from .quantization_settings import QuantizationSettingsComponent
 from .mode_behaviours import AlternativeBehaviour, CancellableBehaviour, DynamicBehaviourMixin, ExcludingBehaviourMixin
 from .multi_entry_mode import MultiEntryMode
+from .navigation_node import ChainNode
 from .notification_component import NotificationComponent, align_right
 from .pad_sensitivity import pad_parameter_sender
 from .scales_component import InstrumentScalesComponent
@@ -46,6 +51,14 @@ from .with_priority import WithPriority
 from . import sysex
 logger = logging.getLogger(__name__)
 HANDSHAKE_DELAY = 1.0
+
+class DeviceProvider(DeviceProviderBase):
+
+    def _appoint_device_from_song(self):
+        if isinstance(self.device, ChainNode.RackBank2Device) and self.device._rack_device == self.song.appointed_device:
+            return
+        self.device = device_to_appoint(self.song.appointed_device)
+
 
 class Push(PushBase):
     u"""
@@ -61,6 +74,7 @@ class Push(PushBase):
     """
     input_target_name_for_auto_arm = u'Push Input'
     device_component_class = DeviceComponent
+    device_provider_class = DeviceProvider
     selected_track_parameter_provider_class = SelectedTrackParameterProvider
     bank_definitions = BANK_DEFINITIONS
     note_editor_class = NoteEditorComponent
@@ -106,6 +120,7 @@ class Push(PushBase):
         self.__on_pad_curve.subject = settings[u'curve']
         self.__on_pad_threshold.subject = settings[u'threshold']
         self.__on_aftertouch_threshold.subject = settings[u'aftertouch_threshold']
+        self.__on_aftertouch_mode.subject = settings[u'aftertouch_mode']
         return settings
 
     def _create_device_decorator_factory(self):
@@ -168,6 +183,7 @@ class Push(PushBase):
             settings = copy(self._settings)
             del settings[u'aftertouch_threshold']
             self._user.settings = settings
+        self.__on_aftertouch_mode(self._settings[u'aftertouch_mode'].value)
 
     @listens(u'failure')
     def _on_handshake_failure(self, bootloader_mode):
@@ -414,7 +430,7 @@ class Push(PushBase):
         self._mixer_track_layer = self._create_mixer_track_layer()
         self._mixer_solo_layer = self._create_mixer_solo_layer()
         self._mixer_mute_layer = self._create_mixer_mute_layer()
-        for track in xrange(self.elements.matrix.width()):
+        for track in range(self.elements.matrix.width()):
             strip = self._mixer.channel_strip(track)
             strip.name = u'Channel_Strip_' + str(track)
             strip.set_invert_mute_feedback(True)
@@ -464,7 +480,7 @@ class Push(PushBase):
         all_pad_sysex_control = create_sysex_element(sysex.ALL_PADS_SENSITIVITY_PREFIX)
         pad_sysex_control = create_sysex_element(sysex.PAD_SENSITIVITY_PREFIX)
         sensitivity_sender = pad_parameter_sender(all_pad_sysex_control, pad_sysex_control)
-        self._pad_sensitivity_update = PadUpdateComponent(all_pads=range(64), parameter_sender=sensitivity_sender, default_profile=action_pad_sensitivity, update_delay=TIMER_DELAY)
+        self._pad_sensitivity_update = PadUpdateComponent(all_pads=list(range(64)), parameter_sender=sensitivity_sender, default_profile=action_pad_sensitivity, update_delay=TIMER_DELAY)
 
     def _init_global_pad_parameters(self):
         self._pad_parameter_control = self._with_firmware_version(1, 16, create_sysex_element(sysex.PAD_PARAMETER_PREFIX, default_value=sysex.make_pad_parameter_message()))
@@ -483,6 +499,12 @@ class Push(PushBase):
     @listens(u'value')
     def __on_aftertouch_threshold(self, value):
         self._global_pad_parameters.aftertouch_threshold = value
+
+    @listens(u'value')
+    def __on_aftertouch_mode(self, value):
+        mode = u'mono' if value else u'polyphonic'
+        self._instrument.instrument.set_aftertouch_mode(mode)
+        self._selected_note_instrument.set_aftertouch_mode(mode)
 
     def _update_pad_params(self):
         new_pad_parameters = make_pad_parameters(self._settings[u'curve'].value, self._settings[u'threshold'].value)

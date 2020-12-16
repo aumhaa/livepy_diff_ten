@@ -1,8 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from .consts import *
 import Live
 
-class MackieControlComponent:
+class MackieControlComponent(object):
     u"""Baseclass for every 'sub component' of the Mackie Control. Just offers some """
 
     def __init__(self, main_script):

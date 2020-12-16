@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter
+from builtins import range
 from _Framework.CompoundComponent import CompoundComponent
 from _Framework.DeviceComponent import DeviceComponent as DeviceComponentBase
 
@@ -31,7 +31,7 @@ class DeviceComponent(DeviceComponentBase, CompoundComponent):
         self._update_parameter_controls()
 
     def _update_parameter_controls(self):
-        for control in ifilter(None, self._parameter_controls or []):
+        for control in filter(None, self._parameter_controls or []):
             control.set_channel(self._bank_index)
 
     def update(self):

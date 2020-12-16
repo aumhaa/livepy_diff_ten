@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from future.utils import itervalues
 from functools import partial
 from ...base import nop
 from ..component import Component
@@ -42,7 +43,7 @@ class BackgroundComponent(Component):
     def update(self):
         super(BackgroundComponent, self).update()
         if self.is_enabled():
-            for control in self._control_map.itervalues():
+            for control in itervalues(self._control_map):
                 self._reset_control(control)
 
 

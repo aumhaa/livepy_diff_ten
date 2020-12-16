@@ -91,7 +91,7 @@ class ClipActionsComponent(ControlSurfaceComponent, Subject):
         if self.can_perform_midi_clip_action():
             clip = self._selected_clip
             loop_length = clip.loop_end - clip.loop_start
-            clip.remove_notes(clip.loop_start, pitch, loop_length, 1)
+            clip.remove_notes_extended(from_time=clip.loop_start, from_pitch=pitch, time_span=loop_length, pitch_span=1)
 
     def on_selected_track_changed(self):
         if self._use_selected_track:

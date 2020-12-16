@@ -1,10 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from _Framework.Skin import Skin
 from .Colors import Rgb
 
-class Colors:
+class Colors(object):
 
-    class Session:
+    class Session(object):
         SceneTriggered = Rgb.GREEN_BLINK
         NoScene = Rgb.BLACK
         ClipStarted = Rgb.GREEN_PULSE
@@ -18,85 +19,85 @@ class Colors:
         StoppedClip = Rgb.RED_HALF
         Enabled = Rgb.YELLOW
 
-    class Zooming:
+    class Zooming(object):
         Selected = Rgb.AMBER
         Stopped = Rgb.RED
         Playing = Rgb.GREEN
         Empty = Rgb.BLACK
 
-    class Mixer:
+    class Mixer(object):
         Disabled = Rgb.BLACK
 
-        class Volume:
+        class Volume(object):
             On = Rgb.GREEN
             Off = Rgb.GREEN_HALF
 
-        class Pan:
+        class Pan(object):
             On = Rgb.ORANGE
             Off = Rgb.ORANGE_HALF
 
-        class Mute:
+        class Mute(object):
             On = Rgb.YELLOW
             Off = Rgb.YELLOW_HALF
 
-        class Solo:
+        class Solo(object):
             On = Rgb.BLUE
             Off = Rgb.BLUE_HALF
 
-        class Arm:
+        class Arm(object):
             On = Rgb.RED
             Off = Rgb.RED_HALF
 
-    class Sends:
+    class Sends(object):
 
-        class Send0:
+        class Send0(object):
             On = Rgb.DARK_BLUE
             Off = Rgb.DARK_BLUE_HALF
 
-        class Send1:
+        class Send1(object):
             On = Rgb.BLUE
             Off = Rgb.BLUE_HALF
 
-    class Mode:
+    class Mode(object):
 
-        class SessionMode:
+        class SessionMode(object):
             On = Rgb.GREEN
             Off = Rgb.GREEN_HALF
 
-        class User1Mode:
+        class User1Mode(object):
             On = Rgb.DARK_BLUE
             Off = Rgb.DARK_BLUE_HALF
 
-        class User2Mode:
+        class User2Mode(object):
             On = Rgb.PURPLE
             Off = Rgb.PURPLE_HALF
 
-        class MixerMode:
+        class MixerMode(object):
             On = Rgb.LIGHT_BLUE
             GroupOn = Rgb.LIGHT_BLUE
             Off = Rgb.LIGHT_BLUE_HALF
 
-        class VolumeMode:
+        class VolumeMode(object):
             On = Rgb.GREEN
             GroupOn = Rgb.GREEN_HALF
             Off = Rgb.BLACK
 
-        class PanMode:
+        class PanMode(object):
             On = Rgb.ORANGE
             GroupOn = Rgb.ORANGE_HALF
             Off = Rgb.BLACK
 
-        class SendAMode:
+        class SendAMode(object):
             On = Rgb.DARK_BLUE
             GroupOn = Rgb.DARK_BLUE_HALF
             Off = Rgb.BLACK
 
-        class SendBMode:
+        class SendBMode(object):
             On = Rgb.BLUE
             GroupOn = Rgb.BLUE_HALF
             Off = Rgb.BLACK
 
-    class Scrolling:
+    class Scrolling(object):
         Enabled = Rgb.GREEN_HALF
         Pressed = Rgb.GREEN
         Disabled = Rgb.BLACK

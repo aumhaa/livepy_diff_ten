@@ -1,13 +1,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 import Live
 
-class Callable:
+class Callable(object):
 
     def __init__(self, anycallable):
-        self.__call__ = anycallable
+        self.fn = anycallable
+
+    def __call__(self, *a, **k):
+        self.fn(*a, **k)
 
 
-class ParamMap:
+class ParamMap(object):
     __module__ = __name__
     __doc__ = u'Class to help with device mapping'
 

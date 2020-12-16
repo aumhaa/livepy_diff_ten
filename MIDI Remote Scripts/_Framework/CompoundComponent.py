@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
 from .ControlSurfaceComponent import ControlSurfaceComponent
 
 class CompoundComponent(ControlSurfaceComponent):
@@ -21,7 +22,7 @@ class CompoundComponent(ControlSurfaceComponent):
         return component
 
     def register_components(self, *a):
-        return map(self.register_component, a)
+        return list(map(self.register_component, a))
 
     def has_component(self, component):
         return component in self._sub_components

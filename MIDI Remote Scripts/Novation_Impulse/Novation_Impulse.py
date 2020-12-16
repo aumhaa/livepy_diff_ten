@@ -1,4 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import chr
+from builtins import range
+from future.utils import string_types
+from past.utils import old_div
 import Live
 from _Framework.ControlSurface import ControlSurface
 from _Framework.InputControlElement import *
@@ -307,7 +313,7 @@ class Novation_Impulse(ControlSurface):
         self._display_reset_delay = INITIAL_DISPLAY_DELAY
 
     def _set_string_to_display(self, string_to_display):
-        assert isinstance(string_to_display, (str, unicode))
+        assert isinstance(string_to_display, string_types)
         self._name_display.segment(0).set_data_source(self._name_display_data_source)
         self._string_to_display = string_to_display
         self._display_reset_delay = STANDARD_DISPLAY_DELAY
@@ -322,5 +328,5 @@ class Novation_Impulse(ControlSurface):
             if selected_track in all_tracks:
                 track_index = list(all_tracks).index(selected_track)
                 new_offset = track_index - track_index % num_strips
-                assert new_offset / num_strips == int(new_offset / num_strips)
+                assert old_div(new_offset, num_strips) == int(old_div(new_offset, num_strips))
                 self._session.set_offsets(new_offset, self._session.scene_offset())

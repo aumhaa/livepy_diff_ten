@@ -1,5 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import chain, izip_longest, repeat
+from builtins import map
+from builtins import range
+from future.moves.itertools import zip_longest
+from past.builtins import unicode
+from itertools import chain, repeat
 from ableton.v2.base import listens, listens_group
 from ableton.v2.control_surface import Component, ParameterProvider
 from ableton.v2.control_surface.control import ControlList, MappedSensitivitySettingControl
@@ -29,7 +33,7 @@ class DeviceParameterComponent(Component):
 
     def _connect_parameters(self):
         parameters = self._parameter_provider.parameters[:self.controls.control_count]
-        for control, parameter_info in map(None, self.controls, parameters):
+        for control, parameter_info in zip_longest(self.controls, parameters):
             parameter = parameter_info.parameter if parameter_info else None
             control.mapped_parameter = parameter
             if parameter:
@@ -54,25 +58,25 @@ class DeviceParameterComponent(Component):
 class DisplayingDeviceParameterComponent(DeviceParameterComponent):
 
     def __init__(self, *a, **k):
-        self._parameter_name_data_sources = map(DisplayDataSource, (u'', u'', u'', u'', u'', u'', u'', u''))
-        self._parameter_value_data_sources = map(DisplayDataSource, (u'', u'', u'', u'', u'', u'', u'', u''))
+        self._parameter_name_data_sources = list(map(DisplayDataSource, (u'', u'', u'', u'', u'', u'', u'', u'')))
+        self._parameter_value_data_sources = list(map(DisplayDataSource, (u'', u'', u'', u'', u'', u'', u'', u'')))
         super(DisplayingDeviceParameterComponent, self).__init__(*a, **k)
 
     @property
     def parameters(self):
-        return map(lambda p: p and p.parameter, self._parameter_provider.parameters)
+        return list(map(lambda p: p and p.parameter, self._parameter_provider.parameters))
 
     @property
     def parameter_names(self):
-        return map(lambda p: p and p.name or u'', self.parameters)
+        return list(map(lambda p: p and p.name or u'', self.parameters))
 
     def set_parameter_name_displays(self, displays):
-        for data_source, display in izip_longest(self._parameter_name_data_sources, displays or []):
+        for data_source, display in zip_longest(self._parameter_name_data_sources, displays or []):
             if display:
                 display.set_data_sources([data_source])
 
     def set_parameter_value_displays(self, displays):
-        for data_source, display in izip_longest(self._parameter_value_data_sources, displays or []):
+        for data_source, display in zip_longest(self._parameter_value_data_sources, displays or []):
             if display:
                 display.set_data_sources([data_source])
 
@@ -85,7 +89,7 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
     def _set_display_line(self, line, sources):
         if line:
             line.set_num_segments(len(sources))
-            for segment in xrange(len(sources)):
+            for segment in range(len(sources)):
                 line.segment(segment).set_data_source(sources[segment])
 
     def clear_display(self):
@@ -118,7 +122,7 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
 
     def _update_parameter_values(self):
         if self.is_enabled():
-            for parameter, data_source in izip_longest(self.parameters, self._parameter_value_data_sources):
+            for parameter, data_source in zip_longest(self.parameters, self._parameter_value_data_sources):
                 value_string = self.parameter_to_string(parameter)
                 if data_source:
                     data_source.set_display_string(value_string)

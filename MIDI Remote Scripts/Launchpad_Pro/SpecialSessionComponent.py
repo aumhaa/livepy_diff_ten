@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from _Framework.Util import find_if, in_range
 from _Framework.Dependency import depends
@@ -199,7 +200,7 @@ class SpecialSessionComponent(SessionComponent):
 
     def _update_stop_scene_clip_buttons(self):
         if self.is_enabled():
-            for index in xrange(self._num_scenes):
+            for index in range(self._num_scenes):
                 self._update_stop_scene_leds(index)
 
     def _update_stop_scene_leds(self, index):

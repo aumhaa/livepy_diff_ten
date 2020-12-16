@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import imap
+from ableton.v2.base import PY3
 from contextlib import contextmanager
 from . import Task, Defaults
 from .ButtonElement import ButtonElementMixin
@@ -24,6 +24,8 @@ class WrapperElement(CompoundElement, ProxyBase):
     class ProxiedInterface(CompoundElement.ProxiedInterface):
 
         def __getattr__(self, name):
+            if PY3 and u'_wrapped_control' not in self.outer.__dict__:
+                raise AttributeError()
             wrapped = self.outer.__dict__[u'_wrapped_control']
             return getattr(wrapped.proxied_interface, name)
 
@@ -50,7 +52,7 @@ class WrapperElement(CompoundElement, ProxyBase):
     def wrapped_control(self):
         return self._wrapped_control
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.owns_control_element(self._wrapped_control)
 
     def on_nested_control_element_received(self, control):
@@ -98,9 +100,9 @@ class ComboElement(WrapperElement):
 
     def __init__(self, control = None, modifiers = [], negative_modifiers = [], *a, **k):
         super(ComboElement, self).__init__(wrapped_control=control, *a, **k)
-        assert all(imap(lambda x: x.is_momentary(), modifiers + negative_modifiers))
-        self._combo_modifiers = dict(map(lambda x: (x, True), modifiers) + map(lambda x: (x, False), negative_modifiers))
-        self.register_control_elements(*self._combo_modifiers.keys())
+        assert all(map(lambda x: x.is_momentary(), modifiers + negative_modifiers))
+        self._combo_modifiers = dict([ (x, True) for x in modifiers ] + [ (x, False) for x in negative_modifiers ])
+        self.register_control_elements(*list(self._combo_modifiers.keys()))
         self.request_listen_nested_control_elements()
 
     def reset(self):
@@ -140,7 +142,7 @@ class ComboElement(WrapperElement):
             self.unregister_control_element(self._wrapped_control)
 
     def _combo_is_on(self):
-        return all(imap(self._modifier_is_valid, self._combo_modifiers))
+        return all(map(self._modifier_is_valid, self._combo_modifiers))
 
     def _modifier_is_valid(self, mod):
         return self.owns_control_element(mod) and mod.is_pressed() == self._combo_modifiers[mod]
@@ -283,7 +285,7 @@ class MultiElement(CompoundElement, ButtonElementMixin):
     class ProxiedInterface(CompoundElement.ProxiedInterface):
 
         def __getattr__(self, name):
-            found = find_if(lambda x: x is not None, imap(lambda c: getattr(c.proxied_interface, name, None), self.outer.nested_control_elements()))
+            found = find_if(lambda x: x is not None, map(lambda c: getattr(c.proxied_interface, name, None), self.outer.nested_control_elements()))
             if found is not None:
                 return found
             raise AttributeError

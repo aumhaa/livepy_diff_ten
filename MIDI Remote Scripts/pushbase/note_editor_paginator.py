@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
 from ableton.v2.base import forward_property, listens, listens_group
 from ableton.v2.control_surface import Component
 from .loop_selector_component import Paginator
@@ -53,7 +54,7 @@ class NoteEditorPaginator(Component, Paginator):
     def select_page_in_point(self, value):
         can_change_page = self.can_change_page
         if can_change_page:
-            map(lambda e: e.set_selected_page_point(value), self._note_editors)
+            list(map(lambda e: e.set_selected_page_point(value), self._note_editors))
             if self._update_from_page_index() and self.is_enabled():
                 self.notify_page()
         return can_change_page

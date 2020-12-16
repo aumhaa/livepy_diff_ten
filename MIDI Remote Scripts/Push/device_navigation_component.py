@@ -16,9 +16,11 @@ class DeviceNavigationComponent(Component):
     track and navigates in its hierarchy.
     """
 
-    def __init__(self, device_bank_registry = None, banking_info = None, info_layer = None, delete_handler = None, session_ring = None, *a, **k):
+    @depends(device_provider=None)
+    def __init__(self, device_bank_registry = None, banking_info = None, info_layer = None, delete_handler = None, session_ring = None, device_provider = None, *a, **k):
+        assert device_provider is not None
         super(DeviceNavigationComponent, self).__init__(*a, **k)
-        self._make_navigation_node = partial(make_navigation_node, session_ring=session_ring, device_bank_registry=device_bank_registry, banking_info=banking_info)
+        self._make_navigation_node = partial(make_navigation_node, session_ring=session_ring, device_bank_registry=device_bank_registry, banking_info=banking_info, device_provider=device_provider)
         self._delete_handler = delete_handler
         self._updating_children = BooleanContext()
         self._device_list = ScrollableListWithTogglesComponent(parent=self)
@@ -156,7 +158,7 @@ class DeviceNavigationComponent(Component):
         with self._updating_children():
             if not self._current_node.children:
                 self.back_to_top()
-            names = map(lambda x: x[0], self._current_node.children)
+            names = [ x[0] for x in self._current_node.children ]
             self._device_list.option_names = names
             self._device_list.selected_option = self._current_node.selected_child
             self._update_enter_button()
@@ -233,7 +235,7 @@ class DeviceNavigationComponent(Component):
             pass
 
     def _make_enter_node(self):
-        if self._device_list.selected_option >= 0 and self._device_list.selected_option < len(self._current_node.children):
+        if self._device_list.selected_option is not None and self._device_list.selected_option >= 0 and self._device_list.selected_option < len(self._current_node.children):
             child = self._current_node.children[self._device_list.selected_option][1]
             return self._make_navigation_node(child, is_entering=True)
 

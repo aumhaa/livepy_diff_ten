@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import liveobj_changed, liveobj_valid, nop
+from ableton.v2.base import liveobj_changed, liveobj_valid, nop, old_hasattr
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, control_matrix
 from pushbase.colors import Pulse
@@ -48,7 +48,7 @@ class ColorChooserComponent(Component, Messenger):
     def matrix(self, button):
         if liveobj_valid(self.object):
             if button.color_index is None:
-                if hasattr(self.object, u'is_auto_colored'):
+                if old_hasattr(self.object, u'is_auto_colored'):
                     self.object.is_auto_colored = True
                     self.show_notification(u'Color automatically enabled for: %s' % self.object.name)
             else:

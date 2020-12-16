@@ -2,6 +2,7 @@ u"""
 Pad Translations for Drum Rack (pad_x, pad_y, note, channel)
 """
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 PAD_TRANSLATIONS = ((0, 0, 60, 13),
  (1, 0, 61, 13),
  (2, 0, 62, 13),
@@ -19,6 +20,6 @@ PAD_TRANSLATIONS = ((0, 0, 60, 13),
  (2, 3, 38, 13),
  (3, 3, 39, 13))
 NON_FEEDBACK_CHANNEL = 0
-FEEDBACK_CHANNELS = range(9, 16)
+FEEDBACK_CHANNELS = list(range(9, 16))
 PAD_FEEDBACK_CHANNEL = FEEDBACK_CHANNELS[-1]
-PLAYHEAD_FEEDBACK_CHANNELS = range(1, 9)
+PLAYHEAD_FEEDBACK_CHANNELS = list(range(1, 9))

@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
-from itertools import izip_longest
+from future.moves.itertools import zip_longest
 from _Framework.Util import clamp
 from _Framework.Dependency import depends
 from _Framework.MixerComponent import MixerComponent
@@ -46,14 +47,14 @@ class SpecialMixerComponent(MixerComponent):
         return SpecialChanStripComponent()
 
     def set_volume_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             if control:
                 control.set_channel(VOLUME_MAP_CHANNEL)
                 control.set_light_and_type(u'Mixer.Volume', FADER_TYPE_STANDARD)
             strip.set_volume_control(control)
 
     def set_pan_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             if control:
                 control.set_channel(PAN_MAP_CHANNEL)
                 control.set_light_and_type(u'Mixer.Pan', FADER_TYPE_BIPOLAR)
@@ -61,8 +62,8 @@ class SpecialMixerComponent(MixerComponent):
 
     def set_send_controls(self, controls):
         self._send_controls = controls
-        for strip, control in izip_longest(self._channel_strips, controls or []):
-            if self.send_index is None or self.send_index not in xrange(8):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
+            if self.send_index is None or self.send_index not in range(8):
                 strip.set_send_controls(None)
             else:
                 if control:
@@ -71,28 +72,28 @@ class SpecialMixerComponent(MixerComponent):
                 strip.set_send_controls((None,) * self._send_index + (control,))
 
     def set_arm_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             if button:
                 button.reset_state()
                 button.set_on_off_values(u'Mixer.ArmOn', u'Mixer.ArmOff')
             strip.set_arm_button(button)
 
     def set_solo_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             if button:
                 button.reset_state()
                 button.set_on_off_values(u'Mixer.SoloOn', u'Mixer.SoloOff')
             strip.set_solo_button(button)
 
     def set_mute_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             if button:
                 button.reset_state()
                 button.set_on_off_values(u'Mixer.MuteOff', u'Mixer.MuteOn')
             strip.set_mute_button(button)
 
     def set_track_select_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             if button:
                 button.reset_state()
                 button.set_on_off_values(u'Mixer.Selected', u'Mixer.Unselected')

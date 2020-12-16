@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from builtins import range
+from future.moves.itertools import zip_longest
 from ableton.v2.base import find_if, forward_property, listenable_property, listens, listens_group, liveobj_valid
 from ableton.v2.control_surface.components import AccentComponent
 from ableton.v2.control_surface.elements import to_midi_value
@@ -26,7 +27,7 @@ class MelodicComponent(MessengerModesComponent):
         self.instrument = InstrumentComponent(parent=self, note_layout=note_layout)
         self._step_duplicator = StepDuplicatorComponent(parent=self)
         self._accent_component = AccentComponent(parent=self)
-        self._note_editors = [ note_editor_class(parent=self, clip_creator=clip_creator, grid_resolution=self._grid_resolution, velocity_range_thresholds=velocity_range_thresholds, is_enabled=False) for _ in xrange(NUM_NOTE_EDITORS) ]
+        self._note_editors = [ note_editor_class(parent=self, clip_creator=clip_creator, grid_resolution=self._grid_resolution, velocity_range_thresholds=velocity_range_thresholds, is_enabled=False) for _ in range(NUM_NOTE_EDITORS) ]
         for editor in self._note_editors:
             note_editor_settings.add_editor(editor)
             editor.set_step_duplicator(self._step_duplicator)
@@ -107,7 +108,7 @@ class MelodicComponent(MessengerModesComponent):
     def set_note_editor_matrices(self, matrices):
         assert not matrices or len(matrices) <= NUM_NOTE_EDITORS
         self._matrices = matrices
-        for editor, matrix in izip_longest(self._note_editors, matrices or []):
+        for editor, matrix in zip_longest(self._note_editors, matrices or []):
             if editor:
                 editor.set_matrix(matrix)
 

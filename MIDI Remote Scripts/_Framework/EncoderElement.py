@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 import Live
 from .ComboElement import WrapperElement
 from .CompoundElement import CompoundElement
@@ -49,7 +50,7 @@ class EncoderElement(InputControlElement):
         return self.__value_normalizer(value)
 
     def normalize_value(self, value):
-        return self.relative_value_to_delta(value) / 64.0 * self.encoder_sensitivity
+        return old_div(self.relative_value_to_delta(value), 64.0) * self.encoder_sensitivity
 
     def notify_value(self, value):
         super(EncoderElement, self).notify_value(value)

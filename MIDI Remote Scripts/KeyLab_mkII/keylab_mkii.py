@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from ableton.v2.base import listens
 from ableton.v2.control_surface import Layer
 from ableton.v2.control_surface.components import SessionRecordingComponent
@@ -32,7 +33,7 @@ class KeyLabMkII(KeyLabEssential):
         super(KeyLabMkII, self)._create_controls()
 
         def make_button_row(index_offset, name):
-            return ButtonMatrixElement(rows=[[ create_button(index + index_offset, name=u'{}_{}'.format(name, index)) for index in xrange(8) ]], name=u'{}s'.format(name))
+            return ButtonMatrixElement(rows=[[ create_button(index + index_offset, name=u'{}_{}'.format(name, index)) for index in range(8) ]], name=u'{}s'.format(name))
 
         self._select_buttons = make_button_row(24, u'Select_Button')
         self._solo_buttons = make_button_row(8, u'Solo_Button')

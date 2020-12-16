@@ -1,11 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import filter
+from builtins import map
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import logging
 import math
 from collections import namedtuple, OrderedDict
 from functools import partial
-from itertools import ifilter, imap
 import Live
-from ableton.v2.base import EventObject, const, clamp, depends, find_if, index_if, isclose, lazy_attribute, listenable_property, listens, listens_group, liveobj_valid, nop, task
+from ableton.v2.base import EventObject, const, clamp, depends, find_if, index_if, isclose, lazy_attribute, listenable_property, listens, listens_group, liveobj_valid, nop, old_hasattr, task
 from ableton.v2.control_surface.control import EncoderControl
 logger = logging.getLogger(__name__)
 FocusMarker = namedtuple(u'FocusMarker', [u'name', u'position'])
@@ -72,6 +77,9 @@ class Region(namedtuple(u'Region', [u'start', u'end'])):
     def __ne__(self, region):
         return not region == self
 
+    def __hash__(self):
+        return hash((self.start, self.end))
+
     @property
     def length(self):
         return self.end - self.start
@@ -133,7 +141,7 @@ class ObjectDescription(object):
 
 class MarginType(object):
     u""" Enum for the zooming algorithm. """
-    NONE, START, END = range(3)
+    NONE, START, END = list(range(3))
 
 
 class TimelineNavigation(EventObject):
@@ -219,7 +227,7 @@ class TimelineNavigation(EventObject):
         u"""
         Returns the name for the given roi or None, if it doesn't have one
         """
-        item = find_if(lambda i: i[1] == roi, self.regions_of_interest.iteritems())
+        item = find_if(lambda i: i[1] == roi, iter(self.regions_of_interest.items()))
         if item is not None:
             return item[0]
 
@@ -330,13 +338,13 @@ class TimelineNavigation(EventObject):
 
     def _add_margin_to_zoomed_region_start(self, region, focused_position):
         p = focused_position - self.timeline_region.start
-        samples_per_pixel = p / self.MARGIN_IN_PX
+        samples_per_pixel = old_div(p, self.MARGIN_IN_PX)
         length = self.TIMELINE_WIDTH_IN_PX * samples_per_pixel
         if self.timeline_region.start + length < region.end:
             region = Region(self.timeline_region.start, region.end)
         else:
             p = region.end - focused_position
-            samples_per_pixel = p / (self.TIMELINE_WIDTH_IN_PX - self.MARGIN_IN_PX)
+            samples_per_pixel = old_div(p, self.TIMELINE_WIDTH_IN_PX - self.MARGIN_IN_PX)
             length = self.TIMELINE_WIDTH_IN_PX * samples_per_pixel
             start = region.end - length
             if start < region.start:
@@ -345,13 +353,13 @@ class TimelineNavigation(EventObject):
 
     def _add_margin_to_zoomed_region_end(self, region, focused_position):
         p = self.timeline_region.end - focused_position
-        samples_per_pixel = p / self.MARGIN_IN_PX
+        samples_per_pixel = old_div(p, self.MARGIN_IN_PX)
         length = self.TIMELINE_WIDTH_IN_PX * samples_per_pixel
         if self.timeline_region.end - length > region.start:
             region = Region(region.start, self.timeline_region.end)
         else:
             p = focused_position - region.start
-            samples_per_pixel = p / (self.TIMELINE_WIDTH_IN_PX - self.MARGIN_IN_PX)
+            samples_per_pixel = old_div(p, self.TIMELINE_WIDTH_IN_PX - self.MARGIN_IN_PX)
             length = self.TIMELINE_WIDTH_IN_PX * samples_per_pixel
             end = region.start + length
             if end > region.end:
@@ -405,7 +413,7 @@ class TimelineNavigation(EventObject):
         return identifier1 != identifier2
 
     def _get_roi_for_object_identifier(self, identifier):
-        return find_if(lambda roi: roi.bound_by(identifier), self.regions_of_interest.values())
+        return find_if(lambda roi: roi.bound_by(identifier), list(self.regions_of_interest.values()))
 
     def _get_position_for_identifier(self, identifier):
         roi = self._get_roi_for_object_identifier(identifier)
@@ -431,8 +439,8 @@ class TimelineNavigation(EventObject):
     def _show_all_objects(self, identifiers):
         start = self.timeline_region.end
         end = self.timeline_region.start
-        positions = imap(self._get_position_for_identifier, identifiers)
-        for position in ifilter(None, positions):
+        positions = list(map(self._get_position_for_identifier, identifiers))
+        for position in filter(None, positions):
             start = min(start, position)
             end = max(end, position)
 
@@ -579,12 +587,12 @@ class TimelineNavigation(EventObject):
     def _add_margin_to_region(self, region):
         start, end = region
         margin = self.RELATIVE_FOCUS_MARGIN
-        start1 = (margin * start + end * margin - start) / (2 * margin - 1)
+        start1 = old_div(margin * start + end * margin - start, 2 * margin - 1)
         start1 = self._timeline_region.clamp_position(start1)
-        end1 = (end - margin * start1) / (1 - margin)
-        end2 = (margin * start + end * margin - end) / (2 * margin - 1)
+        end1 = old_div(end - margin * start1, 1 - margin)
+        end2 = old_div(margin * start + end * margin - end, 2 * margin - 1)
         end2 = self._timeline_region.clamp_position(end2)
-        start2 = (start - margin * end2) / (1 - margin)
+        start2 = old_div(start - margin * end2, 1 - margin)
         return Region(max(start1, start2), min(end1, end2))
 
     def _make_region_from_position_identifier(self, identifier):
@@ -609,7 +617,7 @@ class TimelineNavigation(EventObject):
 
     def _get_roi_for_focused_identifier(self):
         if self._focused_identifier is not None:
-            return map(self.regions_of_interest.get, self.get_object_description(self._focused_identifier).regions)
+            return list(map(self.regions_of_interest.get, self.get_object_description(self._focused_identifier).regions))
         return []
 
     def _get_unique_regions_of_interest(self):
@@ -621,8 +629,8 @@ class TimelineNavigation(EventObject):
         for roi in self._get_roi_for_focused_identifier():
             rois[roi.region_with_margin] = roi
 
-        items = sorted(rois.items(), key=lambda (r, _): r.length, reverse=True)
-        return map(lambda item: item[1], items)
+        items = sorted(list(rois.items()), key=lambda r__: r__[0].length, reverse=True)
+        return [ item[1] for item in items ]
 
     def _select_region_around_visible_region(self):
         regions_of_interest = self._get_unique_regions_of_interest()
@@ -657,7 +665,7 @@ class TimelineNavigation(EventObject):
     def _report_current_source_and_target_roi(self):
         source_roi_name = u''
         target_roi_name = u''
-        for name, roi in self.regions_of_interest.iteritems():
+        for name, roi in self.regions_of_interest.items():
             if roi == self._source_roi:
                 source_roi_name = name
             elif roi == self._target_roi:
@@ -731,7 +739,7 @@ class SimplerWaveformNavigation(TimelineNavigation, WaveformNavigation):
          self.selected_slice_focus: ObjectDescription((u'start_end_marker', u'selected_slice'), u'')}
 
     def get_object_identifier(self, obj):
-        if hasattr(obj, u'name'):
+        if old_hasattr(obj, u'name'):
             return obj.name
         return obj
 

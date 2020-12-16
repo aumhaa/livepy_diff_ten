@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
 import Live
-from itertools import imap
-from ableton.v2.base import Proxy, liveobj_valid
+from ableton.v2.base import Proxy, liveobj_valid, old_hasattr
 from ableton.v2.control_surface.control import ButtonControl
 from pushbase.actions import get_clip_name
 from pushbase.colors import Blink, Pulse
@@ -86,12 +86,12 @@ class SceneComponent(SpecialSceneComponent):
         scene_index = list(self.song.scenes).index(self._scene)
 
         def slot_for_track(mixable):
-            if not hasattr(mixable, u'clip_slots') or len(mixable.clip_slots) == 0:
+            if not old_hasattr(mixable, u'clip_slots') or len(mixable.clip_slots) == 0:
                 return None
             else:
                 return mixable.clip_slots[scene_index]
 
-        return imap(slot_for_track, self._session_ring.controlled_tracks())
+        return list(map(slot_for_track, self._session_ring.controlled_tracks()))
 
     def _create_clip_slot(self):
         return self.clip_slot_component_type(color_chooser=self._color_chooser)

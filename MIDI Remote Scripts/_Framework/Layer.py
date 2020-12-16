@@ -3,7 +3,10 @@ Module implementing a way to resource-based access to controls in an
 unified interface dynamic.
 """
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import repeat, izip
+from builtins import str
+from builtins import object
+from future.utils import raise_
+from itertools import repeat
 from .ControlElement import ControlElementClient
 from .Util import nop
 from .Resource import ExclusiveResource, CompoundResource
@@ -60,7 +63,7 @@ class LayerClient(ControlElementClient):
                     handler = control.set_control_element
                 except AttributeError:
                     if name[0] != u'_':
-                        raise UnhandledControlError, u'Component %s has no handler for control_element %s' % (str(owner), name)
+                        raise_(UnhandledControlError, u'Component %s has no handler for control_element %s' % (str(owner), name))
                     else:
                         handler = nop
 
@@ -124,10 +127,10 @@ class Layer(LayerBase, ExclusiveResource):
     def __init__(self, priority = None, **controls):
         super(Layer, self).__init__()
         self._priority = priority
-        self._name_to_controls = dict(izip(controls.iterkeys(), repeat(None)))
+        self._name_to_controls = dict(zip(iter(controls.keys()), repeat(None)))
         self._control_to_names = dict()
         self._control_clients = dict()
-        for name, control in controls.iteritems():
+        for name, control in controls.items():
             assert control is not None, name
             self._control_to_names.setdefault(control, []).append(name)
 
@@ -160,13 +163,13 @@ class Layer(LayerBase, ExclusiveResource):
 
     def on_received(self, client, *a, **k):
         u""" Override from ExclusiveResource """
-        for control in self._control_to_names.iterkeys():
+        for control in self._control_to_names.keys():
             k.setdefault(u'priority', self._priority)
             control.resource.grab(self._get_control_client(client), *a, **k)
 
     def on_lost(self, client):
         u""" Override from ExclusiveResource """
-        for control in self._control_to_names.iterkeys():
+        for control in self._control_to_names.keys():
             control.resource.release(self._get_control_client(client))
 
     def _get_control_client(self, client):

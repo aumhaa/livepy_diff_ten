@@ -1,5 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
+from future.utils import raise_
 from .Util import BooleanContext
+from ableton.v2.base import old_hasattr
 
 class ProxyBase(object):
     u"""
@@ -31,32 +34,32 @@ class ProxyBase(object):
         super(ProxyBase, self).__init__(*a, **k)
         self._skip_wrapper_lookup = BooleanContext()
 
-    def proxy_hasattr(self, attr):
+    def proxy_old_hasattr(self, attr):
         u"""
         Returns wether the proxy, not the proxied, has an attribute.
         """
         with self._skip_wrapper_lookup():
-            return hasattr(self, attr)
+            return old_hasattr(self, attr)
 
     def __getattr__(self, name):
         if not self._skip_wrapper_lookup:
             obj = self.proxied_object
             interface = self.proxied_interface
-            if obj and hasattr(interface, name):
+            if obj and old_hasattr(interface, name):
                 return getattr(obj, name)
             return getattr(interface, name)
-        raise AttributeError, u'Does not have attribute %s' % name
+        raise_(AttributeError, u'Does not have attribute %s' % name)
 
     def __setattr__(self, name, value):
         obj = self.proxied_object
         interface = self.proxied_interface
-        if obj and hasattr(interface, name):
-            if self.proxy_hasattr(name):
-                raise AttributeError, u'Ambiguous set attribute: %s proxied: %s' % (name, obj)
+        if obj and old_hasattr(interface, name):
+            if self.proxy_old_hasattr(name):
+                raise_(AttributeError, u'Ambiguous set attribute: %s proxied: %s' % (name, obj))
             setattr(obj, name, value)
         else:
-            if hasattr(interface, name):
-                raise AttributeError, u'Ambiguous set attribute: %s proxied: %s' % (name, obj)
+            if old_hasattr(interface, name):
+                raise_(AttributeError, u'Ambiguous set attribute: %s proxied: %s' % (name, obj))
             self.__dict__[name] = value
 
     @property

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 import weakref
 import Live
 from ableton.v2.base import const, depends, mixin, listens
@@ -76,8 +77,8 @@ class FootswitchRowControl(ControlList):
 
                 return Live.Base.Timer(callback=end_pulse, interval=int(1000 * pulse_length), repeat=False)
 
-            seconds_per_beat = 60.0 / tempo
-            subdivision_pulse_pulse_length = PULSE_LENGTH_FRACTION * seconds_per_beat / 2.0
+            seconds_per_beat = old_div(60.0, tempo)
+            subdivision_pulse_pulse_length = PULSE_LENGTH_FRACTION * old_div(seconds_per_beat, 2.0)
             beat_pulse_pulse_length = PULSE_LENGTH_FRACTION * seconds_per_beat
             self._subdivision_pulse_end_pulse_timer = make_led_end_pulse_timer(u'Subdivision_Pulse', subdivision_pulse_pulse_length)
             self._beat_pulse_end_pulse_timer = make_led_end_pulse_timer(u'Beat_Pulse', beat_pulse_pulse_length)

@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip
+from builtins import range
 import Live
 from _Arturia.ArturiaControlSurface import ArturiaControlSurface, MODE_PROPERTY, SETUP_MSG_PREFIX, SETUP_MSG_SUFFIX
 from _Framework.Layer import Layer
@@ -20,12 +20,12 @@ from .MixerComponent import MixerComponent
 from .SessionComponent import SessionComponent
 from .DisplayElement import DisplayElement
 PAD_NOTE_MODE = 10
-ENCODER_HARDWARE_IDS = xrange(33, 43)
+ENCODER_HARDWARE_IDS = list(range(33, 43))
 SLIDER_HARDWARE_IDS = (43, 44, 45, 46, 107, 108, 109, 110, 111)
-PAD_HARDWARE_IDS = xrange(112, 128)
+PAD_HARDWARE_IDS = list(range(112, 128))
 ENCODER_MSG_IDS = (74, 71, 76, 77, 18, 19, 16, 17, 93, 91)
 SLIDER_MSG_IDS = (73, 75, 79, 72, 80, 81, 82, 83, 85)
-PAD_MSG_IDS = xrange(36, 52)
+PAD_MSG_IDS = list(range(36, 52))
 BUTTON_HARDWARE_AND_MESSAGE_IDS = {u'session_record_button': (91, 5),
  u'stop_all_clips_button': (92, 4),
  u'stop_button': (89, 102),
@@ -72,10 +72,10 @@ class KeyLab(ArturiaControlSurface):
             button = ButtonElement(True, MIDI_CC_TYPE, 0, get_button_identifier_by_name(name), name=name.title())
             return button
 
-        for button_name in BUTTON_HARDWARE_AND_MESSAGE_IDS.keys():
+        for button_name in list(BUTTON_HARDWARE_AND_MESSAGE_IDS.keys()):
             setattr(self, u'_' + button_name, make_keylab_button(button_name))
 
-        self._pads = ButtonMatrixElement(rows=[ [ ButtonElement(True, MIDI_CC_TYPE, PAD_CHANNEL, col_index + row_offset, name=u'Pad_%d_%d' % (col_index, row_index)) for col_index in xrange(4) ] for row_index, row_offset in enumerate(xrange(48, 35, -4)) ])
+        self._pads = ButtonMatrixElement(rows=[ [ ButtonElement(True, MIDI_CC_TYPE, PAD_CHANNEL, col_index + row_offset, name=u'Pad_%d_%d' % (col_index, row_index)) for col_index in range(4) ] for row_index, row_offset in enumerate(range(48, 35, -4)) ])
 
     def _create_display(self):
         self._display_line1, self._display_line2 = DisplayElement(16, 1), DisplayElement(16, 1)
@@ -121,16 +121,16 @@ class KeyLab(ArturiaControlSurface):
         self._mixer.set_enabled(True)
 
     def _collect_setup_messages(self):
-        for hardware_id, identifier in izip(ENCODER_HARDWARE_IDS, ENCODER_MSG_IDS):
+        for hardware_id, identifier in zip(ENCODER_HARDWARE_IDS, ENCODER_MSG_IDS):
             self._setup_hardware_encoder(hardware_id, identifier, ENCODER_CHANNEL)
 
-        for hardware_id, identifier in izip(SLIDER_HARDWARE_IDS, SLIDER_MSG_IDS):
+        for hardware_id, identifier in zip(SLIDER_HARDWARE_IDS, SLIDER_MSG_IDS):
             self._setup_hardware_slider(hardware_id, identifier, ENCODER_CHANNEL)
 
-        for hardware_id, identifier in BUTTON_HARDWARE_AND_MESSAGE_IDS.itervalues():
+        for hardware_id, identifier in BUTTON_HARDWARE_AND_MESSAGE_IDS.values():
             self._setup_hardware_button(hardware_id, identifier)
 
-        for hardware_id, identifier in izip(PAD_HARDWARE_IDS, PAD_MSG_IDS):
+        for hardware_id, identifier in zip(PAD_HARDWARE_IDS, PAD_MSG_IDS):
             self._setup_hardware_pad(hardware_id, identifier)
 
     def _setup_hardware_encoder(self, hardware_id, identifier, channel = 0):

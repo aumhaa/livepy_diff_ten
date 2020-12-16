@@ -49,7 +49,7 @@ def map_value_to_led_states(on, off, num_leds, value):
     assert num_leds >= 3, u'There must be at least 3 leds'
     mid_index = int(math.floor(num_leds / 2))
     active_length = mid_index + 1
-    active_led_states = map(lambda i: (on if i / active_length <= abs(value) else off), map(float, range(active_length)))
+    active_led_states = list(map(lambda i: (on if i / active_length <= abs(value) else off), map(float, range(active_length))))
     inactive_led_states = repeat(0, num_leds - active_length)
     if value < 0:
         return chain(reversed(active_led_states), inactive_led_states)

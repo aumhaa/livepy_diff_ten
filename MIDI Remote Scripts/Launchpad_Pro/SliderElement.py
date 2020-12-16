@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import round
+from past.utils import old_div
 from _Framework.SliderElement import SliderElement as SliderElementBase
 from _Framework.Skin import Skin, SkinColorMissingError
 from . import consts
@@ -39,7 +42,7 @@ class SliderElement(SliderElementBase):
             param = self._parameter_to_map_to
             if param != None and param.is_enabled:
                 p_range = param.max - param.min
-                value = int(round((param.value - param.min) / p_range * 127))
+                value = int(round(old_div(param.value - param.min, p_range) * 127))
                 color_value = self._color
             else:
                 value = 0

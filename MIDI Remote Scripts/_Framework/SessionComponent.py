@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from itertools import count
 import Live
 from .CompoundComponent import CompoundComponent
@@ -59,7 +60,7 @@ class SessionComponent(CompoundComponent):
         self._mixer = None
         self._track_slots = self.register_slot_manager()
         self._selected_scene = self.register_component(self._create_scene())
-        self._scenes = self.register_components(*[ self._create_scene() for _ in xrange(num_scenes) ])
+        self._scenes = self.register_components(*[ self._create_scene() for _ in range(num_scenes) ])
         if self._session_component_ends_initialisation:
             self._end_initialisation()
         if auto_name:
@@ -95,12 +96,12 @@ class SessionComponent(CompoundComponent):
     def _enable_skinning(self):
         self.set_stop_clip_triggered_value(u'Session.StopClipTriggered')
         self.set_stop_clip_value(u'Session.StopClip')
-        for scene_index in xrange(self._num_scenes):
+        for scene_index in range(self._num_scenes):
             scene = self.scene(scene_index)
             scene.set_scene_value(u'Session.Scene')
             scene.set_no_scene_value(u'Session.NoScene')
             scene.set_triggered_value(u'Session.SceneTriggered')
-            for track_index in xrange(self._num_tracks):
+            for track_index in range(self._num_tracks):
                 clip_slot = scene.clip_slot(track_index)
                 clip_slot.set_triggered_to_play_value(u'Session.ClipTriggeredPlay')
                 clip_slot.set_triggered_to_record_value(u'Session.ClipTriggeredRecord')
@@ -112,14 +113,14 @@ class SessionComponent(CompoundComponent):
     def _auto_name(self):
         self.name = u'Session_Control'
         self.selected_scene().name = u'Selected_Scene'
-        for track_index in xrange(self._num_tracks):
+        for track_index in range(self._num_tracks):
             clip_slot = self.selected_scene().clip_slot(track_index)
             clip_slot.name = u'Selected_Scene_Clip_Slot_%d' % track_index
 
-        for scene_index in xrange(self._num_scenes):
+        for scene_index in range(self._num_scenes):
             scene = self.scene(scene_index)
             scene.name = u'Scene_%d' % scene_index
-            for track_index in xrange(self._num_tracks):
+            for track_index in range(self._num_tracks):
                 clip_slot = scene.clip_slot(track_index)
                 clip_slot.name = u'%d_Clip_Slot_%d' % (track_index, scene_index)
 
@@ -250,7 +251,7 @@ class SessionComponent(CompoundComponent):
                 slot.set_launch_button(button)
 
         else:
-            for x, y in product(xrange(self._num_tracks), xrange(self._num_scenes)):
+            for x, y in product(range(self._num_tracks), range(self._num_scenes)):
                 scene = self.scene(y)
                 slot = scene.clip_slot(x)
                 slot.set_launch_button(None)
@@ -263,7 +264,7 @@ class SessionComponent(CompoundComponent):
                 scene.set_launch_button(button)
 
         else:
-            for x in xrange(self._num_scenes):
+            for x in range(self._num_scenes):
                 scene = self.scene(x)
                 scene.set_launch_button(None)
 
@@ -302,12 +303,12 @@ class SessionComponent(CompoundComponent):
         matching color for a custom color. The table is used if there is no entry in the
         palette.
         """
-        for y in xrange(self._num_scenes):
+        for y in range(self._num_scenes):
             scene = self.scene(y)
             if not clip_slots_only:
                 scene.set_color_palette(color_palette)
                 scene.set_color_table(color_table)
-            for x in xrange(self._num_tracks):
+            for x in range(self._num_tracks):
                 slot = scene.clip_slot(x)
                 slot.set_clip_palette(color_palette)
                 slot.set_clip_rgb_table(color_table)
@@ -327,7 +328,7 @@ class SessionComponent(CompoundComponent):
 
     def _update_stop_track_clip_buttons(self):
         if self.is_enabled():
-            for index in xrange(self._num_tracks):
+            for index in range(self._num_tracks):
                 self._update_stop_clips_led(index)
 
     def on_scene_list_changed(self):

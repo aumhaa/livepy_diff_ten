@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import object
 import Live
 import MidiRemoteScript
 from .EffectController import EffectController
@@ -7,7 +9,7 @@ from .DisplayController import DisplayController
 from .consts import *
 from _Generic.util import DeviceAppointer
 
-class RemoteSL:
+class RemoteSL(object):
     u""" Automap script for the Novation Remote SL.
     TODO: Add some general comments about the mappings, FX, MX left/right side...
     """

@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter
+from builtins import filter
 from ...base import listens, listens_group, task
 from ...control_surface import Component
 
@@ -36,7 +36,7 @@ class AutoArmComponent(Component):
         song = self.song
         exclusive_arm = song.exclusive_arm
         selected_track = song.view.selected_track
-        return self.is_enabled() and self.can_auto_arm_track(selected_track) and not selected_track.arm and any(ifilter(lambda track: (exclusive_arm or self.can_auto_arm_track(track)) and track.can_be_armed and track.arm, song.tracks))
+        return self.is_enabled() and self.can_auto_arm_track(selected_track) and not selected_track.arm and any(filter(lambda track: (exclusive_arm or self.can_auto_arm_track(track)) and track.can_be_armed and track.arm, song.tracks))
 
     def track_can_be_armed(self, track):
         return track.can_be_armed and track.has_midi_input
@@ -70,7 +70,7 @@ class AutoArmComponent(Component):
 
     @listens(u'tracks')
     def _on_tracks_changed(self):
-        tracks = filter(lambda t: t.can_be_armed, self.song.tracks)
+        tracks = list(filter(lambda t: t.can_be_armed, self.song.tracks))
         self._on_arm_changed.replace_subjects(tracks)
         self._on_input_routing_type_changed.replace_subjects(tracks)
         self._on_frozen_state_changed.replace_subjects(tracks)

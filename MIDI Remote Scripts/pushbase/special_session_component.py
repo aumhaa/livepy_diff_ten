@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from ableton.v2.base import const, depends, forward_property, inject, listens, liveobj_valid
 from ableton.v2.control_surface import Component
@@ -209,7 +210,7 @@ class SpecialSessionComponent(SessionComponent):
     def set_touch_strip(self, touch_strip):
         if touch_strip:
             touch_strip.set_mode(TouchStripModes.CUSTOM_FREE)
-            touch_strip.send_state([ TouchStripStates.STATE_OFF for _ in xrange(touch_strip.state_count) ])
+            touch_strip.send_state([ TouchStripStates.STATE_OFF for _ in range(touch_strip.state_count) ])
         self._on_touch_strip_value.subject = touch_strip
 
     @listens(u'value')

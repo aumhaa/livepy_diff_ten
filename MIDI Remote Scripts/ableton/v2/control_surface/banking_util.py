@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from past.utils import old_div
 from math import ceil
 from copy import deepcopy
 from ..base import liveobj_valid
@@ -57,7 +59,7 @@ def device_bank_count(device, bank_size = 8, definition = None, definitions = No
         elif definition:
             count = len(definition.keys())
         else:
-            count = int(ceil(float(len(all_parameters(device))) / bank_size))
+            count = int(ceil(old_div(float(len(all_parameters(device))), bank_size)))
     return count
 
 
@@ -75,12 +77,12 @@ def device_bank_names(device, bank_size = 8, definitions = None):
             names = definitions[class_name].keys()
         elif has_bank_count(device) and has_bank_names(device, definitions):
             offset = int(has_main_bank(device, definitions))
-            names = [ device.get_bank_name(index - offset) for index in xrange(device_bank_count(device, definitions=definitions)) ]
+            names = [ device.get_bank_name(index - offset) for index in range(device_bank_count(device, definitions=definitions)) ]
             if has_main_bank(device, definitions) and not names[0]:
                 names[0] = BANK_MAIN_KEY
         else:
             bank_count = device_bank_count(device, bank_size=bank_size, definitions=definitions)
-            names = [ BANK_FORMAT % (index + 1) for index in xrange(bank_count) ]
+            names = [ BANK_FORMAT % (index + 1) for index in range(bank_count) ]
     return names
 
 

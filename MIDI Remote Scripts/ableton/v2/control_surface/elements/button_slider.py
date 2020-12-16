@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from past.utils import old_div
 from ...base import EventObject
 from ..input_control_element import InputControlElement, MIDI_INVALID_TYPE
 from .button import ButtonElement
@@ -54,8 +56,8 @@ class ButtonSliderElement(SliderElement):
         if value != self._last_sent_value:
             num_buttons = len(self._buttons)
             index_to_light = 0
-            index_to_light = int((num_buttons - 1) * value / 127) if value > 0 else 0
-            for index in xrange(num_buttons):
+            index_to_light = int(old_div((num_buttons - 1) * value, 127)) if value > 0 else 0
+            for index in range(num_buttons):
                 if index == index_to_light:
                     self._buttons[index].set_light(True)
                 else:
@@ -67,12 +69,12 @@ class ButtonSliderElement(SliderElement):
         self.clear_send_cache()
         if value != 0 or not sender.is_momentary():
             index_of_sender = list(self._buttons).index(sender)
-            midi_value = int(127 * index_of_sender / (len(self._buttons) - 1))
+            midi_value = int(old_div(127 * index_of_sender, len(self._buttons) - 1))
             if self._parameter_to_map_to != None and self._parameter_to_map_to.is_enabled:
                 param_range = self._parameter_to_map_to.max - self._parameter_to_map_to.min
-                param_value = param_range * index_of_sender / (len(self._buttons) - 1) + self._parameter_to_map_to.min
+                param_value = old_div(param_range * index_of_sender, len(self._buttons) - 1) + self._parameter_to_map_to.min
                 if index_of_sender > 0:
-                    param_value += param_range / (4 * len(self._buttons))
+                    param_value += old_div(param_range, 4 * len(self._buttons))
                     if param_value > self._parameter_to_map_to.max:
                         param_value = self._parameter_to_map_to.max
                 self._parameter_to_map_to.value = param_value
@@ -81,5 +83,5 @@ class ButtonSliderElement(SliderElement):
     def _on_parameter_changed(self):
         assert self._parameter_to_map_to != None
         param_range = abs(self._parameter_to_map_to.max - self._parameter_to_map_to.min)
-        midi_value = int(127 * abs(self._parameter_to_map_to.value - self._parameter_to_map_to.min) / param_range)
+        midi_value = int(old_div(127 * abs(self._parameter_to_map_to.value - self._parameter_to_map_to.min), param_range))
         self.send_value(midi_value)

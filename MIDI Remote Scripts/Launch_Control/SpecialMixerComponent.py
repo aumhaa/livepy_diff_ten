@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from builtins import range
+from future.moves.itertools import zip_longest
 from _Framework.MixerComponent import MixerComponent
 from _Framework.ModesComponent import ModesComponent, LayerMode, LatchingBehaviour
 from _Framework.SubjectSlot import subject_slot
@@ -46,12 +47,12 @@ class SpecialMixerComponent(MixerComponent):
     selected_send_index = property(_get_selected_send_index, _set_selected_send_index)
 
     def set_pan_controls(self, controls):
-        for control, channel_strip in izip_longest(controls or [], self._channel_strips):
+        for control, channel_strip in zip_longest(controls or [], self._channel_strips):
             if channel_strip:
                 channel_strip.set_pan_control(control)
 
     def set_volume_controls(self, controls):
-        for control, channel_strip in izip_longest(controls or [], self._channel_strips):
+        for control, channel_strip in zip_longest(controls or [], self._channel_strips):
             if channel_strip:
                 channel_strip.set_volume_control(control)
 
@@ -75,7 +76,7 @@ class SpecialMixerComponent(MixerComponent):
     def _update_send_controls(self):
         for index, channel_strip in enumerate(self._channel_strips):
             send_controls = [ self._send_controls.get_button(index, i) for i in (1, 0) ] if self._send_controls else [None]
-            skipped_sends = [ None for _ in xrange(self._selected_send_index) ]
+            skipped_sends = [ None for _ in range(self._selected_send_index) ]
             channel_strip.set_send_controls(skipped_sends + send_controls)
 
     @subject_slot(u'visible_tracks')

@@ -24,7 +24,7 @@ class TargetTrackProvider(Component):
 
     @listens(u'tracks')
     def __on_tracks_changed(self):
-        tracks = filter(lambda t: t.can_be_armed and t.has_midi_input, self.song.tracks)
+        tracks = [ t for t in self.song.tracks if t.can_be_armed and t.has_midi_input ]
         self.__on_arm_changed.replace_subjects(tracks)
         self.__on_frozen_state_changed.replace_subjects(tracks)
         self._update_tracks(tracks)

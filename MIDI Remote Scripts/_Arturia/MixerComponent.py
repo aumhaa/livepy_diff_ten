@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from future.moves.itertools import zip_longest
 from _Framework.MixerComponent import MixerComponent as MixerComponentBase
 from .ScrollComponent import ScrollComponent
 
@@ -22,7 +24,7 @@ class MixerComponent(MixerComponentBase):
         self.selected_strip().set_send_controls(controls)
 
     def set_return_volume_controls(self, controls):
-        for strip, control in map(None, self._return_strips, controls or []):
+        for strip, control in zip_longest(self._return_strips, controls or []):
             strip.set_volume_control(control)
 
     def set_track_select_encoder(self, encoder):

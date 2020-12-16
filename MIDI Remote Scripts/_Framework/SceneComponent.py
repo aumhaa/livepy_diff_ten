@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from .ClipSlotComponent import ClipSlotComponent, find_nearest_color
 from .CompoundComponent import CompoundComponent
 from .SubjectSlot import subject_slot

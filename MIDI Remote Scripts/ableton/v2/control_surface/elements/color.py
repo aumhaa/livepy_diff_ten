@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ...base import EventObject, listenable_property, listens, liveobj_valid, nop
+from ...base import EventObject, listenable_property, listens, liveobj_valid, nop, old_hasattr
 
 def to_midi_value(int_or_color):
-    if hasattr(int_or_color, u'midi_value'):
+    if old_hasattr(int_or_color, u'midi_value'):
         return int_or_color.midi_value
     else:
         return int(int_or_color)

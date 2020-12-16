@@ -1,7 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 from .consts import *
 
-class FaderfoxComponent:
+class FaderfoxComponent(object):
     __module__ = __name__
     __doc__ = u'Baseclass for a subcomponent for Faderfox controllers.'
     __filter_funcs__ = [u'update_display', u'log']

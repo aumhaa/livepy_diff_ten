@@ -1,6 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import filter
 from collections import OrderedDict
-from itertools import ifilter
+from future.utils import iteritems
 from .control_element import ControlElementClient, NotifyingControlElement
 from ..base import BooleanContext, first, second, listens_group
 
@@ -86,7 +88,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         return priority
 
     def register_control_elements(self, *elements):
-        return map(self.register_control_element, elements)
+        return list(map(self.register_control_element, elements))
 
     def register_control_element(self, element):
         assert element not in self._nested_control_elements
@@ -103,7 +105,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         return element
 
     def unregister_control_elements(self, *elements):
-        return map(self.unregister_control_element, elements)
+        return list(map(self.unregister_control_element, elements))
 
     def unregister_control_element(self, element):
         assert element in self._nested_control_elements
@@ -127,10 +129,10 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         return self._nested_control_elements.get(control, False)
 
     def owned_control_elements(self):
-        return map(first, ifilter(second, self._nested_control_elements.iteritems()))
+        return list(map(first, filter(second, iteritems(self._nested_control_elements))))
 
     def nested_control_elements(self):
-        return self._nested_control_elements.iterkeys()
+        return [ key for key in self._nested_control_elements ]
 
     def reset(self):
         for element in self.owned_control_elements():
@@ -176,7 +178,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         self._listen_nested_requests -= 1
 
     def _connect_nested_control_elements(self):
-        self.__on_nested_control_element_value.replace_subjects(self._nested_control_elements.keys())
+        self.__on_nested_control_element_value.replace_subjects(list(self._nested_control_elements.keys()))
 
     def _disconnect_nested_control_elements(self):
         self.__on_nested_control_element_value.replace_subjects([])
@@ -212,7 +214,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         self._is_resource_based = True
         nested_client = self._get_nested_client(client)
         with self._disable_notify_owner_on_button_ownership_change():
-            for element in self._nested_control_elements.keys():
+            for element in list(self._nested_control_elements.keys()):
                 if not was_resource_based:
                     element.notify_ownership_change(self, False)
                 nested_priority = self.get_control_element_priority(element, priority)
@@ -222,7 +224,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         assert self._is_resource_based
         nested_client = self._get_nested_client(client)
         with self._disable_notify_owner_on_button_ownership_change():
-            for element in self._nested_control_elements.keys():
+            for element in list(self._nested_control_elements.keys()):
                 element.resource.release(nested_client)
 
     def _get_nested_client(self, client):
@@ -237,15 +239,15 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
         return len(self._nested_control_elements)
 
     def __iter__(self):
-        for element, owned in self._nested_control_elements.iteritems():
+        for element, owned in iteritems(self._nested_control_elements):
             yield element if owned else None
 
     def __getitem__(self, index_or_slice):
         if isinstance(index_or_slice, slice):
-            items = self._nested_control_elements.items()[index_or_slice]
+            items = list(self._nested_control_elements.items())[index_or_slice]
             return [ (element if owned else None) for element, owned in items ]
         else:
-            element, owned = self._nested_control_elements.items()[index_or_slice]
+            element, owned = list(self._nested_control_elements.items())[index_or_slice]
             if owned:
                 return element
             return None

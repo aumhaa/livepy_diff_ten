@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip, chain
+from builtins import range
+from builtins import object
+from itertools import chain
 import Live
 from _Arturia.ArturiaControlSurface import ArturiaControlSurface
 from _Arturia.SessionComponent import SessionComponent
@@ -12,17 +14,17 @@ from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
 from _Framework.ButtonElement import ButtonElement, Color
 from _Framework.EncoderElement import EncoderElement
-HARDWARE_ENCODER_IDS = xrange(32, 48)
+HARDWARE_ENCODER_IDS = list(range(32, 48))
 HARDWARE_STOP_BUTTON_ID = 89
 HARDWARE_PLAY_BUTTON_ID = 88
-HARDWARE_PAD_IDS = xrange(112, 128)
+HARDWARE_PAD_IDS = list(range(112, 128))
 ENCODER_MSG_IDS = (10, 74, 71, 76, 77, 93, 73, 75, 114, 18, 19, 16, 17, 91, 79, 72)
-PAD_MSG_IDS = (xrange(44, 52), xrange(36, 44))
+PAD_MSG_IDS = (list(range(44, 52)), list(range(36, 44)))
 PAD_CHANNEL = 9
 
-class Colors:
+class Colors(object):
 
-    class Session:
+    class Session(object):
         ClipStarted = Color(0)
         ClipStopped = Color(0)
         ClipRecording = Color(0)
@@ -78,10 +80,10 @@ class BeatStep(ArturiaControlSurface):
         self._transport.set_enabled(True)
 
     def _collect_setup_messages(self):
-        for identifier, hardware_id in izip(ENCODER_MSG_IDS, HARDWARE_ENCODER_IDS):
+        for identifier, hardware_id in zip(ENCODER_MSG_IDS, HARDWARE_ENCODER_IDS):
             self._setup_hardware_encoder(hardware_id, identifier)
 
         self._setup_hardware_button(HARDWARE_STOP_BUTTON_ID, 1, msg_type=u'cc')
         self._setup_hardware_button(HARDWARE_PLAY_BUTTON_ID, 2, msg_type=u'cc')
-        for hardware_id, identifier in izip(HARDWARE_PAD_IDS, chain(*PAD_MSG_IDS)):
+        for hardware_id, identifier in zip(HARDWARE_PAD_IDS, chain(*PAD_MSG_IDS)):
             self._setup_hardware_button(hardware_id, identifier, PAD_CHANNEL, msg_type=u'note')

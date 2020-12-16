@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 from ableton.v2.base import depends
 from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement, SliderElement, SysexElement
@@ -31,9 +33,9 @@ class LaunchpadElements(object):
         self.left_button = create_button(arrow_button_identifiers[2], u'Left_Button')
         self.right_button = create_button(arrow_button_identifiers[3], u'Right_Button')
         self.session_mode_button = create_button(session_mode_button_identifier, u'Session_Mode_Button')
-        self.scene_launch_buttons_raw = [ create_button(identifier, u'Scene_Launch_Button_{}'.format(row_index)) for row_index, identifier in enumerate(xrange(89, 18, -10)) ]
+        self.scene_launch_buttons_raw = [ create_button(identifier, u'Scene_Launch_Button_{}'.format(row_index)) for row_index, identifier in enumerate(range(89, 18, -10)) ]
         self.scene_launch_buttons = ButtonMatrixElement(rows=[self.scene_launch_buttons_raw], name=u'Scene_Launch_Buttons')
-        self.clip_launch_matrix = ButtonMatrixElement(rows=[ [ create_button(offset + col_index, u'{}_Clip_Launch_Button_{}'.format(col_index, row_index), msg_type=MIDI_NOTE_TYPE) for col_index in xrange(SESSION_WIDTH) ] for row_index, offset in enumerate(xrange(81, 10, -10)) ], name=u'Clip_Launch_Matrix')
+        self.clip_launch_matrix = ButtonMatrixElement(rows=[ [ create_button(offset + col_index, u'{}_Clip_Launch_Button_{}'.format(col_index, row_index), msg_type=MIDI_NOTE_TYPE) for col_index in range(SESSION_WIDTH) ] for row_index, offset in enumerate(range(81, 10, -10)) ], name=u'Clip_Launch_Matrix')
         self.firmware_mode_switch = SysexElement(name=u'Firmware_Mode_Switch', send_message_generator=lambda v: sysex.STD_MSG_HEADER + (self.model_id,
          sysex.FIRMWARE_MODE_COMMAND_BYTE,
          v,
@@ -56,10 +58,10 @@ class LaunchpadElements(object):
          (44, 45, 46, 47, 76, 77, 78, 79),
          (40, 41, 42, 43, 72, 73, 74, 75),
          (36, 37, 38, 39, 68, 69, 70, 71))
-        self.drum_pads = ButtonMatrixElement(rows=[ [ create_button(row_identifiers[col_index], u'Drum_Pad_{}_{}'.format(col_index, row_index), msg_type=MIDI_NOTE_TYPE, channel=8) for col_index in xrange(SESSION_WIDTH) ] for row_index, row_identifiers in enumerate(drum_pad_rows) ], name=u'Drum_Pads')
+        self.drum_pads = ButtonMatrixElement(rows=[ [ create_button(row_identifiers[col_index], u'Drum_Pad_{}_{}'.format(col_index, row_index), msg_type=MIDI_NOTE_TYPE, channel=8) for col_index in range(SESSION_WIDTH) ] for row_index, row_identifiers in enumerate(drum_pad_rows) ], name=u'Drum_Pads')
 
     def _create_scale_pads(self):
-        self.scale_pads = ButtonMatrixElement(rows=[[ create_button(identifier, u'Scale_Pad_{}'.format(identifier), msg_type=MIDI_NOTE_TYPE, channel=15) for identifier in xrange(128) ]], name=u'Scale_Pads')
+        self.scale_pads = ButtonMatrixElement(rows=[[ create_button(identifier, u'Scale_Pad_{}'.format(identifier), msg_type=MIDI_NOTE_TYPE, channel=15) for identifier in range(128) ]], name=u'Scale_Pads')
 
     def _fader_setup_message_generator(self, bank, orientation, polarity):
         return sysex.STD_MSG_HEADER + (self.model_id,

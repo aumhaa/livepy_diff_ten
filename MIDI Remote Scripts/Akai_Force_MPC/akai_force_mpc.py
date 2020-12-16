@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import zip
 from contextlib import contextmanager
 from functools import partial
 from itertools import chain
@@ -127,10 +128,10 @@ class Akai_Force_MPC(ControlSurface):
     def _create_track_assign_button_modes(self):
         self._background = BackgroundComponent(name=u'Background')
         self._modes = ModesComponent(name=u'Track_Assign_Button_Modes', is_enabled=False)
-        self._modes.add_mode(u'mute', [ExtendComboElementMode(combo_pairs=zip(self._elements.mute_buttons_raw, self._elements.track_assign_buttons_raw)), AddLayerMode(self._mixer, Layer(mute_color_controls=u'track_assign_color_controls'))])
-        self._modes.add_mode(u'solo', [ExtendComboElementMode(combo_pairs=zip(self._elements.solo_buttons_raw, self._elements.track_assign_buttons_raw)), AddLayerMode(self._mixer, Layer(solo_color_controls=u'track_assign_color_controls'))])
-        self._modes.add_mode(u'rec_arm', [ExtendComboElementMode(combo_pairs=zip(self._elements.arm_buttons_raw, self._elements.track_assign_buttons_raw)), AddLayerMode(self._mixer, Layer(arm_color_controls=u'track_assign_color_controls'))])
-        self._modes.add_mode(u'clip_stop', [ExtendComboElementMode(combo_pairs=zip(self._elements.clip_stop_buttons_raw, self._elements.track_assign_buttons_raw)), AddLayerMode(self._session, Layer(stop_clip_color_controls=u'track_assign_color_controls'))])
+        self._modes.add_mode(u'mute', [ExtendComboElementMode(combo_pairs=list(zip(self._elements.mute_buttons_raw, self._elements.track_assign_buttons_raw))), AddLayerMode(self._mixer, Layer(mute_color_controls=u'track_assign_color_controls'))])
+        self._modes.add_mode(u'solo', [ExtendComboElementMode(combo_pairs=list(zip(self._elements.solo_buttons_raw, self._elements.track_assign_buttons_raw))), AddLayerMode(self._mixer, Layer(solo_color_controls=u'track_assign_color_controls'))])
+        self._modes.add_mode(u'rec_arm', [ExtendComboElementMode(combo_pairs=list(zip(self._elements.arm_buttons_raw, self._elements.track_assign_buttons_raw))), AddLayerMode(self._mixer, Layer(arm_color_controls=u'track_assign_color_controls'))])
+        self._modes.add_mode(u'clip_stop', [ExtendComboElementMode(combo_pairs=list(zip(self._elements.clip_stop_buttons_raw, self._elements.track_assign_buttons_raw))), AddLayerMode(self._session, Layer(stop_clip_color_controls=u'track_assign_color_controls'))])
         self._modes.add_mode(u'shift', [AddLayerMode(self._transport, Layer(metronome_color_control=u'track_assign_color_controls_raw[4]', clip_trigger_quantization_color_controls=u'physical_track_color_controls')), AddLayerMode(self._clip_actions, Layer(quantize_color_control=u'track_assign_color_controls_raw[0]')), LayerMode(self._background, Layer(button1=u'track_assign_color_controls_raw[1]', button2=u'track_assign_color_controls_raw[2]', button3=u'track_assign_color_controls_raw[3]', button5=u'track_assign_color_controls_raw[5]', button6=u'track_assign_color_controls_raw[6]', button7=u'track_assign_color_controls_raw[7]'))], behaviour=MomentaryBehaviour())
         self._modes.add_mode(u'assign_a', [AddLayerMode(self._mixer, Layer(assign_a_buttons=u'track_assign_buttons', assign_a_color_controls=u'track_assign_color_controls'))], behaviour=MomentaryBehaviour())
         self._modes.add_mode(u'assign_b', [AddLayerMode(self._mixer, Layer(assign_b_buttons=u'track_assign_buttons', assign_b_color_controls=u'track_assign_color_controls'))], behaviour=MomentaryBehaviour())
@@ -144,7 +145,7 @@ class Akai_Force_MPC(ControlSurface):
     def _create_launch_modes(self):
         self._scene_list = SceneListComponent(name=u'Expanded_Scene_Launch', session_ring=self._session_ring, num_scenes=16)
         self._launch_modes = ModesComponent(name=u'Launch_Modes')
-        self._launch_modes.add_mode(u'clip_launch', [partial(self._elements.launch_mode_switch.send_value, 0), ExtendComboElementMode(combo_pairs=zip(chain(*self._elements.clip_launch_buttons_raw), chain(*self._elements.physical_clip_launch_buttons_raw))), ExtendComboElementMode(combo_pairs=zip(chain(*self._elements.clip_color_controls_raw), chain(*self._elements.physical_clip_color_controls_raw)))], cycle_mode_button_color=u'Mode.Off')
+        self._launch_modes.add_mode(u'clip_launch', [partial(self._elements.launch_mode_switch.send_value, 0), ExtendComboElementMode(combo_pairs=list(zip(chain(*self._elements.clip_launch_buttons_raw), chain(*self._elements.physical_clip_launch_buttons_raw)))), ExtendComboElementMode(combo_pairs=list(zip(chain(*self._elements.clip_color_controls_raw), chain(*self._elements.physical_clip_color_controls_raw))))], cycle_mode_button_color=u'Mode.Off')
         if not self.is_force:
             self._launch_modes.add_mode(u'scene_launch', [partial(self._elements.launch_mode_switch.send_value, 1), LayerMode(self._scene_list, Layer(scene_launch_buttons=u'mpc_scene_launch_buttons', scene_color_controls=u'mpc_scene_color_controls'))], cycle_mode_button_color=u'Mode.On')
             self._launch_modes.layer = Layer(cycle_mode_button=u'xyfx_button' if self._product_id == MPC_X_PRODUCT_ID else u'sixteen_level_button')

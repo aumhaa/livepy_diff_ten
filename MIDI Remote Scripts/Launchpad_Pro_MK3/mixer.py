@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip_longest
+from future.moves.itertools import zip_longest
 from ableton.v2.base import clamp, listens_group, liveobj_valid
 from ableton.v2.control_surface.control import control_list, SendValueControl
 from novation.fixed_radio_button_group import FixedRadioButtonGroup
@@ -50,7 +50,7 @@ class MixerComponent(MixerComponentBase):
         self._update_return_track_color_controls()
 
     def _update_send_select_button_colors(self):
-        for select_button, track in izip_longest(self.send_select_buttons, self.song.return_tracks[:NUM_SENDS]):
+        for select_button, track in zip_longest(self.send_select_buttons, self.song.return_tracks[:NUM_SENDS]):
             if select_button:
                 select_button.checked_color = get_midi_color_value_for_track(track)
 
@@ -58,7 +58,7 @@ class MixerComponent(MixerComponentBase):
         value = 0
         if self.send_select_buttons.active_control_count:
             value = self.send_select_buttons[self.send_index].checked_color
-        for strip, control in izip_longest(self._channel_strips, self.return_track_color_controls):
+        for strip, control in zip_longest(self._channel_strips, self.return_track_color_controls):
             control.value = value if liveobj_valid(strip.track) else 0
 
     @listens_group(u'color')

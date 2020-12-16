@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 import Live
 from _Generic.Devices import DEVICE_DICT, BANK_NAME_DICT, DEVICE_BOB_DICT, parameter_banks, parameter_bank_names
 from _Framework.Control import ButtonControl
@@ -17,10 +18,10 @@ class DeviceComponent(DeviceComponentBase):
         self._device_banks = DEVICE_DICT
         self._device_bank_names = BANK_NAME_DICT
         self._device_best_banks = DEVICE_BOB_DICT
-        for device_name, current_banks in self._device_banks.iteritems():
+        for device_name, current_banks in self._device_banks.items():
             if len(current_banks) > 1:
-                assert device_name in self._device_best_banks.keys(), u"Could not find best-of-banks for '%s'" % device_name
-                assert device_name in self._device_bank_names.keys(), u"Could not find bank names for '%s'" % device_name
+                assert device_name in list(self._device_best_banks.keys()), u"Could not find best-of-banks for '%s'" % device_name
+                assert device_name in list(self._device_bank_names.keys()), u"Could not find bank names for '%s'" % device_name
                 current_banks = self._device_best_banks[device_name] + current_banks
                 new_bank_names[device_name] = (BOB_BANK_NAME,) + self._device_bank_names[device_name]
             new_banks[device_name] = current_banks
@@ -50,7 +51,7 @@ class DeviceComponent(DeviceComponentBase):
     def _number_of_parameter_banks(self):
         result = 0
         if self._device != None:
-            if self._device.class_name in self._device_banks.keys():
+            if self._device.class_name in list(self._device_banks.keys()):
                 result = len(self._device_banks[self._device.class_name])
             else:
                 result = super(DeviceComponent, self)._number_of_parameter_banks()
@@ -72,6 +73,6 @@ class DeviceComponent(DeviceComponentBase):
                         value_to_send = u'Device.BankSelected'
                     elif index == 0:
                         value_to_send = u'Device.BestOfBank'
-                    elif index in xrange(bank_length):
+                    elif index in range(bank_length):
                         value_to_send = u'Device.Bank'
                     button.set_light(value_to_send)

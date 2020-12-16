@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter
+from builtins import object
 from .sysex import NUM_SET_PROPERTY_HEADER_BYTES
 
 class MidiMessageCache(object):
@@ -8,7 +10,7 @@ class MidiMessageCache(object):
         self._messages = []
 
     def __call__(self, message):
-        self._messages = filter(lambda m: m[:NUM_SET_PROPERTY_HEADER_BYTES] != message[:NUM_SET_PROPERTY_HEADER_BYTES], self._messages)
+        self._messages = list(filter(lambda m: m[:NUM_SET_PROPERTY_HEADER_BYTES] != message[:NUM_SET_PROPERTY_HEADER_BYTES], self._messages))
         self._messages.append(message)
 
     @property

@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 import Live
 from _Generic.Devices import *
 from _Framework.DeviceComponent import DeviceComponent
@@ -149,9 +151,9 @@ class PageableDeviceComponent(DeviceComponent):
         assert self.is_enabled()
         assert self._device != None
         assert self._parameter_controls != None
-        if self._device.class_name in SPECIAL_DEVICE_DICT.keys():
+        if self._device.class_name in list(SPECIAL_DEVICE_DICT.keys()):
             self.__assign_parameters_special()
-        elif self._device.class_name in DEVICE_DICT.keys():
+        elif self._device.class_name in list(DEVICE_DICT.keys()):
             self.__assign_parameters_normal()
         else:
             self.__assign_parameters_plugin()
@@ -190,12 +192,12 @@ class PageableDeviceComponent(DeviceComponent):
 
     def __assign_parameters_normal(self):
         u""" Assign the controls to the parameters of a device with 4 pages or less """
-        assert self._device.class_name in DEVICE_BOB_DICT.keys()
+        assert self._device.class_name in list(DEVICE_BOB_DICT.keys())
         self._page_index[self._bank_index] = 0
         banks = DEVICE_DICT[self._device.class_name]
         bank_names = []
         if len(banks) > self._bank_index:
-            if self._device.class_name in BANK_NAME_DICT.keys() and len(BANK_NAME_DICT[self._device.class_name]) > 1:
+            if self._device.class_name in list(BANK_NAME_DICT.keys()) and len(BANK_NAME_DICT[self._device.class_name]) > 1:
                 bank_names = BANK_NAME_DICT[self._device.class_name]
             bank = banks[self._bank_index]
             if self._bank_index in range(len(bank_names)):

@@ -1,4 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
 from _Framework.ModeSelectorComponent import ModeSelectorComponent
 from _Framework.ButtonElement import ButtonElement
 from _Framework.ButtonMatrixElement import ButtonMatrixElement
@@ -66,7 +68,7 @@ class SubSelectorComponent(ModeSelectorComponent):
         ModeSelectorComponent.disconnect(self)
 
     def set_update_callback(self, callback):
-        assert dir(callback).count(u'im_func') is 1
+        assert dir(callback).count(u'im_func') is 1 or dir(callback).count(u'__func__') is 1
         self._update_callback = callback
 
     def set_modes_buttons(self, buttons):

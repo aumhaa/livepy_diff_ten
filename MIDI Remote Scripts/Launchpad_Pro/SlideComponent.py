@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from _Framework.Util import clamp
 from _Framework.SubjectSlot import subject_slot, Subject
 from _Framework.CompoundComponent import CompoundComponent
@@ -20,7 +21,7 @@ class Slideable(Subject):
         pos_count = self.position_count
         first_pos = max(int(pmin), 0)
         last_pos = min(int(pmax), pos_count)
-        return xrange(first_pos, last_pos)
+        return list(range(first_pos, last_pos))
 
     def contents(self, position):
         return False

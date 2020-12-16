@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import ifilter, izip
-from ableton.v2.base import EventObject, flatten, listenable_property, listens, listens_group, liveobj_valid
+from builtins import object
+from builtins import filter
+from ableton.v2.base import EventObject, flatten, listenable_property, listens, listens_group, liveobj_valid, old_hasattr
 from ableton.v2.control_surface import find_instrument_devices
 from ableton.v2.control_surface.control import ButtonControl
 from pushbase.drum_group_component import DrumGroupComponent as DrumGroupComponentBase, DrumPadCopyHandler as DrumPadCopyHandlerBase
@@ -10,7 +11,7 @@ from .decoration import find_decorated_object
 from .device_decoration import SimplerDecoratedPropertiesCopier
 
 def find_simplers(chain):
-    return ifilter(lambda i: hasattr(i, u'playback_mode'), find_instrument_devices(chain))
+    return list(filter(lambda i: old_hasattr(i, u'playback_mode'), find_instrument_devices(chain)))
 
 
 def find_all_simplers_on_pad(drum_pad):
@@ -33,7 +34,7 @@ class DrumPadCopyHandler(DrumPadCopyHandlerBase):
         if self._source_pad.note != destination_pad.note and len(destination_pad.chains) > 0:
             source_simplers = find_all_simplers_on_pad(self._source_pad)
             destination_simplers = find_all_simplers_on_pad(destination_pad)
-            for source, destination in izip(source_simplers, destination_simplers):
+            for source, destination in zip(source_simplers, destination_simplers):
                 decorated = find_decorated_object(source, self._decorator_factory)
                 if decorated:
                     self._copy_simpler_properties(decorated, destination)

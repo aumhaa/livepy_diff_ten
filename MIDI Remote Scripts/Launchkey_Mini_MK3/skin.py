@@ -1,23 +1,24 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import object
 from ableton.v2.control_surface import merge_skins, Skin
 from novation.colors import Mono, Rgb
 from novation.skin import skin as base_skin
 
-class Colors:
+class Colors(object):
 
-    class Recording:
+    class Recording(object):
         On = Mono.ON
         Off = Mono.OFF
 
-    class TrackNavigation:
+    class TrackNavigation(object):
         On = Mono.HALF
         Pressed = Mono.ON
 
-    class SceneNavigation:
+    class SceneNavigation(object):
         On = Mono.HALF
         Pressed = Mono.ON
 
-    class DrumGroup:
+    class DrumGroup(object):
         PadSelected = Rgb.WHITE
         PadSelectedNotSoloed = Rgb.WHITE
         PadMutedSelected = Rgb.WHITE

@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import izip, izip_longest
+from builtins import range
+from builtins import zip
+from future.moves.itertools import zip_longest
 from ...base import clamp, listens, liveobj_valid
 from ..component import Component
 from .channel_strip import ChannelStripComponent, release_control
@@ -39,7 +41,7 @@ class RightAlignTracksTrackAssigner(TrackAssigner):
         size = tracks_provider.num_tracks
         num_empty_tracks = max(0, size + offset - len(tracks))
         track_list = size * [None]
-        for i in xrange(size):
+        for i in range(size):
             track_index = i + offset
             if len(tracks) > track_index:
                 track = tracks[track_index]
@@ -96,7 +98,7 @@ class MixerComponent(Component):
 
     @send_index.setter
     def send_index(self, index):
-        if 0 <= index < self.num_sends or index is None:
+        if index is None or 0 <= index < self.num_sends:
             if self._send_index != index:
                 self._send_index = index
                 self.set_send_controls(self._send_controls)
@@ -132,35 +134,35 @@ class MixerComponent(Component):
         self.update()
 
     def set_volume_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.set_volume_control(control)
 
     def set_pan_controls(self, controls):
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             strip.set_pan_control(control)
 
     def set_send_controls(self, controls):
         self._send_controls = controls
-        for strip, control in izip_longest(self._channel_strips, controls or []):
+        for strip, control in zip_longest(self._channel_strips, controls or []):
             if self._send_index is None:
                 strip.set_send_controls(None)
             else:
                 strip.set_send_controls((None,) * self._send_index + (control,))
 
     def set_arm_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_arm_button(button)
 
     def set_solo_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_solo_button(button)
 
     def set_mute_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_mute_button(button)
 
     def set_track_select_buttons(self, buttons):
-        for strip, button in izip_longest(self._channel_strips, buttons or []):
+        for strip, button in zip_longest(self._channel_strips, buttons or []):
             strip.set_select_button(button)
 
     def set_shift_button(self, button):
@@ -220,7 +222,7 @@ class MixerComponent(Component):
 
     def _reassign_tracks(self):
         tracks = self._track_assigner.tracks(self._provider)
-        for track, channel_strip in izip(tracks, self._channel_strips):
+        for track, channel_strip in zip(tracks, self._channel_strips):
             channel_strip.set_track(track)
 
     def _auto_name(self):

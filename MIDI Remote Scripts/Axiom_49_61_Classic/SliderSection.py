@@ -1,8 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
+from builtins import object
 import Live
 from _Axiom.consts import *
 
-class SliderSection:
+class SliderSection(object):
     u""" Class representing the sliders and Zone/Group-buttons on the
         Axiom 49 & 61 Controllers
     """

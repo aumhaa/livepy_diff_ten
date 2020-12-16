@@ -1,10 +1,17 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import str
+from builtins import map
+from builtins import filter
+from builtins import range
+from past.utils import old_div
 from functools import partial
 from _Framework.Util import group
 RCK_BANK1 = (u'Macro 1', u'Macro 2', u'Macro 3', u'Macro 4', u'Macro 5', u'Macro 6', u'Macro 7', u'Macro 8')
-RCK_BANKS = (RCK_BANK1,)
+RCK_BANK2 = (u'Macro 9', u'Macro 10', u'Macro 11', u'Macro 12', u'Macro 13', u'Macro 14', u'Macro 15', u'Macro 16')
+RCK_BANKS = (RCK_BANK1, RCK_BANK2)
 RCK_BOBS = (RCK_BANK1,)
-RCK_BNK_NAMES = (u'Macros',)
+RCK_BNK_NAMES = (u'Macros', u'Macros 2')
 ALG_BANK1 = (u'OSC1 Level', u'OSC1 Octave', u'OSC1 Semi', u'OSC1 Shape', u'OSC2 Level', u'OSC2 Octave', u'OSC2 Semi', u'OSC2 Shape')
 ALG_BANK2 = (u'OSC1 Balance', u'F1 Freq', u'F1 Resonance', u'F1 Type', u'OSC2 Balance', u'F2 Freq', u'F2 Resonance', u'F2 Type')
 ALG_BANK3 = (u'FEG1 Attack', u'FEG1 Decay', u'FEG1 Sustain', u'FEG1 Rel', u'FEG2 Attack', u'FEG2 Decay', u'FEG2 Sustain', u'FEG2 Rel')
@@ -528,7 +535,7 @@ def device_parameters_to_map(device):
 def parameter_bank_names(device, bank_name_dict = BANK_NAME_DICT):
     u""" Determine the bank names to use for a device """
     if device != None:
-        if device.class_name in bank_name_dict.keys():
+        if device.class_name in list(bank_name_dict.keys()):
             return bank_name_dict[device.class_name]
         banks = number_of_parameter_banks(device)
 
@@ -547,25 +554,25 @@ def parameter_bank_names(device, bank_name_dict = BANK_NAME_DICT):
                     name = None
 
                 if name:
-                    return str(filter(_is_ascii, name))
+                    return u''.join(filter(_is_ascii, name))
                 else:
                     return _default_bank_name(bank_index)
 
-            return map(_bank_name, range(0, banks))
+            return list(map(_bank_name, list(range(0, banks))))
         else:
-            return map(_default_bank_name, range(0, banks))
+            return list(map(_default_bank_name, list(range(0, banks))))
     return []
 
 
 def parameter_banks(device, device_dict = DEVICE_DICT):
     u""" Determine the parameters to use for a device """
     if device != None:
-        if device.class_name in device_dict.keys():
+        if device.class_name in list(device_dict.keys()):
 
             def names_to_params(bank):
-                return map(partial(get_parameter_by_name, device), bank)
+                return list(map(partial(get_parameter_by_name, device), bank))
 
-            return map(names_to_params, device_dict[device.class_name])
+            return list(map(names_to_params, device_dict[device.class_name]))
         else:
             if device.class_name in MAX_DEVICES:
                 try:
@@ -586,7 +593,7 @@ def parameter_banks(device, device_dict = DEVICE_DICT):
                         else:
                             return [ (device.parameters[i] if i != -1 else None) for i in parameter_indices ]
 
-                    return map(_bank_parameters, range(0, banks))
+                    return list(map(_bank_parameters, list(range(0, banks))))
             return group(device_parameters_to_map(device), 8)
     return []
 
@@ -595,7 +602,7 @@ def best_of_parameter_bank(device, device_bob_dict = DEVICE_BOB_DICT):
     if device and device.class_name in device_bob_dict:
         bobs = device_bob_dict[device.class_name]
         assert len(bobs) == 1
-        return map(partial(get_parameter_by_name, device), bobs[0])
+        return list(map(partial(get_parameter_by_name, device), bobs[0]))
     if device.class_name in MAX_DEVICES:
         try:
             parameter_indices = device.get_bank_parameters(-1)
@@ -609,7 +616,7 @@ def best_of_parameter_bank(device, device_bob_dict = DEVICE_BOB_DICT):
 def number_of_parameter_banks(device, device_dict = DEVICE_DICT):
     u""" Determine the amount of parameter banks the given device has """
     if device != None:
-        if device.class_name in device_dict.keys():
+        if device.class_name in list(device_dict.keys()):
             device_bank = device_dict[device.class_name]
             return len(device_bank)
         else:
@@ -622,7 +629,7 @@ def number_of_parameter_banks(device, device_dict = DEVICE_DICT):
                 if banks != 0:
                     return banks
             param_count = len(device.parameters[1:])
-            return param_count / 8 + (1 if param_count % 8 else 0)
+            return old_div(param_count, 8) + (1 if param_count % 8 else 0)
     return 0
 
 

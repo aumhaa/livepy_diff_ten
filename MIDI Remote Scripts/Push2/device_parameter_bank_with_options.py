@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
 from ableton.v2.base import listenable_property, liveobj_valid, find_if
 from ableton.v2.control_surface import create_device_bank, DescribedDeviceParameterBank
 from .custom_bank_definitions import OPTIONS_KEY, VIEW_DESCRIPTION_KEY
@@ -14,7 +15,7 @@ class DescribedDeviceParameterBankWithOptions(DescribedDeviceParameterBank):
     @property
     def bank_view_description(self):
         bank = self._definition.value_by_index(self.index)
-        return unicode(bank.get(VIEW_DESCRIPTION_KEY, u''))
+        return str(bank.get(VIEW_DESCRIPTION_KEY, u''))
 
     def _current_option_slots(self):
         bank = self._definition.value_by_index(self.index)

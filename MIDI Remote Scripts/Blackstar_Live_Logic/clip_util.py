@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from past.utils import old_div
 from ableton.v2.base import compose, find_if, liveobj_valid
 
 def has_clip(slot):
@@ -59,7 +60,7 @@ def get_clip_time(clip):
     of `clip` in terms of the clip's time signature
     """
     sig_num, sig_denom = clip.signature_numerator, clip.signature_denominator
-    loop_position = (clip.playing_position - clip.loop_start) * sig_denom / 4.0
+    loop_position = (clip.playing_position - clip.loop_start) * old_div(sig_denom, 4.0)
     beats = int(loop_position) % sig_num + 1
-    bars = int(loop_position / sig_num) + 1
+    bars = int(old_div(loop_position, sig_num)) + 1
     return (bars, beats)

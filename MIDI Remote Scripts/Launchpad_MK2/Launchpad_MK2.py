@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import range
 from functools import partial
 import Live
 from _Framework.Util import const, mixin, recursive_map
@@ -119,9 +120,9 @@ class Launchpad_MK2(IdentifiableControlSurface, OptimizedControlSurface):
         self._down_button = make_button(105, 0, msg_type=MIDI_CC_TYPE, name=u'Down_Button')
         self._left_button = make_button(106, 0, msg_type=MIDI_CC_TYPE, name=u'Left_Button')
         self._right_button = make_button(107, 0, msg_type=MIDI_CC_TYPE, name=u'Right_Button')
-        self._session_matrix_raw = [ [ make_button(col + offset, 0, name=u'Session_Matrix_Button_%d_%d' % (col, row)) for col in xrange(consts.SESSION_WIDTH) ] for row, offset in enumerate(xrange(81, 10, -10)) ]
+        self._session_matrix_raw = [ [ make_button(col + offset, 0, name=u'Session_Matrix_Button_%d_%d' % (col, row)) for col in range(consts.SESSION_WIDTH) ] for row, offset in enumerate(range(81, 10, -10)) ]
         self._session_matrix = ButtonMatrixElement(rows=self._session_matrix_raw, name=u'Session_Matrix')
-        self._scene_launch_matrix_raw = [ make_button(identifier, 0, name=u'Scene_Launch_Button_%d' % (index,)) for index, identifier in enumerate(xrange(89, 18, -10)) ]
+        self._scene_launch_matrix_raw = [ make_button(identifier, 0, name=u'Scene_Launch_Button_%d' % (index,)) for index, identifier in enumerate(range(89, 18, -10)) ]
         self._scene_launch_matrix = ButtonMatrixElement(rows=[self._scene_launch_matrix_raw], name=u'Scene_Launch_Buttons')
         self._session_zoom_matrix = ButtonMatrixElement(rows=recursive_map(partial(with_modifier, self._session_button_single), self._session_matrix_raw))
         self._volume_reset_buttons = self._session_matrix.submatrix[:, :1]
@@ -140,7 +141,7 @@ class Launchpad_MK2(IdentifiableControlSurface, OptimizedControlSurface):
         self._mute_button = self._scene_launch_matrix_raw[5]
         self._solo_button = self._scene_launch_matrix_raw[6]
         self._record_arm_button = self._scene_launch_matrix_raw[7]
-        self._sliders = ButtonMatrixElement(rows=[[ SliderElement(MIDI_CC_TYPE, 0, identifier) for identifier in xrange(21, 29) ]])
+        self._sliders = ButtonMatrixElement(rows=[[ SliderElement(MIDI_CC_TYPE, 0, identifier) for identifier in range(21, 29) ]])
         self._create_user_controls()
 
     def _create_user_controls(self):
@@ -150,11 +151,11 @@ class Launchpad_MK2(IdentifiableControlSurface, OptimizedControlSurface):
         Max for Live.
         """
         self._user_1_matrix = ButtonMatrixElement(rows=[ [ make_button(identifier, USER_1_CHANNEL, name=u'User_1_Button_%d_%d' % (row_index, col_index)) for col_index, identifier in enumerate(row) ] for row_index, row in enumerate(USER_1_MATRIX_IDENTIFIERS) ], name=u'User_1_Matrix')
-        self._user_1_arrow_buttons = ButtonMatrixElement(rows=[[ make_button(identifier, USER_1_CHANNEL, msg_type=MIDI_CC_TYPE, name=u'User_1_Arrow_Button_%d' % (index,)) for index, identifier in enumerate(xrange(104, 108)) ]], name=u'User_1_Arrow_Buttons')
-        self._user_1_side_buttons = ButtonMatrixElement(rows=[ [make_button(identifier, USER_1_CHANNEL, name=u'User_1_Side_Button_%d' % (index,))] for index, identifier in enumerate(xrange(100, 108)) ], name=u'User_1_Side_Buttons')
-        self._user_2_matrix = ButtonMatrixElement(rows=[ [ make_button(offset + col_index, USER_2_CHANNEL, name=u'User_2_Button_%d_%d' % (col_index, row_index)) for col_index in xrange(8) ] for row_index, offset in enumerate(xrange(81, 10, -10)) ], name=u'User_2_Matrix')
-        self._user_2_arrow_buttons = ButtonMatrixElement(rows=[[ make_button(identifier, USER_2_CHANNEL, msg_type=MIDI_CC_TYPE, name=u'User_2_Arrow_Button_%d' % (index,)) for index, identifier in enumerate(xrange(104, 108)) ]], name=u'User_2_Arrow_Buttons')
-        self._user_2_side_buttons = ButtonMatrixElement(rows=[ [make_button(identifier, USER_2_CHANNEL, name=u'User_2_Side_Button_%d' % (index,))] for index, identifier in enumerate(xrange(89, 18, -10)) ], name=u'User_2_Side_Buttons')
+        self._user_1_arrow_buttons = ButtonMatrixElement(rows=[[ make_button(identifier, USER_1_CHANNEL, msg_type=MIDI_CC_TYPE, name=u'User_1_Arrow_Button_%d' % (index,)) for index, identifier in enumerate(range(104, 108)) ]], name=u'User_1_Arrow_Buttons')
+        self._user_1_side_buttons = ButtonMatrixElement(rows=[ [make_button(identifier, USER_1_CHANNEL, name=u'User_1_Side_Button_%d' % (index,))] for index, identifier in enumerate(range(100, 108)) ], name=u'User_1_Side_Buttons')
+        self._user_2_matrix = ButtonMatrixElement(rows=[ [ make_button(offset + col_index, USER_2_CHANNEL, name=u'User_2_Button_%d_%d' % (col_index, row_index)) for col_index in range(8) ] for row_index, offset in enumerate(range(81, 10, -10)) ], name=u'User_2_Matrix')
+        self._user_2_arrow_buttons = ButtonMatrixElement(rows=[[ make_button(identifier, USER_2_CHANNEL, msg_type=MIDI_CC_TYPE, name=u'User_2_Arrow_Button_%d' % (index,)) for index, identifier in enumerate(range(104, 108)) ]], name=u'User_2_Arrow_Buttons')
+        self._user_2_side_buttons = ButtonMatrixElement(rows=[ [make_button(identifier, USER_2_CHANNEL, name=u'User_2_Side_Button_%d' % (index,))] for index, identifier in enumerate(range(89, 18, -10)) ], name=u'User_2_Side_Buttons')
 
     def _create_session(self):
         self._session = SessionComponent(is_enabled=False, num_tracks=self._session_matrix.width(), num_scenes=self._session_matrix.height(), enable_skinning=True, name=u'Session', is_root=True, layer=Layer(track_bank_left_button=self._left_button, track_bank_right_button=self._right_button, scene_bank_up_button=self._up_button, scene_bank_down_button=self._down_button))
@@ -205,7 +206,7 @@ class Launchpad_MK2(IdentifiableControlSurface, OptimizedControlSurface):
         self._send_challenge()
 
     def _send_challenge(self):
-        challenge_bytes = tuple([ self._challenge >> 8 * index & 127 for index in xrange(4) ])
+        challenge_bytes = tuple([ self._challenge >> 8 * index & 127 for index in range(4) ])
         self._send_midi(consts.STANDARD_SYSEX_PREFIX + consts.CHALLENGE_RESPONSE_BYTE + challenge_bytes + (247,))
 
     def handle_sysex(self, midi_bytes):
@@ -218,8 +219,8 @@ class Launchpad_MK2(IdentifiableControlSurface, OptimizedControlSurface):
         return len(midi_bytes) == 10 and midi_bytes[:7] == consts.STANDARD_SYSEX_PREFIX + consts.CHALLENGE_RESPONSE_BYTE
 
     def _is_response_valid(self, midi_bytes):
-        response = long(midi_bytes[7])
-        response += long(midi_bytes[8] << 8)
+        response = int(midi_bytes[7])
+        response += int(midi_bytes[8] << 8)
         return response == Live.Application.encrypt_challenge2(self._challenge)
 
     def _on_handshake_successful(self):

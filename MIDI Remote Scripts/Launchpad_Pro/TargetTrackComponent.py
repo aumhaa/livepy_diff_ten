@@ -26,7 +26,7 @@ class TargetTrackComponent(ControlSurfaceComponent, Subject):
 
     @subject_slot(u'tracks')
     def _on_tracks_changed(self):
-        tracks = filter(lambda t: t.can_be_armed and t.has_midi_input, self.song().tracks)
+        tracks = [ t for t in self.song().tracks if t.can_be_armed and t.has_midi_input ]
         self._on_arm_changed.replace_subjects(tracks)
         self._on_frozen_state_changed.replace_subjects(tracks)
         self._refresh_armed_track_stack(tracks)

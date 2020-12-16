@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
 from _Framework.Layer import Layer, SimpleLayerOwner
 from _APC.ControlElementUtils import make_slider
 from APC_Key_25.APC_Key_25 import APC_Key_25
@@ -17,7 +18,7 @@ class APC_mini(APC_Key_25):
 
     def _create_controls(self):
         super(APC_mini, self)._create_controls()
-        self._unused_buttons = map(self.make_shifted_button, self._scene_launch_buttons[5:7])
+        self._unused_buttons = list(map(self.make_shifted_button, self._scene_launch_buttons[5:7]))
         self._master_volume_control = make_slider(0, 56, name=u'Master_Volume')
 
     def _create_mixer(self):

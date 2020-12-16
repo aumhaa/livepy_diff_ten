@@ -1,8 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import map
+from builtins import filter
+from builtins import range
 from functools import partial
-from itertools import imap, izip
 import Live
-from ableton.v2.base import EventObject, MultiSlot, const, depends, find_if, listenable_property, listens, listens_group, liveobj_valid, nop, task
+from ableton.v2.base import EventObject, MultiSlot, const, depends, find_if, listenable_property, listens, listens_group, liveobj_valid, nop, old_hasattr, task
 from ableton.v2.base.util import index_if
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.mode import ModesComponent, SetAttributeMode
@@ -27,7 +29,7 @@ class RoutingMeterRealTimeChannelAssigner(Component):
         self._half_window_size = sliding_window_size // 2
         self._routing_channels = []
         self._selected_index = -1
-        self.real_time_channels = [ RealTimeDataComponent(parent=self, channel_type=u'meter', real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data) for _ in xrange(sliding_window_size) ]
+        self.real_time_channels = [ RealTimeDataComponent(parent=self, channel_type=u'meter', real_time_mapper=real_time_mapper, register_real_time_data=register_real_time_data) for _ in range(sliding_window_size) ]
 
     def disconnect(self):
         super(RoutingMeterRealTimeChannelAssigner, self).disconnect()
@@ -76,7 +78,7 @@ class RoutingMeterRealTimeChannelAssigner(Component):
         return self._routing_channels[window_start:window_end]
 
     def _attached_routing_channels(self):
-        return filter(liveobj_valid, imap(lambda real_time_assignment: real_time_assignment.attached_object, self.real_time_channels))
+        return list(filter(liveobj_valid, map(lambda real_time_assignment: real_time_assignment.attached_object, self.real_time_channels)))
 
     def _update_list_index_to_pool_index_mapping(self):
         new_mapping = {}
@@ -251,10 +253,10 @@ def _target_has_postfix(target_and_postfix):
 
 def can_combine_targets(targets, postfixes):
     if len(targets) == len(postfixes):
-        if all(imap(_target_has_postfix, izip(targets, postfixes))):
+        if all(map(_target_has_postfix, zip(targets, postfixes))):
             first_name = targets[0].display_name
             common_prefix = first_name[:first_name.rfind(postfixes[0])]
-            return all(imap(lambda t: t.display_name.startswith(common_prefix), targets))
+            return all(map(lambda t: t.display_name.startswith(common_prefix), targets))
     return False
 
 
@@ -568,7 +570,7 @@ class RoutingTypeList(RoutingTargetList):
         self.notify_selected_track()
 
     def _make_targets(self):
-        return map(RoutingTarget, self._router.routing_targets)
+        return list(map(RoutingTarget, self._router.routing_targets))
 
 
 class RoutingChannelList(RoutingTargetList):
@@ -712,7 +714,7 @@ class RoutingControlComponent(ModesComponent):
     @listenable_property
     def can_monitor(self):
         track = self.song.view.selected_track
-        return hasattr(track, u'current_monitoring_state') and not track.is_frozen and track.can_be_armed
+        return old_hasattr(track, u'current_monitoring_state') and not track.is_frozen and track.can_be_armed
 
     @listenable_property
     def monitoring_state_index(self):

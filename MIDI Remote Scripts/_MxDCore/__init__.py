@@ -1,6 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from future.utils import string_types
 from .MxDCore import MxDCore as _MxDCore
 import sys, warnings
+from ableton.v2.base import old_hasattr
 
 def set_manager(manager):
     assert manager != None
@@ -16,8 +19,8 @@ def disconnect():
 
 def execute_command(device_id, object_id, command, arguments):
     assert _MxDCore.instance != None
-    assert isinstance(arguments, (str, unicode))
-    if hasattr(_MxDCore.instance, command):
+    assert isinstance(arguments, string_types)
+    if old_hasattr(_MxDCore.instance, command):
         try:
             with warnings.catch_warnings(record=True) as caught_warnings:
                 _MxDCore.instance.update_device_context(device_id, object_id)

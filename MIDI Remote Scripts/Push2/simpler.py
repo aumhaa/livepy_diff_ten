@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from functools import partial
 from ableton.v2.base import depends, find_if, listenable_property, listens, liveobj_valid
 from ableton.v2.control_surface import EnumWrappingParameter, NotifyingList, SimplerDeviceDecorator as SimplerDeviceDecoratorBase, get_parameter_by_name
@@ -197,7 +200,7 @@ class SimplerDeviceDecorator(SimplerDeviceDecoratorBase, Messenger):
 
     def get_warp_as_option_label(self):
         try:
-            bars = int(self._live_object.guess_playback_length() / self._song.signature_numerator)
+            bars = int(old_div(self._live_object.guess_playback_length(), self._song.signature_numerator))
             return u'Warp as %d Bar%s' % (bars, u's' if bars > 1 else u'')
         except RuntimeError:
             return u'Warp as X Bars'

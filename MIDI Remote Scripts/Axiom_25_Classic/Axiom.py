@@ -1,4 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 from _Axiom.consts import *
 from _Axiom.Transport import Transport
 from _Axiom.Pads import Pads
@@ -7,7 +10,7 @@ from _Generic.util import DeviceAppointer
 import Live
 import MidiRemoteScript
 
-class Axiom:
+class Axiom(object):
     u""" A controller script for the M-Audio Axiom Keyboard/Controller series """
 
     def __init__(self, c_instance):

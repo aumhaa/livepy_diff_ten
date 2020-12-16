@@ -30,7 +30,7 @@ class ClipActionsComponent(ClipActionsComponentBase):
     def delete_pitch(self, pitch):
         clip = self.clip_slot.clip
         loop_length = clip.loop_end - clip.loop_start
-        clip.remove_notes(clip.loop_start, pitch, loop_length, 1)
+        clip.remove_notes_extended(from_time=clip.loop_start, from_pitch=pitch, time_span=loop_length, pitch_span=1)
 
     def delete_clip(self):
         self.clip_slot.delete_clip()

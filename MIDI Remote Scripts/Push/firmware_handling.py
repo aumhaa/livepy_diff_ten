@@ -1,13 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import str
+from builtins import open
+from builtins import range
 from os import path
-VERSION_PREFIX = str(u'10F4000041444139204E69636F6C6C73')
+VERSION_PREFIX = '10F4000041444139204E69636F6C6C73'
 NUM_VERSION_BYTES = 8
 PRESET_FILE_NAME = u'Preset.syx'
 
 def get_version_number_from_string(version_string):
     result = 0.0
     if version_string:
-        figures = [ version_string[i:i + 2] for i in xrange(0, len(version_string), 2) ]
+        figures = [ version_string[i:i + 2] for i in range(0, len(version_string), 2) ]
         result = sum([ int(fig) * 10 ** (1 - i) for i, fig in enumerate(figures) ])
     return result
 
@@ -25,7 +28,7 @@ def get_provided_firmware_version():
     result = 0.0
     try:
         mod_path = path.dirname(path.realpath(__file__))
-        with open(path.join(mod_path, PRESET_FILE_NAME), u'r') as f:
+        with open(path.join(mod_path, PRESET_FILE_NAME), u'rb') as f:
             version_string = get_version_string_from_file_content(f.read())
             result = get_version_number_from_string(version_string)
     except IOError:
