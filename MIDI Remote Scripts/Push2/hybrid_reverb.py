@@ -41,7 +41,7 @@ def to_percentage_display(value):
     percentage = 100.0 * value
     format_str = '%.0f'
     percentage_str = format_str % percentage
-    return unicode(percentage_str + ' %')
+    return percentage_str + ' %'
 
 
 def to_ms_display(value):

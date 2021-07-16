@@ -294,7 +294,9 @@ class RelativeInternalParameter(InternalParameter):
 class IntegerParameter(InternalParameter):
 
     def __init__(self, integer_value_host=None, integer_value_property_name=None, min_value=None, max_value=None, show_as_quantized=False, *a, **k):
-        (super(IntegerParameter, self).__init__)(a, display_value_conversion=unicode, **k)
+        if 'display_value_conversion' not in k:
+            k['display_value_conversion'] = unicode
+        (super(IntegerParameter, self).__init__)(*a, **k)
         self._integer_value_host = integer_value_host
         self._integer_value_property_name = integer_value_property_name
         self._min_value = min_value if min_value is not None else 0

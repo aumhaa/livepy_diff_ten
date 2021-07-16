@@ -15,6 +15,7 @@ from .LomUtils import LomInformation, LomIntrospection, LomPathCalculator, LomPa
 from .LomTypes import ENUM_TYPES, LIVE_APP, CONTROL_SURFACES, PROPERTY_TYPES, ROOT_KEYS, MFLPropertyFormats, get_control_surfaces, get_exposed_lom_types, get_exposed_property_info, get_root_prop, is_lom_object, is_cplusplus_lom_object, is_object_iterable, LomNoteOperationWarning, LomNoteOperationError, LomAttributeError, LomObjectError, verify_object_property, data_dict_to_json
 from .NotesAPIUtils import midi_note_to_dict, verify_note_specification_requirements
 logger = logging.getLogger(__name__)
+MAX_SYMBOL_SIZE = 32767
 
 def get_current_max_device(device_id):
     return MxDCore.instance.manager.get_max_device(device_id)
@@ -40,6 +41,8 @@ NOTES_API_MAIN_KEY_ERROR = "Expecting 'notes' as the main dictionary's key"
 NOTE_ID_MISSING_ERROR = "Required key 'note_id' is missing"
 PRIVATE_PROP_WARNING = 'Warning: Calling private property. This property might change or be removed in the future.'
 INVALID_NOTE_ID_ERROR = "Provided note ID doesn't exist in the clip"
+DICT_SIZE_EXCEEDED_ERROR = 'Maximum dictionary size exceeded'
+PARSE_ERROR = 'Error parsing parameters'
 
 def concatenate_strings(string_list, string_format='%s %s'):
     return str(reduce(lambda s1, s2: string_format % (s1, s2), string_list) if len(string_list) > 0 else '')
@@ -502,9 +505,24 @@ class MxDCore(object):
 
     def obj_call(self, device_id, object_id, parameters):
         current_object = self._get_current_lom_object(device_id, object_id)
+        param_comps = None
+        try:
+            param_comps = self._parse(device_id, object_id, parameters)
+        except Exception:
+            function_name, rest = parameters.split(' ', 1)
+            is_long_dict = rest.startswith('"{') and len(parameters) >= MAX_SYMBOL_SIZE
+            if is_long_dict:
+                self._raise(device_id, object_id, '%s: %s' % (function_name, DICT_SIZE_EXCEEDED_ERROR))
+            else:
+                self._raise(device_id, object_id, '%s: %s' % (PARSE_ERROR, parameters))
+            return
+        else:
+
+            def to_str(param_comps):
+                return ' '.join(map(str, param_comps))
+
         if current_object != None:
             try:
-                param_comps = self._parse(device_id, object_id, parameters)
                 func_name = str(param_comps[0])
                 handler = self._call_handler[func_name] if func_name in list(self._call_handler.keys()) else self._object_default_call_handler
                 handler(device_id, object_id, current_object, param_comps)
@@ -517,7 +535,7 @@ class MxDCore(object):
 
             except RuntimeError as e:
                 try:
-                    self._raise(device_id, object_id, "%s: '%s'" % (str(e), parameters))
+                    self._raise(device_id, object_id, "%s: '%s'" % (str(e), to_str(param_comps)))
                 finally:
                     e = None
                     del e
@@ -525,13 +543,13 @@ class MxDCore(object):
             except Exception as e:
                 try:
                     reason = 'Invalid ' + ('arguments' if isinstance(e, TypeError) else 'syntax')
-                    self._raise(device_id, object_id, "%s: '%s'" % (reason, parameters))
+                    self._raise(device_id, object_id, "%s: '%s'" % (reason, to_str(param_comps)))
                 finally:
                     e = None
                     del e
 
         else:
-            self._warn(device_id, object_id, 'call %s: no valid object set' % parameters)
+            self._warn(device_id, object_id, 'call %s: no valid object set' % to_str(param_comps))
 
     def obs_set_id(self, device_id, object_id, parameter):
         if self._is_integer(parameter) and self._lom_id_exists(device_id, int(parameter)):
@@ -708,7 +726,11 @@ class MxDCore(object):
         function_name, function_parameters = parameters[0], parameters[1:]
         verify_object_property(lom_object, function_name, self.epii_version)
         midi_note_vector = (getattr(lom_object, function_name))(*function_parameters)
-        self.manager.send_message(device_id, object_id, 'obj_call_result', self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector)))
+        result = self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector))
+        if len(result) > MAX_SYMBOL_SIZE:
+            self._raise(device_id, object_id, function_name + ': ' + DICT_SIZE_EXCEEDED_ERROR)
+            return
+        self.manager.send_message(device_id, object_id, 'obj_call_result', result)
 
     def _object_get_notes_by_id_handler(self, device_id, object_id, lom_object, parameters):
         function_name, function_parameters = parameters[0], parameters[1:]
@@ -718,7 +740,11 @@ class MxDCore(object):
         except ValueError:
             raise RuntimeError(INVALID_NOTE_ID_ERROR)
 
-        self.manager.send_message(device_id, object_id, 'obj_call_result', self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector)))
+        result = self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector))
+        if len(result) > MAX_SYMBOL_SIZE:
+            self._raise(device_id, object_id, function_name + ': ' + DICT_SIZE_EXCEEDED_ERROR)
+            return
+        self.manager.send_message(device_id, object_id, 'obj_call_result', result)
 
     def _object_add_new_notes_handler(self, device_id, object_id, lom_object, parameters):
         function_name, function_parameter = parameters[0], parameters[1]

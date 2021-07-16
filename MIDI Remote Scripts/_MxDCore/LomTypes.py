@@ -403,6 +403,16 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
  
  Live.Eq8Device.Eq8Device.View: tuple(_DEVICE_VIEW_BASE_PROPS + [MFLProperty('selected_band')]), 
  
+ Live.HybridReverbDevice.HybridReverbDevice: tuple(_DEVICE_BASE_PROPS + [
+                                              MFLProperty('ir_attack_time'),
+                                              MFLProperty('ir_category_index'),
+                                              MFLProperty('ir_category_list'),
+                                              MFLProperty('ir_decay_time'),
+                                              MFLProperty('ir_file_index'),
+                                              MFLProperty('ir_file_list'),
+                                              MFLProperty('ir_size_factor'),
+                                              MFLProperty('ir_time_shaping_on')]), 
+ 
  Live.MaxDevice.MaxDevice: tuple(_DEVICE_BASE_PROPS + [
                             MFLProperty('get_bank_count'),
                             MFLProperty('get_bank_name'),
@@ -725,6 +735,15 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                          MFLProperty('device_insert_mode'),
                          MFLProperty('is_collapsed'),
                          MFLProperty('select_instrument')), 
+ 
+ Live.SpectralResonatorDevice.SpectralResonatorDevice: tuple(_DEVICE_BASE_PROPS + [
+                                                        MFLProperty('frequency_dial_mode'),
+                                                        MFLProperty('midi_gate'),
+                                                        MFLProperty('mod_mode'),
+                                                        MFLProperty('mono_poly'),
+                                                        MFLProperty('pitch_mode'),
+                                                        MFLProperty('pitch_bend_range'),
+                                                        MFLProperty('polyphony')]), 
  
  Live.WavetableDevice.WavetableDevice: tuple(_DEVICE_BASE_PROPS + [
                                         MFLProperty('add_parameter_to_modulation_matrix'),

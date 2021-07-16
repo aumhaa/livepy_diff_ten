@@ -465,8 +465,12 @@ class SimpleControlSurface(EventObject):
         pref_dict = {}
         try:
             pref_dict = loads(bytes(preferences))
-        except Exception:
-            pass
+        except Exception as e:
+            try:
+                logger.error('Error while loading control surface preferences %s', str(e))
+            finally:
+                e = None
+                del e
 
         preferences.set_serializer(lambda: dumps(pref_dict))
         return pref_dict

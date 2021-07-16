@@ -100,6 +100,7 @@ PARAMETER_SENSITIVITIES = {'UltraAnalog':{'OSC1 Octave':{DEFAULT_SENSITIVITY_KEY
  'Flanger':{'Sync Rate': {DEFAULT_SENSITIVITY_KEY: 0.1}}, 
  'GrainDelay':{'Pitch': {DEFAULT_SENSITIVITY_KEY: 0.1}}, 
  'Phaser':{'LFO Sync Rate': {DEFAULT_SENSITIVITY_KEY: 0.1}}, 
+ 'PhaserNew':{'Ph/Fl Mode': {DEFAULT_SENSITIVITY_KEY: 0.02}}, 
  'Resonator':{'II Pitch':{DEFAULT_SENSITIVITY_KEY: 0.1}, 
   'III Pitch':{DEFAULT_SENSITIVITY_KEY: 0.1}, 
   'IV Pitch':{DEFAULT_SENSITIVITY_KEY: 0.1}, 

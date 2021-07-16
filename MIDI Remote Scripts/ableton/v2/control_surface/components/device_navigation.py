@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 from builtins import filter
 from builtins import map
-from ...base import first, index_if, listens, liveobj_changed, liveobj_valid, SlotGroup
+from ...base import first, index_if, listens, liveobj_changed, liveobj_valid, SlotGroup, EventObject
 from ...control_surface import device_to_appoint
 from .item_lister import ItemListerComponent, ItemProvider
 

@@ -18,4 +18,4 @@ class Redux2DeviceDecorator(LiveObjectDecorator, EventObject):
 
     @property
     def parameters(self):
-        return tuple(self._live_object.parameters) + self._additional_parameters
+        return tuple(self._live_object.parameters)

@@ -5,6 +5,7 @@ from .auto_filter import AutoFilterDeviceComponent
 from .channel_eq import ChannelEqDeviceComponent
 from .compressor import CompressorDeviceComponent
 from .chorus2 import Chorus2DeviceComponent
+from .corpus import CorpusDeviceComponent
 from .delay import DelayDeviceComponent
 from .echo import EchoDeviceComponent
 from .eq8 import Eq8DeviceComponent
@@ -19,6 +20,7 @@ DEVICE_COMPONENT_MODES = {'Generic':GenericDeviceComponent,
  'Eq8':Eq8DeviceComponent, 
  'Compressor2':CompressorDeviceComponent, 
  'Chorus2':Chorus2DeviceComponent, 
+ 'Corpus':CorpusDeviceComponent, 
  'InstrumentVector':WavetableDeviceComponent, 
  'Operator':OperatorDeviceComponent, 
  'Echo':EchoDeviceComponent, 
@@ -35,6 +37,8 @@ class DeviceComponentProvider(ModesComponent):
     @depends(device_provider=None)
     def __init__(self, device_component_layer=None, device_decorator_factory=None, banking_info=None, device_bank_registry=None, device_provider=None, delete_button=None, decoupled_parameter_list_change_notifications=False, *a, **k):
         (super(DeviceComponentProvider, self).__init__)(*a, **k)
+        self._shrink_parameters_dirty = False
+        self._decoupled_parameter_list_change_notifications = decoupled_parameter_list_change_notifications
         self._is_drum_pad_selected = False
         self._device_provider = device_provider
         self._visualisation_real_time_data = RealTimeDataComponent(channel_type='visualisation',
@@ -52,7 +56,7 @@ class DeviceComponentProvider(ModesComponent):
               visualisation_real_time_data=(self._visualisation_real_time_data),
               is_enabled=False,
               delete_button=delete_button,
-              decoupled_parameter_list_change_notifications=decoupled_parameter_list_change_notifications)
+              decoupled_parameter_list_change_notifications=(self._decoupled_parameter_list_change_notifications))
 
         for mode_name, device_component in self._device_component_modes.items():
             self.add_mode(mode_name, [device_component, (device_component, device_component_layer)])
@@ -74,13 +78,13 @@ class DeviceComponentProvider(ModesComponent):
         self._DeviceComponentProvider__on_options_changed.subject = device_component
         self._DeviceComponentProvider__on_visualisation_visible_changed.subject = device_component
         device_component.set_device(device)
-        self.notify_shrink_parameters()
+        self._notify_or_mark_as_dirty_shrink_parameters()
         self._visualisation_real_time_data.set_data(device)
 
     def set_drum_pad_selected(self, is_selected):
         if self._is_drum_pad_selected != is_selected:
             self._is_drum_pad_selected = is_selected
-            self.notify_shrink_parameters()
+            self._notify_or_mark_as_dirty_shrink_parameters()
             self.notify_visualisation_real_time_channel_id()
 
     @property
@@ -108,6 +112,11 @@ class DeviceComponentProvider(ModesComponent):
         current_device = getattr(self.device(), '_live_object', self.device())
         return liveobj_changed(current_device, device)
 
+    def notify_changes(self):
+        if self._shrink_parameters_dirty:
+            self._shrink_parameters_dirty = False
+            self.notify_shrink_parameters()
+
     @listens('device')
     def __on_provided_device_changed(self):
         device = self._device_provider.device
@@ -120,9 +129,15 @@ class DeviceComponentProvider(ModesComponent):
         self.notify_parameters()
         self.device_component.parameters_changed()
 
+    def _notify_or_mark_as_dirty_shrink_parameters(self):
+        if self._decoupled_parameter_list_change_notifications:
+            self._shrink_parameters_dirty = True
+        else:
+            self.notify_shrink_parameters()
+
     @listens('shrink_parameters')
     def __on_shrink_parameters_changed(self):
-        self.notify_shrink_parameters()
+        self._notify_or_mark_as_dirty_shrink_parameters()
 
     @listens('options')
     def __on_options_changed(self):

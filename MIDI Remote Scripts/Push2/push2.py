@@ -1155,3 +1155,4 @@ class Push2(IdentifiableControlSurface, PushBase):
         if self._device_component:
             if self._decoupled_parameter_list_change_notifications:
                 self._device_component.device_component.update_and_notify_parameters()
+                self._device_component.notify_changes()

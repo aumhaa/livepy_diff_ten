@@ -11,6 +11,8 @@ from pushbase import consts
 DeviceType = Live.Device.DeviceType
 
 def make_navigation_node(model_object, is_entering=True, session_ring=None, device_bank_registry=None, banking_info=None, device_provider=None):
+    if isinstance(model_object, ChainNode.RackBank2Device):
+        model_object = model_object.rack_device
     node = None
     if model_object == None:
         node = None
@@ -205,6 +207,10 @@ class ChainNode(ModelNode):
         def __init__(self, rack_device, *a, **k):
             (super(EventObject, self).__init__)(*a, **k)
             self._rack_device = rack_device
+
+        @property
+        def rack_device(self):
+            return self._rack_device
 
         @listenable_property
         def name(self):

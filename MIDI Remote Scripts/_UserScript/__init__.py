@@ -46,7 +46,7 @@ def create_instance(c_instance, user_path=''):
         if file_object:
             file_data = None
             config_parser = ConfigParser()
-            config_parser.readfp(file_object, user_path)
+            config_parser.read_file(file_object)
             device_controls = [
              (-1, -1),
              (-1, -1),
