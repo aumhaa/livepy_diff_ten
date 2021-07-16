@@ -13,11 +13,11 @@ import _Framework.ClipSlotComponent as ClipSlotComponent
 from .ClipActionsComponent import double_clip, duplicate_clip
 
 class SpecialClipSlotComponent(ClipSlotComponent):
-    quantization_component = None
 
-    @depends(should_arm=None)
-    def __init__(self, should_arm=None, *a, **k):
+    @depends(should_arm=None, quantization_component=None)
+    def __init__(self, should_arm=None, quantization_component=None, *a, **k):
         self._should_arm = False
+        self._quantization_component = quantization_component
         self._double_loop_button = None
         self._quantize_button = None
         (super(SpecialClipSlotComponent, self).__init__)(*a, **k)
@@ -70,8 +70,8 @@ class SpecialClipSlotComponent(ClipSlotComponent):
     def _do_quantize_clip(self, clip_slot):
         clip = clip_slot.clip
         if clip:
-            if self.quantization_component:
-                self.quantization_component.quantize_clip(clip)
+            if self._quantization_component:
+                self._quantization_component.quantize_clip(clip)
 
     def _do_duplicate_clip(self):
         if self._clip_slot:

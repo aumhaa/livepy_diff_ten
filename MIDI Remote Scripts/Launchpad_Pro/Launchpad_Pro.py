@@ -28,7 +28,7 @@ from .SpecialSessionRecordingComponent import SpecialSessionRecordingComponent
 from .DrumGroupFinderComponent import DrumGroupFinderComponent
 from .DrumGroupComponent import DrumGroupComponent
 from .SpecialMixerComponent import SpecialMixerComponent
-from .SpecialSessionComponent import SpecialSessionComponent as SessionComponent, SpecialClipSlotComponent, SpecialSessionZoomingComponent as SessionZoomingComponent, SessionZoomingManagerComponent
+from .SpecialSessionComponent import SpecialSessionComponent as SessionComponent, SpecialSessionZoomingComponent as SessionZoomingComponent, SessionZoomingManagerComponent
 from .SpecialModesComponent import SpecialModesComponent, SpecialReenterBehaviour, CancelingReenterBehaviour
 from .UserMatrixComponent import UserMatrixComponent
 from . import consts
@@ -238,7 +238,8 @@ class Launchpad_Pro(IdentifiableControlSurface, OptimizedControlSurface):
             self._create_global_component()
             self._last_sent_mode_byte = None
             with inject(layout_setup=(const(self._layout_setup)),
-              should_arm=(const(self._should_arm_track))).everywhere():
+              should_arm=(const(self._should_arm_track)),
+              quantization_component=(const(self._actions_component))).everywhere():
                 self._create_session()
                 self._create_recording()
                 self._create_actions()
@@ -288,7 +289,6 @@ class Launchpad_Pro(IdentifiableControlSurface, OptimizedControlSurface):
           scene_bank_down_button=(self._midimap['Arrow_Down_Button'])))
         self._session.set_enabled(True)
         self._session.set_rgb_mode(LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE)
-        SpecialClipSlotComponent.quantization_component = self._actions_component
         for scene_index in range(NUM_SCENES):
             scene = self._session.scene(scene_index)
             scene.layer = Layer(select_button=(self._midimap['Shift_Button']),
@@ -313,12 +313,12 @@ class Launchpad_Pro(IdentifiableControlSurface, OptimizedControlSurface):
 
     def _create_actions(self):
         self._clip_actions_component = ClipActionsComponent((self._target_track_component),
+          (self._actions_component),
           name='Clip_Actions',
           is_enabled=False,
           layer=Layer(duplicate_button=(self._midimap['Duplicate_Button']),
           double_button=(self._midimap['Double_Loop_Button']),
           quantize_button=(self._midimap['Quantize_Button'])))
-        ClipActionsComponent.quantization_component = self._actions_component
 
     def _create_drums(self):
         self._drum_group_finder = DrumGroupFinderComponent((self._target_track_component),

@@ -2279,7 +2279,7 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
                           use('Dry Wet').with_name('Dry/Wet')), 
     
     OPTIONS_KEY: (
-                  use('Freeze').if_parameter('On').has_value('On').else_use(''),
+                  use('Frozen').if_parameter('On').has_value('On').else_use(''),
                   use('Unit').if_parameter('Mode').has_value('Retrigger').and_parameter('Retrigger Mode').has_value('Sync').and_parameter('On').has_value('On').else_use(''),
                   use('Delay Dly. Unit').if_parameter('Delay On').has_value('On').else_use(''),
                   '',
@@ -2300,7 +2300,7 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
     
     OPTIONS_KEY: (
                   '',
-                  use('Freeze').if_parameter('On').has_value('On').else_use(''),
+                  use('Frozen').if_parameter('On').has_value('On').else_use(''),
                   use('Unit').if_parameter('Retrigger Mode').has_value('Sync').and_parameter('Mode').has_value('Retrigger').and_parameter('On').has_value('On').else_use(''),
                   use('Fade Type').if_parameter('Mode').has_value('Retrigger').and_parameter('On').has_value('On').else_use(''),
                   '',
@@ -2316,7 +2316,7 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
                           use('Delay Tilt').with_name('Tilt').if_parameter('Delay On').has_value('On').else_use(''),
                           use('Delay Spray').with_name('Spray').if_parameter('Delay On').has_value('On').else_use(''),
                           use('Delay Mask').with_name('Mask').if_parameter('Delay On').has_value('On').else_use(''),
-                          use('Delay Dry Wet').with_name('Del. Dry/Wet')), 
+                          use('Dry Wet').with_name('Dry/Wet')), 
     
     OPTIONS_KEY: (
                   use('Delay Dly. Unit').if_parameter('Delay On').has_value('On').else_use(''),
@@ -2331,7 +2331,7 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
    {BANK_PARAMETERS_KEY: (
                           'Delay On',
                           use('Delay Stereo Spread').with_name('Stereo').if_parameter('Delay On').has_value('On').else_use(''),
-                          use('Delay Dry Wet').with_name('Del. Dry/Wet').if_parameter('Delay On').has_value('On').else_use(''),
+                          use('Delay Mix').with_name('Mix').if_parameter('Delay On').has_value('On').else_use(''),
                           '',
                           '',
                           '',

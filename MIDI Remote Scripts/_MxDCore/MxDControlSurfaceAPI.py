@@ -5,6 +5,7 @@ from builtins import object
 from future.utils import string_types
 from collections import namedtuple
 from ableton.v2.base import old_hasattr
+from _MxDCore.ControlSurfaceWrapper import WrapperRegistry
 from _MxDCore.LomTypes import is_control_surface, get_control_surfaces
 RECEIVE_MIDI_TIMEOUT = 0.2
 
@@ -18,8 +19,8 @@ def midi_bytes_are_sysex(bytes):
     return len(bytes) > 3 and bytes[0] == 240 and bytes[(-1)] == 247
 
 
-def check_attribute(lom_object, actual_name, shown_name):
-    if not old_hasattr(lom_object, actual_name):
+def check_has_mxd_midi_scheduler(lom_object, shown_name):
+    if not old_hasattr(lom_object, 'mxd_midi_scheduler'):
         raise AttributeError("object '{}' has no attribute '{}'".format(type(lom_object).__name__, shown_name))
 
 
@@ -28,7 +29,11 @@ class MxDControlSurfaceAPI(object):
     def __init__(self, mxdcore, *a, **k):
         (super(MxDControlSurfaceAPI, self).__init__)(*a, **k)
         self._mxdcore = mxdcore
-        self._grabbed_controls_per_cs = {}
+        self._wrapper_registry = WrapperRegistry()
+
+    @property
+    def wrapper_registry(self):
+        return self._wrapper_registry
 
     class MxDMidiOwner(namedtuple('Owner', 'device_id object_id mxdcore')):
 
@@ -50,12 +55,12 @@ class MxDControlSurfaceAPI(object):
             return midi_bytes_are_sysex(message)
 
     def object_send_midi(self, device_id, object_id, lom_object, parameters):
-        check_attribute(lom_object, 'mxd_midi_scheduler', 'send_midi')
+        check_has_mxd_midi_scheduler(lom_object, 'send_midi')
         midi_message = tuple(map(midi_byte_to_int, parameters[1:]))
         lom_object.mxd_midi_scheduler.send(self.MxDMidiOwner(device_id, object_id, self._mxdcore), midi_message)
 
     def object_send_receive_sysex(self, device_id, object_id, lom_object, parameters):
-        check_attribute(lom_object, 'mxd_midi_scheduler', 'send_receive_sysex')
+        check_has_mxd_midi_scheduler(lom_object, 'send_receive_sysex')
         owner = self.MxDMidiOwner(device_id, object_id, self._mxdcore)
         has_timeout = len(parameters) > 2 and parameters[(-2)] == 'timeout'
         timeout = parameters[(-1)] if has_timeout else RECEIVE_MIDI_TIMEOUT
@@ -67,11 +72,11 @@ class MxDControlSurfaceAPI(object):
             self._mxdcore._raise(device_id, object_id, 'non-sysex passed to send_receive_sysex')
 
     def object_grab_midi(self, device_id, object_id, lom_object, parameters):
-        check_attribute(lom_object, 'mxd_midi_scheduler', 'grab_midi')
+        check_has_mxd_midi_scheduler(lom_object, 'grab_midi')
         lom_object.mxd_midi_scheduler.grab(self.MxDMidiOwner(device_id, object_id, self._mxdcore))
 
     def object_release_midi(self, device_id, object_id, lom_object, parameters):
-        check_attribute(lom_object, 'mxd_midi_scheduler', 'release_midi')
+        check_has_mxd_midi_scheduler(lom_object, 'release_midi')
         lom_object.mxd_midi_scheduler.release(self.MxDMidiOwner(device_id, object_id, self._mxdcore))
 
     def release_control_surface_midi(self, device_id, object_id):
@@ -82,32 +87,18 @@ class MxDControlSurfaceAPI(object):
     def object_get_control_names(self, device_id, object_id, lom_object, parameters):
         if not is_control_surface(lom_object):
             raise AttributeError("object '{}' has no attribute get_control_names".format(type(lom_object).__name__))
-        control_names = self._get_cs_control_names(lom_object)
+        control_names = lom_object.control_names
         result = 'control_names %d\n' % len(control_names) + ''.join(['control {}\n'.format(name) for name in control_names]) + 'done'
         self._mxdcore.manager.send_message(device_id, object_id, 'obj_call_result', result)
-
-    def _get_cs_control_names(self, cs):
-        return [control.name for control in cs.controls if old_hasattr(control, 'name') if control.name]
 
     def object_get_control(self, device_id, object_id, lom_object, parameters):
         if not is_control_surface(lom_object):
             raise AttributeError("object '{}' has no attribute get_control".format(type(lom_object).__name__))
         cs = lom_object
         name = parameters[1]
-        control = self._get_cs_control(cs, name)
+        control = cs.get_control_by_name(name)
         result_str = self._mxdcore.str_representation_for_object(control)
         self._mxdcore.manager.send_message(device_id, object_id, 'obj_call_result', result_str)
-
-    def _get_cs_control(self, cs, name):
-        for control in cs.controls:
-            if old_hasattr(control, 'name'):
-                if control.name == name:
-                    return control
-
-    def set_control_element(self, control, grabbed):
-        if old_hasattr(control, 'release_parameter'):
-            control.release_parameter()
-        control.reset()
 
     def _get_control_or_raise(self, cs, control_or_name, command):
         if not is_control_surface(cs):
@@ -115,11 +106,11 @@ class MxDControlSurfaceAPI(object):
         if not control_or_name:
             raise AttributeError('control id or name required for {}'.format(command))
         if isinstance(control_or_name, string_types):
-            control = self._get_cs_control(cs, control_or_name)
+            control = cs.get_control_by_name(control_or_name)
             assert control, "{} is not a control of '{}'".format(control_or_name, type(cs).__name__)
         else:
             control = control_or_name
-            if control not in cs.controls:
+            if not cs.has_control(control):
                 id_str = self._mxdcore.str_representation_for_object(control)
                 raise AttributeError("'{}' ({}) is not a control of '{}'".format(type(control).__name__, id_str, type(cs).__name__))
         return control
@@ -128,34 +119,10 @@ class MxDControlSurfaceAPI(object):
         cs = lom_object
         control_or_name = parameters[1]
         control = self._get_control_or_raise(cs, control_or_name, 'grab_control')
-        if cs not in self._grabbed_controls_per_cs:
-            self._grabbed_controls_per_cs[cs] = []
-            cs.add_disconnect_listener(self._disconnect_control_surface)
-        grabbed_controls = self._grabbed_controls_per_cs[cs]
-        if control not in grabbed_controls:
-            with cs.component_guard():
-                priority = cs.mxd_grab_control_priority() if old_hasattr(cs, 'mxd_grab_control_priority') else 1
-                control.resource.grab(self, priority=priority)
-                if old_hasattr(control, 'suppress_script_forwarding'):
-                    control.suppress_script_forwarding = False
-                grabbed_controls.append(control)
+        cs.grab_control(control)
 
     def object_release_control(self, device_id, object_id, lom_object, parameters):
         cs = lom_object
         control_or_name = parameters[1]
         control = self._get_control_or_raise(cs, control_or_name, 'release_control')
-        grabbed_controls = self._grabbed_controls_per_cs.setdefault(cs, [])
-        if control in grabbed_controls:
-            with cs.component_guard():
-                grabbed_controls.remove(control)
-                control.resource.release(self)
-
-    def _disconnect_control_surface(self, cs):
-        try:
-            for control in self._grabbed_controls_per_cs[cs]:
-                with cs.component_guard():
-                    control.resource.release(self)
-
-            del self._grabbed_controls_per_cs[cs]
-        except KeyError:
-            pass
+        cs.release_control(control)

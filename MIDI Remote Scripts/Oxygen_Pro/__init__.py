@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC, PORTS_KEY, SCRIPT, controller_id, inport, outport
+from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC, PORTS_KEY, REMOTE, SCRIPT, controller_id, inport, outport
 from .oxygen_pro import Oxygen_Pro
 
 def get_capabilities():
@@ -10,9 +10,11 @@ def get_capabilities():
                          'Oxygen Pro 25', 'Oxygen Pro 49', 'Oxygen Pro 61']), 
      
      PORTS_KEY: [
-                 inport(props=[]),
+                 inport(props=[NOTES_CC, REMOTE]),
                  inport(props=[]),
                  inport(props=[NOTES_CC, SCRIPT]),
+                 outport(props=[]),
+                 outport(props=[]),
                  outport(props=[SCRIPT])]}
 
 

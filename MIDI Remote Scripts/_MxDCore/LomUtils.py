@@ -5,6 +5,7 @@ from builtins import object
 import sys, types
 from itertools import chain
 from ableton.v2.base import old_hasattr
+from .ControlSurfaceWrapper import is_real_control_surface
 from .MxDUtils import TupleWrapper
 from .LomTypes import cs_base_classes, TUPLE_TYPES, PROPERTY_TYPES, EXTRA_CS_FUNCTIONS, ENUM_TYPES, ROOT_KEYS, LIVE_APP, MFLPropertyFormats, LomObjectError, LomAttributeError, get_exposed_property_names_for_type, get_exposed_property_info, is_class, get_root_prop, is_lom_object, is_cplusplus_lom_object, is_object_iterable
 
@@ -162,10 +163,11 @@ def is_control_surfaces_list(path_component):
     return path_component in ('cs', 'control_surfaces')
 
 
-def wrap_control_surfaces_list(parent):
+def wrap_control_surfaces_list(parent, cs_wrapper_registry):
     return TupleWrapper.get_tuple_wrapper(parent,
       'control_surfaces',
-      element_filter=(lambda e: isinstance(e, cs_base_classes())))
+      element_filter=is_real_control_surface,
+      element_transform=(cs_wrapper_registry.wrap))
 
 
 class LomPathCalculator(object):
@@ -243,11 +245,12 @@ class LomPathCalculator(object):
 
 class LomPathResolver(object):
 
-    def __init__(self, path_components, external_device, lom_classes, list_manager, *a, **k):
+    def __init__(self, path_components, external_device, lom_classes, list_manager, cs_wrapper_registry=None, *a, **k):
         (super(LomPathResolver, self).__init__)(*a, **k)
         self._external_device = external_device
         self._lom_classes = lom_classes
         self._list_manager = list_manager
+        self._cs_wrapper_registry = cs_wrapper_registry
         self._lom_object = self._calculate_object_from_path(path_components)
 
     @property
@@ -261,7 +264,7 @@ class LomPathResolver(object):
         if len(path_components) > 1:
             parent = self._calculate_object_from_path(path_components[:-1])
         if is_control_surfaces_list(attribute):
-            lom_object = wrap_control_surfaces_list(parent)
+            lom_object = wrap_control_surfaces_list(parent, self._cs_wrapper_registry)
         elif parent != None:
             if old_hasattr(parent, attribute):
                 selector = self._list_manager.get_list_wrapper if is_cplusplus_lom_object(parent) else TupleWrapper.get_tuple_wrapper
@@ -278,7 +281,7 @@ class LomPathResolver(object):
                     index = int(component)
                     if is_control_surfaces_list(prev_component):
                         parent = components[(-2)] if len(components) > 1 else None
-                        tuple_wrapper = wrap_control_surfaces_list(parent)
+                        tuple_wrapper = wrap_control_surfaces_list(parent, self._cs_wrapper_registry)
                         lom_object = tuple_wrapper.get_list()[index]
                     else:
                         lom_object = lom_object[index]

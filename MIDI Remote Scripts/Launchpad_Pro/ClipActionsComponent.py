@@ -44,13 +44,13 @@ class ClipActionsComponent(ControlSurfaceComponent, Subject):
     duplicate_button = ButtonControl(**ACTION_BUTTON_COLORS)
     double_button = ButtonControl(**ACTION_BUTTON_COLORS)
     quantize_button = ButtonControl(**ACTION_BUTTON_COLORS)
-    quantization_component = None
     __subject_events__ = ('selected_clip', )
 
-    def __init__(self, target_track_component, *a, **k):
+    def __init__(self, target_track_component, quantization_component, *a, **k):
         (super(ClipActionsComponent, self).__init__)(*a, **k)
         self._target_track_component = target_track_component
         self._on_track_changed.subject = self._target_track_component
+        self._quantization_component = quantization_component
         self._use_selected_track = False
         self._selected_clip = None
         self._track = self.song().view.selected_track
@@ -83,8 +83,8 @@ class ClipActionsComponent(ControlSurfaceComponent, Subject):
     @quantize_button.pressed
     def quantize_button(self, button):
         if self.can_perform_clip_action():
-            if self.quantization_component:
-                self.quantization_component.quantize_clip(self._selected_clip)
+            if self._quantization_component:
+                self._quantization_component.quantize_clip(self._selected_clip)
 
     def delete_pitch(self, pitch):
         if self.can_perform_midi_clip_action():

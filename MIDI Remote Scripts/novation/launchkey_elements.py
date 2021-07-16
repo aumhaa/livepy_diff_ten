@@ -3,7 +3,7 @@ from builtins import range
 import Live
 from ableton.v2.base import depends
 from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, PrioritizedResource
-from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement, EncoderElement
+from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement, ComboElement, EncoderElement
 SESSION_WIDTH = 8
 SESSION_HEIGHT = 2
 DRUM_CHANNEL = 9
@@ -28,6 +28,7 @@ class LaunchkeyElements(object):
           'Shift_Button', resource_type=PrioritizedResource, channel=0)
         self.play_button = create_button(115, 'Play_Button')
         self.record_button = create_button(117, 'Record_Button')
+        self.play_button_with_shift = self.with_shift(self.play_button)
         self.scene_launch_buttons_raw = [
          create_button(104, 'Scene_Launch_Button', channel=0),
          create_button(105, 'Stop_Solo_Mute_Button', channel=0)]
@@ -46,3 +47,8 @@ class LaunchkeyElements(object):
           'InControl_Mode_Switch', msg_type=MIDI_NOTE_TYPE)
         self.pad_layout_switch = create_button(3, 'Pad_Layout_Switch')
         self.pot_layout_switch = create_button(9, 'Pot_Layout_Switch')
+
+    def with_shift(self, button):
+        return ComboElement(control=button,
+          modifier=(self.shift_button),
+          name=('{}_With_Shift'.format(button.name)))

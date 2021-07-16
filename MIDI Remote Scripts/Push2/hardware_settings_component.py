@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from __future__ import division
 from builtins import round
 from past.utils import old_div
-import Live
+import weakref, Live
 from ableton.v2.base import clamp, listens, task
 from ableton.v2.control_surface import Component
 LED_FADE_IN_DELAY = 0.3
@@ -17,7 +17,13 @@ class HardwareSettingsComponent(Component):
         self._settings = settings
         self._led_brightness_element = led_brightness_element
         self._display_brightness_element = display_brightness_element
-        self._led_brightness_timer = Live.Base.Timer(callback=(self._on_fade_in_led_brightness_timer),
+        component_ref = weakref.ref(self)
+
+        def timer_callback():
+            if component_ref():
+                component_ref()._on_fade_in_led_brightness_timer()
+
+        self._led_brightness_timer = Live.Base.Timer(callback=timer_callback,
           interval=LED_FADE_IN_FREQUENCY,
           repeat=True)
         self._target_led_brightness = 0

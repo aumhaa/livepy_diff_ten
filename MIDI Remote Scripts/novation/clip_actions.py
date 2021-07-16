@@ -4,7 +4,6 @@ import ableton.v2.control_surface.components as ClipActionsComponentBase
 from .blinking_button import BlinkingButtonControl
 
 class ClipActionsComponent(ClipActionsComponentBase):
-    quantization_component = None
     quantize_button = BlinkingButtonControl(color='Action.Quantize',
       blink_on_color='Action.QuantizePressed',
       blink_off_color='Action.Quantize')
@@ -13,8 +12,9 @@ class ClipActionsComponent(ClipActionsComponentBase):
       blink_off_color='Action.Double')
     __events__ = ('can_perform_clip_actions', )
 
-    def __init__(self, *a, **k):
+    def __init__(self, quantization_component=None, *a, **k):
         (super(ClipActionsComponent, self).__init__)(*a, **k)
+        self._quantization_component = quantization_component
         self.delete_button.color = 'Action.Delete'
         self.delete_button.pressed_color = 'Action.DeletePressed'
         self.duplicate_button.color = 'Action.Duplicate'
@@ -22,8 +22,8 @@ class ClipActionsComponent(ClipActionsComponentBase):
 
     @quantize_button.pressed
     def quantize_button(self, _):
-        if self.quantization_component:
-            self.quantization_component.quantize_clip(self.clip_slot.clip)
+        if self._quantization_component:
+            self._quantization_component.quantize_clip(self.clip_slot.clip)
             self.quantize_button.start_blinking()
 
     @double_loop_button.pressed

@@ -10,7 +10,7 @@ from ableton.v2.control_surface.components import DeviceParameterComponent
 from ableton.v2.control_surface.defaults import TIMER_DELAY
 from ableton.v2.control_surface.elements import ButtonMatrixElement, ComboElement, SysexElement
 from ableton.v2.control_surface.mode import EnablingModesComponent, LayerMode, ModesComponent, LazyEnablingMode, ReenterBehaviour, SetAttributeMode
-from pushbase.actions import select_clip_and_get_name_from_slot, select_scene_and_get_name
+from pushbase.actions import select_clip_and_get_name_from_slot, select_scene_and_get_description
 from pushbase.pad_sensitivity import PadUpdateComponent
 from pushbase.quantization_component import QUANTIZATION_NAMES_UNICODE, QuantizationComponent, QuantizationSettingsComponent
 from pushbase.selection import PushSelection
@@ -113,6 +113,22 @@ class RealTimeClientModel(EventObject):
         self.notify_clientId()
 
     clientId = property(_get_client_id, _set_client_id)
+
+
+class MixModeBehaviour(ReenterBehaviour):
+
+    def __init__(self, push):
+        self._push = push
+
+    def press_immediate(self, component, mode):
+        if self._push._is_on_master():
+            if self._push._mix_modes.selected_mode != 'track':
+                self._push._mix_modes.selected_mode = 'track'
+        super(MixModeBehaviour, self).press_immediate(component, mode)
+
+    def on_reenter(self):
+        if not self._push._is_on_master():
+            self._push._mix_modes.cycle_mode()
 
 
 class Push2(IdentifiableControlSurface, PushBase):
@@ -446,10 +462,12 @@ class Push2(IdentifiableControlSurface, PushBase):
           page_down_button='octave_down_button')
 
     def on_select_clip_slot(self, clip_slot):
-        self.show_notification('Clip Selected: ' + select_clip_and_get_name_from_slot(clip_slot, self.song))
+        self.show_notification('Clip selected: ' + select_clip_and_get_name_from_slot(clip_slot, self.song))
 
     def on_select_scene(self, scene):
-        self.show_notification('Scene Selected: ' + select_scene_and_get_name(scene, self.song))
+        scene_description = select_scene_and_get_description(scene, self.song)
+        if scene_description != '':
+            self.show_notification('Scene selected: ' + scene_description)
 
     def _create_session_mode(self):
         session_modes = MessengerModesComponent(muted=True, is_enabled=False)
@@ -802,19 +820,6 @@ class Push2(IdentifiableControlSurface, PushBase):
         self._mix_modes.selected_mode = 'global'
         self._model.mixerSelectView = self._mixer_control
         self._model.trackMixerSelectView = track_mixer_control
-
-        class MixModeBehaviour(ReenterBehaviour):
-
-            def press_immediate(behaviour_self, component, mode):
-                if self._is_on_master():
-                    if self._mix_modes.selected_mode != 'track':
-                        self._mix_modes.selected_mode = 'track'
-                super(MixModeBehaviour, behaviour_self).press_immediate(component, mode)
-
-            def on_reenter(behaviour_self):
-                if not self._is_on_master():
-                    self._mix_modes.cycle_mode()
-
         self._main_modes.add_mode('mix',
           [
          self._mix_modes,
@@ -822,7 +827,7 @@ class Push2(IdentifiableControlSurface, PushBase):
            attribute='parameter_provider',
            value=(self._track_parameter_provider)),
          self._clip_phase_enabler],
-          behaviour=(MixModeBehaviour()))
+          behaviour=(MixModeBehaviour(self)))
 
     def _init_dialog_modes(self):
         self._dialog_modes = ModesComponent()
@@ -1072,15 +1077,20 @@ class Push2(IdentifiableControlSurface, PushBase):
 
     def _create_controls(self):
         self._create_pad_sensitivity_update()
+        push2_ref = weakref.ref(self)
 
         class Deleter(object):
 
             @property
             def is_deleting(_):
-                return self._delete_default_component.is_deleting
+                if push2_ref():
+                    return push2_ref()._delete_default_component.is_deleting
+                raise RuntimeError('Attempting to access Push 2 Deleter when Push 2 is dead')
 
             def delete_clip_envelope(_, param):
-                return self._delete_default_component.delete_clip_envelope(param)
+                if push2_ref():
+                    return push2_ref()._delete_default_component.delete_clip_envelope(param)
+                raise RuntimeError('Attempting to delete clip enveloper when Push 2 is dead')
 
         self.elements = Elements(deleter=(Deleter()),
           undo_handler=UndoStepHandler(song=(self.song)),

@@ -77,7 +77,7 @@ class MessageBoxText(object):
     QUANTIZE_CLIP = '                  Quantized to:     %(to)s, %(amount)s'
     QUANTIZE_CLIP_PITCH = '                Quantized %(source)s to:   %(to)s, %(amount)s'
     DELETE_NOTES = '                  Notes deleted:    %s'
-    CAPTURE_AND_INSERT_SCENE = '                      Duplicated to scene %s'
+    CAPTURE_AND_INSERT_SCENE = '                      Duplicated to scene: %s'
     DUPLICATE_LOOP = '                   New loop length: %(length)s'
     DELETE_SCENE = '                  Scene deleted:    %s'
     DUPLICATE_SCENE = '                  Scene duplicated: %s'

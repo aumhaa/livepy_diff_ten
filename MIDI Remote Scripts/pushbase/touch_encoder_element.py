@@ -13,12 +13,11 @@ class TouchEncoderObserver(object):
 
 class TouchEncoderElement(TouchEncoderElementBase):
 
-    def __init__(self, undo_step_handler=None, undo_group=None, delete_handler=None, *a, **k):
+    def __init__(self, undo_step_handler=None, delete_handler=None, *a, **k):
         (super(TouchEncoderElement, self).__init__)(*a, **k)
         self._trigger_undo_step = False
         self._undo_step_open = False
         self._undo_step_handler = undo_step_handler
-        self._undo_group = undo_group
         self._delete_handler = delete_handler
         self.set_observer(None)
 
@@ -66,11 +65,11 @@ class TouchEncoderElement(TouchEncoderElementBase):
     def _begin_undo_step(self):
         if self._undo_step_handler:
             if self._trigger_undo_step:
-                self._undo_step_handler.begin_undo_step(client=(self._undo_group))
+                self._undo_step_handler.begin_undo_step(client=self)
                 self._trigger_undo_step = False
                 self._undo_step_open = True
 
     def _end_undo_step(self):
         if self._undo_step_handler:
             if self._undo_step_open:
-                self._undo_step_handler.end_undo_step(client=(self._undo_group))
+                self._undo_step_handler.end_undo_step(client=self)

@@ -220,15 +220,7 @@ class HybridReverbDeviceDecorator(LiveObjectDecorator, EventObject):
          self.routing_parameter_eq_off,
          self.routing_parameter_eq_on_prealgo_on,
          self.routing_parameter_eq_on_prealgo_off)
-        self.register_disconnectable(self._additional_parameters)
-
-    @property
-    def parameters(self):
-        return tuple(self._live_object.parameters) + self._additional_parameters
-
-    @property
-    def options(self):
-        return (
+        self._additional_options = (
          self.feedback_ms_sync_switch,
          self.eq_low_type_switch,
          self.eq_high_type_switch,
@@ -239,6 +231,15 @@ class HybridReverbDeviceDecorator(LiveObjectDecorator, EventObject):
          self.freeze_in_option,
          self.prealgo_option,
          self.bass_mono_option)
+        self.register_disconnectables(self._additional_parameters + self._additional_options)
+
+    @property
+    def parameters(self):
+        return tuple(self._live_object.parameters) + self._additional_parameters
+
+    @property
+    def options(self):
+        return self._additional_options
 
     @listens('value')
     def on_vintage_parameter_change(self):

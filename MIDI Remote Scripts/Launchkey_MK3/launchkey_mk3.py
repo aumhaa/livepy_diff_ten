@@ -132,6 +132,7 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
         self._transport = TransportComponent(name='Transport',
           is_enabled=False,
           layer=Layer(play_button='play_button',
+          continue_playing_button='play_button_with_shift',
           alt_stop_button='stop_button',
           loop_button='loop_button',
           metronome_button='click_button',
@@ -147,10 +148,10 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
     def _create_quantization(self):
         self._quantization = QuantizationComponent(name='Quantization')
         self._clip_actions = ClipActionsComponent(name='Clip_Actions',
+          quantization_component=(self._quantization),
           is_enabled=False,
           layer=Layer(quantize_button='quantize_button'))
         self._clip_actions.set_enabled(True)
-        ClipActionsComponent.quantization_component = self._quantization
 
     def _create_device(self):
         self._device = DeviceComponent(name='Device',

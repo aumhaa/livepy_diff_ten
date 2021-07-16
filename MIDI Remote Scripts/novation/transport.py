@@ -16,9 +16,9 @@ class TransportComponent(TransportComponentBase):
 
     @play_button.toggled
     def _on_play_button_toggled(self, is_toggled, _):
-        if is_toggled:
-            self.song.stop_playing()
         self.song.is_playing = is_toggled
+        if is_toggled:
+            self.song.current_song_time = 0.0
 
     @capture_midi_button.pressed
     def capture_midi_button(self, _):

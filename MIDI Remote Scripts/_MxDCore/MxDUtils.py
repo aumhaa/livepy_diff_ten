@@ -16,18 +16,19 @@ class TupleWrapper(object):
 
     forget_tuple_wrapper_instances = staticmethod(forget_tuple_wrapper_instances)
 
-    def get_tuple_wrapper(parent, attribute, element_filter=None):
+    def get_tuple_wrapper(parent, attribute, element_filter=None, element_transform=None):
         if (
          parent, attribute) not in TupleWrapper._tuple_wrapper_registry:
-            TupleWrapper._tuple_wrapper_registry[(parent, attribute)] = TupleWrapper(parent, attribute, element_filter)
+            TupleWrapper._tuple_wrapper_registry[(parent, attribute)] = TupleWrapper(parent, attribute, element_filter, element_transform)
         return TupleWrapper._tuple_wrapper_registry[(parent, attribute)]
 
     get_tuple_wrapper = staticmethod(get_tuple_wrapper)
 
-    def __init__(self, parent, attribute, element_filter=None):
+    def __init__(self, parent, attribute, element_filter=None, element_transform=None):
         self._parent = parent
         self._attribute = attribute
         self._element_filter = element_filter
+        self._element_transform = element_transform
 
     def get_list(self):
         result = ()
@@ -39,9 +40,10 @@ class TupleWrapper(object):
                 result = parent[self._attribute]
         elif old_hasattr(parent, self._attribute):
             result = getattr(parent, self._attribute)
-        if self._element_filter:
-            return [e if self._element_filter(e) else None for e in result]
-        return result
+        filtered_result = [e if self._element_filter(e) else None for e in result] if self._element_filter else result
+        if self._element_transform:
+            return list(map(self._element_transform, filtered_result))
+        return filtered_result
 
 
 STATE_NEUTRAL = 'neutral'

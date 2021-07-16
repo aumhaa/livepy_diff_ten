@@ -3,6 +3,7 @@ from future.builtins import filter, zip
 from itertools import repeat, chain
 from functools import partial, wraps
 from future.utils import iteritems, string_types, with_metaclass
+import weakref
 from .disconnectable import Disconnectable, CompoundDisconnectable
 from .live_api_utils import liveobj_valid
 from .abl_signal import Signal
@@ -389,7 +390,7 @@ class ObservablePropertyAlias(EventObject):
 
     def __init__(self, alias_host, property_host=None, property_name='', alias_name=None, getter=None, *a, **k):
         (super(ObservablePropertyAlias, self).__init__)(*a, **k)
-        self._alias_host = alias_host
+        self._alias_host = weakref.ref(alias_host)
         self._alias_name = alias_name or property_name
         self._property_host = property_host
         self._property_name = property_name
@@ -407,9 +408,11 @@ class ObservablePropertyAlias(EventObject):
 
     def _setup_alias(self, getter):
         aliased_prop = property(getter or self._get_property)
-        setattr(self._alias_host.__class__, self._alias_name, aliased_prop)
-        notifier = getattr(self._alias_host, 'notify_' + self._alias_name)
-        self._property_slot = self.register_slot(Slot(self.property_host, notifier, self._property_name))
+        alias_host = self._alias_host()
+        if alias_host:
+            setattr(alias_host.__class__, self._alias_name, aliased_prop)
+            notifier = getattr(alias_host, 'notify_' + self._alias_name)
+            self._property_slot = self.register_slot(Slot(self.property_host, notifier, self._property_name))
 
     def _get_property(self, _):
         return getattr(self.property_host, self._property_name, None)

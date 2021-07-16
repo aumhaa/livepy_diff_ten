@@ -46,7 +46,7 @@ class CaptureAndInsertSceneComponent(ActionWithSettingsComponent, Messenger):
     def _capture_and_insert_scene(self):
         try:
             self.song.capture_and_insert_scene()
-            self.show_notification(MessageBoxText.CAPTURE_AND_INSERT_SCENE % self.song.view.selected_scene.name.strip())
+            self.show_notification(MessageBoxText.CAPTURE_AND_INSERT_SCENE % scene_description(self.song.view.selected_scene, self.song))
         except Live.Base.LimitationError:
             self.expect_dialog(MessageBoxText.SCENE_LIMIT_REACHED)
 
@@ -196,6 +196,19 @@ def get_clip_name(clip):
     return '[unnamed]'
 
 
+def scene_description(scene, song, with_tempo_and_time_sig=True):
+    description = str(list(song.scenes).index(scene) + 1)
+    if scene.name != '':
+        description += ' | {}'.format(scene.name)
+    if with_tempo_and_time_sig:
+        if scene.tempo > 0:
+            description += ' | {:.2f} BPM'.format(scene.tempo)
+        if scene.time_signature_numerator > 0:
+            if scene.time_signature_denominator > 0:
+                description += ' | {}/{}'.format(scene.time_signature_numerator, scene.time_signature_denominator)
+    return description
+
+
 def clip_name_from_clip_slot(clip_slot):
     clip_name = '[none]'
     if liveobj_valid(clip_slot):
@@ -206,13 +219,12 @@ def clip_name_from_clip_slot(clip_slot):
     return clip_name
 
 
-def select_scene_and_get_name(scene, song):
-    scene_name = '[none]'
+def select_scene_and_get_description(scene, song):
     if liveobj_valid(scene):
         if song.view.selected_scene != scene:
             song.view.selected_scene = scene
-        scene_name = scene.name if scene.name != '' else '[unnamed]'
-    return scene_name
+        return scene_description(scene, song)
+    return ''
 
 
 class SelectComponent(Component):
@@ -265,9 +277,9 @@ class SelectComponent(Component):
         self._selection_display.set_display_string(time, 3)
 
     def on_select_scene(self, scene):
-        scene_name = select_scene_and_get_name(scene, self.song)
-        self._selection_display.set_display_string('Scene Selection:')
-        self._selection_display.set_display_string(scene_name, 1)
+        scene_description = select_scene_and_get_description(scene, self.song)
+        self._selection_display.set_display_string('Scene Selection: ')
+        self._selection_display.set_display_string(scene_description, 1)
         self._selection_display.reset_display_right()
         self._selection_display.set_enabled(True)
 

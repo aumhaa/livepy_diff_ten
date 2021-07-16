@@ -7,7 +7,7 @@ from ableton.v2.control_surface.components import ClipSlotComponent, SceneCompon
 from ableton.v2.control_surface.control import ButtonControl
 from ableton.v2.control_surface.mode import EnablingModesComponent
 from pushbase.touch_strip_element import TouchStripStates, TouchStripModes
-from .actions import clip_name_from_clip_slot
+from .actions import clip_name_from_clip_slot, scene_description
 from .message_box_component import Messenger
 from .consts import MessageBoxText
 
@@ -100,7 +100,7 @@ class DuplicateSceneComponent(Component, Messenger):
         if not (self.is_enabled() and value or is_momentary):
             try:
                 self.song.duplicate_scene(self._session_ring.scene_offset + index)
-                self.show_notification(MessageBoxText.DUPLICATE_SCENE % self.song.view.selected_scene.name)
+                self.show_notification(MessageBoxText.DUPLICATE_SCENE % scene_description(self.song.view.selected_scene, self.song))
             except Live.Base.LimitationError:
                 self.expect_dialog(MessageBoxText.SCENE_LIMIT_REACHED)
             except RuntimeError:
@@ -141,36 +141,36 @@ class SpecialClipSlotComponent(ClipSlotComponent, Messenger):
 
     def _do_launch_clip--- This code section failed: ---
 
- L. 170         0  LOAD_FAST                'self'
+ L. 171         0  LOAD_FAST                'self'
                 2  LOAD_ATTR                _fixed_length_recording
                 4  LOAD_METHOD              should_start_fixed_length_recording
 
- L. 171         6  LOAD_FAST                'self'
+ L. 172         6  LOAD_FAST                'self'
                 8  LOAD_ATTR                _clip_slot
                10  CALL_METHOD_1         1  '1 positional argument'
                12  STORE_FAST               'should_start_fixed_length_recording'
 
- L. 173        14  LOAD_FAST                'self'
+ L. 174        14  LOAD_FAST                'self'
                16  LOAD_METHOD              _clip_is_recording
                18  CALL_METHOD_0         0  '0 positional arguments'
                20  STORE_FAST               'clip_is_recording'
 
- L. 176        22  LOAD_FAST                'fire_state'
+ L. 177        22  LOAD_FAST                'fire_state'
                24  POP_JUMP_IF_FALSE    34  'to 34'
 
- L. 177        26  LOAD_FAST                'should_start_fixed_length_recording'
+ L. 178        26  LOAD_FAST                'should_start_fixed_length_recording'
                28  POP_JUMP_IF_TRUE     34  'to 34'
 
- L. 178        30  LOAD_FAST                'clip_is_recording'
+ L. 179        30  LOAD_FAST                'clip_is_recording'
                32  POP_JUMP_IF_FALSE    38  'to 38'
              34_0  COME_FROM            28  '28'
              34_1  COME_FROM            24  '24'
 
- L. 179        34  LOAD_FAST                'fire_state'
+ L. 180        34  LOAD_FAST                'fire_state'
                36  POP_JUMP_IF_TRUE     56  'to 56'
              38_0  COME_FROM            32  '32'
 
- L. 181        38  LOAD_GLOBAL              super
+ L. 182        38  LOAD_GLOBAL              super
                40  LOAD_GLOBAL              SpecialClipSlotComponent
                42  LOAD_FAST                'self'
                44  CALL_FUNCTION_2       2  '2 positional arguments'
@@ -181,19 +181,19 @@ class SpecialClipSlotComponent(ClipSlotComponent, Messenger):
                54  JUMP_FORWARD        118  'to 118'
              56_0  COME_FROM            36  '36'
 
- L. 182        56  LOAD_FAST                'should_start_fixed_length_recording'
+ L. 183        56  LOAD_FAST                'should_start_fixed_length_recording'
                58  POP_JUMP_IF_FALSE    98  'to 98'
 
- L. 183        60  LOAD_FAST                'self'
+ L. 184        60  LOAD_FAST                'self'
                62  LOAD_ATTR                _clip_slot
                64  LOAD_ATTR                canonical_parent
                66  STORE_FAST               'track'
 
- L. 184        68  LOAD_FAST                'self'
+ L. 185        68  LOAD_FAST                'self'
                70  LOAD_ATTR                _fixed_length_recording
                72  LOAD_METHOD              start_recording_in_slot
 
- L. 185        74  LOAD_FAST                'track'
+ L. 186        74  LOAD_FAST                'track'
                76  LOAD_GLOBAL              list
                78  LOAD_FAST                'track'
                80  LOAD_ATTR                clip_slots
@@ -207,10 +207,10 @@ class SpecialClipSlotComponent(ClipSlotComponent, Messenger):
                96  JUMP_FORWARD        118  'to 118'
              98_0  COME_FROM            58  '58'
 
- L. 187        98  LOAD_FAST                'clip_is_recording'
+ L. 188        98  LOAD_FAST                'clip_is_recording'
               100  POP_JUMP_IF_FALSE   118  'to 118'
 
- L. 188       102  LOAD_FAST                'self'
+ L. 189       102  LOAD_FAST                'self'
               104  LOAD_ATTR                _fixed_length_recording
               106  LOAD_METHOD              stop_recording
               108  LOAD_FAST                'self'
@@ -232,9 +232,9 @@ class SpecialSceneComponent(SceneComponent, Messenger):
         try:
             if self._scene:
                 song = self.song
-                name = self._scene.name
+                description = scene_description(self._scene, song, False)
                 song.delete_scene(list(song.scenes).index(self._scene))
-                self.show_notification(MessageBoxText.DELETE_SCENE % name)
+                self.show_notification(MessageBoxText.DELETE_SCENE % description)
         except RuntimeError:
             pass
 

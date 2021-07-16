@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from __future__ import division
-import Live
 from builtins import round
 from past.utils import old_div
 from ableton.v2.base import listenable_property, listens

@@ -39,7 +39,13 @@ class NotificationComponent(Component):
         if self._notification_timer:
             self._notification_timer.stop()
         if notification_time != -1:
-            self._notification_timer = Live.Base.Timer(callback=(self.hide_notification),
+            component_ref = ref(self)
+
+            def timer_callback():
+                if component_ref():
+                    component_ref().hide_notification()
+
+            self._notification_timer = Live.Base.Timer(callback=timer_callback,
               interval=(int(1000 * notification_time)),
               repeat=False)
             self._notification_timer.start()

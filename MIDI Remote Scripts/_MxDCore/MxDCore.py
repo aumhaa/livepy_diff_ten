@@ -12,10 +12,9 @@ import _Framework.Disconnectable as Disconnectable
 from .MxDUtils import TupleWrapper, StringHandler
 from .MxDControlSurfaceAPI import MxDControlSurfaceAPI
 from .LomUtils import LomInformation, LomIntrospection, LomPathCalculator, LomPathResolver
-from .LomTypes import ENUM_TYPES, LIVE_APP, CONTROL_SURFACES, PROPERTY_TYPES, ROOT_KEYS, MFLPropertyFormats, get_control_surfaces, get_exposed_lom_types, get_exposed_property_info, get_root_prop, is_lom_object, is_cplusplus_lom_object, is_object_iterable, LomNoteOperationWarning, LomNoteOperationError, LomAttributeError, LomObjectError, verify_object_property, data_dict_to_json
+from .LomTypes import ENUM_TYPES, LIVE_APP, CONTROL_SURFACES, PROPERTY_TYPES, ROOT_KEYS, MFLPropertyFormats, get_control_surfaces, get_exposed_lom_types, get_exposed_property_info, get_root_prop, is_lom_object, is_control_surface, is_cplusplus_lom_object, is_object_iterable, LomNoteOperationWarning, LomNoteOperationError, LomAttributeError, LomObjectError, verify_object_property, data_dict_to_json
 from .NotesAPIUtils import midi_note_to_dict, verify_note_specification_requirements
 logger = logging.getLogger(__name__)
-MAX_SYMBOL_SIZE = 32767
 
 def get_current_max_device(device_id):
     return MxDCore.instance.manager.get_max_device(device_id)
@@ -41,8 +40,8 @@ NOTES_API_MAIN_KEY_ERROR = "Expecting 'notes' as the main dictionary's key"
 NOTE_ID_MISSING_ERROR = "Required key 'note_id' is missing"
 PRIVATE_PROP_WARNING = 'Warning: Calling private property. This property might change or be removed in the future.'
 INVALID_NOTE_ID_ERROR = "Provided note ID doesn't exist in the clip"
-DICT_SIZE_EXCEEDED_ERROR = 'Maximum dictionary size exceeded'
 PARSE_ERROR = 'Error parsing parameters'
+WARP_MARKER_SPEC_INCOMPLETE_ERROR = 'Both beat time and sample time need to be specified.'
 
 def concatenate_strings(string_list, string_format='%s %s'):
     return str(reduce(lambda s1, s2: string_format % (s1, s2), string_list) if len(string_list) > 0 else '')
@@ -63,6 +62,12 @@ def note_from_parameters(parameters):
     new_note.append(int(parameters[3]) if (len(parameters) > 3) and (isinstance(parameters[3], (int, float))) else 100)
     new_note.append(len(parameters) > 4 and parameter_to_bool(parameters[4]))
     return tuple(new_note)
+
+
+def get_object_type_name(obj):
+    if is_control_surface(obj):
+        return obj.type_name
+    return obj.__class__.__name__
 
 
 class MxDCore(object):
@@ -95,7 +100,8 @@ class MxDCore(object):
          'send_midi':self._cs_api.object_send_midi, 
          'send_receive_sysex':self._cs_api.object_send_receive_sysex, 
          'grab_midi':self._cs_api.object_grab_midi, 
-         'release_midi':self._cs_api.object_release_midi}
+         'release_midi':self._cs_api.object_release_midi, 
+         'add_warp_marker':self._object_warp_marker_handler}
         self.lom_classes = get_exposed_lom_types()
         self.lom_classes += LomIntrospection(_Framework).lom_classes
         self.appointed_lom_ids = {0: None}
@@ -379,7 +385,7 @@ class MxDCore(object):
         object_type = 'unknown'
         if current_object != None:
             current_object = self._disambiguate_object(current_object)
-            object_type = current_object.__class__.__name__
+            object_type = get_object_type_name(current_object)
         self.manager.send_message(device_id, object_id, 'obj_type', str(object_type))
 
     def obj_get_info(self, device_id, object_id, parameters):
@@ -389,7 +395,7 @@ class MxDCore(object):
             object_info = 'id %s\n' % str(self._get_lom_id_by_lom_object(current_object))
             current_object = self._disambiguate_object(current_object)
             lom_info = LomInformation(current_object, self.epii_version)
-            object_info += 'type %s\n' % str(current_object.__class__.__name__)
+            object_info += 'type %s\n' % str(get_object_type_name(current_object))
             object_info += '%s\n' % lom_info.description
             if not is_object_iterable(current_object):
 
@@ -509,12 +515,7 @@ class MxDCore(object):
         try:
             param_comps = self._parse(device_id, object_id, parameters)
         except Exception:
-            function_name, rest = parameters.split(' ', 1)
-            is_long_dict = rest.startswith('"{') and len(parameters) >= MAX_SYMBOL_SIZE
-            if is_long_dict:
-                self._raise(device_id, object_id, '%s: %s' % (function_name, DICT_SIZE_EXCEEDED_ERROR))
-            else:
-                self._raise(device_id, object_id, '%s: %s' % (PARSE_ERROR, parameters))
+            self._raise(device_id, object_id, '%s: %s' % (PARSE_ERROR, parameters))
             return
         else:
 
@@ -616,7 +617,11 @@ class MxDCore(object):
     def _object_from_path(self, device_id, object_id, path_components, must_exist):
         lom_object = None
         try:
-            resolver = LomPathResolver(path_components, get_current_max_device(device_id), self.lom_classes, self.manager)
+            resolver = LomPathResolver(path_components,
+              (get_current_max_device(device_id)),
+              (self.lom_classes),
+              (self.manager),
+              cs_wrapper_registry=(self._cs_api.wrapper_registry))
             lom_object = resolver.lom_object
         except (LomAttributeError, LomObjectError) as e:
             try:
@@ -727,9 +732,6 @@ class MxDCore(object):
         verify_object_property(lom_object, function_name, self.epii_version)
         midi_note_vector = (getattr(lom_object, function_name))(*function_parameters)
         result = self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector))
-        if len(result) > MAX_SYMBOL_SIZE:
-            self._raise(device_id, object_id, function_name + ': ' + DICT_SIZE_EXCEEDED_ERROR)
-            return
         self.manager.send_message(device_id, object_id, 'obj_call_result', result)
 
     def _object_get_notes_by_id_handler(self, device_id, object_id, lom_object, parameters):
@@ -741,9 +743,6 @@ class MxDCore(object):
             raise RuntimeError(INVALID_NOTE_ID_ERROR)
 
         result = self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector))
-        if len(result) > MAX_SYMBOL_SIZE:
-            self._raise(device_id, object_id, function_name + ': ' + DICT_SIZE_EXCEEDED_ERROR)
-            return
         self.manager.send_message(device_id, object_id, 'obj_call_result', result)
 
     def _object_add_new_notes_handler(self, device_id, object_id, lom_object, parameters):
@@ -759,6 +758,26 @@ class MxDCore(object):
                 raise RuntimeError(INVALID_DICT_ENTRY_ERROR)
 
         result = getattr(lom_object, function_name)(note_specifications)
+        self.manager.send_message(device_id, object_id, 'obj_call_result', self.str_representation_for_object(result))
+
+    def _object_warp_marker_handler(self, device_id, object_id, lom_object, parameters):
+        function_name, function_param = parameters[0], parameters[1]
+        warp_marker_dict = json.loads(function_param)
+        verify_object_property(lom_object, function_name, self.epii_version)
+        dict_keys = warp_marker_dict.keys()
+        if 'beat_time' not in dict_keys:
+            raise RuntimeError(WARP_MARKER_SPEC_INCOMPLETE_ERROR)
+        if 'sample_time' not in dict_keys:
+            num_samples = lom_object.beat_to_sample_time(warp_marker_dict['beat_time'])
+            sample_rate = lom_object.sample_rate
+            warp_marker_dict['sample_time'] = num_samples / float(sample_rate)
+        warp_marker = None
+        try:
+            warp_marker = (Live.Clip.WarpMarker)(**warp_marker_dict)
+        except TypeError:
+            raise RuntimeError(INVALID_DICT_ENTRY_ERROR)
+
+        result = getattr(lom_object, function_name)(warp_marker)
         self.manager.send_message(device_id, object_id, 'obj_call_result', self.str_representation_for_object(result))
 
     def _object_apply_note_modifications_handler(self, device_id, object_id, lom_object, parameters):

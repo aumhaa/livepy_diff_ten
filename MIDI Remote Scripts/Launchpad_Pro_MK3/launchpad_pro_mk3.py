@@ -21,7 +21,7 @@ from .channel_strip import ChannelStripComponent
 from .drum_group import DrumGroupComponent
 from .elements import Elements, FADER_MODES
 from .mixer import MixerComponent
-from .session import ClipSlotComponent, SessionComponent
+from .session import SessionComponent
 from .simple_device import SimpleDeviceParameterComponent
 from .skin import skin
 from .transport import TransportComponent
@@ -80,7 +80,9 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
     def _create_components(self):
         self._fixed_length_setting = FixedLengthSetting()
         self._fixed_length_recording = FixedLengthRecording(self.song, self._fixed_length_setting)
-        with inject(fixed_length_recording=(const(self._fixed_length_recording))).everywhere():
+        self._create_quantization()
+        with inject(fixed_length_recording=(const(self._fixed_length_recording)),
+          quantization_component=(const(self._quantization))).everywhere():
             super(Launchpad_Pro_MK3, self)._create_components()
             self._create_recording_modes()
         self._create_session_overview()
@@ -92,7 +94,6 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
         self._create_undo_redo()
         self._create_transport()
         self._create_clip_actions()
-        self._create_quantization()
         self._create_fixed_length()
         self._create_drum_group()
         self._create_scale_pad_translator()
@@ -167,6 +168,7 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
 
     def _create_clip_actions(self):
         self._clip_actions = ClipActionsComponent(name='Clip_Actions',
+          quantization_component=(self._quantization),
           is_enabled=False,
           layer=Layer(duplicate_button='duplicate_button',
           quantize_button='quantize_button',
@@ -177,8 +179,6 @@ class Launchpad_Pro_MK3(InstrumentControlMixin, NovationBase):
           is_enabled=False,
           layer=Layer(quantization_toggle_button='quantize_button_with_shift'))
         self._quantization.set_enabled(True)
-        ClipActionsComponent.quantization_component = self._quantization
-        ClipSlotComponent.quantization_component = self._quantization
 
     def _create_fixed_length(self):
         self._fixed_length = FixedLengthComponent(fixed_length_setting=(self._fixed_length_setting),

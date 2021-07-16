@@ -7,8 +7,8 @@ class SpectralDeviceDecorator(LiveObjectDecorator, EventObject):
 
     def __init__(self, *a, **k):
         (super(SpectralDeviceDecorator, self).__init__)(*a, **k)
-        self.freeze_option = DeviceOnOffOption(name='Freeze',
-          property_host=(get_parameter_by_name(self, 'Freeze On')))
+        self.freeze_option = DeviceOnOffOption(name='Frozen',
+          property_host=(get_parameter_by_name(self, 'Frozen')))
         self.unit_option = DeviceSwitchOption(name='Unit',
           parameter=(get_parameter_by_name(self, 'Unit')),
           labels=[
