@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.ModeSelectorComponent import ModeSelectorComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 from .consts import *
 
 class MainModeSelector(ModeSelectorComponent):
-    u""" SelectorComponent that assigns navigation buttons to different functions """
 
     def __init__(self, device_0, device_1, session, mixer, device_nav, up_button, down_button, left_button, right_button, select_button):
         ModeSelectorComponent.__init__(self)

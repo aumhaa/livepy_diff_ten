@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Util import index_if
-from _Framework.SessionComponent import SessionComponent as SessionComponentBase
+import _Framework.SessionComponent as SessionComponentBase
 
 class SessionComponent(SessionComponentBase):
     _session_component_ends_initialisation = False
 
     def __init__(self, *a, **k):
-        super(SessionComponent, self).__init__(*a, **k)
+        (super(SessionComponent, self).__init__)(*a, **k)
         self.set_offsets(0, 0)
         self.on_selected_scene_changed()
         self.on_selected_track_changed()

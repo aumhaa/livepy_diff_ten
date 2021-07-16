@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from _Framework.ModeSelectorComponent import ModeSelectorComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 
 class EncoderMixerModeSelector(ModeSelectorComponent):
-    u""" Class that reassigns encoders on the AxiomAirMini32 to different mixer functions """
 
     def __init__(self, mixer):
         ModeSelectorComponent.__init__(self)
@@ -28,13 +27,14 @@ class EncoderMixerModeSelector(ModeSelectorComponent):
 
     def update(self):
         super(EncoderMixerModeSelector, self).update()
-        if self.is_enabled() and self._controls != None:
-            mode = self._mode_index
-            for index in range(len(self._controls)):
-                strip = self._mixer.channel_strip(index)
-                if mode == 0:
-                    strip.set_pan_control(None)
-                    strip.set_volume_control(self._controls[index])
-                elif mode == 1:
-                    strip.set_volume_control(None)
-                    strip.set_pan_control(self._controls[index])
+        if self.is_enabled():
+            if self._controls != None:
+                mode = self._mode_index
+                for index in range(len(self._controls)):
+                    strip = self._mixer.channel_strip(index)
+                    if mode == 0:
+                        strip.set_pan_control(None)
+                        strip.set_volume_control(self._controls[index])
+                    if mode == 1:
+                        strip.set_volume_control(None)
+                        strip.set_pan_control(self._controls[index])

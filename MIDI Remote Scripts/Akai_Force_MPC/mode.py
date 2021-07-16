@@ -3,8 +3,8 @@ from ableton.v2.control_surface.mode import Mode
 
 class ExtendComboElementMode(Mode):
 
-    def __init__(self, combo_pairs = None, *a, **k):
-        super(ExtendComboElementMode, self).__init__(*a, **k)
+    def __init__(self, combo_pairs=None, *a, **k):
+        (super(ExtendComboElementMode, self).__init__)(*a, **k)
         self._combo_pairs = combo_pairs
 
     def enter_mode(self):

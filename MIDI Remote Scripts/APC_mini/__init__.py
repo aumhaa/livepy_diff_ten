@@ -7,5 +7,10 @@ def create_instance(c_instance):
 
 
 def get_capabilities():
-    return {CONTROLLER_ID_KEY: controller_id(vendor_id=2536, product_ids=[40], model_name=u'APC MINI'),
-     PORTS_KEY: [inport(props=[NOTES_CC, SCRIPT, REMOTE]), outport(props=[SCRIPT, REMOTE])]}
+    return {CONTROLLER_ID_KEY: controller_id(vendor_id=2536,
+                          product_ids=[40],
+                          model_name='APC MINI'), 
+     
+     PORTS_KEY: [
+                 inport(props=[NOTES_CC, SCRIPT, REMOTE]),
+                 outport(props=[SCRIPT, REMOTE])]}

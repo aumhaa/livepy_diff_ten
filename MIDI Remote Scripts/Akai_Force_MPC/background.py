@@ -6,4 +6,4 @@ class LightingBackgroundComponent(BackgroundComponent):
     def _clear_control(self, name, control):
         super(LightingBackgroundComponent, self)._clear_control(name, control)
         if control:
-            control.set_light(u'Background.On')
+            control.set_light('Background.On')

@@ -11,9 +11,9 @@ class ViewControlComponent(Component):
     @vertical_encoder.value
     def vertical_encoder(self, value, _):
         direction = NavDirection.up if value < 0 else NavDirection.down
-        self.application.view.scroll_view(direction, u'', False)
+        self.application.view.scroll_view(direction, '', False)
 
     @horizontal_encoder.value
     def horizontal_encoder(self, value, _):
         direction = NavDirection.left if value < 0 else NavDirection.right
-        self.application.view.scroll_view(direction, u'', False)
+        self.application.view.scroll_view(direction, '', False)

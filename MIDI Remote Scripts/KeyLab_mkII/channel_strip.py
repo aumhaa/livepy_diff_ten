@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
 from ableton.v2.control_surface.control import TextDisplayControl
-from KeyLab_Essential.channel_strip import ChannelStripComponent as ChannelStripComponentBase
+import KeyLab_Essential.channel_strip as ChannelStripComponentBase
 
 class ChannelStripComponent(ChannelStripComponentBase):
-    track_name_display = TextDisplayControl(u' ')
+    track_name_display = TextDisplayControl(' ')
 
     def set_track_name_display(self, display):
         self.track_name_display.set_control_element(display)
@@ -16,4 +16,4 @@ class ChannelStripComponent(ChannelStripComponentBase):
 
     def _update_track_name_display(self):
         track = self._track
-        self.track_name_display[0] = track.name if liveobj_valid(track) else u''
+        self.track_name_display[0] = track.name if liveobj_valid(track) else ''

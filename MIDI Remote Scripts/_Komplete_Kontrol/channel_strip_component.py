@@ -3,11 +3,11 @@ from builtins import str
 from builtins import round
 import re
 from ableton.v2.base import listens, liveobj_valid
-from ableton.v2.control_surface.components import ChannelStripComponent as ChannelStripComponentBase
+import ableton.v2.control_surface.components as ChannelStripComponentBase
 from ableton.v2.control_surface.elements import DisplayDataSource
 from ableton.v2.control_surface.control import SendValueControl
 from .sysex import DEFAULT_TRACK_TYPE_VALUE, EMPTY_TRACK_TYPE_VALUE, MASTER_TRACK_TYPE_VALUE
-volume_pattern = re.compile(u'-*\\d+.\\d+')
+volume_pattern = re.compile('-*\\d+.\\d+')
 
 class ChannelStripComponent(ChannelStripComponentBase):
     track_type_display = SendValueControl()
@@ -17,10 +17,10 @@ class ChannelStripComponent(ChannelStripComponentBase):
     track_muted_via_solo_display = SendValueControl()
 
     def __init__(self, *a, **k):
-        super(ChannelStripComponent, self).__init__(*a, **k)
+        (super(ChannelStripComponent, self).__init__)(*a, **k)
         self._track_volume_data_source = DisplayDataSource()
         self._track_panning_data_source = DisplayDataSource()
-        self.__on_selected_track_changed.subject = self.song.view
+        self._ChannelStripComponent__on_selected_track_changed.subject = self.song.view
 
     @property
     def track_volume_data_source(self):
@@ -34,50 +34,50 @@ class ChannelStripComponent(ChannelStripComponentBase):
         super(ChannelStripComponent, self).set_track(track)
         track = track if liveobj_valid(track) else None
         mixer = track.mixer_device if track else None
-        self.__on_muted_via_solo_changed.subject = track
-        self.__on_volume_value_changed.subject = mixer.volume if mixer else None
-        self.__on_panning_value_changed.subject = mixer.panning if mixer else None
+        self._ChannelStripComponent__on_muted_via_solo_changed.subject = track
+        self._ChannelStripComponent__on_volume_value_changed.subject = mixer.volume if mixer else None
+        self._ChannelStripComponent__on_panning_value_changed.subject = mixer.panning if mixer else None
         self._update_track_volume_data_source()
         self._update_track_panning_data_source()
         self._update_track_type_display()
-        self.__on_muted_via_solo_changed()
+        self._ChannelStripComponent__on_muted_via_solo_changed()
 
     def _on_mute_changed(self):
         super(ChannelStripComponent, self)._on_mute_changed()
-        self.track_mute_display.value = int(self._track.mute) if liveobj_valid(self._track) and self._track != self.song.master_track else 0
+        self.track_mute_display.value = int(self._track.mute) if (liveobj_valid(self._track)) and (self._track != self.song.master_track) else 0
 
     def _on_solo_changed(self):
         super(ChannelStripComponent, self)._on_solo_changed()
-        self.track_solo_display.value = int(self._track.solo) if liveobj_valid(self._track) and self._track != self.song.master_track else 0
+        self.track_solo_display.value = int(self._track.solo) if (liveobj_valid(self._track)) and (self._track != self.song.master_track) else 0
 
-    @listens(u'selected_track')
+    @listens('selected_track')
     def __on_selected_track_changed(self):
         selected_track = self.song.view.selected_track
         self.track_selection_display.value = int(self._track == selected_track) if liveobj_valid(self._track) else 0
 
-    @listens(u'muted_via_solo')
+    @listens('muted_via_solo')
     def __on_muted_via_solo_changed(self):
-        self.track_muted_via_solo_display.value = int(self._track.muted_via_solo) if liveobj_valid(self._track) and self._track != self.song.master_track else 0
+        self.track_muted_via_solo_display.value = int(self._track.muted_via_solo) if (liveobj_valid(self._track)) and (self._track != self.song.master_track) else 0
 
-    @listens(u'value')
+    @listens('value')
     def __on_volume_value_changed(self):
         self._update_track_volume_data_source()
 
-    @listens(u'value')
+    @listens('value')
     def __on_panning_value_changed(self):
         self._update_track_panning_data_source()
 
     def _update_track_volume_data_source(self):
-        volume_string = u''
+        volume_string = ''
         if liveobj_valid(self._track):
             volume_string = str(self._track.mixer_device.volume)
-            found_string = u''.join(volume_pattern.findall(volume_string))
+            found_string = ''.join(volume_pattern.findall(volume_string))
             if found_string:
-                volume_string = u'%s dB' % round(float(found_string), 1)
+                volume_string = '%s dB' % round(float(found_string), 1)
         self._track_volume_data_source.set_display_string(volume_string)
 
     def _update_track_panning_data_source(self):
-        pan_string = u''
+        pan_string = ''
         if liveobj_valid(self._track):
             pan_string = str(self._track.mixer_device.panning)
         self._track_panning_data_source.set_display_string(pan_string)

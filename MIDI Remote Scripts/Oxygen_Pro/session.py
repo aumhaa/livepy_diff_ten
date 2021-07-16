@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.components import SessionComponent as SessionComponentBase
+import ableton.v2.control_surface.components as SessionComponentBase
 from ableton.v2.control_surface.control import EncoderControl
 
 class SessionComponent(SessionComponentBase):

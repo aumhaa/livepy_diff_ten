@@ -24,7 +24,7 @@ def as_ascii(message):
 class SimpleDisplayElement(NotifyingControlElement):
 
     def __init__(self, header, tail, *a, **k):
-        super(SimpleDisplayElement, self).__init__(*a, **k)
+        (super(SimpleDisplayElement, self).__init__)(*a, **k)
         self._message_header = header
         self._message_tail = tail
         self._message_to_send = None
@@ -46,7 +46,7 @@ class SimpleDisplayElement(NotifyingControlElement):
         self._request_send_message()
 
     def reset(self):
-        self.display_message(u' ')
+        self.display_message(' ')
 
     def send_midi(self, midi_bytes):
         if midi_bytes != self._last_sent_message:

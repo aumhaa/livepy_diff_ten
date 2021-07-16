@@ -5,11 +5,11 @@ from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl
 
 class UndoComponent(Component):
-    undo_button = ButtonControl(color=u'DefaultButton.Off')
+    undo_button = ButtonControl(color='DefaultButton.Off')
 
     def __init__(self, *a, **k):
-        super(UndoComponent, self).__init__(*a, **k)
-        self._light_undo_button_task = self._tasks.add(task.sequence(task.run(partial(self._set_undo_button_light, u'DefaultButton.On')), task.wait(1.0), task.run(partial(self._set_undo_button_light, u'DefaultButton.Off'))))
+        (super(UndoComponent, self).__init__)(*a, **k)
+        self._light_undo_button_task = self._tasks.add(task.sequence(task.run(partial(self._set_undo_button_light, 'DefaultButton.On')), task.wait(1.0), task.run(partial(self._set_undo_button_light, 'DefaultButton.Off'))))
         self._light_undo_button_task.kill()
 
     @undo_button.pressed

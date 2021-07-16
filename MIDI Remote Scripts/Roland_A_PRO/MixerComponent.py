@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.MixerComponent import MixerComponent as MixerComponentBase
+import _Framework.MixerComponent as MixerComponentBase
 from _Framework.Control import ButtonControl
 
 class MixerComponent(MixerComponentBase):
@@ -9,7 +9,7 @@ class MixerComponent(MixerComponentBase):
     track_down_button = ButtonControl()
 
     def __init__(self, *a, **k):
-        super(MixerComponent, self).__init__(*a, **k)
+        (super(MixerComponent, self).__init__)(*a, **k)
 
     @bank_up_button.pressed
     def bank_up_button_pressed(self, button):

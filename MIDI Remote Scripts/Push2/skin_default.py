@@ -3,7 +3,7 @@ from builtins import object
 from ableton.v2.control_surface import Skin
 from ableton.v2.control_surface.elements import SelectedClipColorFactory, SelectedTrackColorFactory
 from pushbase.colors import Blink, FallbackColor, Pulse
-from pushbase.skin_default import Colors as ColorsBase
+import pushbase.skin_default as ColorsBase
 from .colors import Basic, DISPLAY_BUTTON_SHADE_LEVEL, Rgb, SelectedDeviceChainColorFactory, SelectedDrumPadColorFactory, make_color_factory_func
 make_selected_track_color = make_color_factory_func(SelectedTrackColorFactory)
 make_selected_drum_pad_color = make_color_factory_func(SelectedDrumPadColorFactory)

@@ -3,7 +3,6 @@ from builtins import object
 from . import Defaults
 
 class MomentaryModeObserver(object):
-    u""" Listens to the changes of a given set of controls and decides which mode to use """
 
     def __init__(self):
         object.__init__(self)
@@ -14,10 +13,7 @@ class MomentaryModeObserver(object):
     def disconnect(self):
         self._reset()
 
-    def set_mode_details(self, base_mode, controls, mode_callback = None):
-        assert isinstance(base_mode, int)
-        assert isinstance(controls, (type(None), tuple))
-        assert mode_callback == None or callable(mode_callback)
+    def set_mode_details(self, base_mode, controls, mode_callback=None):
         self._reset()
         if controls != None:
             self._controls = controls
@@ -34,7 +30,7 @@ class MomentaryModeObserver(object):
         self._timer_count += 1
 
     def _control_changed(self, value):
-        if self._mode_callback == None or self._mode_callback() == self._base_mode:
+        if self._mode_callback == None or (self._mode_callback() == self._base_mode):
             self._controls_changed = True
 
     def _release_controls(self):

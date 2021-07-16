@@ -4,10 +4,10 @@ from .control import Control, control_color
 class ColorSysexControl(Control):
 
     class State(Control.State):
-        color = control_color(u'DefaultButton.Disabled')
+        color = control_color('DefaultButton.Disabled')
 
-        def __init__(self, color = None, *a, **k):
-            super(ColorSysexControl.State, self).__init__(*a, **k)
+        def __init__(self, color=None, *a, **k):
+            (super(ColorSysexControl.State, self).__init__)(*a, **k)
             if color is not None:
                 self.color = color
 

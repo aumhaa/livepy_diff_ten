@@ -6,6 +6,6 @@ class ProxyElement(Proxy, ControlElement):
 
     def reset(self):
         try:
-            super(ProxyElement, self).__getattr__(u'reset')()
+            super(ProxyElement, self).__getattr__('reset')()
         except AttributeError:
             pass

@@ -12,7 +12,8 @@ class RingedMappedEncoderControl(MappedControl):
             if self._direct_mapping:
                 self._on_parameter_value()
 
-        @listens(u'value')
+        @listens('value')
         def _on_parameter_value(self):
-            if self._control_element and self.enabled:
-                self._control_element.set_ring_value(self._direct_mapping)
+            if self._control_element:
+                if self.enabled:
+                    self._control_element.set_ring_value(self._direct_mapping)

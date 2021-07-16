@@ -1,19 +1,23 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import clamp, listens
-from ableton.v2.control_surface.components import TransportComponent as TransportComponentBase
+import ableton.v2.control_surface.components as TransportComponentBase
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl
 
 class TransportComponent(TransportComponentBase):
-    capture_midi_button = ButtonControl(color=u'Recording.On', pressed_color=u'Recording.Off')
-    shift_button = ButtonControl(color=u'DefaultButton.Off', pressed_color=u'DefaultButton.On')
-    prev_cue_button = ButtonControl(color=u'DefaultButton.Off', pressed_color=u'DefaultButton.On')
-    next_cue_button = ButtonControl(color=u'DefaultButton.Off', pressed_color=u'DefaultButton.On')
+    capture_midi_button = ButtonControl(color='Recording.On',
+      pressed_color='Recording.Off')
+    shift_button = ButtonControl(color='DefaultButton.Off',
+      pressed_color='DefaultButton.On')
+    prev_cue_button = ButtonControl(color='DefaultButton.Off',
+      pressed_color='DefaultButton.On')
+    next_cue_button = ButtonControl(color='DefaultButton.Off',
+      pressed_color='DefaultButton.On')
     scroll_encoder = EncoderControl()
 
     def __init__(self, *a, **k):
-        super(TransportComponent, self).__init__(*a, **k)
-        self.__on_can_capture_midi_changed.subject = self.song
-        self.__on_can_capture_midi_changed()
+        (super(TransportComponent, self).__init__)(*a, **k)
+        self._TransportComponent__on_can_capture_midi_changed.subject = self.song
+        self._TransportComponent__on_can_capture_midi_changed()
 
     @scroll_encoder.value
     def scroll_encoder(self, value, _):
@@ -41,6 +45,6 @@ class TransportComponent(TransportComponentBase):
         if self.song.can_jump_to_next_cue:
             self.song.jump_to_next_cue()
 
-    @listens(u'can_capture_midi')
+    @listens('can_capture_midi')
     def __on_can_capture_midi_changed(self):
         self.capture_midi_button.enabled = self.song.can_capture_midi

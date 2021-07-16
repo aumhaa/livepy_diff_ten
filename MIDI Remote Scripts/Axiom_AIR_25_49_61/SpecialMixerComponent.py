@@ -1,12 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from _Framework.MixerComponent import MixerComponent
+import _Framework.MixerComponent as MixerComponent
 from .DisplayingChanStripComponent import DisplayingChanStripComponent
 
 class SpecialMixerComponent(MixerComponent):
-    u""" Special mixer class that uses displaying channel strips """
 
-    def __init__(self, name_display, value_display, num_tracks, num_returns = 0):
+    def __init__(self, name_display, value_display, num_tracks, num_returns=0):
         MixerComponent.__init__(self, num_tracks, num_returns=0)
         self._name_display = name_display
         self._value_display = value_display

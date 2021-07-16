@@ -2,19 +2,17 @@ from __future__ import absolute_import, print_function, unicode_literals
 from __future__ import division
 from builtins import range
 from past.utils import old_div
-from _Framework.ButtonElement import ButtonElement
+import _Framework.ButtonElement as ButtonElement
 from _Framework.SessionZoomingComponent import DeprecatedSessionZoomingComponent
 
 class ShiftableZoomingComponent(DeprecatedSessionZoomingComponent):
-    u""" Special ZoomingComponent that uses clip stop buttons for stop all when zoomed """
 
     def __init__(self, session, stop_buttons, *a, **k):
-        super(ShiftableZoomingComponent, self).__init__(session, *a, **k)
+        (super(ShiftableZoomingComponent, self).__init__)(session, *a, **k)
         self._stop_buttons = stop_buttons
         self._ignore_buttons = False
         for button in self._stop_buttons:
-            assert isinstance(button, ButtonElement)
-            button.add_value_listener(self._stop_value, identify_sender=True)
+            button.add_value_listener((self._stop_value), identify_sender=True)
 
     def disconnect(self):
         super(ShiftableZoomingComponent, self).disconnect()
@@ -22,7 +20,6 @@ class ShiftableZoomingComponent(DeprecatedSessionZoomingComponent):
             button.remove_value_listener(self._stop_value)
 
     def set_ignore_buttons(self, ignore):
-        assert isinstance(ignore, type(False))
         if self._ignore_buttons != ignore:
             self._ignore_buttons = ignore
             if not self._is_zoomed_out:
@@ -38,15 +35,11 @@ class ShiftableZoomingComponent(DeprecatedSessionZoomingComponent):
                     button.turn_off()
 
     def _stop_value(self, value, sender):
-        assert value in range(128)
-        assert sender != None
-        if self.is_enabled() and not self._ignore_buttons and self._is_zoomed_out:
-            if value != 0 or not sender.is_momentary():
+        if self.is_enabled():
+            if self._ignore_buttons or self._is_zoomed_out and not value != 0 or sender.is_momentary():
                 self.song().stop_all_clips()
 
     def _zoom_value(self, value):
-        assert self._zoom_button != None
-        assert value in range(128)
         if self.is_enabled():
             if self._zoom_button.is_momentary():
                 self._is_zoomed_out = value > 0

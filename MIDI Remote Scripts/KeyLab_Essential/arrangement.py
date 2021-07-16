@@ -8,7 +8,7 @@ class ArrangementComponent(Component):
 
     @set_or_delete_cue_button.pressed
     def set_or_delete_cue_button(self, _):
-        if self.application.view.focused_document_view == u'Arranger':
+        if self.application.view.focused_document_view == 'Arranger':
             self.song.set_or_delete_cue()
 
     @jump_encoder.value

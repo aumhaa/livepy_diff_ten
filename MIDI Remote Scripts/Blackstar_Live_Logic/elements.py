@@ -7,14 +7,17 @@ from .skin import skin
 from .time_display import TimeDisplayElement
 NUM_LOOPER_SWITCHES = 6
 
-def create_button(identifier, name, msg_type = MIDI_CC_TYPE, **k):
+def create_button(identifier, name, msg_type=MIDI_CC_TYPE, **k):
     return ButtonElement(True, msg_type, 15, identifier, skin=skin, name=name, **k)
 
 
 class Elements(object):
 
     def __init__(self, *a, **k):
-        super(Elements, self).__init__(*a, **k)
-        self.foot_switches = ButtonMatrixElement(rows=[[ create_button(i, u'Foot_Switch_{}'.format(i)) for i in range(NUM_LOOPER_SWITCHES) ]], name=u'Foot_Switches')
+        (super(Elements, self).__init__)(*a, **k)
+        self.foot_switches = ButtonMatrixElement(rows=[
+         [create_button(i, 'Foot_Switch_{}'.format(i)) for i in range(NUM_LOOPER_SWITCHES)]],
+          name='Foot_Switches')
         self.time_display = TimeDisplayElement(SYSEX_HEADER + NUMERIC_DISPLAY_COMMAND, (SYSEX_END,))
-        self.live_integration_mode_switch = SysexElement(name=u'Live_Integration_Mode_Switch', send_message_generator=lambda v: LIVE_INTEGRATION_MODE_ID + (v, SYSEX_END))
+        self.live_integration_mode_switch = SysexElement(name='Live_Integration_Mode_Switch',
+          send_message_generator=(lambda v: LIVE_INTEGRATION_MODE_ID + (v, SYSEX_END)))

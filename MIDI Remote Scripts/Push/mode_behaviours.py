@@ -2,11 +2,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface.mode import ModeButtonBehaviour
 
 class CancellableBehaviour(ModeButtonBehaviour):
-    u"""
-    Acts a toggle for the mode -- when the button is pressed a second
-    time, every mode in this mode group will be exited, going back to
-    the last selected mode.  It also does mode latching.
-    """
     _previous_mode = None
 
     def press_immediate(self, component, mode):
@@ -27,19 +22,15 @@ class CancellableBehaviour(ModeButtonBehaviour):
         self._previous_mode = component.active_modes[0] if component.active_modes else None
 
     def restore_previous_mode(self, component):
-        if len(component.active_modes) == 0 and self._previous_mode is not None:
-            component.push_mode(self._previous_mode)
+        if len(component.active_modes) == 0:
+            if self._previous_mode is not None:
+                component.push_mode(self._previous_mode)
 
 
 class AlternativeBehaviour(CancellableBehaviour):
-    u"""
-    Relies in the alternative to be in the same group for cancellation
-    to work properly. Also shows cancellable behaviour and the
-    alternative is latched.
-    """
 
-    def __init__(self, alternative_mode = None, *a, **k):
-        super(AlternativeBehaviour, self).__init__(*a, **k)
+    def __init__(self, alternative_mode=None, *a, **k):
+        (super(AlternativeBehaviour, self).__init__)(*a, **k)
         self._alternative_mode = alternative_mode
 
     def _check_mode_groups(self, component, mode):
@@ -48,33 +39,24 @@ class AlternativeBehaviour(CancellableBehaviour):
         return mode_groups and mode_groups & alt_group
 
     def release_delayed(self, component, mode):
-        assert self._check_mode_groups(component, mode)
         component.pop_groups(component.get_mode_groups(mode))
         self.restore_previous_mode(component)
 
     def press_delayed(self, component, mode):
-        assert self._check_mode_groups(component, mode)
         self.remember_previous_mode(component)
         component.push_mode(self._alternative_mode)
 
     def release_immediate(self, component, mode):
-        assert self._check_mode_groups(component, mode)
         super(AlternativeBehaviour, self).press_immediate(component, mode)
 
     def press_immediate(self, component, mode):
-        assert self._check_mode_groups(component, mode)
+        pass
 
 
 class DynamicBehaviourMixin(ModeButtonBehaviour):
-    u"""
-    Chooses the mode to uses dynamically when the button is pressed.
-    If no mode is returned, the default one is used instead.
-    
-    It can be safely used as a mixin in front of every other behviour.
-    """
 
-    def __init__(self, mode_chooser = None, *a, **k):
-        super(DynamicBehaviourMixin, self).__init__(*a, **k)
+    def __init__(self, mode_chooser=None, *a, **k):
+        (super(DynamicBehaviourMixin, self).__init__)(*a, **k)
         self._mode_chooser = mode_chooser
         self._chosen_mode = None
 
@@ -93,13 +75,9 @@ class DynamicBehaviourMixin(ModeButtonBehaviour):
 
 
 class ExcludingBehaviourMixin(ModeButtonBehaviour):
-    u"""
-    Button behaviour that excludes the mode/s when the currently
-    selected mode is in any of the excluded groups.
-    """
 
-    def __init__(self, excluded_groups = set(), *a, **k):
-        super(ExcludingBehaviourMixin, self).__init__(*a, **k)
+    def __init__(self, excluded_groups=set(), *a, **k):
+        (super(ExcludingBehaviourMixin, self).__init__)(*a, **k)
         self._excluded_groups = set(excluded_groups)
 
     def is_excluded(self, component, selected):

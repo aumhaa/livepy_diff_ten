@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
-from novation.channel_strip import ChannelStripComponent as ChannelStripComponentBase
+import novation.channel_strip as ChannelStripComponentBase
 
 class ChannelStripComponent(ChannelStripComponentBase):
 
@@ -13,6 +13,6 @@ class ChannelStripComponent(ChannelStripComponentBase):
             if self.song.view.selected_track == self._track:
                 self.select_button.color = self._track_color_value
             else:
-                self.select_button.color = u'Mixer.TrackNotSelected'
+                self.select_button.color = 'Mixer.TrackNotSelected'
         else:
             self.select_button.color = self.empty_color

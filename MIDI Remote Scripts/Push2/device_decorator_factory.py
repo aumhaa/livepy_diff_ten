@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface import DeviceDecoratorFactory as DeviceDecoratorFactoryBase
+import ableton.v2.control_surface as DeviceDecoratorFactoryBase
 from .auto_filter import AutoFilterDeviceDecorator
 from .compressor import CompressorDeviceDecorator
 from .device_decoration import SamplerDeviceDecorator, PedalDeviceDecorator, DrumBussDeviceDecorator, UtilityDeviceDecorator
@@ -16,20 +16,20 @@ from .spectral import SpectralDeviceDecorator
 from .wavetable import WavetableDeviceDecorator
 
 class DeviceDecoratorFactory(DeviceDecoratorFactoryBase):
-    DECORATOR_CLASSES = {u'OriginalSimpler': SimplerDeviceDecorator,
-     u'Operator': OperatorDeviceDecorator,
-     u'MultiSampler': SamplerDeviceDecorator,
-     u'AutoFilter': AutoFilterDeviceDecorator,
-     u'Eq8': Eq8DeviceDecorator,
-     u'Chorus2': Chorus2DeviceDecorator,
-     u'Compressor2': CompressorDeviceDecorator,
-     u'Pedal': PedalDeviceDecorator,
-     u'DrumBuss': DrumBussDeviceDecorator,
-     u'Echo': EchoDeviceDecorator,
-     u'Hybrid': HybridReverbDeviceDecorator,
-     u'InstrumentVector': WavetableDeviceDecorator,
-     u'Spectral': SpectralDeviceDecorator,
-     u'StereoGain': UtilityDeviceDecorator,
-     u'Transmute': TransmuteDeviceDecorator,
-     u'Delay': DelayDeviceDecorator,
-     u'Redux2': Redux2DeviceDecorator}
+    DECORATOR_CLASSES = {'OriginalSimpler':SimplerDeviceDecorator, 
+     'Operator':OperatorDeviceDecorator, 
+     'MultiSampler':SamplerDeviceDecorator, 
+     'AutoFilter':AutoFilterDeviceDecorator, 
+     'Eq8':Eq8DeviceDecorator, 
+     'Chorus2':Chorus2DeviceDecorator, 
+     'Compressor2':CompressorDeviceDecorator, 
+     'Pedal':PedalDeviceDecorator, 
+     'DrumBuss':DrumBussDeviceDecorator, 
+     'Echo':EchoDeviceDecorator, 
+     'Hybrid':HybridReverbDeviceDecorator, 
+     'InstrumentVector':WavetableDeviceDecorator, 
+     'Spectral':SpectralDeviceDecorator, 
+     'StereoGain':UtilityDeviceDecorator, 
+     'Transmute':TransmuteDeviceDecorator, 
+     'Delay':DelayDeviceDecorator, 
+     'Redux2':Redux2DeviceDecorator}

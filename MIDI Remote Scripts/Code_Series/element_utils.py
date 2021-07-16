@@ -8,7 +8,8 @@ CHANNEL = 0
 
 @depends(skin=None)
 def make_button(identifier, name, **k):
-    return ButtonElement(IS_MOMENTARY, MIDI_NOTE_TYPE, CHANNEL, identifier, name=name, **k)
+    return ButtonElement(
+ IS_MOMENTARY, MIDI_NOTE_TYPE, CHANNEL, identifier, name=name, **k)
 
 
 def make_slider(channel, name):
@@ -16,4 +17,8 @@ def make_slider(channel, name):
 
 
 def make_encoder(identifier, name):
-    return EncoderElement(MIDI_CC_TYPE, 0, identifier, Live.MidiMap.MapMode.relative_smooth_signed_bit, name=name)
+    return EncoderElement(MIDI_CC_TYPE,
+      0,
+      identifier,
+      (Live.MidiMap.MapMode.relative_smooth_signed_bit),
+      name=name)

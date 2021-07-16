@@ -3,7 +3,12 @@ from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC,
 from .irig_keys_io import IRigKeysIO
 
 def get_capabilities():
-    return {CONTROLLER_ID_KEY: controller_id(vendor_id=6499, product_ids=[46, 45], model_name=[u'iRig Keys IO 25', u'iRig Keys IO 49']),
+    return {CONTROLLER_ID_KEY: controller_id(vendor_id=6499,
+                          product_ids=[
+                         46, 45],
+                          model_name=[
+                         'iRig Keys IO 25', 'iRig Keys IO 49']), 
+     
      PORTS_KEY: [inport(props=[NOTES_CC, SCRIPT, REMOTE]), outport(props=[SCRIPT])]}
 
 

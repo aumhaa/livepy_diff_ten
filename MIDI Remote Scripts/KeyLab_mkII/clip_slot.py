@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from KeyLab_Essential.clip_slot import ClipSlotComponent as ClipSlotComponentBase
+import KeyLab_Essential.clip_slot as ClipSlotComponentBase
 
 class ClipSlotComponent(ClipSlotComponentBase):
 

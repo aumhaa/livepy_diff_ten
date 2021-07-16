@@ -8,16 +8,16 @@ class ViewControlComponent(Component):
     scene_encoder = SendValueEncoderControl()
 
     def __init__(self, *a, **k):
-        super(ViewControlComponent, self).__init__(*a, **k)
+        (super(ViewControlComponent, self).__init__)(*a, **k)
         self._track_scroller = BasicTrackScroller()
         self._scene_scroller = BasicSceneScroller()
         song = self.song
         view = song.view
-        self.register_slot(song, self._update_track_encoder, u'visible_tracks')
-        self.register_slot(song, self._update_track_encoder, u'return_tracks')
-        self.register_slot(view, self._update_track_encoder, u'selected_track')
-        self.register_slot(song, self._update_scene_encoder, u'scenes')
-        self.register_slot(view, self._update_scene_encoder, u'selected_scene')
+        self.register_slot(song, self._update_track_encoder, 'visible_tracks')
+        self.register_slot(song, self._update_track_encoder, 'return_tracks')
+        self.register_slot(view, self._update_track_encoder, 'selected_track')
+        self.register_slot(song, self._update_scene_encoder, 'scenes')
+        self.register_slot(view, self._update_scene_encoder, 'selected_scene')
 
     @track_encoder.value
     def track_encoder(self, value, _):

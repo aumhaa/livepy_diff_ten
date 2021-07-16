@@ -3,8 +3,15 @@ from ableton.v2.control_surface.capabilities import controller_id, CONTROLLER_ID
 from .blackstar_live_logic import Blackstar_Live_Logic
 
 def get_capabilities():
-    return {CONTROLLER_ID_KEY: controller_id(vendor_id=10196, product_ids=[4097], model_name=[u'Live Logic MIDI Controller']),
-     PORTS_KEY: [inport(props=[SCRIPT, REMOTE, NOTES_CC]), outport(props=[SCRIPT, REMOTE, NOTES_CC])]}
+    return {CONTROLLER_ID_KEY: controller_id(vendor_id=10196,
+                          product_ids=[
+                         4097],
+                          model_name=[
+                         'Live Logic MIDI Controller']), 
+     
+     PORTS_KEY: [
+                 inport(props=[SCRIPT, REMOTE, NOTES_CC]),
+                 outport(props=[SCRIPT, REMOTE, NOTES_CC])]}
 
 
 def create_instance(c_instance):

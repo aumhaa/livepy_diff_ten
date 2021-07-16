@@ -14,7 +14,7 @@ from .consts import MessageBoxText
 class ClipSlotCopyHandler(Messenger):
 
     def __init__(self, *a, **k):
-        super(ClipSlotCopyHandler, self).__init__(*a, **k)
+        (super(ClipSlotCopyHandler, self).__init__)(*a, **k)
         self._is_copying = False
         self._source_clip_slot = None
         self._last_shown_notification_ref = const(None)
@@ -86,9 +86,8 @@ class ClipSlotCopyHandler(Messenger):
 
 class DuplicateSceneComponent(Component, Messenger):
 
-    def __init__(self, session_ring = None, *a, **k):
-        super(DuplicateSceneComponent, self).__init__(*a, **k)
-        assert session_ring is not None
+    def __init__(self, session_ring=None, *a, **k):
+        (super(DuplicateSceneComponent, self).__init__)(*a, **k)
         self._session_ring = session_ring
         self._scene_buttons = None
 
@@ -96,9 +95,9 @@ class DuplicateSceneComponent(Component, Messenger):
         self._scene_buttons = buttons
         self._on_scene_value.subject = buttons
 
-    @listens(u'value')
+    @listens('value')
     def _on_scene_value(self, value, index, _, is_momentary):
-        if self.is_enabled() and (value or not is_momentary):
+        if not (self.is_enabled() and value or is_momentary):
             try:
                 self.song.duplicate_scene(self._session_ring.scene_offset + index)
                 self.show_notification(MessageBoxText.DUPLICATE_SCENE % self.song.view.selected_scene.name)
@@ -112,19 +111,18 @@ class DuplicateSceneComponent(Component, Messenger):
 
 class SpecialClipSlotComponent(ClipSlotComponent, Messenger):
 
-    @depends(copy_handler=const(None), fixed_length_recording=const(None))
-    def __init__(self, copy_handler = None, fixed_length_recording = None, *a, **k):
-        assert copy_handler is not None
-        assert fixed_length_recording is not None
-        super(SpecialClipSlotComponent, self).__init__(*a, **k)
+    @depends(copy_handler=(const(None)), fixed_length_recording=(const(None)))
+    def __init__(self, copy_handler=None, fixed_length_recording=None, *a, **k):
+        (super(SpecialClipSlotComponent, self).__init__)(*a, **k)
         self._copy_handler = copy_handler
         self._fixed_length_recording = fixed_length_recording
 
     def _do_delete_clip(self):
-        if self._clip_slot and self._clip_slot.has_clip:
-            clip_name = self._clip_slot.clip.name
-            self._clip_slot.delete_clip()
-            self.show_notification(MessageBoxText.DELETE_CLIP % clip_name)
+        if self._clip_slot:
+            if self._clip_slot.has_clip:
+                clip_name = self._clip_slot.clip.name
+                self._clip_slot.delete_clip()
+                self.show_notification(MessageBoxText.DELETE_CLIP % clip_name)
 
     def _do_select_clip(self, clip_slot):
         if liveobj_valid(self._clip_slot):
@@ -141,16 +139,90 @@ class SpecialClipSlotComponent(ClipSlotComponent, Messenger):
     def _clip_is_recording(self):
         return self.has_clip() and self._clip_slot.clip.is_recording
 
-    def _do_launch_clip(self, fire_state):
-        should_start_fixed_length_recording = self._fixed_length_recording.should_start_fixed_length_recording(self._clip_slot)
-        clip_is_recording = self._clip_is_recording()
-        if fire_state and not should_start_fixed_length_recording and not clip_is_recording or not fire_state:
-            super(SpecialClipSlotComponent, self)._do_launch_clip(fire_state)
-        elif should_start_fixed_length_recording:
-            track = self._clip_slot.canonical_parent
-            self._fixed_length_recording.start_recording_in_slot(track, list(track.clip_slots).index(self._clip_slot))
-        elif clip_is_recording:
-            self._fixed_length_recording.stop_recording(self._clip_slot.clip)
+    def _do_launch_clip--- This code section failed: ---
+
+ L. 170         0  LOAD_FAST                'self'
+                2  LOAD_ATTR                _fixed_length_recording
+                4  LOAD_METHOD              should_start_fixed_length_recording
+
+ L. 171         6  LOAD_FAST                'self'
+                8  LOAD_ATTR                _clip_slot
+               10  CALL_METHOD_1         1  '1 positional argument'
+               12  STORE_FAST               'should_start_fixed_length_recording'
+
+ L. 173        14  LOAD_FAST                'self'
+               16  LOAD_METHOD              _clip_is_recording
+               18  CALL_METHOD_0         0  '0 positional arguments'
+               20  STORE_FAST               'clip_is_recording'
+
+ L. 176        22  LOAD_FAST                'fire_state'
+               24  POP_JUMP_IF_FALSE    34  'to 34'
+
+ L. 177        26  LOAD_FAST                'should_start_fixed_length_recording'
+               28  POP_JUMP_IF_TRUE     34  'to 34'
+
+ L. 178        30  LOAD_FAST                'clip_is_recording'
+               32  POP_JUMP_IF_FALSE    38  'to 38'
+             34_0  COME_FROM            28  '28'
+             34_1  COME_FROM            24  '24'
+
+ L. 179        34  LOAD_FAST                'fire_state'
+               36  POP_JUMP_IF_TRUE     56  'to 56'
+             38_0  COME_FROM            32  '32'
+
+ L. 181        38  LOAD_GLOBAL              super
+               40  LOAD_GLOBAL              SpecialClipSlotComponent
+               42  LOAD_FAST                'self'
+               44  CALL_FUNCTION_2       2  '2 positional arguments'
+               46  LOAD_METHOD              _do_launch_clip
+               48  LOAD_FAST                'fire_state'
+               50  CALL_METHOD_1         1  '1 positional argument'
+               52  POP_TOP          
+               54  JUMP_FORWARD        118  'to 118'
+             56_0  COME_FROM            36  '36'
+
+ L. 182        56  LOAD_FAST                'should_start_fixed_length_recording'
+               58  POP_JUMP_IF_FALSE    98  'to 98'
+
+ L. 183        60  LOAD_FAST                'self'
+               62  LOAD_ATTR                _clip_slot
+               64  LOAD_ATTR                canonical_parent
+               66  STORE_FAST               'track'
+
+ L. 184        68  LOAD_FAST                'self'
+               70  LOAD_ATTR                _fixed_length_recording
+               72  LOAD_METHOD              start_recording_in_slot
+
+ L. 185        74  LOAD_FAST                'track'
+               76  LOAD_GLOBAL              list
+               78  LOAD_FAST                'track'
+               80  LOAD_ATTR                clip_slots
+               82  CALL_FUNCTION_1       1  '1 positional argument'
+               84  LOAD_METHOD              index
+               86  LOAD_FAST                'self'
+               88  LOAD_ATTR                _clip_slot
+               90  CALL_METHOD_1         1  '1 positional argument'
+               92  CALL_METHOD_2         2  '2 positional arguments'
+               94  POP_TOP          
+               96  JUMP_FORWARD        118  'to 118'
+             98_0  COME_FROM            58  '58'
+
+ L. 187        98  LOAD_FAST                'clip_is_recording'
+              100  POP_JUMP_IF_FALSE   118  'to 118'
+
+ L. 188       102  LOAD_FAST                'self'
+              104  LOAD_ATTR                _fixed_length_recording
+              106  LOAD_METHOD              stop_recording
+              108  LOAD_FAST                'self'
+              110  LOAD_ATTR                _clip_slot
+              112  LOAD_ATTR                clip
+              114  CALL_METHOD_1         1  '1 positional argument'
+              116  POP_TOP          
+            118_0  COME_FROM           100  '100'
+            118_1  COME_FROM            96  '96'
+            118_2  COME_FROM            54  '54'
+
+Parse error at or near `JUMP_FORWARD' instruction at offset 54
 
 
 class SpecialSceneComponent(SceneComponent, Messenger):
@@ -168,34 +240,32 @@ class SpecialSceneComponent(SceneComponent, Messenger):
 
 
 class SpecialSessionComponent(SessionComponent):
-    u"""
-    Special session subclass that handles ConfigurableButtons
-    and has a button to fire the selected clip slot.
-    """
     _session_component_ends_initialisation = False
     scene_component_type = SpecialSceneComponent
     duplicate_button = ButtonControl()
 
-    def __init__(self, clip_slot_copy_handler = None, fixed_length_recording = None, *a, **k):
+    def __init__(self, clip_slot_copy_handler=None, fixed_length_recording=None, *a, **k):
         self._clip_copy_handler = clip_slot_copy_handler or ClipSlotCopyHandler()
         self._fixed_length_recording = fixed_length_recording
-        with inject(copy_handler=const(self._clip_copy_handler), fixed_length_recording=const(self._fixed_length_recording)).everywhere():
-            super(SpecialSessionComponent, self).__init__(*a, **k)
+        with inject(copy_handler=(const(self._clip_copy_handler)),
+          fixed_length_recording=(const(self._fixed_length_recording))).everywhere():
+            (super(SpecialSessionComponent, self).__init__)(*a, **k)
         self._slot_launch_button = None
         self._duplicate_button = None
-        self._duplicate = DuplicateSceneComponent(self._session_ring, parent=self)
-        self._duplicate_enabler = EnablingModesComponent(parent=self, component=self._duplicate)
+        self._duplicate = DuplicateSceneComponent((self._session_ring), parent=self)
+        self._duplicate_enabler = EnablingModesComponent(parent=self,
+          component=(self._duplicate))
         self._end_initialisation()
 
-    duplicate_layer = forward_property(u'_duplicate')(u'layer')
+    duplicate_layer = forward_property('_duplicate')('layer')
 
     @duplicate_button.pressed
     def duplicate_button(self, button):
-        self._duplicate_enabler.selected_mode = u'enabled'
+        self._duplicate_enabler.selected_mode = 'enabled'
 
     @duplicate_button.released
     def duplicate_button(self, button):
-        self._duplicate_enabler.selected_mode = u'disabled'
+        self._duplicate_enabler.selected_mode = 'disabled'
         self._clip_copy_handler.stop_copying()
 
     def set_slot_launch_button(self, button):
@@ -210,19 +280,18 @@ class SpecialSessionComponent(SessionComponent):
     def set_touch_strip(self, touch_strip):
         if touch_strip:
             touch_strip.set_mode(TouchStripModes.CUSTOM_FREE)
-            touch_strip.send_state([ TouchStripStates.STATE_OFF for _ in range(touch_strip.state_count) ])
+            touch_strip.send_state([TouchStripStates.STATE_OFF for _ in range(touch_strip.state_count)])
         self._on_touch_strip_value.subject = touch_strip
 
-    @listens(u'value')
+    @listens('value')
     def _on_touch_strip_value(self, value):
         pass
 
-    @listens(u'value')
+    @listens('value')
     def _on_slot_launch_value(self, value):
-        if self.is_enabled():
-            if value != 0 or not self._slot_launch_button.is_momentary():
-                if liveobj_valid(self.song.view.highlighted_clip_slot):
-                    self.song.view.highlighted_clip_slot.fire()
-                self._slot_launch_button.turn_on()
-            else:
-                self._slot_launch_button.turn_off()
+        if not (self.is_enabled() and value != 0 or self._slot_launch_button.is_momentary()):
+            if liveobj_valid(self.song.view.highlighted_clip_slot):
+                self.song.view.highlighted_clip_slot.fire()
+            self._slot_launch_button.turn_on()
+        else:
+            self._slot_launch_button.turn_off()

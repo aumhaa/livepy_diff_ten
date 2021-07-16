@@ -5,11 +5,11 @@ from ableton.v2.control_surface.components import SessionRingComponent
 class SelectedTrackFollowingSessionRingComponent(SessionRingComponent):
 
     def __init__(self, *a, **k):
-        super(SelectedTrackFollowingSessionRingComponent, self).__init__(*a, **k)
-        self.__on_selected_track_changed.subject = self.song.view
-        self.__on_selected_track_changed()
+        (super(SelectedTrackFollowingSessionRingComponent, self).__init__)(*a, **k)
+        self._SelectedTrackFollowingSessionRingComponent__on_selected_track_changed.subject = self.song.view
+        self._SelectedTrackFollowingSessionRingComponent__on_selected_track_changed()
 
-    @listens(u'selected_track')
+    @listens('selected_track')
     def __on_selected_track_changed(self):
         tracks_to_use = self.tracks_to_use()
         selected_track = self.song.view.selected_track

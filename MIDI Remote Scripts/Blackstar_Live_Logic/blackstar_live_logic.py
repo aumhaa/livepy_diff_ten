@@ -8,10 +8,13 @@ from .looper import LooperComponent
 class Blackstar_Live_Logic(ControlSurface):
 
     def __init__(self, *a, **k):
-        super(Blackstar_Live_Logic, self).__init__(*a, **k)
+        (super(Blackstar_Live_Logic, self).__init__)(*a, **k)
         with self.component_guard():
             self._elements = Elements()
-            self._looper = LooperComponent(name=u'Looper', is_enabled=False, layer=Layer(foot_switches=self._elements.foot_switches, time_display=self._elements.time_display))
+            self._looper = LooperComponent(name='Looper',
+              is_enabled=False,
+              layer=Layer(foot_switches=(self._elements.foot_switches),
+              time_display=(self._elements.time_display)))
 
     def disconnect(self):
         super(Blackstar_Live_Logic, self).disconnect()
@@ -23,10 +26,6 @@ class Blackstar_Live_Logic(ControlSurface):
         self.schedule_message(2, self.refresh_state)
 
     def process_midi_bytes(self, midi_bytes, midi_processor):
-        u"""
-        The switches send sysex which we need to ignore to avoid
-        an error being logged from Live
-        """
         if is_sysex(midi_bytes):
             return
         return super(Blackstar_Live_Logic, self).process_midi_bytes(midi_bytes, midi_processor)

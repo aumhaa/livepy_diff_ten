@@ -1,13 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface.control import Control
-DEFAULT_MESSAGE = u'-'
+DEFAULT_MESSAGE = '-'
 
 class DisplayControl(Control):
 
     class State(Control.State):
 
         def __init__(self, *a, **k):
-            super(DisplayControl.State, self).__init__(*a, **k)
+            (super(DisplayControl.State, self).__init__)(*a, **k)
             self._message = DEFAULT_MESSAGE
 
         @property

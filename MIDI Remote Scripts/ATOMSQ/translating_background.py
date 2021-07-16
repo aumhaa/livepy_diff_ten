@@ -4,10 +4,11 @@ from ableton.v2.control_surface.control import RadioButtonGroup
 from .midi import USER_MODE_START_CHANNEL
 
 class TranslatingBackgroundComponent(BackgroundComponent):
-    channel_selection_buttons = RadioButtonGroup(control_count=6, channel=USER_MODE_START_CHANNEL)
+    channel_selection_buttons = RadioButtonGroup(control_count=6,
+      channel=USER_MODE_START_CHANNEL)
 
     def __init__(self, *a, **k):
-        super(TranslatingBackgroundComponent, self).__init__(*a, **k)
+        (super(TranslatingBackgroundComponent, self).__init__)(*a, **k)
         self.channel_selection_buttons.checked_index = 0
 
     def set_channel_selection_buttons(self, buttons):

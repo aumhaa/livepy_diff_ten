@@ -3,10 +3,7 @@ import Live
 FilterType = Live.Browser.FilterType
 DeviceType = Live.Device.DeviceType
 
-def filter_type_for_hotswap_target(target, default = FilterType.disabled):
-    u"""
-    Returns the appropriate browser filter type for a given hotswap target.
-    """
+def filter_type_for_hotswap_target(target, default=FilterType.disabled):
     if isinstance(target, Live.Device.Device):
         if target.type == DeviceType.instrument:
             return FilterType.instrument_hotswap
@@ -25,12 +22,7 @@ def filter_type_for_hotswap_target(target, default = FilterType.disabled):
     return default
 
 
-def get_selection_for_new_device(selection, insert_left = False):
-    u"""
-    Returns a device, depending on the type of object that is selected at this moment.
-    For drum pads, it returns the last device in the pads chain.
-    If the selected object is no device, it returns the selected deviec.
-    """
+def get_selection_for_new_device(selection, insert_left=False):
     selected = selection.selected_object
     if isinstance(selected, Live.DrumPad.DrumPad) and selected.chains and selected.chains[0].devices:
         index = 0 if insert_left else -1

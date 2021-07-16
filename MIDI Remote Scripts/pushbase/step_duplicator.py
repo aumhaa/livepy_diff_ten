@@ -46,7 +46,7 @@ class StepDuplicatorComponent(Component, Messenger):
     button = ButtonControl()
 
     def __init__(self, *a, **k):
-        super(StepDuplicatorComponent, self).__init__(*a, **k)
+        (super(StepDuplicatorComponent, self).__init__)(*a, **k)
         self._clip = None
         self._source_step = None
         self._notification_reference = partial(nop, None)
@@ -59,19 +59,21 @@ class StepDuplicatorComponent(Component, Messenger):
         self._cancel_duplicate()
         self._clip = clip
 
-    def add_step_with_pitch(self, note, step_start, step_end, nudge_offset = 0, is_page = False):
-        if self.is_enabled() and self.is_duplicating:
-            current_step = (note,
-             step_start,
-             step_end - step_start,
-             nudge_offset,
-             is_page)
-            if self._source_step is not None:
-                self._duplicate_to(current_step)
-            else:
-                self._duplicate_from(current_step)
+    def add_step_with_pitch(self, note, step_start, step_end, nudge_offset=0, is_page=False):
+        if self.is_enabled():
+            if self.is_duplicating:
+                current_step = (
+                 note,
+                 step_start,
+                 step_end - step_start,
+                 nudge_offset,
+                 is_page)
+                if self._source_step is not None:
+                    self._duplicate_to(current_step)
+                else:
+                    self._duplicate_from(current_step)
 
-    def add_step(self, step_start, step_end, nudge_offset = 0, is_page = False):
+    def add_step(self, step_start, step_end, nudge_offset=0, is_page=False):
         self.add_step_with_pitch(ALL_NOTES, step_start, step_end, nudge_offset, is_page)
 
     def _duplicate_from(self, source_step):
@@ -81,7 +83,10 @@ class StepDuplicatorComponent(Component, Messenger):
         if from_pitch == ALL_NOTES:
             from_pitch = 0
             pitch_span = 127
-        notes = self._clip.get_notes_extended(from_time=source_step[1], from_pitch=from_pitch, time_span=source_step[2], pitch_span=pitch_span)
+        notes = self._clip.get_notes_extended(from_time=(source_step[1]),
+          from_pitch=from_pitch,
+          time_span=(source_step[2]),
+          pitch_span=pitch_span)
         if len(notes) > 0:
             message = MessageBoxText.COPIED_PAGE if source_step[4] else MessageBoxText.COPIED_STEP
             self._source_step = source_step
@@ -97,8 +102,9 @@ class StepDuplicatorComponent(Component, Messenger):
             message = MessageBoxText.CANNOT_PASTE_FROM_STEP_TO_PAGE if destination_step[4] else MessageBoxText.CANNOT_PASTE_FROM_PAGE_TO_STEP
         loop_start = destination_step[1]
         loop_end = loop_start + self._source_step[2]
-        if destination_step[4] and not (loop_start >= self._clip.loop_start and loop_end <= self._clip.loop_end):
-            set_loop(self._clip, loop_start, loop_end)
+        if destination_step[4]:
+            if loop_start >= self._clip.loop_start and not loop_end <= self._clip.loop_end:
+                set_loop(self._clip, loop_start, loop_end)
         self._notification_reference = self.show_notification(message)
         self._source_step = None
 

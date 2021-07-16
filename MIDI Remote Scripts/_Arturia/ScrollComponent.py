@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.ScrollComponent import ScrollComponent as ScrollComponentBase
+import _Framework.ScrollComponent as ScrollComponentBase
 from _Framework.Control import EncoderControl
 
 class ScrollComponent(ScrollComponentBase):
@@ -14,7 +14,8 @@ class ScrollComponent(ScrollComponentBase):
         scroll_step = None
         if value > 0 and self.can_scroll_down():
             scroll_step = self._do_scroll_down
-        elif value < 0 and self.can_scroll_up():
-            scroll_step = self._do_scroll_up
+        elif value < 0:
+            if self.can_scroll_up():
+                scroll_step = self._do_scroll_up
         if scroll_step is not None:
             scroll_step()

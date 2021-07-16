@@ -6,8 +6,8 @@ class ViewControlComponent(ViewControlComponentBase):
     scene_scroll_encoder = StepEncoderControl(num_steps=64)
 
     def __init__(self, *a, **k):
-        super(ViewControlComponent, self).__init__(*a, **k)
-        self._scroll_scenes = ScrollComponent(BasicSceneScroller(), parent=self)
+        (super(ViewControlComponent, self).__init__)(*a, **k)
+        self._scroll_scenes = ScrollComponent((BasicSceneScroller()), parent=self)
 
     @scene_scroll_encoder.value
     def scene_scroll_encoder(self, value, _):

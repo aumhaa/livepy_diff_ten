@@ -1,22 +1,21 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.LogicalDisplaySegment import LogicalDisplaySegment
+import _Framework.LogicalDisplaySegment as LogicalDisplaySegment
 
 class NumericalDisplaySegment(LogicalDisplaySegment):
-    u""" Special display segment that only displays numerical values """
 
     @staticmethod
     def adjust_string(original, length):
-        characters_to_retain = {u'0': 48,
-         u'1': 49,
-         u'2': 50,
-         u'3': 51,
-         u'4': 52,
-         u'5': 53,
-         u'6': 54,
-         u'7': 55,
-         u'8': 56,
-         u'9': 57}
-        resulting_string = u''
+        characters_to_retain = {'0':48, 
+         '1':49, 
+         '2':50, 
+         '3':51, 
+         '4':52, 
+         '5':53, 
+         '6':54, 
+         '7':55, 
+         '8':56, 
+         '9':57}
+        resulting_string = ''
         for char in original:
             if char in characters_to_retain:
                 resulting_string = resulting_string + char
@@ -31,7 +30,7 @@ class NumericalDisplaySegment(LogicalDisplaySegment):
         LogicalDisplaySegment.__init__(self, width, update_callback)
 
     def display_string(self):
-        resulting_string = u' ' * int(self._width)
+        resulting_string = ' ' * int(self._width)
         if self._data_source != None:
             resulting_string = NumericalDisplaySegment.adjust_string(self._data_source.display_string(), self._width)
         return resulting_string

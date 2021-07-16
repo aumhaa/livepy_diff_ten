@@ -10,14 +10,14 @@ class DetailClipComponent(Component):
     delete_notes_button = ButtonControl()
 
     def __init__(self, *a, **k):
-        super(DetailClipComponent, self).__init__(*a, **k)
+        (super(DetailClipComponent, self).__init__)(*a, **k)
         self._record_quantization = RecordingQuantization.rec_q_sixtenth
-        self.__on_record_quantization_changed.subject = self.song
-        self.__on_record_quantization_changed()
-        self.__on_detail_clip_changed.subject = self.song.view
-        self.__on_detail_clip_changed()
+        self._DetailClipComponent__on_record_quantization_changed.subject = self.song
+        self._DetailClipComponent__on_record_quantization_changed()
+        self._DetailClipComponent__on_detail_clip_changed.subject = self.song.view
+        self._DetailClipComponent__on_detail_clip_changed()
 
-    @listens(u'detail_clip')
+    @listens('detail_clip')
     def __on_detail_clip_changed(self):
         clip = self.song.view.detail_clip
         if liveobj_valid(clip) and clip.is_midi_clip:
@@ -27,7 +27,7 @@ class DetailClipComponent(Component):
             self.quantize_notes_button.enabled = False
             self.delete_notes_button.enabled = False
 
-    @listens(u'midi_recording_quantization')
+    @listens('midi_recording_quantization')
     def __on_record_quantization_changed(self):
         if self.song.midi_recording_quantization:
             self._record_quantization = self.song.midi_recording_quantization
@@ -39,4 +39,7 @@ class DetailClipComponent(Component):
     @delete_notes_button.pressed
     def delete_notes_button(self, _):
         clip = self.song.view.detail_clip
-        clip.remove_notes_extended(from_time=0, from_pitch=0, time_span=clip.loop_end, pitch_span=128)
+        clip.remove_notes_extended(from_time=0,
+          from_pitch=0,
+          time_span=(clip.loop_end),
+          pitch_span=128)

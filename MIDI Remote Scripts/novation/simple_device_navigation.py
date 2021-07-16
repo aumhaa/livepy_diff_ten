@@ -5,13 +5,10 @@ from ableton.v2.control_surface.control import ButtonControl
 NavDirection = Live.Application.Application.View.NavDirection
 
 class SimpleDeviceNavigationComponent(Component):
-    u"""
-    Device navigation component for the case where
-    we only need to go to the next or previous device
-    on a track.
-    """
-    next_button = ButtonControl(color=u'Device.Navigation', pressed_color=u'Device.NavigationPressed')
-    prev_button = ButtonControl(color=u'Device.Navigation', pressed_color=u'Device.NavigationPressed')
+    next_button = ButtonControl(color='Device.Navigation',
+      pressed_color='Device.NavigationPressed')
+    prev_button = ButtonControl(color='Device.Navigation',
+      pressed_color='Device.NavigationPressed')
 
     @next_button.pressed
     def next_button(self, value):
@@ -23,8 +20,8 @@ class SimpleDeviceNavigationComponent(Component):
 
     def _scroll_device_chain(self, direction):
         view = self.application.view
-        if not view.is_view_visible(u'Detail') or not view.is_view_visible(u'Detail/DeviceChain'):
-            view.show_view(u'Detail')
-            view.show_view(u'Detail/DeviceChain')
+        if not (view.is_view_visible('Detail') and view.is_view_visible('Detail/DeviceChain')):
+            view.show_view('Detail')
+            view.show_view('Detail/DeviceChain')
         else:
-            view.scroll_view(direction, u'Detail/DeviceChain', False)
+            view.scroll_view(direction, 'Detail/DeviceChain', False)

@@ -51,33 +51,33 @@ class VisualisationGuides(object):
         return origin_row * VisualisationSettings.row_spacing + guide_type + index * VisualisationSettings.row_spacing - origin_y
 
     @staticmethod
-    def button_left_x(index, origin_x = None):
+    def button_left_x(index, origin_x=None):
         return VisualisationGuides._guide_x(index, origin_x, VisualisationSettings.button_left)
 
     @staticmethod
-    def light_left_x(index, origin_x = None):
+    def light_left_x(index, origin_x=None):
         return VisualisationGuides._guide_x(index, origin_x, VisualisationSettings.light_left)
 
     @staticmethod
-    def light_right_x(index, origin_x = None):
+    def light_right_x(index, origin_x=None):
         return VisualisationGuides._guide_x(index, origin_x, VisualisationSettings.light_right)
 
     @staticmethod
-    def button_right_x(index, origin_x = None):
+    def button_right_x(index, origin_x=None):
         return VisualisationGuides._guide_x(index, origin_x, VisualisationSettings.button_right)
 
     @staticmethod
-    def row_top_y(index, origin_y = None):
+    def row_top_y(index, origin_y=None):
         return VisualisationGuides._guide_y(index, origin_y, VisualisationSettings.row_top)
 
     @staticmethod
-    def body_top_y(index, origin_y = None):
+    def body_top_y(index, origin_y=None):
         return VisualisationGuides._guide_y(index, origin_y, VisualisationSettings.body_top)
 
     @staticmethod
-    def body_bottom_y(index, origin_y = None):
+    def body_bottom_y(index, origin_y=None):
         return VisualisationGuides._guide_y(index, origin_y, VisualisationSettings.body_bottom)
 
     @staticmethod
-    def row_bottom_y(index, origin_y = None):
+    def row_bottom_y(index, origin_y=None):
         return VisualisationGuides._guide_y(index, origin_y, VisualisationSettings.row_bottom)

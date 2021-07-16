@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
 from ableton.v2.control_surface import merge_skins, Skin
 from novation.colors import Mono, Rgb
-from novation.skin import skin as base_skin
+import novation.skin as base_skin
 
 class Colors(object):
 
@@ -27,4 +27,4 @@ class Colors(object):
         NavigationPressed = Rgb.WHITE
 
 
-skin = merge_skins(*(base_skin, Skin(Colors)))
+skin = merge_skins(base_skin, Skin(Colors)*())

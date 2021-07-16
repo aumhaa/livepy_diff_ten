@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import find_if
-from ableton.v2.control_surface.components import SessionComponent as SessionComponentBase
+import ableton.v2.control_surface.components as SessionComponentBase
 
 class SessionComponent(SessionComponentBase):
 

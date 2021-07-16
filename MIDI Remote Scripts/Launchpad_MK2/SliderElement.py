@@ -4,14 +4,14 @@ from builtins import round
 from past.utils import old_div
 from _Framework.Dependency import depends
 from _Framework.Skin import SkinColorMissingError
-from _Framework.SliderElement import SliderElement as SliderElementBase
+import _Framework.SliderElement as SliderElementBase
 from . import consts
 
 class SliderElement(SliderElementBase):
 
     @depends(skin=None)
-    def __init__(self, msg_type, channel, identifier, skin = None, *a, **k):
-        super(SliderElement, self).__init__(msg_type, channel, identifier, *a, **k)
+    def __init__(self, msg_type, channel, identifier, skin=None, *a, **k):
+        (super(SliderElement, self).__init__)(msg_type, channel, identifier, *a, **k)
         self._skin = skin
         self._index = 0
         self._type = 0
@@ -29,7 +29,6 @@ class SliderElement(SliderElementBase):
         return self._type
 
     def _set_type(self, type):
-        assert type in (consts.FADER_STANDARD_TYPE, consts.FADER_BIPOLAR_TYPE)
         self._type = type
 
     type = property(_get_type, _set_type)
@@ -56,8 +55,5 @@ class SliderElement(SliderElementBase):
         else:
             value = 0
             color_value = 0
-        msg += (self.type,
-         color_value,
-         value,
-         247)
+        msg += (self.type, color_value, value, 247)
         self._send_midi(msg)

@@ -15,19 +15,19 @@ class DescribedDeviceParameterBankWithOptions(DescribedDeviceParameterBank):
     @property
     def bank_view_description(self):
         bank = self._definition.value_by_index(self.index)
-        return str(bank.get(VIEW_DESCRIPTION_KEY, u''))
+        return str(bank.get(VIEW_DESCRIPTION_KEY, ''))
 
     def _current_option_slots(self):
         bank = self._definition.value_by_index(self.index)
-        return bank.get(OPTIONS_KEY) or (u'',) * OPTIONS_PER_BANK
+        return bank.get(OPTIONS_KEY) or ('', ) * OPTIONS_PER_BANK
 
     def _content_slots(self):
         return self._current_option_slots() + super(DescribedDeviceParameterBankWithOptions, self)._content_slots()
 
     def _collect_options(self):
         option_slots = self._current_option_slots()
-        options = getattr(self._device, u'options', [])
-        return [ find_if(lambda o: o.name == str(slot_definition), options) for slot_definition in option_slots ]
+        options = getattr(self._device, 'options', [])
+        return [find_if(lambda o: o.name == str(slot_definition), options) for slot_definition in option_slots]
 
     def _update_parameters(self):
         super(DescribedDeviceParameterBankWithOptions, self)._update_parameters()
@@ -37,7 +37,9 @@ class DescribedDeviceParameterBankWithOptions(DescribedDeviceParameterBank):
 
 def create_device_bank_with_options(device, banking_info):
     if liveobj_valid(device) and banking_info.device_bank_definition(device) is not None:
-        bank = DescribedDeviceParameterBankWithOptions(device=device, size=8, banking_info=banking_info)
+        bank = DescribedDeviceParameterBankWithOptions(device=device,
+          size=8,
+          banking_info=banking_info)
     else:
         bank = create_device_bank(device, banking_info)
     return bank

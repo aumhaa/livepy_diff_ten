@@ -5,9 +5,8 @@ from .banking_util import BANK_FORMAT, BANK_MAIN_KEY, BANK_PARAMETERS_KEY, all_p
 
 class DeviceParameterBank(EventObject):
 
-    def __init__(self, size = None, device = None, banking_info = None, *a, **k):
-        assert size is not None
-        super(DeviceParameterBank, self).__init__(*a, **k)
+    def __init__(self, size=None, device=None, banking_info=None, *a, **k):
+        (super(DeviceParameterBank, self).__init__)(*a, **k)
         self._size = size
         self._device = device
         self._banking_info = banking_info
@@ -17,7 +16,7 @@ class DeviceParameterBank(EventObject):
         self._update_parameters()
 
     def bank_count(self):
-        return self._banking_info.device_bank_count(self._device, bank_size=self._size)
+        return self._banking_info.device_bank_count((self._device), bank_size=(self._size))
 
     def _adjust_index(self, index):
         return clamp(index, 0, max(0, self.bank_count() - 1))
@@ -31,14 +30,15 @@ class DeviceParameterBank(EventObject):
         return self._index
 
     def _set_index(self, index):
-        if self._index != index and self._is_index_valid(index):
-            index = self._adjust_index(index)
-            self._index = index
-            self._update_parameters()
+        if self._index != index:
+            if self._is_index_valid(index):
+                index = self._adjust_index(index)
+                self._index = index
+                self._update_parameters()
 
     index = property(_get_index, _set_index)
 
-    @listens(u'parameters')
+    @listens('parameters')
     def _on_parameters_changed(self):
         self._index = self._adjust_index(self._index)
         self._update_parameters()
@@ -54,7 +54,7 @@ class DeviceParameterBank(EventObject):
     def name(self):
         if liveobj_valid(self._device):
             return self._calc_name()
-        return u''
+        return ''
 
     @property
     def device(self):
@@ -65,7 +65,7 @@ class DeviceParameterBank(EventObject):
         offset = self._index * self._size
         params = parameters[offset:]
         params.extend([None] * (self._size - len(params)))
-        return [ (param, None) for param in params ]
+        return [(param, None) for param in params]
 
     def _update_parameters(self):
         parameters = self._collect_parameters()[:self._size]
@@ -76,13 +76,13 @@ class DeviceParameterBank(EventObject):
 
 class DescribedDeviceParameterBank(DeviceParameterBank):
 
-    def __init__(self, device = None, banking_info = None, *a, **k):
+    def __init__(self, device=None, banking_info=None, *a, **k):
         self._definition = banking_info.device_bank_definition(device)
         self._dynamic_slots = []
-        super(DescribedDeviceParameterBank, self).__init__(device=device, banking_info=banking_info, *a, **k)
+        (super(DescribedDeviceParameterBank, self).__init__)(a, device=device, banking_info=banking_info, **k)
         self._update_parameters()
 
-    @listens_group(u'content')
+    @listens_group('content')
     def _on_slot_content_changed(self, _slot):
         self._update_parameters()
 
@@ -97,7 +97,7 @@ class DescribedDeviceParameterBank(DeviceParameterBank):
             slot.set_parameter_host(None)
             self.unregister_disconnectable(slot)
 
-        self._dynamic_slots = list(filter(lambda s: old_hasattr(s, u'notify_content'), self._content_slots()))
+        self._dynamic_slots = list(filter(lambda s: old_hasattr(s, 'notify_content'), self._content_slots()))
         for slot in self._dynamic_slots:
             self.register_disconnectable(slot)
             slot.set_parameter_host(self.device)
@@ -110,7 +110,8 @@ class DescribedDeviceParameterBank(DeviceParameterBank):
     def _collect_parameters(self):
         parameters = self._device.parameters
         bank_slots = self._current_parameter_slots()
-        return [ (find_if(lambda p: p.original_name == str(slot_definition), parameters), getattr(slot_definition, u'display_name', None)) for slot_definition in bank_slots ]
+        return [(
+         find_if(lambda p: p.original_name == str(slot_definition), parameters), getattr(slot_definition, 'display_name', None)) for slot_definition in bank_slots]
 
     def _update_parameters(self):
         self._setup_dynamic_slots()
@@ -120,8 +121,7 @@ class DescribedDeviceParameterBank(DeviceParameterBank):
 class MaxDeviceParameterBank(DeviceParameterBank):
 
     def __init__(self, *a, **k):
-        super(MaxDeviceParameterBank, self).__init__(*a, **k)
-        assert old_hasattr(self._device, u'get_bank_count')
+        (super(MaxDeviceParameterBank, self).__init__)(*a, **k)
         self._on_bank_parameters_changed.subject = self.device
 
     def _calc_name(self):
@@ -133,7 +133,7 @@ class MaxDeviceParameterBank(DeviceParameterBank):
             return provided_name
         return super(MaxDeviceParameterBank, self)._calc_name()
 
-    @listens(u'bank_parameters_changed')
+    @listens('bank_parameters_changed')
     def _on_bank_parameters_changed(self):
         self._update_parameters()
 
@@ -143,8 +143,8 @@ class MaxDeviceParameterBank(DeviceParameterBank):
         parameters = self._device.parameters
         mx_index = self.index - int(self._banking_info.has_main_bank(self._device))
         indices = self.device.get_bank_parameters(mx_index)
-        parameters = [ (parameters[index] if index >= 0 else None) for index in indices ]
-        return [ (param, None) for param in parameters ]
+        parameters = [parameters[index] if index >= 0 else None for index in indices]
+        return [(param, None) for param in parameters]
 
 
 def create_device_bank(device, banking_info):

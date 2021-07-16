@@ -1,10 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from _Framework.ModeSelectorComponent import ModeSelectorComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 from .consts import *
 
 class FaderButtonModeSelector(ModeSelectorComponent):
-    u""" SelectorComponent that assigns fader buttons to different functions """
 
     def __init__(self, mixer, fader_buttons):
         ModeSelectorComponent.__init__(self)

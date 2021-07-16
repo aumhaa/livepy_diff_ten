@@ -1,12 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.EncoderElement import EncoderElement
+import _Framework.EncoderElement as EncoderElement
 from _Framework.InputControlElement import *
 
 class IdentifyingEncoderElement(EncoderElement):
-    u""" Encoder with LED that can be connected and disconnected to a specific parameter
-    and can send and receive on different channels """
 
-    def __init__(self, msg_type, channel, identifier, map_mode, send_channel = None, identifier_send_offset = 0):
+    def __init__(self, msg_type, channel, identifier, map_mode, send_channel=None, identifier_send_offset=0):
         EncoderElement.__init__(self, msg_type, channel, identifier, map_mode)
         self._identify_mode = False
         self._send_channel = send_channel
@@ -48,8 +46,8 @@ class IdentifyingEncoderElement(EncoderElement):
     def reset(self):
         self.send_value(self._off_value)
 
-    def send_value(self, value, force = False):
-        if force or self._force_next_value or value != self._last_sent_value and self._is_being_forwarded:
+    def send_value(self, value, force=False):
+        if force or ((self._force_next_value or value) != self._last_sent_value and self._is_being_forwarded):
             data_byte1 = self._original_identifier + self._identifier_send_offset
             data_byte2 = value
             status_byte = self._send_channel if self._send_channel else self._original_channel
@@ -58,15 +56,17 @@ class IdentifyingEncoderElement(EncoderElement):
             elif self._msg_type == MIDI_CC_TYPE:
                 status_byte += MIDI_CC_STATUS
             if self.send_midi((status_byte, data_byte1, data_byte2)):
-                self._last_sent_message = (value, None)
+                self._last_sent_message = (
+                 value, None)
                 if self._report_output:
                     is_input = True
                     self._report_value(value, not is_input)
         self._force_next_value = False
 
     def connect_to(self, parameter):
-        if parameter != self._parameter_to_map_to and not self.is_mapped_manually():
-            self.send_value(self._off_value, force=True)
+        if parameter != self._parameter_to_map_to:
+            if not self.is_mapped_manually():
+                self.send_value((self._off_value), force=True)
         EncoderElement.connect_to(self, parameter)
 
     def release_parameter(self):
@@ -78,8 +78,8 @@ class IdentifyingEncoderElement(EncoderElement):
 
     def _update_led(self):
         if self.is_mapped_manually():
-            self.send_value(self._on_value, force=True)
+            self.send_value((self._on_value), force=True)
         elif self._parameter_to_map_to != None:
-            self.send_value(self._on_value, force=True)
+            self.send_value((self._on_value), force=True)
         else:
-            self.send_value(self._off_value, force=True)
+            self.send_value((self._off_value), force=True)

@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.MixerComponent import MixerComponent as MixerComponentBase
-from _Arturia.ScrollComponent import ScrollComponent
+import _Framework.MixerComponent as MixerComponentBase
+import _Arturia.ScrollComponent as ScrollComponent
 
 class MixerComponent(MixerComponentBase):
 
     def __init__(self, *a, **k):
-        super(MixerComponent, self).__init__(*a, **k)
+        (super(MixerComponent, self).__init__)(*a, **k)
         self._track_selection = self.register_component(ScrollComponent())
         self._track_selection.can_scroll_up = self._can_select_prev_track
         self._track_selection.can_scroll_down = self._can_select_next_track
@@ -30,13 +30,11 @@ class MixerComponent(MixerComponentBase):
     def _select_prev_track(self):
         selected_track = self.song().view.selected_track
         all_tracks = self.all_tracks()
-        assert selected_track in all_tracks
         index = list(all_tracks).index(selected_track)
-        self.song().view.selected_track = all_tracks[index - 1]
+        self.song().view.selected_track = all_tracks[(index - 1)]
 
     def _select_next_track(self):
         selected_track = self.song().view.selected_track
         all_tracks = self.all_tracks()
-        assert selected_track in all_tracks
         index = list(all_tracks).index(selected_track)
-        self.song().view.selected_track = all_tracks[index + 1]
+        self.song().view.selected_track = all_tracks[(index + 1)]

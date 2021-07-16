@@ -7,5 +7,6 @@ class NullFullVelocity(object):
 
 class FullVelocityElement(ProxyElement):
 
-    def __init__(self, full_velocity = None, *a, **k):
-        super(FullVelocityElement, self).__init__(proxied_object=full_velocity, proxied_interface=NullFullVelocity())
+    def __init__(self, full_velocity=None, *a, **k):
+        super(FullVelocityElement, self).__init__(proxied_object=full_velocity,
+          proxied_interface=(NullFullVelocity()))

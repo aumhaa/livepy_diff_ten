@@ -11,21 +11,21 @@ class SkinColorMissingError(Exception):
 
 class Skin(object):
 
-    def __init__(self, colors = None, *a, **k):
-        super(Skin, self).__init__(*a, **k)
+    def __init__(self, colors=None, *a, **k):
+        (super(Skin, self).__init__)(*a, **k)
         self._colors = {}
         if colors is not None:
             self._fill_colors(colors)
 
-    def _fill_colors(self, colors, pathname = u''):
-        if getattr(colors, u'__bases__', None):
+    def _fill_colors(self, colors, pathname=''):
+        if getattr(colors, '__bases__', None):
             for base in colors.__bases__:
                 self._fill_colors(base)
 
         for k, v in colors.__dict__.items():
-            if k[:1] != u'_':
+            if k[:1] != '_':
                 if callable(v):
-                    self._fill_colors(v, pathname + k + u'.')
+                    self._fill_colors(v, pathname + k + '.')
                 else:
                     self._colors[pathname + k] = v
 
@@ -33,7 +33,7 @@ class Skin(object):
         try:
             return self._colors[key]
         except KeyError:
-            raise_(SkinColorMissingError, u'Skin color missing: %s' % str(key))
+            raise_(SkinColorMissingError, 'Skin color missing: %s' % str(key))
 
     def iteritems(self):
         return iter(self._colors.items())
@@ -41,5 +41,5 @@ class Skin(object):
 
 def merge_skins(*skins):
     skin = Skin()
-    skin._colors = dict(chain(*[ list(s._colors.items()) for s in skins ]))
+    skin._colors = dict(chain(*[list(s._colors.items()) for s in skins]))
     return skin

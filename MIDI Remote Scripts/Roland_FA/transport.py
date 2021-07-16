@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface.control import ButtonControl
-from ableton.v2.control_surface.components import TransportComponent as TransportComponentBase
+import ableton.v2.control_surface.components as TransportComponentBase
 
 class TransportComponent(TransportComponentBase):
     jump_to_start_button = ButtonControl()

@@ -3,15 +3,9 @@ from ableton.v2.control_surface import midi
 from ableton.v2.testing import advance_tasks_by_time, ControlSurfaceTestBase, count_calls, interaction_guard
 from .. import sysex
 from ..launchpad_elements import SESSION_HEIGHT, SESSION_WIDTH
-IDENTITY_RESPONSE = (sysex.SYSEX_START_BYTE,
- midi.SYSEX_NON_REALTIME,
- 0,
- midi.SYSEX_GENERAL_INFO,
- midi.SYSEX_IDENTITY_RESPONSE_ID) + sysex.NOVATION_MANUFACTURER_ID + (0, 0) + sysex.DEVICE_FAMILY_MEMBER_CODE + (0,
- 0,
- 0,
- 0,
- sysex.SYSEX_END_BYTE)
+IDENTITY_RESPONSE = (
+ sysex.SYSEX_START_BYTE, midi.SYSEX_NON_REALTIME, 0, midi.SYSEX_GENERAL_INFO, midi.SYSEX_IDENTITY_RESPONSE_ID) + sysex.NOVATION_MANUFACTURER_ID + (0,
+                                                                                                                                                   0) + sysex.DEVICE_FAMILY_MEMBER_CODE + (0, 0, 0, 0, sysex.SYSEX_END_BYTE)
 
 class NovationControlSurfaceTestBase(ControlSurfaceTestBase):
     control_surface_class = None
@@ -28,10 +22,11 @@ class NovationControlSurfaceTestBase(ControlSurfaceTestBase):
 
     def send_layout_change(self, layout_bytes):
         with interaction_guard():
-            self.surface.get_control_by_name(u'Layout_Switch').receive_value(layout_bytes)
+            self.surface.get_control_by_name('Layout_Switch').receive_value(layout_bytes)
 
     def assertDawModeMessageSent(self, model_id):
-        self.assertIn(sysex.STD_MSG_HEADER + (model_id,
+        self.assertIn(sysex.STD_MSG_HEADER + (
+         model_id,
          sysex.FIRMWARE_MODE_COMMAND_BYTE,
          sysex.DAW_MODE_BYTE,
          sysex.SYSEX_END_BYTE), self.sent_midi)
@@ -40,4 +35,5 @@ class NovationControlSurfaceTestBase(ControlSurfaceTestBase):
         self.assertIn(sysex.STD_MSG_HEADER + (model_id, sysex.LAYOUT_COMMAND_BYTE) + layout_bytes + (sysex.SYSEX_END_BYTE,), self.sent_midi)
 
     def assertLayoutRequestMessageSent(self, model_id):
-        self.assertIn(sysex.STD_MSG_HEADER + (model_id, sysex.LAYOUT_COMMAND_BYTE, sysex.SYSEX_END_BYTE), self.sent_midi)
+        self.assertIn(sysex.STD_MSG_HEADER + (
+         model_id, sysex.LAYOUT_COMMAND_BYTE, sysex.SYSEX_END_BYTE), self.sent_midi)

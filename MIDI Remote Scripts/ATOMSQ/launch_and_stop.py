@@ -5,17 +5,18 @@ from ableton.v2.control_surface.components import ClipSlotComponent
 from ableton.v2.control_surface.control import ButtonControl, ToggleButtonControl
 
 class LaunchAndStopComponent(Component):
-    scene_launch_button = ButtonControl(color=u'DefaultButton.Off', pressed_color=u'DefaultButton.On')
+    scene_launch_button = ButtonControl(color='DefaultButton.Off',
+      pressed_color='DefaultButton.On')
     track_stop_button = ButtonControl()
 
     def __init__(self, *a, **k):
-        super(LaunchAndStopComponent, self).__init__(*a, **k)
+        (super(LaunchAndStopComponent, self).__init__)(*a, **k)
         self._clip_slot = ClipSlotComponent()
-        self.register_slot(self.song.view, self.__on_track_or_scene_changed, u'selected_track')
-        self.register_slot(self.song.view, self.__on_track_or_scene_changed, u'selected_scene')
-        self.__on_playing_status_changed.subject = self.song.view
-        self.__on_track_or_scene_changed()
-        self.__on_playing_status_changed()
+        self.register_slot(self.song.view, self._LaunchAndStopComponent__on_track_or_scene_changed, 'selected_track')
+        self.register_slot(self.song.view, self._LaunchAndStopComponent__on_track_or_scene_changed, 'selected_scene')
+        self._LaunchAndStopComponent__on_playing_status_changed.subject = self.song.view
+        self._LaunchAndStopComponent__on_track_or_scene_changed()
+        self._LaunchAndStopComponent__on_playing_status_changed()
 
     def set_clip_launch_button(self, button):
         self._clip_slot.set_launch_button(button)
@@ -32,7 +33,7 @@ class LaunchAndStopComponent(Component):
         slot = self.song.view.highlighted_clip_slot
         self._clip_slot.set_clip_slot(slot if liveobj_valid(slot) else None)
 
-    @listens(u'selected_track.playing_slot_index')
+    @listens('selected_track.playing_slot_index')
     def __on_playing_status_changed(self):
         track = self.song.view.selected_track
         self.track_stop_button.enabled = track in self.song.tracks and track.playing_slot_index >= 0

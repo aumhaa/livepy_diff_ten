@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.DeviceComponent import DeviceComponent
+import _Framework.DeviceComponent as DeviceComponent
 from .consts import FADER_TYPE_STANDARD, DEVICE_MAP_CHANNEL
 
 class SpecialDeviceComponent(DeviceComponent):
@@ -8,7 +8,7 @@ class SpecialDeviceComponent(DeviceComponent):
         if controls:
             for control in controls:
                 control.set_channel(DEVICE_MAP_CHANNEL)
-                control.set_light_and_type(u'Device.On', FADER_TYPE_STANDARD)
+                control.set_light_and_type('Device.On', FADER_TYPE_STANDARD)
 
         super(SpecialDeviceComponent, self).set_parameter_controls(controls)
 

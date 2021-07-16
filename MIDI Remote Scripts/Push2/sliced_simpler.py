@@ -5,7 +5,9 @@ from .colors import IndexedColor
 NEXT_SLICE_PULSE_SPEED = 48
 
 def next_slice_color(track_color_index):
-    return Pulse(color1=IndexedColor.from_live_index(track_color_index, shade_level=2), color2=IndexedColor.from_live_index(track_color_index, shade_level=1), speed=NEXT_SLICE_PULSE_SPEED)
+    return Pulse(color1=IndexedColor.from_live_index(track_color_index, shade_level=2),
+      color2=IndexedColor.from_live_index(track_color_index, shade_level=1),
+      speed=NEXT_SLICE_PULSE_SPEED)
 
 
 class Push2SlicedSimplerComponent(SlicedSimplerComponent):

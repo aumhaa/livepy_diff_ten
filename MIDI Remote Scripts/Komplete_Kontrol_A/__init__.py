@@ -3,7 +3,7 @@ from .komplete_kontrol_a import Komplete_Kontrol_A
 from ableton.v2.control_surface.capabilities import SUGGESTED_PORT_NAMES_KEY
 
 def get_capabilities():
-    return {SUGGESTED_PORT_NAMES_KEY: [u'Komplete Kontrol A DAW', u'Komplete Kontrol M DAW']}
+    return {SUGGESTED_PORT_NAMES_KEY: ['Komplete Kontrol A DAW', 'Komplete Kontrol M DAW']}
 
 
 def create_instance(c_instance):

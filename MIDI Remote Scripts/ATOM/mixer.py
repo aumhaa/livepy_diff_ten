@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
+import ableton.v2.control_surface.components as MixerComponentBase
 
 class MixerComponent(MixerComponentBase):
 
@@ -13,7 +13,7 @@ class MixerComponent(MixerComponentBase):
         if controls:
             for index, control in enumerate(controls):
                 if control:
-                    self.channel_strip(index).set_send_controls((None,) * send_index + (control,))
+                    self.channel_strip(index).set_send_controls((None, ) * send_index + (control,))
 
         else:
             for strip in self._channel_strips:

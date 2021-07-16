@@ -4,8 +4,8 @@ from . import sysex
 
 class GlobalPadParameters(Component):
 
-    def __init__(self, aftertouch_threshold = 0, *a, **k):
-        super(GlobalPadParameters, self).__init__(*a, **k)
+    def __init__(self, aftertouch_threshold=0, *a, **k):
+        (super(GlobalPadParameters, self).__init__)(*a, **k)
         self._pad_parameter_element = None
         self._aftertouch_threshold = aftertouch_threshold
 
@@ -24,7 +24,7 @@ class GlobalPadParameters(Component):
 
     def _update_pad_parameter_element(self):
         if self._pad_parameter_element:
-            self._pad_parameter_element.send_value(sysex.make_pad_parameter_message(aftertouch_threshold=self._aftertouch_threshold))
+            self._pad_parameter_element.send_value(sysex.make_pad_parameter_message(aftertouch_threshold=(self._aftertouch_threshold)))
 
     def update(self):
         super(GlobalPadParameters, self).update()

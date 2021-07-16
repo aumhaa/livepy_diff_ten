@@ -10,55 +10,80 @@ from .session import SessionComponent
 class Oxygen_Pro(ControlSurface):
 
     def __init__(self, *a, **k):
-        super(Oxygen_Pro, self).__init__(*a, **k)
+        (super(Oxygen_Pro, self).__init__)(*a, **k)
         with self.component_guard():
             self._elements = Elements()
-            with inject(element_container=const(self._elements)).everywhere():
+            with inject(element_container=(const(self._elements))).everywhere():
                 self._create_transport()
                 self._create_undo_redo()
                 self._create_device_parameters()
                 self._create_session()
                 self._create_mixer()
                 self._create_record_modes()
-        self.__on_main_view_changed.subject = self.application.view
+        self._Oxygen_Pro__on_main_view_changed.subject = self.application.view
 
     def _create_transport(self):
-        self._transport = TransportComponent(name=u'Transport', is_enabled=False, layer=Layer(loop_button=u'loop_button', stop_button=u'stop_button', play_button=u'play_button'))
+        self._transport = TransportComponent(name='Transport',
+          is_enabled=False,
+          layer=Layer(loop_button='loop_button',
+          stop_button='stop_button',
+          play_button='play_button'))
         self._transport.set_enabled(True)
 
     def _create_undo_redo(self):
-        self._undo_redo = UndoRedoComponent(name=u'Undo_Redo', is_enabled=False, layer=Layer(undo_button=u'back_button'))
+        self._undo_redo = UndoRedoComponent(name='Undo_Redo',
+          is_enabled=False,
+          layer=Layer(undo_button='back_button'))
         self._undo_redo.set_enabled(True)
 
     def _create_device_parameters(self):
-        self._device_parameters = SimpleDeviceParameterComponent(name=u'Device_Parameters', is_enabled=False, layer=Layer(parameter_controls=u'knobs'))
+        self._device_parameters = SimpleDeviceParameterComponent(name='Device_Parameters',
+          is_enabled=False,
+          layer=Layer(parameter_controls='knobs'))
         self._device_parameters.set_enabled(True)
 
     def _create_session(self):
-        self._session_ring = SessionRingComponent(name=u'Session_Ring', num_tracks=SESSION_WIDTH, num_scenes=SESSION_HEIGHT)
-        self._session = SessionComponent(name=u'Session', is_enabled=False, session_ring=self._session_ring, layer=Layer(clip_launch_buttons=u'pads', scene_launch_buttons=u'scene_launch_buttons', scene_encoder=u'encoder'))
+        self._session_ring = SessionRingComponent(name='Session_Ring',
+          num_tracks=SESSION_WIDTH,
+          num_scenes=SESSION_HEIGHT)
+        self._session = SessionComponent(name='Session',
+          is_enabled=False,
+          session_ring=(self._session_ring),
+          layer=Layer(clip_launch_buttons='pads',
+          scene_launch_buttons='scene_launch_buttons',
+          scene_encoder='encoder'))
         self._session.selected_scene().set_launch_button(self._elements.encoder_push_button)
         self._session.set_enabled(True)
-        self._session_navigation = SessionNavigationComponent(name=u'Session_Navigation', is_enabled=False, session_ring=self._session_ring, layer=Layer(left_button=u'bank_left_button', right_button=u'bank_right_button'))
+        self._session_navigation = SessionNavigationComponent(name='Session_Navigation',
+          is_enabled=False,
+          session_ring=(self._session_ring),
+          layer=Layer(left_button='bank_left_button', right_button='bank_right_button'))
         self._session_navigation.set_up_button(self._elements.rewind_button)
         self._session_navigation.set_down_button(self._elements.fastforward_button)
         self._session_navigation.set_enabled(True)
 
     def _create_mixer(self):
-        self._mixer = MixerComponent(name=u'Mixer', is_enabled=False, auto_name=True, tracks_provider=self._session_ring, track_assigner=SimpleTrackAssigner(), layer=Layer(volume_controls=u'faders', arm_buttons=u'fader_buttons'))
+        self._mixer = MixerComponent(name='Mixer',
+          is_enabled=False,
+          auto_name=True,
+          tracks_provider=(self._session_ring),
+          track_assigner=(SimpleTrackAssigner()),
+          layer=Layer(volume_controls='faders', arm_buttons='fader_buttons'))
         self._mixer.master_strip().set_volume_control(self._elements.master_fader)
         self._mixer.set_enabled(True)
 
     def _create_record_modes(self):
-        self._session_record = SessionRecordingComponent(name=u'Session_Record', is_enabled=False, layer=Layer(record_button=u'record_button'))
-        self._record_modes = ModesComponent(name=u'Record_Modes')
-        self._record_modes.add_mode(u'session', EnablingMode(self._session_record))
-        self._record_modes.add_mode(u'arrange', AddLayerMode(self._transport, layer=Layer(record_button=u'record_button')))
-        self.__on_main_view_changed()
+        self._session_record = SessionRecordingComponent(name='Session_Record',
+          is_enabled=False,
+          layer=Layer(record_button='record_button'))
+        self._record_modes = ModesComponent(name='Record_Modes')
+        self._record_modes.add_mode('session', EnablingMode(self._session_record))
+        self._record_modes.add_mode('arrange', AddLayerMode((self._transport), layer=Layer(record_button='record_button')))
+        self._Oxygen_Pro__on_main_view_changed()
 
-    @listens(u'is_view_visible', u'Session')
+    @listens('is_view_visible', 'Session')
     def __on_main_view_changed(self):
-        if self.application.view.is_view_visible(u'Session'):
-            self._record_modes.selected_mode = u'session'
+        if self.application.view.is_view_visible('Session'):
+            self._record_modes.selected_mode = 'session'
         else:
-            self._record_modes.selected_mode = u'arrange'
+            self._record_modes.selected_mode = 'arrange'

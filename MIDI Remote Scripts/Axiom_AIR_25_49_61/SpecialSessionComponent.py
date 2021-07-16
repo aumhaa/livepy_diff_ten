@@ -1,9 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.SessionComponent import SessionComponent
+import _Framework.SessionComponent as SessionComponent
 
 class SpecialSessionComponent(SessionComponent):
-    u""" Session component which allows parallel mixer components
-    and has track select buttons """
 
     def __init__(self, num_tracks, num_scenes):
         self._alt_mixer = None
@@ -68,23 +66,24 @@ class SpecialSessionComponent(SessionComponent):
         if offsets_changed:
             self._reassign_scenes()
             self.notify_offset()
-            if self.width() > 0 and self.height() > 0:
-                self._do_show_highlight()
+            if self.width() > 0:
+                if self.height() > 0:
+                    self._do_show_highlight()
 
     def _next_track_value(self, value):
         if self.is_enabled():
-            if value is not 0 or not self._next_track_button.is_momentary():
+            if not (value is not 0 or self._next_track_button.is_momentary()):
                 selected_track = self.song().view.selected_track
                 all_tracks = self.song().visible_tracks + self.song().return_tracks + (self.song().master_track,)
-                if selected_track != all_tracks[-1]:
+                if selected_track != all_tracks[(-1)]:
                     index = list(all_tracks).index(selected_track)
-                    self.song().view.selected_track = all_tracks[index + 1]
+                    self.song().view.selected_track = all_tracks[(index + 1)]
 
     def _prev_track_value(self, value):
         if self.is_enabled():
-            if value is not 0 or not self._prev_track_button.is_momentary():
+            if not (value is not 0 or self._prev_track_button.is_momentary()):
                 selected_track = self.song().view.selected_track
                 all_tracks = self.song().visible_tracks + self.song().return_tracks + (self.song().master_track,)
                 if selected_track != all_tracks[0]:
                     index = list(all_tracks).index(selected_track)
-                    self.song().view.selected_track = all_tracks[index - 1]
+                    self.song().view.selected_track = all_tracks[(index - 1)]

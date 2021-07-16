@@ -13,4 +13,4 @@ def is_first_device_on_pad(device, drum_pad):
 
 
 def is_simpler(device):
-    return device and device.class_name == u'OriginalSimpler'
+    return device and device.class_name == 'OriginalSimpler'

@@ -12,8 +12,8 @@ from ableton.v2.control_surface.elements import DisplayDataSource
 class DeviceParameterComponent(Component):
     controls = ControlList(MappedSensitivitySettingControl, 8)
 
-    def __init__(self, parameter_provider = None, *a, **k):
-        super(DeviceParameterComponent, self).__init__(*a, **k)
+    def __init__(self, parameter_provider=None, *a, **k):
+        (super(DeviceParameterComponent, self).__init__)(*a, **k)
         self.parameter_provider = parameter_provider
 
     @property
@@ -43,7 +43,7 @@ class DeviceParameterComponent(Component):
         if self.is_enabled():
             self._connect_parameters()
 
-    @listens(u'parameters')
+    @listens('parameters')
     def _on_parameters_changed(self):
         self._update_parameters()
 
@@ -58,9 +58,15 @@ class DeviceParameterComponent(Component):
 class DisplayingDeviceParameterComponent(DeviceParameterComponent):
 
     def __init__(self, *a, **k):
-        self._parameter_name_data_sources = list(map(DisplayDataSource, (u'', u'', u'', u'', u'', u'', u'', u'')))
-        self._parameter_value_data_sources = list(map(DisplayDataSource, (u'', u'', u'', u'', u'', u'', u'', u'')))
-        super(DisplayingDeviceParameterComponent, self).__init__(*a, **k)
+        self._parameter_name_data_sources = list(map(DisplayDataSource, ('', '', '',
+                                                                         '', '',
+                                                                         '', '',
+                                                                         '')))
+        self._parameter_value_data_sources = list(map(DisplayDataSource, ('', '', '',
+                                                                          '', '',
+                                                                          '', '',
+                                                                          '')))
+        (super(DisplayingDeviceParameterComponent, self).__init__)(*a, **k)
 
     @property
     def parameters(self):
@@ -68,7 +74,7 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
 
     @property
     def parameter_names(self):
-        return list(map(lambda p: p and p.name or u'', self.parameters))
+        return list(map(lambda p: p and (p.name) or '', self.parameters))
 
     def set_parameter_name_displays(self, displays):
         for data_source, display in zip_longest(self._parameter_name_data_sources, displays or []):
@@ -94,7 +100,7 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
 
     def clear_display(self):
         for source in chain(self._parameter_name_data_sources, self._parameter_value_data_sources):
-            source.set_display_string(u'')
+            source.set_display_string('')
 
     def _update_parameters(self):
         super(DisplayingDeviceParameterComponent, self)._update_parameters()
@@ -105,11 +111,11 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
             self._update_parameter_names()
             self._update_parameter_values()
 
-    @listens_group(u'name')
+    @listens_group('name')
     def _on_parameter_name_changed(self, parameter):
         self._update_parameter_names()
 
-    @listens_group(u'value')
+    @listens_group('value')
     def _on_parameter_value_changed(self, parameter):
         self._update_parameter_values()
 
@@ -118,7 +124,7 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
             params = zip(chain(self.parameter_provider.parameters, repeat(None)), self._parameter_name_data_sources)
             for info, name_data_source in params:
                 name = self.info_to_name(info)
-                name_data_source.set_display_string(name or u'')
+                name_data_source.set_display_string(name or '')
 
     def _update_parameter_values(self):
         if self.is_enabled():
@@ -128,11 +134,11 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
                     data_source.set_display_string(value_string)
 
     def info_to_name(self, info):
-        return info and info.name or u''
+        return info and (info.name) or ''
 
     def parameter_to_string(self, parameter):
         if parameter == None:
-            return u''
+            return ''
         return unicode(parameter)
 
     def parameter_to_value(self, parameter):

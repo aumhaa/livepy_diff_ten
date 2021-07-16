@@ -3,8 +3,12 @@ from _Framework.Capabilities import CONTROLLER_ID_KEY, PORTS_KEY, SCRIPT, contro
 from .RolandMX1 import RolandMX1
 
 def get_capabilities():
-    return {CONTROLLER_ID_KEY: controller_id(vendor_id=1410, product_ids=[419], model_name=[u'MX-1']),
-     PORTS_KEY: [inport(props=[]),
+    return {CONTROLLER_ID_KEY: controller_id(vendor_id=1410,
+                          product_ids=[419],
+                          model_name=['MX-1']), 
+     
+     PORTS_KEY: [
+                 inport(props=[]),
                  inport(props=[SCRIPT]),
                  outport(props=[]),
                  outport(props=[SCRIPT])]}

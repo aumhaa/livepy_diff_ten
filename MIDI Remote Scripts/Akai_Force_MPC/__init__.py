@@ -3,8 +3,10 @@ from ableton.v2.control_surface.capabilities import NOTES_CC, PORTS_KEY, SUGGEST
 from .akai_force_mpc import Akai_Force_MPC
 
 def get_capabilities():
-    return {SUGGESTED_PORT_NAMES_KEY: [u'Akai Network - DAW Control'],
-     PORTS_KEY: [inport(props=[NOTES_CC, SCRIPT, REMOTE]), outport(props=[NOTES_CC, SCRIPT, REMOTE])]}
+    return {SUGGESTED_PORT_NAMES_KEY: ['Akai Network - DAW Control'], 
+     PORTS_KEY: [
+                 inport(props=[NOTES_CC, SCRIPT, REMOTE]),
+                 outport(props=[NOTES_CC, SCRIPT, REMOTE])]}
 
 
 def create_instance(c_instance):

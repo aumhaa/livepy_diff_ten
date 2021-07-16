@@ -10,7 +10,7 @@ class MockControlSurface(object):
     send_midi = nop
 
     def __init__(self, *a, **k):
-        super(MockControlSurface, self).__init__(*a, **k)
+        (super(MockControlSurface, self).__init__)(*a, **k)
         self._song = Live.Song.Song(num_tracks=4, num_returns=2)
 
     def song(self):

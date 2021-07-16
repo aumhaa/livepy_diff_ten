@@ -10,10 +10,6 @@ class SendReceiveValueControl(InputControl):
 
 
 class MappedAbsoluteControl(MappedControl):
-    u"""
-    Control that maps ControlElements with an absolute map mode to
-    Live parameters. Supports internal parameters.
-    """
 
     class State(MappedControl.State):
 
@@ -39,7 +35,7 @@ class MappedAbsoluteControl(MappedControl):
                 else:
                     self._control_element.release_parameter()
 
-        @listens(u'value')
+        @listens('value')
         def _control_value(self, value):
             mapped_parameter = self.mapped_parameter
             if mapped_parameter.is_quantized:

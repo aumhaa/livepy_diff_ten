@@ -15,10 +15,6 @@ def is_song_recording(song):
 
 
 def get_midi_color_value_for_track(track):
-    u"""
-    Returns midi value corresponding to track color for a valid track,
-    otherwise return Rgb.BLACK (the off color)
-    """
     if liveobj_valid(track):
         color = CLIP_COLOR_TABLE.get(track.color, None)
         if color is None:

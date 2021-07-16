@@ -9,12 +9,12 @@ def default_combiner(results):
 
 class Slot(object):
 
-    def __init__(self, callback = None, *a, **k):
-        super(Slot, self).__init__(*a, **k)
+    def __init__(self, callback=None, *a, **k):
+        (super(Slot, self).__init__)(*a, **k)
         self.callback = callback
 
     def __call__(self, *a, **k):
-        return self.callback(*a, **k)
+        return (self.callback)(*a, **k)
 
     def __eq__(self, other):
         return id(self) == id(other) or self.callback == other
@@ -25,44 +25,22 @@ class Slot(object):
 
 class IdentifyingSlot(Slot):
 
-    def __init__(self, sender = None, *a, **k):
-        super(IdentifyingSlot, self).__init__(*a, **k)
+    def __init__(self, sender=None, *a, **k):
+        (super(IdentifyingSlot, self).__init__)(*a, **k)
         self.sender = sender
 
     def __call__(self, *a, **k):
-        self.callback(*(a + (self.sender,)), **k)
+        (self.callback)(*a + (self.sender,), **k)
 
 
 class Signal(object):
-    u"""
-    A signal object implements the observer pattern.  It can be
-    connected to any number of slots (i.e. callbacks). Whenever the
-    signal is called, all the slots are called.
-    
-    The return value of this function will depend on the combiner.
-    The combiner takes a generator of slot results and returns a
-    value.  The slots whose results are not evaluated are not called.
-    """
 
-    def __init__(self, combiner = default_combiner, sender = None, *a, **k):
-        super(Signal, self).__init__(*a, **k)
+    def __init__(self, combiner=default_combiner, sender=None, *a, **k):
+        (super(Signal, self).__init__)(*a, **k)
         self._slots = []
         self._combiner = combiner
 
-    def connect(self, slot, in_front = False, sender = None):
-        u"""
-        Connects the signal to the slot. Does nothing if the slot is
-        already connected. Returns the wrapper object that is used as
-        a slot.
-        
-        If 'in_front' is True, the slot will be put first, meaning it
-        will be called before previously registered slots (by default
-        it is put last).
-        
-        If 'sender' is not None, it will be passed as last ordinal
-        parameter to the slot when the signal is dispatched.
-        """
-        assert callable(slot)
+    def connect(self, slot, in_front=False, sender=None):
         if slot not in self._slots:
             slot = IdentifyingSlot(sender, slot) if sender is not None else Slot(slot)
             if in_front:

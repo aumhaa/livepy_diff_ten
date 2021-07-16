@@ -3,8 +3,12 @@ from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC,
 from .sl_mkiii import SLMkIII
 
 def get_capabilities():
-    return {CONTROLLER_ID_KEY: controller_id(vendor_id=4661, product_ids=[257], model_name=[u'Novation SL MkIII']),
-     PORTS_KEY: [inport(props=[NOTES_CC, REMOTE]),
+    return {CONTROLLER_ID_KEY: controller_id(vendor_id=4661,
+                          product_ids=[257],
+                          model_name=['Novation SL MkIII']), 
+     
+     PORTS_KEY: [
+                 inport(props=[NOTES_CC, REMOTE]),
                  inport(props=[NOTES_CC, SCRIPT, REMOTE]),
                  inport(props=[NOTES_CC, REMOTE]),
                  outport(props=[]),

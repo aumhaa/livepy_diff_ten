@@ -11,12 +11,9 @@ from ableton.v2.control_surface.components import ScrollComponent, Scrollable
 from . import consts
 
 class ScrollableListItem(object):
-    u"""
-    Wrapper of an item of a scrollable list.
-    """
 
-    def __init__(self, index = None, content = None, scrollable_list = None, *a, **k):
-        super(ScrollableListItem, self).__init__(*a, **k)
+    def __init__(self, index=None, content=None, scrollable_list=None, *a, **k):
+        (super(ScrollableListItem, self).__init__)(*a, **k)
         self._content = content
         self._index = index
         self._scrollable_list = scrollable_list
@@ -45,17 +42,12 @@ class ScrollableListItem(object):
 
 
 class ScrollableList(EventObject, Scrollable):
-    u"""
-    Class for managing a visual subset of a list of items.
-    
-    The items will be wrapped in an item_type instance.
-    """
-    __events__ = (u'selected_item', u'item_activated', u'scroll')
+    __events__ = ('selected_item', 'item_activated', 'scroll')
     item_type = ScrollableListItem
     fixed_offset = None
 
-    def __init__(self, num_visible_items = 1, item_type = None, *a, **k):
-        super(ScrollableList, self).__init__(*a, **k)
+    def __init__(self, num_visible_items=1, item_type=None, *a, **k):
+        (super(ScrollableList, self).__init__)(*a, **k)
         if item_type != None:
             self.item_type = item_type
         self._items = []
@@ -93,7 +85,6 @@ class ScrollableList(EventObject, Scrollable):
         return self._num_visible_items
 
     def _set_num_visible_items(self, num_items):
-        assert num_items >= 0
         self._num_visible_items = num_items
         self._normalize_offset(self._selected_item_index)
 
@@ -104,30 +95,23 @@ class ScrollableList(EventObject, Scrollable):
         return self.items[self._offset:self._offset + self._num_visible_items]
 
     def select_item_index_with_offset(self, index, offset):
-        u"""
-        Selects an item index but moves the view such that there are,
-        if possible, 'offset' number of elements visible before the
-        selected one.  Does nothing if the item was already selected.
-        """
-        if index != self.selected_item_index and index >= 0 and index < len(self._items):
-            assert self.selected_item_index != -1
-            self._offset = clamp(index - offset, 0, len(self._items))
-            self._normalize_offset(index)
-            self._do_set_selected_item_index(index)
+        if index != self.selected_item_index:
+            if index >= 0:
+                if index < len(self._items):
+                    self._offset = clamp(index - offset, 0, len(self._items))
+                    self._normalize_offset(index)
+                    self._do_set_selected_item_index(index)
 
     def select_item_index_with_border(self, index, border_size):
-        u"""
-        Selects an item with an index. Moves the view if the selection would exceed the
-        border of the current view.
-        """
         if self.fixed_offset is not None:
             self.select_item_index_with_offset(index, self.fixed_offset)
-        elif index >= 0 and index < len(self._items):
-            if not in_range(index, self._offset + border_size, self._offset + self._num_visible_items - border_size):
-                offset = index - (self._num_visible_items - 2 * border_size) if self.selected_item_index < index else index - border_size
-                self._offset = clamp(offset, 0, len(self._items))
-            self._normalize_offset(index)
-            self._do_set_selected_item_index(index)
+        elif index >= 0:
+            if index < len(self._items):
+                if not in_range(index, self._offset + border_size, self._offset + self._num_visible_items - border_size):
+                    offset = index - (self._num_visible_items - 2 * border_size) if self.selected_item_index < index else index - border_size
+                    self._offset = clamp(offset, 0, len(self._items))
+                self._normalize_offset(index)
+                self._do_set_selected_item_index(index)
 
     def next_page(self):
         if self.can_scroll_down():
@@ -150,10 +134,10 @@ class ScrollableList(EventObject, Scrollable):
             self.select_item_index_with_offset(index, 0)
 
     def _set_selected_item_index(self, index):
-        if index >= 0 and index < len(self._items):
-            assert self.selected_item_index != -1
-            self._normalize_offset(index)
-            self._do_set_selected_item_index(index)
+        if index >= 0:
+            if index < len(self._items):
+                self._normalize_offset(index)
+                self._do_set_selected_item_index(index)
 
     def _get_selected_item_index(self):
         return self._selected_item_index
@@ -182,7 +166,7 @@ class ScrollableList(EventObject, Scrollable):
         for item in self._items:
             item._scrollable_list = None
 
-        self._items = tuple([ self.item_type(index=index, content=item, scrollable_list=self) for index, item in enumerate(items) ])
+        self._items = tuple([self.item_type(index=index, content=item, scrollable_list=self) for index, item in enumerate(items)])
         if self._items:
             new_selection = index_if(lambda item: str(item) == old_selection, self._items)
             self._selected_item_index = new_selection if in_range(new_selection, 0, len(self._items)) else 0
@@ -212,9 +196,6 @@ class ScrollableList(EventObject, Scrollable):
 
 
 class ActionListItem(ScrollableListItem):
-    u"""
-    Interface for an list element that can be actuated on.
-    """
     supports_action = False
 
     def action(self):
@@ -222,59 +203,48 @@ class ActionListItem(ScrollableListItem):
 
 
 class ActionList(ScrollableList):
-    u"""
-    A scrollable list of items that can be actuated on.
-    """
     item_type = ActionListItem
 
 
 class DefaultItemFormatter(object):
-    u"""
-    Item formatter that will indicate selection and show action_message if the item
-    is currently performing an action
-    """
-    action_message = u'Loading...'
+    action_message = 'Loading...'
 
     def __call__(self, index, item, action_in_progress):
-        display_string = u''
+        display_string = ''
         if item:
-            display_string += consts.CHAR_SELECT if item.is_selected else u' '
+            display_string += consts.CHAR_SELECT if item.is_selected else ' '
             display_string += self.action_message if action_in_progress else str(item)
         return display_string
 
 
 class ListComponent(Component):
-    u"""
-    Component that handles a ScrollableList.  If an action button is
-    passed, it can handle an ActionList.
-    """
-    __events__ = (u'item_action', u'selected_item')
+    __events__ = ('item_action', 'selected_item')
     SELECTION_DELAY = 0.5
     ENCODER_FACTOR = 10.0
-    empty_list_message = u''
+    empty_list_message = ''
     _current_action_item = None
     _last_action_item = None
-    action_button = ButtonControl(color=u'Browser.Load')
+    action_button = ButtonControl(color='Browser.Load')
     encoders = control_list(EncoderControl)
 
-    def __init__(self, scrollable_list = None, data_sources = tuple(), *a, **k):
-        super(ListComponent, self).__init__(*a, **k)
+    def __init__(self, scrollable_list=None, data_sources=tuple(), *a, **k):
+        (super(ListComponent, self).__init__)(*a, **k)
         self._data_sources = data_sources
         self._activation_task = task.Task()
         self._action_on_scroll_task = task.Task()
         self._scrollable_list = None
         self._scroller = ScrollComponent(parent=self)
         self._pager = ScrollComponent(parent=self)
-        self.last_action_item = lambda : self._last_action_item
+        self.last_action_item = lambda: self._last_action_item
         self.item_formatter = DefaultItemFormatter()
         for c in (self._scroller, self._pager):
             for button in (c.scroll_up_button, c.scroll_down_button):
-                button.color = u'List.ScrollerOn'
+                button.color = 'List.ScrollerOn'
                 button.pressed_color = None
-                button.disabled_color = u'List.ScrollerOff'
+                button.disabled_color = 'List.ScrollerOff'
 
         if scrollable_list == None:
-            self.scrollable_list = ActionList(num_visible_items=len(data_sources))
+            self.scrollable_list = ActionList(num_visible_items=(len(data_sources)))
         else:
             self.scrollable_list = scrollable_list
         self._scrollable_list.num_visible_items = len(data_sources)
@@ -314,24 +284,24 @@ class ListComponent(Component):
             self._scrollable_list.num_visible_items = len(sources)
         self._update_display()
 
-    select_next_button = forward_property(u'_scroller')(u'scroll_down_button')
-    select_prev_button = forward_property(u'_scroller')(u'scroll_up_button')
-    next_page_button = forward_property(u'_pager')(u'scroll_down_button')
-    prev_page_button = forward_property(u'_pager')(u'scroll_up_button')
+    select_next_button = forward_property('_scroller')('scroll_down_button')
+    select_prev_button = forward_property('_scroller')('scroll_up_button')
+    next_page_button = forward_property('_pager')('scroll_down_button')
+    prev_page_button = forward_property('_pager')('scroll_up_button')
 
     def on_enabled_changed(self):
         super(ListComponent, self).on_enabled_changed()
         if not self.is_enabled():
             self._execute_action_task.kill()
 
-    @listens(u'scroll')
+    @listens('scroll')
     def _on_scroll(self):
         if self._trigger_action_on_scrolling:
             trigger_selected = partial(self._trigger_action, self.selected_item)
             self._action_on_scroll_task.kill()
             self._action_on_scroll_task = self._tasks.add(task.sequence(task.wait(defaults.MOMENTARY_DELAY), task.delay(1), task.run(trigger_selected)))
 
-    @listens(u'selected_item')
+    @listens('selected_item')
     def _on_selected_item_changed(self):
         self._scroller.update()
         self._pager.update()
@@ -352,11 +322,12 @@ class ListComponent(Component):
         self._add_offset_to_selected_index(value)
 
     def _add_offset_to_selected_index(self, offset):
-        if self.is_enabled() and self._scrollable_list:
-            with self._delay_activation():
-                with self._in_encoder_selection():
-                    self._selected_index_float = clamp(self._selected_index_float + offset * self.ENCODER_FACTOR, 0, len(self._scrollable_list.items))
-                    self._scrollable_list.select_item_index_with_border(int(self._selected_index_float), 1)
+        if self.is_enabled():
+            if self._scrollable_list:
+                with self._delay_activation():
+                    with self._in_encoder_selection():
+                        self._selected_index_float = clamp(self._selected_index_float + offset * self.ENCODER_FACTOR, 0, len(self._scrollable_list.items))
+                        self._scrollable_list.select_item_index_with_border(int(self._selected_index_float), 1)
 
     @action_button.pressed
     def action_button(self, button):
@@ -368,16 +339,15 @@ class ListComponent(Component):
         self.notify_item_action(item)
 
     def _trigger_action(self, item):
-        if self.is_enabled() and self._can_be_used_for_action(item):
-            if self._scrollable_list != None:
-                self._scrollable_list.select_item(item)
-            self._current_action_item = item
-            self.update()
-            self._execute_action_task.restart()
+        if self.is_enabled():
+            if self._can_be_used_for_action(item):
+                if self._scrollable_list != None:
+                    self._scrollable_list.select_item(item)
+                self._current_action_item = item
+                self.update()
+                self._execute_action_task.restart()
 
     def _execute_action(self):
-        u""" Is called by the execute action task and should not be called directly
-        use _trigger_action instead """
         if self._current_action_item != None:
             self.do_trigger_action(self._current_action_item)
             self._last_action_item = self._current_action_item
@@ -405,14 +375,14 @@ class ListComponent(Component):
         return self.selected_item == self.last_action_item() and self._can_be_used_for_action(self.next_item)
 
     def _update_action_feedback(self):
-        color = u'Browser.Loading'
+        color = 'Browser.Loading'
         if self._current_action_item == None:
             if self._action_target_is_next_item():
-                color = u'Browser.LoadNext'
+                color = 'Browser.LoadNext'
             elif self._can_be_used_for_action(self.selected_item):
-                color = u'Browser.Load'
+                color = 'Browser.Load'
             else:
-                color = u'Browser.LoadNotPossible'
+                color = 'Browser.LoadNotPossible'
         self.action_button.color = color
 
     def _update_display(self):
@@ -423,8 +393,10 @@ class ListComponent(Component):
             display_string = self.item_formatter(index, item, action_in_progress)
             data_source.set_display_string(display_string)
 
-        if not visible_items and self._data_sources and self.empty_list_message:
-            self._data_sources[0].set_display_string(self.empty_list_message)
+        if not visible_items:
+            if self._data_sources:
+                if self.empty_list_message:
+                    self._data_sources[0].set_display_string(self.empty_list_message)
 
     def update(self):
         super(ListComponent, self).update()

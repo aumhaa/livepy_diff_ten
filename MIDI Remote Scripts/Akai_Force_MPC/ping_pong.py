@@ -7,10 +7,8 @@ PING_PERIOD = 3
 class PingPongComponent(Component):
     pong = InputControl()
 
-    def __init__(self, on_pong_callback = None, on_ping_timeout = None, *a, **k):
-        super(PingPongComponent, self).__init__(*a, **k)
-        assert on_pong_callback is not None
-        assert on_ping_timeout is not None
+    def __init__(self, on_pong_callback=None, on_ping_timeout=None, *a, **k):
+        (super(PingPongComponent, self).__init__)(*a, **k)
         self._on_pong_callback = on_pong_callback
         self._on_ping_timeout = on_ping_timeout
         self._ping = None
@@ -32,9 +30,10 @@ class PingPongComponent(Component):
         self._keepalive_starter_task.restart()
 
     def _send_ping(self):
-        if self._ping and self.is_enabled():
-            self._pong_received = False
-            self._ping.send_value(0)
+        if self._ping:
+            if self.is_enabled():
+                self._pong_received = False
+                self._ping.send_value(0)
 
     def _check_pong_received(self):
         if not self._pong_received:

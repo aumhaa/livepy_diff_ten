@@ -8,7 +8,7 @@ class BinaryControl(Control):
         OFF_VALUE = 0
 
         def __init__(self, *a, **k):
-            super(BinaryControl.State, self).__init__(*a, **k)
+            (super(BinaryControl.State, self).__init__)(*a, **k)
             self._is_on = False
 
         @property

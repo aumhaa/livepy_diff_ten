@@ -24,28 +24,28 @@ class TrackDecoratorFactory(DecoratorFactory):
     def _get_nesting_level(self, track):
         if track.is_grouped:
             return self._get_nesting_level(track.group_track) + 1
-        else:
-            return 0
+        return 0
 
     def _get_chain_nesting_level(self, chain):
         parent_chain_or_track = chain.canonical_parent.canonical_parent
-        if old_hasattr(parent_chain_or_track, u'group_track'):
+        if old_hasattr(parent_chain_or_track, 'group_track'):
             return self._get_nesting_level(parent_chain_or_track) + 1
-        elif old_hasattr(parent_chain_or_track, u'canonical_parent') and old_hasattr(parent_chain_or_track.canonical_parent, u'canonical_parent'):
-            return self._get_chain_nesting_level(parent_chain_or_track) + 1
-        else:
-            return 0
+        if old_hasattr(parent_chain_or_track, 'canonical_parent'):
+            if old_hasattr(parent_chain_or_track.canonical_parent, 'canonical_parent'):
+                return self._get_chain_nesting_level(parent_chain_or_track) + 1
+        return 0
 
     def _get_track_for_chain(self, mixable):
         parent = mixable.canonical_parent
-        while not (isinstance(parent, Live.Track.Track) or isinstance(parent, Live.Chain.Chain)):
-            parent = parent.canonical_parent
+        while not isinstance(parent, Live.Track.Track):
+            if not isinstance(parent, Live.Chain.Chain):
+                parent = parent.canonical_parent
 
         return parent
 
     def _get_decorated_track(self, track):
         decorated = self.decorate(track)
-        if getattr(track, u'group_track', None):
+        if getattr(track, 'group_track', None):
             decorated.parent_track = self.decorate(track.group_track)
             decorated.nesting_level = self._get_nesting_level(track)
         elif isinstance(track, Live.Chain.Chain):

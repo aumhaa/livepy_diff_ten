@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import zip
 from future.moves.itertools import zip_longest
-from ableton.v2.control_surface.components import MixerComponent as MixerComponentBase
+import ableton.v2.control_surface.components as MixerComponentBase
 
 class MixerComponent(MixerComponentBase):
 

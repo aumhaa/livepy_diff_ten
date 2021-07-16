@@ -1,13 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.DeviceComponent import DeviceComponent
+import _Framework.DeviceComponent as DeviceComponent
 from _Generic.Devices import parameter_bank_names, parameter_banks, DEVICE_DICT, BANK_NAME_DICT, DEVICE_BOB_DICT
-BOP_BANK_NAME = u'Best of Parameters'
+BOP_BANK_NAME = 'Best of Parameters'
 
 class BestBankDeviceComponent(DeviceComponent):
-    u""" Special Device component that uses the best of bank of a device as default """
 
     def __init__(self, *a, **k):
-        super(BestBankDeviceComponent, self).__init__(*a, **k)
+        (super(BestBankDeviceComponent, self).__init__)(*a, **k)
         new_banks = {}
         new_bank_names = {}
         self._device_banks = DEVICE_DICT
@@ -18,7 +17,8 @@ class BestBankDeviceComponent(DeviceComponent):
             if len(current_banks) > 1:
                 current_banks = self._device_best_banks[device_name] + current_banks
                 new_bank_names[device_name] = (BOP_BANK_NAME,) + self._device_bank_names[device_name]
-            new_banks[device_name] = current_banks
+            else:
+                new_banks[device_name] = current_banks
 
         self._device_banks = new_banks
         self._device_bank_names = new_bank_names

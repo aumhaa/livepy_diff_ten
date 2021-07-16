@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
+import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 
 class DeviceNavComponent(ControlSurfaceComponent):
-    u""" Component that can navigate the selection of devices """
 
     def __init__(self):
         ControlSurfaceComponent.__init__(self)
@@ -39,11 +38,11 @@ class DeviceNavComponent(ControlSurfaceComponent):
         if self.is_enabled():
             if not sender.is_momentary() or value != 0:
                 app_view = self.application().view
-                if not app_view.is_view_visible(u'Detail') or not app_view.is_view_visible(u'Detail/DeviceChain'):
-                    app_view.show_view(u'Detail')
-                    app_view.show_view(u'Detail/DeviceChain')
+                if not (app_view.is_view_visible('Detail') and app_view.is_view_visible('Detail/DeviceChain')):
+                    app_view.show_view('Detail')
+                    app_view.show_view('Detail/DeviceChain')
                 else:
                     directions = Live.Application.Application.View.NavDirection
                     direction = directions.right if sender == self._right_button else directions.left
                     modifier_pressed = True
-                    app_view.scroll_view(direction, u'Detail/DeviceChain', not modifier_pressed)
+                    app_view.scroll_view(direction, 'Detail/DeviceChain', not modifier_pressed)

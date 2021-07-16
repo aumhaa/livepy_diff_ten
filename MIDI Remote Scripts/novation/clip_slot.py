@@ -1,13 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import const, depends
-from ableton.v2.control_surface.components import ClipSlotComponent as ClipSlotComponentBase
+import ableton.v2.control_surface.components as ClipSlotComponentBase
 
 class FixedLengthClipSlotComponent(ClipSlotComponentBase):
 
-    @depends(fixed_length_recording=const(None))
+    @depends(fixed_length_recording=(const(None)))
     def __init__(self, fixed_length_recording, *a, **k):
-        assert fixed_length_recording is not None
-        super(FixedLengthClipSlotComponent, self).__init__(*a, **k)
+        (super(FixedLengthClipSlotComponent, self).__init__)(*a, **k)
         self._fixed_length_recording = fixed_length_recording
 
     def _do_launch_clip(self, fire_state):

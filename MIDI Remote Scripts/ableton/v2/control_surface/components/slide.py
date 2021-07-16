@@ -5,18 +5,9 @@ from ..component import Component
 from .scroll import ScrollComponent, Scrollable
 
 class Slideable(EventObject):
-    u"""
-    Models of an entity that has a position in a 1-D discrete axis,
-    and that has some natural steps (called pages) of this axis.
-    """
-    __events__ = (u'page_offset', u'page_length', u'position', u'position_count', u'contents')
+    __events__ = ('page_offset', 'page_length', 'position', 'position_count', 'contents')
 
     def contents_range(self, pmin, pmax):
-        u"""
-        Tells whether there are any contents in the (min, max) range,
-        wherein min and max are floats in the (0, position_count)
-        range. Can be left unimplemented.
-        """
         pos_count = self.position_count
         first_pos = max(int(pmin), 0)
         last_pos = min(int(pmax), pos_count)
@@ -44,8 +35,8 @@ class Slideable(EventObject):
 
 class SlideComponent(Component, Scrollable):
 
-    def __init__(self, slideable = None, *a, **k):
-        super(SlideComponent, self).__init__(*a, **k)
+    def __init__(self, slideable=None, *a, **k):
+        (super(SlideComponent, self).__init__)(*a, **k)
         slideable = slideable or self
         self._slideable = slideable
         self._position_scroll = ScrollComponent(parent=self)
@@ -55,7 +46,7 @@ class SlideComponent(Component, Scrollable):
         self._page_scroll.can_scroll_down = self.can_scroll_page_down
         self._page_scroll.scroll_down = self.scroll_page_down
         self._page_scroll.scroll_up = self.scroll_page_up
-        self.__on_position_changed.subject = slideable
+        self._SlideComponent__on_position_changed.subject = slideable
 
     def set_scroll_up_button(self, button):
         self._position_scroll.set_scroll_up_button(button)
@@ -116,7 +107,7 @@ class SlideComponent(Component, Scrollable):
         self._position_scroll.update()
         self._page_scroll.update()
 
-    @listens(u'position')
+    @listens('position')
     def __on_position_changed(self):
         self._position_scroll.update()
         self._page_scroll.update()

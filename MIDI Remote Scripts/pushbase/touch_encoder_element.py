@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
-from ableton.v2.control_surface.elements import TouchEncoderElement as TouchEncoderElementBase
+import ableton.v2.control_surface.elements as TouchEncoderElementBase
 
 class TouchEncoderObserver(object):
-    u""" Interface for observing the state of one or more TouchEncoderElements """
 
     def on_encoder_touch(self, encoder):
         pass
@@ -13,10 +12,9 @@ class TouchEncoderObserver(object):
 
 
 class TouchEncoderElement(TouchEncoderElementBase):
-    u""" Class representing an encoder that is touch sensitive """
 
-    def __init__(self, undo_step_handler = None, undo_group = None, delete_handler = None, *a, **k):
-        super(TouchEncoderElement, self).__init__(*a, **k)
+    def __init__(self, undo_step_handler=None, undo_group=None, delete_handler=None, *a, **k):
+        (super(TouchEncoderElement, self).__init__)(*a, **k)
         self._trigger_undo_step = False
         self._undo_step_open = False
         self._undo_step_handler = undo_step_handler
@@ -66,11 +64,13 @@ class TouchEncoderElement(TouchEncoderElementBase):
         self._undo_step_handler = None
 
     def _begin_undo_step(self):
-        if self._undo_step_handler and self._trigger_undo_step:
-            self._undo_step_handler.begin_undo_step(client=self._undo_group)
-            self._trigger_undo_step = False
-            self._undo_step_open = True
+        if self._undo_step_handler:
+            if self._trigger_undo_step:
+                self._undo_step_handler.begin_undo_step(client=(self._undo_group))
+                self._trigger_undo_step = False
+                self._undo_step_open = True
 
     def _end_undo_step(self):
-        if self._undo_step_handler and self._undo_step_open:
-            self._undo_step_handler.end_undo_step(client=self._undo_group)
+        if self._undo_step_handler:
+            if self._undo_step_open:
+                self._undo_step_handler.end_undo_step(client=(self._undo_group))

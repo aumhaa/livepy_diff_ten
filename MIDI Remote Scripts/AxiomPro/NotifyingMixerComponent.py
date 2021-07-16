@@ -2,11 +2,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 from __future__ import division
 from builtins import str
 from past.utils import old_div
-from _Framework.MixerComponent import MixerComponent
-from _Framework.PhysicalDisplayElement import PhysicalDisplayElement
+import _Framework.MixerComponent as MixerComponent
+import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
 
 class NotifyingMixerComponent(MixerComponent):
-    u""" Special mixer class that notifies an observer when reassigning parameters """
 
     def __init__(self, num_tracks):
         self._update_callback = None
@@ -18,11 +17,9 @@ class NotifyingMixerComponent(MixerComponent):
         self._update_callback = None
 
     def set_update_callback(self, callback):
-        assert callback == None or dir(callback).count(u'im_func') is 1 or dir(callback).count(u'__func__') is 1
         self._update_callback = callback
 
     def set_bank_display(self, display):
-        assert isinstance(display, PhysicalDisplayElement)
         self._bank_display = display
 
     def on_selected_track_changed(self):
@@ -32,7 +29,6 @@ class NotifyingMixerComponent(MixerComponent):
         if selected_track in self._tracks_to_use():
             track_index = list(self._tracks_to_use()).index(selected_track)
             new_offset = track_index - track_index % num_strips
-            assert old_div(new_offset, num_strips) == int(old_div(new_offset, num_strips))
             self.set_track_offset(new_offset)
 
     def update(self):
@@ -55,7 +51,7 @@ class NotifyingMixerComponent(MixerComponent):
             if value != 0 and old_offset != self._track_offset:
                 min_track = self._track_offset + 1
                 max_track = min(len(self._tracks_to_use()), min_track + len(self._channel_strips))
-                self._bank_display.display_message(u'Tracks ' + str(min_track) + u' - ' + str(max_track))
+                self._bank_display.display_message('Tracks ' + str(min_track) + ' - ' + str(max_track))
             else:
                 self._bank_display.update()
 
@@ -66,6 +62,6 @@ class NotifyingMixerComponent(MixerComponent):
             if value != 0 and old_offset != self._track_offset:
                 min_track = self._track_offset + 1
                 max_track = min(len(self._tracks_to_use()), min_track + len(self._channel_strips))
-                self._bank_display.display_message(u'Tracks ' + str(min_track) + u' - ' + str(max_track))
+                self._bank_display.display_message('Tracks ' + str(min_track) + ' - ' + str(max_track))
             else:
                 self._bank_display.update()

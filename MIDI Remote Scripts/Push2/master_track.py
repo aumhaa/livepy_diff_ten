@@ -6,15 +6,14 @@ from ableton.v2.control_surface.control import ToggleButtonControl
 class MasterTrackComponent(Component):
     toggle_button = ToggleButtonControl()
 
-    def __init__(self, tracks_provider = None, *a, **k):
-        assert tracks_provider is not None
-        super(MasterTrackComponent, self).__init__(*a, **k)
+    def __init__(self, tracks_provider=None, *a, **k):
+        (super(MasterTrackComponent, self).__init__)(*a, **k)
         self._tracks_provider = tracks_provider
-        self.__on_selected_item_changed.subject = self._tracks_provider
+        self._MasterTrackComponent__on_selected_item_changed.subject = self._tracks_provider
         self._previous_selection = self._tracks_provider.selected_item
         self._update_button_state()
 
-    @listens(u'selected_item')
+    @listens('selected_item')
     def __on_selected_item_changed(self, *a):
         self._update_button_state()
         if not self._is_on_master():

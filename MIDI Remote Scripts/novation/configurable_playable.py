@@ -5,7 +5,8 @@ class ConfigurablePlayableComponent(PlayableComponent):
 
     def __init__(self, translation_channel, *a, **k):
         self._translation_channel = translation_channel
-        super(ConfigurablePlayableComponent, self).__init__(*a, **k)
+        (super(ConfigurablePlayableComponent, self).__init__)(*a, **k)
 
     def _note_translation_for_button(self, button):
-        return (button.identifier, self._translation_channel)
+        return (
+         button.identifier, self._translation_channel)

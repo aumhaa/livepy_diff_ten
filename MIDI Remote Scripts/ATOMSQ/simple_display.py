@@ -11,7 +11,8 @@ def as_ascii(message):
         ascii = ord(char)
         if ascii > 127:
             ascii = QUESTION_MARK
-        result.append(ascii)
+        else:
+            result.append(ascii)
 
     return tuple(result)
 
@@ -19,7 +20,7 @@ def as_ascii(message):
 class SimpleDisplayElement(NotifyingControlElement):
 
     def __init__(self, header, tail, *a, **k):
-        super(SimpleDisplayElement, self).__init__(*a, **k)
+        (super(SimpleDisplayElement, self).__init__)(*a, **k)
         self._message_header = header
         self._message_tail = tail
         self._message_to_send = None
@@ -29,8 +30,8 @@ class SimpleDisplayElement(NotifyingControlElement):
 
     def display_message(self, message):
         if message:
-            is_reset_message = message == u' '
-            self._message_to_send = self._message_header + as_ascii(u' ' if is_reset_message else adjust_string(message, MAX_CENTER_DISPLAY_LENGTH).strip()) + self._message_tail
+            is_reset_message = message == ' '
+            self._message_to_send = self._message_header + as_ascii(' ' if is_reset_message else adjust_string(message, MAX_CENTER_DISPLAY_LENGTH).strip()) + self._message_tail
             self._request_send_message()
 
     def update(self):
@@ -42,7 +43,7 @@ class SimpleDisplayElement(NotifyingControlElement):
         self._request_send_message()
 
     def reset(self):
-        self.display_message(u' ')
+        self.display_message(' ')
 
     def send_midi(self, midi_bytes):
         if midi_bytes != self._last_sent_message:

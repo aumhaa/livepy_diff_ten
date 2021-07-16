@@ -12,24 +12,16 @@ from .SubjectSlot import subject_slot, subject_slot_group, Subject
 
 def device_to_appoint(device):
     appointed_device = device
-    if device != None and device.can_have_drum_pads and not device.has_macro_mappings and len(device.chains) > 0 and device.view.selected_chain != None and len(device.view.selected_chain.devices) > 0:
-        appointed_device = device_to_appoint(device.view.selected_chain.devices[0])
-    return appointed_device
+    if not device != None or device.can_have_drum_pads:
+        if not device.has_macro_mappings:
+            if len(device.chains) > 0:
+                if device.view.selected_chain != None:
+                    if len(device.view.selected_chain.devices) > 0:
+                        appointed_device = device_to_appoint(device.view.selected_chain.devices[0])
+        return appointed_device
 
 
-def select_and_appoint_device(song, device_to_select, ignore_unmapped_macros = True):
-    u"""
-    Convenience function for selecting a device for a control surface to control.
-    
-    This takes care of selecting the device and appointing it for remote control, which
-    is important, because these are two concepts, that are not exactly the same.
-    
-    The device component always controls the appointed device. It's possible to select
-    another device, but not appoint it for control. The behaviour in this function
-    appoints a drum rack's selected chain's first device if none of the macros are mapped
-    for the drum rack. Though, it's still possible to select the drum rack, we just do
-    not display its controls in this scenario.
-    """
+def select_and_appoint_device(song, device_to_select, ignore_unmapped_macros=True):
     appointed_device = device_to_select
     if ignore_unmapped_macros:
         appointed_device = device_to_appoint(device_to_select)
@@ -38,11 +30,10 @@ def select_and_appoint_device(song, device_to_select, ignore_unmapped_macros = T
 
 
 class DeviceComponent(ControlSurfaceComponent, Subject):
-    u""" Class representing a device in Live """
-    __subject_events__ = (u'device',)
+    __subject_events__ = ('device', )
 
-    def __init__(self, device_bank_registry = None, device_selection_follows_track_selection = False, *a, **k):
-        super(DeviceComponent, self).__init__(*a, **k)
+    def __init__(self, device_bank_registry=None, device_selection_follows_track_selection=False, *a, **k):
+        (super(DeviceComponent, self).__init__)(*a, **k)
         self._device_bank_registry = device_bank_registry or DeviceBankRegistry()
         self._device = None
         self._parameter_controls = None
@@ -54,32 +45,32 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
         self._lock_callback = None
         self._device_name_data_source = None
         self._bank_index = 0
-        self._bank_name = u'<No Bank>'
+        self._bank_name = '<No Bank>'
         self._locked_to_device = False
 
-        def make_property_slot(name, alias = None):
+        def make_property_slot(name, alias=None):
             alias = alias or name
-            return self.register_slot(None, getattr(self, u'_on_%s_changed' % alias), name)
+            return self.register_slot(None, getattr(self, '_on_%s_changed' % alias), name)
 
-        self._on_off_property_slot = make_property_slot(u'value', alias=u'device_on_off')
-        self._name_property_slot = make_property_slot(u'name', alias=u'device_name')
-        self._parameters_property_slot = make_property_slot(u'parameters')
-        self._device_bank_property_slot = make_property_slot(u'device_bank')
+        self._on_off_property_slot = make_property_slot('value', alias='device_on_off')
+        self._name_property_slot = make_property_slot('name', alias='device_name')
+        self._parameters_property_slot = make_property_slot('parameters')
+        self._device_bank_property_slot = make_property_slot('device_bank')
 
         def make_button_slot(name):
-            return self.register_slot(None, getattr(self, u'_%s_value' % name), u'value')
+            return self.register_slot(None, getattr(self, '_%s_value' % name), 'value')
 
-        self._bank_up_button_slot = make_button_slot(u'bank_up')
-        self._bank_down_button_slot = make_button_slot(u'bank_down')
-        self._lock_button_slot = make_button_slot(u'lock')
-        self._on_off_button_slot = make_button_slot(u'on_off')
+        self._bank_up_button_slot = make_button_slot('bank_up')
+        self._bank_down_button_slot = make_button_slot('bank_down')
+        self._lock_button_slot = make_button_slot('lock')
+        self._on_off_button_slot = make_button_slot('on_off')
         song = self.song()
         view = song.view
         self.device_selection_follows_track_selection = device_selection_follows_track_selection
         self._device_bank_property_slot.subject = self._device_bank_registry
-        self.__on_appointed_device_changed.subject = song
-        self.__on_selected_track_changed.subject = view
-        self.__on_selected_device_changed.subject = view.selected_track.view
+        self._DeviceComponent__on_appointed_device_changed.subject = song
+        self._DeviceComponent__on_selected_track_changed.subject = view
+        self._DeviceComponent__on_selected_device_changed.subject = view.selected_track.view
 
     def disconnect(self):
         self._device_bank_registry = None
@@ -100,12 +91,12 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
     def device(self):
         return self._device
 
-    @subject_slot(u'appointed_device')
+    @subject_slot('appointed_device')
     def __on_appointed_device_changed(self):
         self.set_device(device_to_appoint(self.song().appointed_device))
 
     def set_device(self, device):
-        if not self._locked_to_device and (device != self._device or type(device) != type(self._device)):
+        if self._locked_to_device or (device != self._device or type(device) != type(self._device)):
             if self._device != None:
                 self._release_parameters(self._parameter_controls)
             self._device = device
@@ -115,26 +106,26 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
             if self._device != None:
                 self._bank_index = 0
             self._bank_index = self._device_bank_registry.get_device_bank(self._device)
-            self._bank_name = u'<No Bank>'
+            self._bank_name = '<No Bank>'
             self._on_device_name_changed()
             self.update()
             self.notify_device()
 
-    @subject_slot(u'has_macro_mappings')
+    @subject_slot('has_macro_mappings')
     def __on_has_macro_mappings_changed(self):
-        self.song().appointed_device = device_to_appoint(self.__on_has_macro_mappings_changed.subject)
+        self.song().appointed_device = device_to_appoint(self._DeviceComponent__on_has_macro_mappings_changed.subject)
 
-    @subject_slot(u'selected_track')
+    @subject_slot('selected_track')
     def __on_selected_track_changed(self):
-        self.__on_selected_device_changed.subject = self.song().view.selected_track.view
+        self._DeviceComponent__on_selected_device_changed.subject = self.song().view.selected_track.view
         if self.device_selection_follows_track_selection:
             self.update_device_selection()
 
-    @subject_slot(u'chains')
+    @subject_slot('chains')
     def __on_chains_changed(self):
         self._update_appointed_device()
 
-    @subject_slot(u'selected_device')
+    @subject_slot('selected_device')
     def __on_selected_device_changed(self):
         self._update_appointed_device()
 
@@ -144,14 +135,15 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
         if device != None:
             song.appointed_device = device_to_appoint(device)
         rack_device = device if isinstance(device, Live.RackDevice.RackDevice) else None
-        self.__on_has_macro_mappings_changed.subject = rack_device
-        self.__on_chains_changed.subject = rack_device
+        self._DeviceComponent__on_has_macro_mappings_changed.subject = rack_device
+        self._DeviceComponent__on_chains_changed.subject = rack_device
 
     def update_device_selection(self):
         track = self.song().view.selected_track
         device_to_select = track.view.selected_device
-        if device_to_select == None and len(track.devices) > 0:
-            device_to_select = track.devices[0]
+        if device_to_select == None:
+            if len(track.devices) > 0:
+                device_to_select = track.devices[0]
         if device_to_select != None:
             self.song().view.select_device(device_to_select)
         self.set_device(device_to_select)
@@ -189,7 +181,6 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
         self._update_lock_button()
 
     def set_lock_button(self, button):
-        assert button == None or isinstance(button, ButtonElement)
         self._lock_button = button
         self._lock_button_slot.subject = button
         self._update_lock_button()
@@ -203,9 +194,13 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
         self._lock_callback = callback
 
     def restore_bank(self, bank_index):
-        if self._device != None and self._is_banking_enabled() and self._locked_to_device and self._number_of_parameter_banks() > bank_index and self._bank_index != bank_index:
-            self._bank_index = bank_index
-            self.update()
+        if self._device != None:
+            if self._is_banking_enabled():
+                if self._locked_to_device:
+                    if self._number_of_parameter_banks() > bank_index:
+                        if self._bank_index != bank_index:
+                            self._bank_index = bank_index
+                            self.update()
 
     def device_name_data_source(self):
         if self._device_name_data_source == None:
@@ -221,7 +216,7 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
                 old_bank_name = self._bank_name
                 self._assign_parameters()
                 if self._bank_name != old_bank_name:
-                    self._show_msg_callback(self._device.name + u' Bank: ' + self._bank_name)
+                    self._show_msg_callback(self._device.name + ' Bank: ' + self._bank_name)
         elif self._parameter_controls != None:
             self._release_parameters(self._parameter_controls)
         if self.is_enabled():
@@ -231,64 +226,57 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
             self._update_device_bank_nav_buttons()
 
     def _bank_up_value(self, value):
-        assert self._bank_up_button != None
-        assert value != None
-        assert isinstance(value, int)
         if self.is_enabled():
             if not self._bank_up_button.is_momentary() or value is not 0:
                 if self._device != None:
                     num_banks = self._number_of_parameter_banks()
                     if self._bank_down_button == None:
-                        self._bank_name = u''
+                        self._bank_name = ''
                         self._bank_index = (self._bank_index + 1) % num_banks if self._bank_index != None else 0
                         self.update()
-                    elif self._bank_index == None or num_banks > self._bank_index + 1:
-                        self._bank_name = u''
-                        self._bank_index = self._bank_index + 1 if self._bank_index != None else 0
-                        self.update()
+        else:
+            pass
+        if self._bank_index == None or (num_banks > self._bank_index + 1):
+            self._bank_name = ''
+            self._bank_index = self._bank_index + 1 if self._bank_index != None else 0
+            self.update()
 
     def _bank_down_value(self, value):
-        assert self._bank_down_button != None
-        assert value != None
-        assert isinstance(value, int)
         if self.is_enabled():
             if not self._bank_down_button.is_momentary() or value is not 0:
-                if self._device != None and (self._bank_index == None or self._bank_index > 0):
-                    self._bank_name = u''
-                    self._bank_index = self._bank_index - 1 if self._bank_index != None else max(0, self._number_of_parameter_banks() - 1)
-                    self.update()
+                if self._device != None:
+                    if self._bank_index == None or (self._bank_index > 0):
+                        self._bank_name = ''
+                        self._bank_index = self._bank_index - 1 if self._bank_index != None else max(0, self._number_of_parameter_banks() - 1)
+                        self.update()
 
     def _lock_value(self, value):
-        assert self._lock_button != None
-        assert self._lock_callback != None
-        assert value != None
-        assert isinstance(value, int)
         if not self._lock_button.is_momentary() or value is not 0:
             self._lock_callback()
 
     def _on_off_value(self, value):
-        assert self._on_off_button != None
-        assert value in range(128)
         if not self._on_off_button.is_momentary() or value is not 0:
             parameter = self._on_off_parameter()
-            if parameter != None and parameter.is_enabled:
-                parameter.value = float(int(parameter.value == 0.0))
+            if parameter != None:
+                if parameter.is_enabled:
+                    parameter.value = float(int(parameter.value == 0.0))
 
-    @subject_slot_group(u'value')
+    @subject_slot_group('value')
     def _on_bank_value(self, value, button):
         self._bank_value(value, button)
 
     def _bank_value(self, value, button):
-        if self.is_enabled() and self._device != None:
-            if not button.is_momentary() or value is not 0:
-                bank = list(self._bank_buttons).index(button)
-                if bank != self._bank_index:
-                    if self._number_of_parameter_banks() > bank:
-                        self._bank_name = u''
-                        self._bank_index = bank
-                        self.update()
-                else:
-                    self._show_msg_callback(self._device.name + u' Bank: ' + self._bank_name)
+        if self.is_enabled():
+            if self._device != None:
+                if not button.is_momentary() or value is not 0:
+                    bank = list(self._bank_buttons).index(button)
+                    if bank != self._bank_index:
+                        if self._number_of_parameter_banks() > bank:
+                            self._bank_name = ''
+                            self._bank_index = bank
+                            self.update()
+                    else:
+                        self._show_msg_callback(self._device.name + ' Bank: ' + self._bank_name)
 
     def _is_banking_enabled(self):
         direct_banking = self._bank_buttons != None
@@ -297,9 +285,6 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
         return direct_banking or roundtrip_banking or increment_banking
 
     def _assign_parameters(self):
-        assert self.is_enabled()
-        assert self._device != None
-        assert self._parameter_controls != None
         self._bank_name, bank = self._current_bank_details()
         for control, parameter in zip(self._parameter_controls, bank):
             if control != None:
@@ -315,7 +300,7 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
 
     def _on_device_name_changed(self):
         if self._device_name_data_source != None:
-            self._device_name_data_source.set_display_string(self._device.name if self.is_enabled() and self._device != None else u'No Device')
+            self._device_name_data_source.set_display_string(self._device.name if (self.is_enabled()) and (self._device != None) else 'No Device')
 
     def _on_parameters_changed(self):
         self.update()
@@ -324,23 +309,25 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
         result = None
         if self._device != None:
             for parameter in self._device.parameters:
-                if str(parameter.name).startswith(u'Device On'):
+                if str(parameter.name).startswith('Device On'):
                     result = parameter
                     break
 
         return result
 
     def _update_on_off_button(self):
-        if self.is_enabled() and self._on_off_button != None:
-            turn_on = False
-            if self._device != None:
-                parameter = self._on_off_parameter()
-                turn_on = parameter != None and parameter.value > 0.0
-            self._on_off_button.set_light(turn_on)
+        if self.is_enabled():
+            if self._on_off_button != None:
+                turn_on = False
+                if self._device != None:
+                    parameter = self._on_off_parameter()
+                    turn_on = parameter != None and parameter.value > 0.0
+                self._on_off_button.set_light(turn_on)
 
     def _update_lock_button(self):
-        if self.is_enabled() and self._lock_button != None:
-            self._lock_button.set_light(self._locked_to_device)
+        if self.is_enabled():
+            if self._lock_button != None:
+                self._lock_button.set_light(self._locked_to_device)
 
     def _update_device_bank_buttons(self):
         if self.is_enabled():
@@ -350,11 +337,12 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
 
     def _update_device_bank_nav_buttons(self):
         if self.is_enabled():
-            if self._bank_up_button != None and self._bank_down_button != None:
-                can_bank_up = self._bank_index == None or self._number_of_parameter_banks() > self._bank_index + 1
-                can_bank_down = self._bank_index == None or self._bank_index > 0
-                self._bank_up_button.set_light(self._device and can_bank_up)
-                self._bank_down_button.set_light(self._device and can_bank_down)
+            if self._bank_up_button != None:
+                if self._bank_down_button != None:
+                    can_bank_up = self._bank_index == None or self._number_of_parameter_banks() > self._bank_index + 1
+                    can_bank_down = self._bank_index == None or self._bank_index > 0
+                    self._bank_up_button.set_light(self._device and can_bank_up)
+                    self._bank_down_button.set_light(self._device and can_bank_down)
 
     def _best_of_parameter_bank(self):
         return best_of_parameter_bank(self._device)
@@ -377,14 +365,16 @@ class DeviceComponent(ControlSurfaceComponent, Subject):
         best_of = self._best_of_parameter_bank()
         banks = self._parameter_banks()
         if banks:
-            if self._bank_index != None and self._is_banking_enabled() or not best_of:
-                index = self._bank_index if self._bank_index != None else 0
-                bank = banks[index]
-                bank_name = self._parameter_bank_names()[index]
-            else:
-                bank = best_of
-                bank_name = u'Best of Parameters'
-        return (bank_name, bank)
+            if self._bank_index != None:
+                if self._is_banking_enabled() or not best_of:
+                    index = self._bank_index if self._bank_index != None else 0
+                    bank = banks[index]
+                    bank_name = self._parameter_bank_names()[index]
+                else:
+                    bank = best_of
+                    bank_name = 'Best of Parameters'
+        return (
+         bank_name, bank)
 
     def _on_device_bank_changed(self, device, bank):
         if device == self._device:

@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from _Framework.MixerComponent import MixerComponent
+import _Framework.MixerComponent as MixerComponent
 
 class SpecialMixerComponent(MixerComponent):
-    u""" Special mixer class that toggles given buttons between mute and solo """
 
     def __init__(self, num_tracks):
         MixerComponent.__init__(self, num_tracks)
@@ -33,8 +32,9 @@ class SpecialMixerComponent(MixerComponent):
             button = None
             if self._strip_mute_solo_buttons != None:
                 button = self._strip_mute_solo_buttons[index]
-            strip.set_mute_button(button)
-            strip.set_solo_button(None)
+            else:
+                strip.set_mute_button(button)
+                strip.set_solo_button(None)
 
     def _mute_solo_flip_value(self, value):
         if self._strip_mute_solo_buttons != None:

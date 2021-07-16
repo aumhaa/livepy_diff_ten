@@ -1,13 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.ButtonElement import ButtonElement
+import _Framework.ButtonElement as ButtonElement
 from _Framework.InputControlElement import MIDI_NOTE_TYPE, MIDI_CC_TYPE, MIDI_CC_STATUS
 from .consts import *
 
 class ConfigurableButtonElement(ButtonElement):
-    u""" Special button class that can be configured with custom on- and off-values
-    and can send and receive on different channels with different message types """
 
-    def __init__(self, is_momentary, msg_type, channel, identifier, send_channel = None, identifier_send_offset = 0, send_msg_type = None):
+    def __init__(self, is_momentary, msg_type, channel, identifier, send_channel=None, identifier_send_offset=0, send_msg_type=None):
         ButtonElement.__init__(self, is_momentary, msg_type, channel, identifier)
         self._send_channel = send_channel
         self._send_msg_type = send_msg_type
@@ -39,7 +37,7 @@ class ConfigurableButtonElement(ButtonElement):
     def reset(self):
         self.send_value(self._off_value)
 
-    def add_value_listener(self, callback, identify_sender = False):
+    def add_value_listener(self, callback, identify_sender=False):
         if not self._is_notifying:
             ButtonElement.add_value_listener(self, callback, identify_sender)
         else:
@@ -54,8 +52,8 @@ class ConfigurableButtonElement(ButtonElement):
 
         self._pending_listeners = []
 
-    def send_value(self, value, force = False):
-        if force or self._force_next_value or value != self._last_sent_value:
+    def send_value(self, value, force=False):
+        if force or (self._force_next_value or value != self._last_sent_value):
             data_byte1 = self._original_identifier + self._identifier_send_offset
             data_byte2 = value
             status_byte = self._send_channel if self._send_channel else self._original_channel
@@ -69,7 +67,8 @@ class ConfigurableButtonElement(ButtonElement):
             elif self._msg_type == MIDI_CC_TYPE:
                 status_byte += MIDI_CC_STATUS
             if self.send_midi((status_byte, data_byte1, data_byte2)):
-                self._last_sent_message = (value, None)
+                self._last_sent_message = (
+                 value, None)
                 if self._report_output:
                     is_input = True
                     self._report_value(value, not is_input)

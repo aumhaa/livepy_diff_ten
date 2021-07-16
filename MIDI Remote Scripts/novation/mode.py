@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface.control import InputControl
-from ableton.v2.control_surface.mode import ModesComponent as ModesComponentBase
+import ableton.v2.control_surface.mode as ModesComponentBase
 
 class ModesComponent(ModesComponentBase):
-    __events__ = (u'mode_byte',)
+    __events__ = ('mode_byte', )
     mode_selection_control = InputControl()
 
     @mode_selection_control.value

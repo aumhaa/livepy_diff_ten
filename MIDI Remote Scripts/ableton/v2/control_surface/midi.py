@@ -11,7 +11,8 @@ SYSEX_GENERAL_INFO = 6
 SYSEX_NON_REALTIME = 126
 SYSEX_IDENTITY_REQUEST_ID = 1
 SYSEX_IDENTITY_RESPONSE_ID = 2
-SYSEX_IDENTITY_REQUEST_MESSAGE = (SYSEX_START,
+SYSEX_IDENTITY_REQUEST_MESSAGE = (
+ SYSEX_START,
  SYSEX_NON_REALTIME,
  127,
  SYSEX_GENERAL_INFO,
@@ -41,7 +42,7 @@ def is_sysex(midi_bytes):
 
 
 def is_valid_sysex(midi_bytes):
-    return is_sysex(midi_bytes) and midi_bytes[0] == SYSEX_START and midi_bytes[-1] == SYSEX_END
+    return is_sysex(midi_bytes) and midi_bytes[0] == SYSEX_START and midi_bytes[(-1)] == SYSEX_END
 
 
 def is_pitchbend(midi_bytes):
@@ -56,4 +57,4 @@ def extract_value(midi_bytes):
 
 def pretty_print_bytes(midi_bytes):
     hex_values = list(map(hex, midi_bytes))
-    return u' '.join(hex_values)
+    return ' '.join(hex_values)

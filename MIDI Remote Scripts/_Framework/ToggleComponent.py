@@ -3,16 +3,12 @@ from .ControlSurfaceComponent import ControlSurfaceComponent
 from .SubjectSlot import subject_slot
 
 class ToggleComponent(ControlSurfaceComponent):
-    u"""
-    Maps a toggle button to a boolean property of the Live model.
-    """
     is_private = True
     is_momentary = False
     read_only = False
 
-    def __init__(self, property_name = None, subject = None, is_momentary = False, model_transform = None, view_transform = None, read_only = False, *a, **k):
-        assert property_name
-        super(ToggleComponent, self).__init__(*a, **k)
+    def __init__(self, property_name=None, subject=None, is_momentary=False, model_transform=None, view_transform=None, read_only=False, *a, **k):
+        (super(ToggleComponent, self).__init__)(*a, **k)
         self._property_name = property_name
         self._property_slot = self.register_slot(subject, self._on_property_changed_in_model, property_name)
         self._property_button = None
@@ -50,7 +46,6 @@ class ToggleComponent(ControlSurfaceComponent):
     value = property(_get_value, _set_value)
 
     def set_toggle_button(self, button):
-        assert button is None or not self.is_momentary or button.is_momentary()
         self._on_button_value.subject = button
         self._update_button()
 
@@ -70,7 +65,7 @@ class ToggleComponent(ControlSurfaceComponent):
     def _on_property_changed_in_model(self):
         self._update_button()
 
-    @subject_slot(u'value')
+    @subject_slot('value')
     def _on_button_value(self, value):
         if self.is_enabled() and not self.read_only:
             if self.is_momentary:
@@ -78,5 +73,5 @@ class ToggleComponent(ControlSurfaceComponent):
                     self.value = self.model_transform(True)
                 else:
                     self.value = self.model_transform(False)
-            elif value:
-                self.value = self.model_transform(not self.value)
+        elif value:
+            self.value = self.model_transform(not self.value)

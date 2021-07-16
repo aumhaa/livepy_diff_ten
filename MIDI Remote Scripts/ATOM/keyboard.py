@@ -9,7 +9,7 @@ class KeyboardComponent(NotePadMixin, PlayableComponent, ScrollComponent):
     def __init__(self, translation_channel, *a, **k):
         self._translation_channel = translation_channel
         self._start_note = 60
-        super(KeyboardComponent, self).__init__(*a, **k)
+        (super(KeyboardComponent, self).__init__)(*a, **k)
 
     def can_scroll_up(self):
         return self._start_note < MAX_START_NOTE
@@ -31,12 +31,14 @@ class KeyboardComponent(NotePadMixin, PlayableComponent, ScrollComponent):
         self._release_all_pads()
 
     def _update_button_color(self, button):
-        button.color = u'Keyboard.{}'.format(u'Sharp' if button.index in SHARP_INDICES else u'Natural')
+        button.color = 'Keyboard.{}'.format('Sharp' if button.index in SHARP_INDICES else 'Natural')
 
     def _note_translation_for_button(self, button):
         row, column = button.coordinate
         inverted_row = self.matrix.height - row - 1
-        return (inverted_row * self.matrix.width + column + self._start_note, self._translation_channel)
+        return (
+         inverted_row * self.matrix.width + column + self._start_note,
+         self._translation_channel)
 
     def _release_all_pads(self):
         for pad in self.matrix:

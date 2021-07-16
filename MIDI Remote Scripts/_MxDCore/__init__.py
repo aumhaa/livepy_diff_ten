@@ -6,8 +6,6 @@ import sys, warnings
 from ableton.v2.base import old_hasattr
 
 def set_manager(manager):
-    assert manager != None
-    assert _MxDCore.instance == None
     _MxDCore.instance = _MxDCore()
     _MxDCore.instance.set_manager(manager)
 
@@ -18,8 +16,6 @@ def disconnect():
 
 
 def execute_command(device_id, object_id, command, arguments):
-    assert _MxDCore.instance != None
-    assert isinstance(arguments, string_types)
     if old_hasattr(_MxDCore.instance, command):
         try:
             with warnings.catch_warnings(record=True) as caught_warnings:
@@ -30,11 +26,11 @@ def execute_command(device_id, object_id, command, arguments):
                     _MxDCore.instance._warn(device_id, object_id, str(warning.message))
 
         except:
-            if sys.exc_info()[0].__name__ == u'RuntimeError':
+            if sys.exc_info()[0].__name__ == 'RuntimeError':
                 assert_reason = str(sys.exc_info()[1])
             else:
-                assert_reason = u'Invalid syntax'
+                assert_reason = 'Invalid syntax'
             _MxDCore.instance._raise(device_id, object_id, assert_reason)
 
     else:
-        _MxDCore.instance._raise(device_id, object_id, u'Unknown command: ' + command)
+        _MxDCore.instance._raise(device_id, object_id, 'Unknown command: ' + command)

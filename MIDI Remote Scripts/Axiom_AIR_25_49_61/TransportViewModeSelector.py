@@ -1,8 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.ModeSelectorComponent import ModeSelectorComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 
 class TransportViewModeSelector(ModeSelectorComponent):
-    u""" Class that reassigns specific buttons based on the views visible in Live """
 
     def __init__(self, transport, session, ffwd_button, rwd_button, loop_button):
         ModeSelectorComponent.__init__(self)
@@ -11,7 +10,7 @@ class TransportViewModeSelector(ModeSelectorComponent):
         self._ffwd_button = ffwd_button
         self._rwd_button = rwd_button
         self._loop_button = loop_button
-        self.application().view.add_is_view_visible_listener(u'Session', self._on_view_changed)
+        self.application().view.add_is_view_visible_listener('Session', self._on_view_changed)
         self._on_view_changed()
 
     def disconnect(self):
@@ -21,7 +20,7 @@ class TransportViewModeSelector(ModeSelectorComponent):
         self._ffwd_button = None
         self._rwd_button = None
         self._loop_button = None
-        self.application().view.remove_is_view_visible_listener(u'Session', self._on_view_changed)
+        self.application().view.remove_is_view_visible_listener('Session', self._on_view_changed)
 
     def update(self):
         super(TransportViewModeSelector, self).update()
@@ -38,7 +37,7 @@ class TransportViewModeSelector(ModeSelectorComponent):
                 self._session.selected_scene().set_launch_button(self._loop_button)
 
     def _on_view_changed(self):
-        if self.application().view.is_view_visible(u'Session'):
+        if self.application().view.is_view_visible('Session'):
             self._mode_index = 1
         else:
             self._mode_index = 0

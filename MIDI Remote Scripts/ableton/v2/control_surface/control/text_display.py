@@ -6,13 +6,14 @@ class TextDisplayControl(Control):
 
     class State(Control.State):
 
-        def __init__(self, segments = (u'',), *a, **k):
-            super(TextDisplayControl.State, self).__init__(*a, **k)
-            self._data_sources = [ DisplayDataSource(segment) for segment in segments ]
+        def __init__(self, segments=('',), *a, **k):
+            (super(TextDisplayControl.State, self).__init__)(*a, **k)
+            self._data_sources = [DisplayDataSource(segment) for segment in segments]
 
         def set_control_element(self, control_element):
-            if not control_element and self._control_element:
-                self._control_element.set_data_sources(None)
+            if not control_element:
+                if self._control_element:
+                    self._control_element.set_data_sources(None)
             super(TextDisplayControl.State, self).set_control_element(control_element)
             if control_element:
                 control_element.set_data_sources(self._data_sources)

@@ -3,7 +3,7 @@ from builtins import range
 from future.moves.itertools import zip_longest
 from functools import partial
 from ableton.v2.control_surface.control.control import InputControl
-from _Komplete_Kontrol.mixer_component import MixerComponent as MixerComponentBase
+import _Komplete_Kontrol.mixer_component as MixerComponentBase
 from .channel_strip_component import ChannelStripComponent
 from .meter_display_element import METERS_PER_SEGMENT
 

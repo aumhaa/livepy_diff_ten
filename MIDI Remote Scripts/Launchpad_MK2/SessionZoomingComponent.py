@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
-from _Framework.SessionZoomingComponent import SessionZoomingComponent as SessionZoomingComponentBase
+import _Framework.SessionZoomingComponent as SessionZoomingComponentBase
 from .ComponentUtils import skin_scroll_component
-from _Framework.SessionComponent import SessionComponent
+import _Framework.SessionComponent as SessionComponent
 
 class SessionZoomingComponent(SessionZoomingComponentBase):
 
@@ -11,8 +11,6 @@ class SessionZoomingComponent(SessionZoomingComponentBase):
         list(map(skin_scroll_component, (self._horizontal_scroll, self._vertical_scroll)))
 
     def register_component(self, component):
-        assert component != None
-        assert component not in self._sub_components
         self._sub_components.append(component)
         return component
 

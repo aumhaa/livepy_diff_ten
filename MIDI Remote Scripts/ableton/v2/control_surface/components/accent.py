@@ -5,10 +5,11 @@ from ..control import ToggleButtonControl
 from ..elements import NullFullVelocity
 
 class AccentComponent(Component):
-    accent_button = ToggleButtonControl(toggled_color=u'Accent.On', untoggled_color=u'Accent.Off')
+    accent_button = ToggleButtonControl(toggled_color='Accent.On',
+      untoggled_color='Accent.Off')
 
     def __init__(self, *a, **k):
-        super(AccentComponent, self).__init__(*a, **k)
+        (super(AccentComponent, self).__init__)(*a, **k)
         self.set_full_velocity(None)
 
     def set_full_velocity(self, full_velocity):

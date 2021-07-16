@@ -2,26 +2,26 @@ from __future__ import absolute_import, print_function, unicode_literals
 from __future__ import division
 from builtins import round
 from past.utils import old_div
-from _Framework.SliderElement import SliderElement as SliderElementBase
+import _Framework.SliderElement as SliderElementBase
 from _Framework.Skin import Skin, SkinColorMissingError
 from . import consts
-FADER_TYPES = (consts.FADER_TYPE_STANDARD, consts.FADER_TYPE_BIPOLAR)
+FADER_TYPES = (
+ consts.FADER_TYPE_STANDARD, consts.FADER_TYPE_BIPOLAR)
 
 class SliderElement(SliderElementBase):
 
-    def __init__(self, msg_type, channel, identifier, skin = Skin(), *a, **k):
+    def __init__(self, msg_type, channel, identifier, skin=Skin(), *a, **k):
         self._skin = skin
         self._header = None
         self._type = consts.FADER_TYPE_STANDARD
         self._color = 0
-        super(SliderElement, self).__init__(msg_type, channel, identifier, *a, **k)
+        (super(SliderElement, self).__init__)(msg_type, channel, identifier, *a, **k)
         self.set_needs_takeover(False)
 
     def set_index(self, index):
         self._header = consts.SYSEX_STANDARD_PREFIX + consts.SYSEX_PARAM_BYTE_FADER_SETUP + (index,)
 
     def set_light_and_type(self, light_value, type_value):
-        assert type_value in FADER_TYPES
         self.set_light(light_value)
         self._type = type_value
 

@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.MixerComponent import MixerComponent
+import _Framework.MixerComponent as MixerComponent
 from .SelectChanStripComponent import SelectChanStripComponent
 
 class SpecialMixerComponent(MixerComponent):
-    u""" Class encompassing several selecting channel strips to form a mixer """
 
     def _create_strip(self):
         return SelectChanStripComponent()

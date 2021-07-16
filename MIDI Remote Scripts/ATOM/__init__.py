@@ -3,11 +3,13 @@ from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC,
 from .atom import ATOM
 
 def get_capabilities():
-    return {CONTROLLER_ID_KEY: controller_id(vendor_id=6479, product_ids=[518], model_name=[u'ATOM']),
-     PORTS_KEY: [inport(props=[NOTES_CC, SCRIPT, REMOTE]), outport(props=[NOTES_CC,
-                  SYNC,
-                  SCRIPT,
-                  REMOTE])]}
+    return {CONTROLLER_ID_KEY: controller_id(vendor_id=6479,
+                          product_ids=[518],
+                          model_name=['ATOM']), 
+     
+     PORTS_KEY: [
+                 inport(props=[NOTES_CC, SCRIPT, REMOTE]),
+                 outport(props=[NOTES_CC, SYNC, SCRIPT, REMOTE])]}
 
 
 def create_instance(c_instance):

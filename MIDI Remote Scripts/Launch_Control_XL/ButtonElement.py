@@ -20,4 +20,4 @@ class ButtonElement(ButtonElementBase):
         elif value is OFF_VALUE and self._off_value is not None:
             self._skin[self._off_value].draw(self)
         else:
-            super(ButtonElement, self).send_value(value, **k)
+            (super(ButtonElement, self).send_value)(value, **k)

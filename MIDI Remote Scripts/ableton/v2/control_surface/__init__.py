@@ -25,4 +25,24 @@ from .session_ring_selection_linking import SessionRingSelectionLinking
 from .simpler_decoration import BoolWrappingParameter, SimplerDeviceDecorator
 from .skin import SkinColorMissingError, Skin, merge_skins
 from .wavetable_decoration import WavetableDeviceDecorator, WavetableEnvelopeType, WavetableFilterType, WavetableLfoType, WavetableOscillatorType
-__all__ = (u'BackgroundLayer', u'BANK_FORMAT', u'BANK_MAIN_KEY', u'BANK_PARAMETERS_KEY', u'BankingInfo', u'BoolWrappingParameter', u'ClipCreator', u'Component', u'CompoundElement', u'CompoundLayer', u'CompoundResource', u'ControlElement', u'ControlElementClient', u'ControlSurface', u'DecoratorFactory', u'DEFAULT_PRIORITY', u'DescribedDeviceParameterBank', u'DeviceBankRegistry', u'DeviceDecoratorFactory', u'DeviceProvider', u'ElementOwnershipHandler', u'EnumWrappingParameter', u'ExclusiveResource', u'IdentifiableControlSurface', u'InputControlElement', u'InputSignal', u'IntegerParameter', u'InternalParameter', u'InternalParameterBase', u'Layer', u'LayerClient', u'LayerError', u'LiveObjectDecorator', u'MIDI_CC_TYPE', u'MIDI_INVALID_TYPE', u'MIDI_NOTE_TYPE', u'MIDI_PB_TYPE', u'MIDI_SYSEX_TYPE', u'MidiMap', u'MX_MAIN_BANK_INDEX', u'NestedElementClient', u'NotifyingControlElement', u'NotifyingList', u'OptimizedOwnershipHandler', u'ParameterInfo', u'ParameterProvider', u'ParameterSlot', u'PercussionInstrumentFinder', u'PitchParameter', u'PrioritizedResource', u'ProxyResource', u'RelativeInternalParameter', u'Resource', u'SessionRingSelectionLinking', u'SharedResource', u'SimpleControlSurface', u'SimpleLayerOwner', u'SimplerDeviceDecorator', u'Skin', u'SkinColorMissingError', u'StackingResource', u'UnhandledElementError', u'WavetableDeviceDecorator', u'WavetableEnvelopeType', u'WavetableFilterType', u'WavetableLfoType', u'WavetableOscillatorType', u'WrappingParameter', u'all_parameters', u'create_device_bank', u'device_bank_definition', u'device_to_appoint', u'find_instrument_devices', u'find_instrument_meeting_requirement', u'get_element', u'get_parameter_by_name', u'is_parameter_quantized', u'merge_skins', u'select_and_appoint_device', u'to_percentage_display', u'use')
+__all__ = ('BackgroundLayer', 'BANK_FORMAT', 'BANK_MAIN_KEY', 'BANK_PARAMETERS_KEY',
+           'BankingInfo', 'BoolWrappingParameter', 'ClipCreator', 'Component', 'CompoundElement',
+           'CompoundLayer', 'CompoundResource', 'ControlElement', 'ControlElementClient',
+           'ControlSurface', 'DecoratorFactory', 'DEFAULT_PRIORITY', 'DescribedDeviceParameterBank',
+           'DeviceBankRegistry', 'DeviceDecoratorFactory', 'DeviceProvider', 'ElementOwnershipHandler',
+           'EnumWrappingParameter', 'ExclusiveResource', 'IdentifiableControlSurface',
+           'InputControlElement', 'InputSignal', 'IntegerParameter', 'InternalParameter',
+           'InternalParameterBase', 'Layer', 'LayerClient', 'LayerError', 'LiveObjectDecorator',
+           'MIDI_CC_TYPE', 'MIDI_INVALID_TYPE', 'MIDI_NOTE_TYPE', 'MIDI_PB_TYPE',
+           'MIDI_SYSEX_TYPE', 'MidiMap', 'MX_MAIN_BANK_INDEX', 'NestedElementClient',
+           'NotifyingControlElement', 'NotifyingList', 'OptimizedOwnershipHandler',
+           'ParameterInfo', 'ParameterProvider', 'ParameterSlot', 'PercussionInstrumentFinder',
+           'PitchParameter', 'PrioritizedResource', 'ProxyResource', 'RelativeInternalParameter',
+           'Resource', 'SessionRingSelectionLinking', 'SharedResource', 'SimpleControlSurface',
+           'SimpleLayerOwner', 'SimplerDeviceDecorator', 'Skin', 'SkinColorMissingError',
+           'StackingResource', 'UnhandledElementError', 'WavetableDeviceDecorator',
+           'WavetableEnvelopeType', 'WavetableFilterType', 'WavetableLfoType', 'WavetableOscillatorType',
+           'WrappingParameter', 'all_parameters', 'create_device_bank', 'device_bank_definition',
+           'device_to_appoint', 'find_instrument_devices', 'find_instrument_meeting_requirement',
+           'get_element', 'get_parameter_by_name', 'is_parameter_quantized', 'merge_skins',
+           'select_and_appoint_device', 'to_percentage_display', 'use')

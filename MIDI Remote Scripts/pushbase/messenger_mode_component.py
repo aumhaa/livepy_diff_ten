@@ -6,25 +6,26 @@ from .message_box_component import Messenger
 class MessengerModesComponent(ModesComponent, Messenger):
     notify_when_enabled = False
 
-    def __init__(self, muted = False, *a, **k):
-        super(MessengerModesComponent, self).__init__(*a, **k)
+    def __init__(self, muted=False, *a, **k):
+        (super(MessengerModesComponent, self).__init__)(*a, **k)
         self._mode_message_map = {}
         self._default_and_alternative_mode_map = {}
         self._is_being_enabled = BooleanContext()
         self._muted = muted
 
-    def add_mode(self, name, mode_or_component, message = None, default_mode = None, alternative_mode = None, **k):
-        super(MessengerModesComponent, self).add_mode(name, mode_or_component, **k)
+    def add_mode(self, name, mode_or_component, message=None, default_mode=None, alternative_mode=None, **k):
+        (super(MessengerModesComponent, self).add_mode)(name, mode_or_component, **k)
         self._mode_message_map[name] = message
         self._default_and_alternative_mode_map[name] = (default_mode, alternative_mode)
 
     def get_mode_message(self):
-        message = self._mode_message_map.get(self.selected_mode, u'')
+        message = self._mode_message_map.get(self.selected_mode, '')
         return message
 
     def get_default_mode_and_alternative_mode(self):
-        default_mode, alternative_mode = self._default_and_alternative_mode_map.get(self.selected_mode, u'')
-        return (default_mode, alternative_mode)
+        default_mode, alternative_mode = self._default_and_alternative_mode_map.get(self.selected_mode, '')
+        return (
+         default_mode, alternative_mode)
 
     def on_enabled_changed(self):
         with self._is_being_enabled():
@@ -32,10 +33,11 @@ class MessengerModesComponent(ModesComponent, Messenger):
 
     def _do_enter_mode(self, name):
         super(MessengerModesComponent, self)._do_enter_mode(name)
-        if (not self._is_being_enabled or self.notify_when_enabled) and not self._muted:
-            message = self._mode_message_map.get(name, None)
-            if message:
-                self.show_notification(message)
+        if not self._is_being_enabled or self.notify_when_enabled:
+            if not self._muted:
+                message = self._mode_message_map.get(name, None)
+                if message:
+                    self.show_notification(message)
 
     @property
     def muted(self):

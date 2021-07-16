@@ -3,8 +3,12 @@ from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC,
 from .fa import FA
 
 def get_capabilities():
-    return {CONTROLLER_ID_KEY: controller_id(vendor_id=1410, product_ids=[372], model_name=u'FA-06 08'),
-     PORTS_KEY: [inport(props=[]),
+    return {CONTROLLER_ID_KEY: controller_id(vendor_id=1410,
+                          product_ids=[372],
+                          model_name='FA-06 08'), 
+     
+     PORTS_KEY: [
+                 inport(props=[]),
                  inport(props=[NOTES_CC, SCRIPT, REMOTE]),
                  outport(props=[]),
                  outport(props=[SCRIPT])]}

@@ -1,11 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-from _Framework.ButtonElement import ButtonElement
-from _Framework.TransportComponent import TransportComponent
+import _Framework.ButtonElement as ButtonElement
+import _Framework.TransportComponent as TransportComponent
 
 class ShiftableTransportComponent(TransportComponent):
-    u""" Special transport class handling the seek buttons differently based on a shift button"""
 
     def __init__(self):
         self._shift_button = None
@@ -19,7 +18,6 @@ class ShiftableTransportComponent(TransportComponent):
         TransportComponent.disconnect(self)
 
     def set_shift_button(self, button):
-        assert button == None or isinstance(button, ButtonElement) and button.is_momentary()
         if self._shift_button != button:
             if self._shift_button != None:
                 self._shift_button.remove_value_listener(self._shift_value)
@@ -29,22 +27,16 @@ class ShiftableTransportComponent(TransportComponent):
                 self._shift_button.add_value_listener(self._shift_value)
 
     def _shift_value(self, value):
-        assert self._shift_button != None
-        assert value in range(128)
         if self.is_enabled():
             self._shift_pressed = value > 0
 
     def _ffwd_value(self, value):
-        assert self._ffwd_button != None
-        assert value in range(128)
         if self._shift_pressed:
             self.song().current_song_time = self.song().last_event_time
         else:
             TransportComponent._ffwd_value(self, value)
 
     def _rwd_value(self, value):
-        assert self._rwd_button != None
-        assert value in range(128)
         if self._shift_pressed:
             self.song().current_song_time = 0.0
         else:

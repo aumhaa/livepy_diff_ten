@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.components import SessionRecordingComponent as SessionRecordingComponentBase
+import ableton.v2.control_surface.components as SessionRecordingComponentBase
 from ableton.v2.control_surface.control import ButtonControl
 
 class SessionRecordingComponent(SessionRecordingComponentBase):

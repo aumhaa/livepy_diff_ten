@@ -5,8 +5,8 @@ from .consts import *
 
 class FaderfoxComponent(object):
     __module__ = __name__
-    __doc__ = u'Baseclass for a subcomponent for Faderfox controllers.'
-    __filter_funcs__ = [u'update_display', u'log']
+    __doc__ = 'Baseclass for a subcomponent for Faderfox controllers.'
+    __filter_funcs__ = ['update_display', 'log']
 
     def __init__(self, parent):
         FaderfoxComponent.realinit(self, parent)

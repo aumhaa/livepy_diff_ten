@@ -5,8 +5,8 @@ from .control import TextDisplayControl
 NUM_MESSAGE_SEGMENTS = 2
 
 class MessageComponent(Component):
-    display = TextDisplayControl(segments=(u'',) * NUM_MESSAGE_SEGMENTS)
+    display = TextDisplayControl(segments=(('', ) * NUM_MESSAGE_SEGMENTS))
 
     def __call__(self, *messages):
         for index, message in zip(range(NUM_MESSAGE_SEGMENTS), messages):
-            self.display[index] = message if message else u''
+            self.display[index] = message if message else ''

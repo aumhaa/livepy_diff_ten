@@ -1,18 +1,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import clamp, listens
 from ableton.v2.control_surface import ParameterInfo
-from ableton.v2.control_surface.components import DeviceComponent as DeviceComponentBase
+import ableton.v2.control_surface.components as DeviceComponentBase
 from ableton.v2.control_surface.control import ButtonControl
 from .parameter_mapping_sensitivities import parameter_mapping_sensitivity
 
 class DeviceComponent(DeviceComponentBase):
-    __events__ = (u'bank',)
-    prev_bank_button = ButtonControl(color=u'Device.On')
-    next_bank_button = ButtonControl(color=u'Device.On')
+    __events__ = ('bank', )
+    prev_bank_button = ButtonControl(color='Device.On')
+    next_bank_button = ButtonControl(color='Device.On')
 
     def __init__(self, *a, **k):
-        super(DeviceComponent, self).__init__(*a, **k)
-        self.__on_bank_changed.subject = self._device_bank_registry
+        (super(DeviceComponent, self).__init__)(*a, **k)
+        self._DeviceComponent__on_bank_changed.subject = self._device_bank_registry
         self._update_bank_scroll_buttons()
 
     @prev_bank_button.pressed
@@ -28,9 +28,11 @@ class DeviceComponent(DeviceComponentBase):
         self._update_bank_scroll_buttons()
 
     def _create_parameter_info(self, parameter, name):
-        return ParameterInfo(parameter=parameter, name=name, default_encoder_sensitivity=parameter_mapping_sensitivity(parameter, self.device().class_name))
+        return ParameterInfo(parameter=parameter,
+          name=name,
+          default_encoder_sensitivity=(parameter_mapping_sensitivity(parameter, self.device().class_name)))
 
-    @listens(u'device_bank')
+    @listens('device_bank')
     def __on_bank_changed(self, device, bank):
         if device == self.device():
             self._set_bank_index(bank)

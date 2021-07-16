@@ -6,7 +6,7 @@ from .sysex import NUM_SET_PROPERTY_HEADER_BYTES
 class MidiMessageCache(object):
 
     def __init__(self, *a, **k):
-        super(MidiMessageCache, self).__init__(*a, **k)
+        (super(MidiMessageCache, self).__init__)(*a, **k)
         self._messages = []
 
     def __call__(self, message):

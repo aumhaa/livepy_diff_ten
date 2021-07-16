@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
 from ableton.v2.control_surface import ParameterInfo
-from ableton.v2.control_surface.components import DeviceComponent as DeviceComponentBase
+import ableton.v2.control_surface.components as DeviceComponentBase
 from ableton.v2.control_surface.control import ButtonControl
 from .parameter_mapping_sensitivities import parameter_mapping_sensitivity, fine_grain_parameter_mapping_sensitivity
 
 def is_wavetable(device):
-    return liveobj_valid(device) and device.class_name == u'InstrumentVector'
+    return liveobj_valid(device) and device.class_name == 'InstrumentVector'
 
 
 class DeviceComponent(DeviceComponentBase):
@@ -28,4 +28,7 @@ class DeviceComponent(DeviceComponentBase):
 
     def _create_parameter_info(self, parameter, name):
         device_class_name = self.device().class_name
-        return ParameterInfo(parameter=parameter, name=name, default_encoder_sensitivity=parameter_mapping_sensitivity(parameter, device_class_name), fine_grain_encoder_sensitivity=fine_grain_parameter_mapping_sensitivity(parameter, device_class_name))
+        return ParameterInfo(parameter=parameter,
+          name=name,
+          default_encoder_sensitivity=(parameter_mapping_sensitivity(parameter, device_class_name)),
+          fine_grain_encoder_sensitivity=(fine_grain_parameter_mapping_sensitivity(parameter, device_class_name)))

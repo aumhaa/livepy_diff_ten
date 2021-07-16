@@ -1,9 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.Control import RadioButtonControl, control_list
-from _Framework.ControlSurfaceComponent import ControlSurfaceComponent
+import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 from _Framework.SubjectSlot import subject_slot
-AVAILABLE_QUANTIZATION = [Live.Song.Quantization.q_no_q,
+AVAILABLE_QUANTIZATION = [
+ Live.Song.Quantization.q_no_q,
  Live.Song.Quantization.q_8_bars,
  Live.Song.Quantization.q_4_bars,
  Live.Song.Quantization.q_2_bars,
@@ -16,7 +17,7 @@ class QuantizationComponent(ControlSurfaceComponent):
     quantization_buttons = control_list(RadioButtonControl)
 
     def __init__(self, *a, **k):
-        super(QuantizationComponent, self).__init__(*a, **k)
+        (super(QuantizationComponent, self).__init__)(*a, **k)
         self.quantization_buttons.control_count = len(AVAILABLE_QUANTIZATION) + 1
         self._on_clip_trigger_quantization_changed.subject = self.song()
         self._on_clip_trigger_quantization_changed()
@@ -28,11 +29,11 @@ class QuantizationComponent(ControlSurfaceComponent):
             if quantization != self.song().clip_trigger_quantization:
                 self.song().clip_trigger_quantization = quantization
 
-    @subject_slot(u'clip_trigger_quantization')
+    @subject_slot('clip_trigger_quantization')
     def _on_clip_trigger_quantization_changed(self):
         self._get_button(self.song().clip_trigger_quantization).is_checked = True
 
     def _get_button(self, quantization):
         if quantization in AVAILABLE_QUANTIZATION:
             return self.quantization_buttons[AVAILABLE_QUANTIZATION.index(quantization)]
-        return self.quantization_buttons[-1]
+        return self.quantization_buttons[(-1)]

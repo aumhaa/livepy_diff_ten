@@ -25,4 +25,18 @@ from .toggle import ToggleComponent
 from .transport import TransportComponent
 from .undo_redo import UndoRedoComponent
 from .view_control import BasicSceneScroller, BasicTrackScroller, SceneListScroller, SceneScroller, TrackScroller, ViewControlComponent, all_tracks
-__all__ = (u'AccentComponent', u'all_tracks', u'ArmedTargetTrackComponent', u'AutoArmComponent', u'BackgroundComponent', u'ModifierBackgroundComponent', u'ChannelStripComponent', u'ClipActionsComponent', u'ClipSlotComponent', u'find_nearest_color', u'DeviceComponent', u'DeviceNavigationComponent', u'DeviceParameterComponent', u'DisplayingDeviceParameterComponent', u'DrumGroupComponent', u'FlattenedDeviceChain', u'is_empty_rack', u'ItemListerComponent', u'ItemProvider', u'ItemSlot', u'MixerComponent', u'nested_device_parent', u'PlayableComponent', u'RightAlignTracksTrackAssigner', u'SceneComponent', u'Scrollable', u'ScrollComponent', u'SessionComponent', u'SessionNavigationComponent', u'SessionRingScroller', u'SessionRingTrackScroller', u'SessionRingSceneScroller', u'SessionRingTrackPager', u'SessionRingScenePager', u'SessionRecordingComponent', u'SessionRingComponent', u'SessionOverviewComponent', u'SimpleItemSlot', u'SimpleTrackAssigner', u'Slideable', u'SlideComponent', u'TargetTrackComponent', u'ToggleComponent', u'TransportComponent', u'BasicSceneScroller', u'BasicTrackScroller', u'SceneListScroller', u'SceneScroller', u'track_is_recording', u'track_playing_slot', u'TrackScroller', u'UndoRedoComponent', u'ViewControlComponent')
+__all__ = ('AccentComponent', 'all_tracks', 'ArmedTargetTrackComponent', 'AutoArmComponent',
+           'BackgroundComponent', 'ModifierBackgroundComponent', 'ChannelStripComponent',
+           'ClipActionsComponent', 'ClipSlotComponent', 'find_nearest_color', 'DeviceComponent',
+           'DeviceNavigationComponent', 'DeviceParameterComponent', 'DisplayingDeviceParameterComponent',
+           'DrumGroupComponent', 'FlattenedDeviceChain', 'is_empty_rack', 'ItemListerComponent',
+           'ItemProvider', 'ItemSlot', 'MixerComponent', 'nested_device_parent',
+           'PlayableComponent', 'RightAlignTracksTrackAssigner', 'SceneComponent',
+           'Scrollable', 'ScrollComponent', 'SessionComponent', 'SessionNavigationComponent',
+           'SessionRingScroller', 'SessionRingTrackScroller', 'SessionRingSceneScroller',
+           'SessionRingTrackPager', 'SessionRingScenePager', 'SessionRecordingComponent',
+           'SessionRingComponent', 'SessionOverviewComponent', 'SimpleItemSlot',
+           'SimpleTrackAssigner', 'Slideable', 'SlideComponent', 'TargetTrackComponent',
+           'ToggleComponent', 'TransportComponent', 'BasicSceneScroller', 'BasicTrackScroller',
+           'SceneListScroller', 'SceneScroller', 'track_is_recording', 'track_playing_slot',
+           'TrackScroller', 'UndoRedoComponent', 'ViewControlComponent')

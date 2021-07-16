@@ -10,27 +10,25 @@ class SpecialModesComponent(ModesComponent):
 
 
 class SpecialReenterBehaviour(ReenterBehaviour):
-    u"""
-    When a mode with this behaviour is reentered, enters on_reenter_mode instead
-    """
 
-    def __init__(self, mode_name = None, *a, **k):
-        super(ReenterBehaviour, self).__init__(*a, **k)
+    def __init__(self, mode_name=None, *a, **k):
+        (super(ReenterBehaviour, self).__init__)(*a, **k)
         self._mode_name = mode_name
 
     def press_immediate(self, component, mode):
         was_active = component.selected_mode == mode
         super(ReenterBehaviour, self).press_immediate(component, mode)
         if was_active:
-            if self._mode_name is not None and component.get_mode(self._mode_name):
-                component.push_mode(self._mode_name)
-                component.pop_unselected_modes()
+            if self._mode_name is not None:
+                if component.get_mode(self._mode_name):
+                    component.push_mode(self._mode_name)
+                    component.pop_unselected_modes()
 
 
 class CancelingReenterBehaviour(SpecialReenterBehaviour):
 
     def __init__(self, *a, **k):
-        super(CancelingReenterBehaviour, self).__init__(*a, **k)
+        (super(CancelingReenterBehaviour, self).__init__)(*a, **k)
         self._reenter_mode_active = False
 
     def press_immediate(self, component, mode):

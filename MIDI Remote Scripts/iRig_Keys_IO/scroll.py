@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import nop
-from ableton.v2.control_surface.components import ScrollComponent as ScrollComponentBase
+import ableton.v2.control_surface.components as ScrollComponentBase
 from ableton.v2.control_surface.control import EncoderControl
 
 class ScrollComponent(ScrollComponentBase):
@@ -11,6 +11,7 @@ class ScrollComponent(ScrollComponentBase):
         scroll_step = nop
         if value > 0 and self.can_scroll_down():
             scroll_step = self._do_scroll_down
-        elif value < 0 and self.can_scroll_up():
-            scroll_step = self._do_scroll_up
+        elif value < 0:
+            if self.can_scroll_up():
+                scroll_step = self._do_scroll_up
         scroll_step()

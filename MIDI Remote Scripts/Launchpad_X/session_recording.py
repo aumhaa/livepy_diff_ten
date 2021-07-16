@@ -9,9 +9,9 @@ class SessionRecordingMixin(object):
     record_button = ButtonControl(delay_time=0.5)
 
     def __init__(self, *a, **k):
-        super(SessionRecordingMixin, self).__init__(*a, **k)
-        blink_on = partial(self._set_record_button_color, u'Recording.CaptureTriggered')
-        blink_off = partial(self._set_record_button_color, u'DefaultButton.Off')
+        (super(SessionRecordingMixin, self).__init__)(*a, **k)
+        blink_on = partial(self._set_record_button_color, 'Recording.CaptureTriggered')
+        blink_off = partial(self._set_record_button_color, 'DefaultButton.Off')
         self._blink_task = self._tasks.add(task.sequence(task.run(blink_on), task.wait(BLINK_PERIOD), task.run(blink_off), task.wait(BLINK_PERIOD), task.run(blink_on), task.wait(BLINK_PERIOD), task.run(blink_off)))
         self._blink_task.kill()
 

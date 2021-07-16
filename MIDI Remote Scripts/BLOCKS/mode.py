@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface.control import ButtonControl
-from ableton.v2.control_surface.mode import ModesComponent as ModesComponentBase
+import ableton.v2.control_surface.mode as ModesComponentBase
 
 class ModesComponent(ModesComponentBase):
     cycle_mode_button = ButtonControl()

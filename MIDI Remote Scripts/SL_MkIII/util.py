@@ -29,4 +29,4 @@ def color_for_track(track):
         except (KeyError, IndexError):
             color_value = find_nearest_color(RGB_COLOR_TABLE, track.color)
 
-    return Color(color_value)
+        return Color(color_value)

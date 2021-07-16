@@ -17,7 +17,7 @@ class PlayableComponent(Component):
     pressed_pads = listenable_property.managed([])
 
     def __init__(self, *a, **k):
-        super(PlayableComponent, self).__init__(*a, **k)
+        (super(PlayableComponent, self).__init__)(*a, **k)
         self._takeover_pads = False
         self._accent_component = AccentComponent(parent=self)
 
@@ -28,11 +28,6 @@ class PlayableComponent(Component):
         self._accent_component.set_full_velocity(full_velocity)
 
     def _set_control_pads_from_script(self, takeover_pads):
-        u"""
-        If takeover_pads, the matrix buttons will be controlled from
-        the script. Otherwise they send midi notes to the track
-        associated to the instrument.
-        """
         if takeover_pads != self._takeover_pads:
             self._takeover_pads = takeover_pads
             self._update_control_from_script()
@@ -58,13 +53,13 @@ class PlayableComponent(Component):
         self._on_matrix_released(button)
 
     def _on_matrix_pressed(self, button):
-        self.pressed_pads = apply_to_list(self.pressed_pads, u'append', button)
+        self.pressed_pads = apply_to_list(self.pressed_pads, 'append', button)
         if len(self.pressed_pads) == 1:
             self._update_control_from_script()
 
     def _on_matrix_released(self, button):
         if button in self.pressed_pads:
-            self.pressed_pads = apply_to_list(self.pressed_pads, u'remove', button)
+            self.pressed_pads = apply_to_list(self.pressed_pads, 'remove', button)
             if not self.pressed_pads:
                 self._update_control_from_script()
         self._update_led_feedback()
@@ -83,14 +78,15 @@ class PlayableComponent(Component):
             self._update_button_color(button)
 
     def _update_button_color(self, button):
-        button.color = u'DefaultButton.Off'
+        button.color = 'DefaultButton.Off'
 
     def _button_should_be_enabled(self, button):
         identifier, _ = self._note_translation_for_button(button)
-        return identifier is None or isinstance(identifier, Number) and identifier < 128
+        return (identifier is None) or ((isinstance(identifier, Number)) and (identifier < 128))
 
     def _note_translation_for_button(self, button):
-        return (button.identifier, button.channel)
+        return (
+         button.identifier, button.channel)
 
     def _update_note_translations(self):
         for button in self.matrix:

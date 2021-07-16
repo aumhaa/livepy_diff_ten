@@ -6,15 +6,15 @@ from .device_options import DeviceOnOffOption
 class Redux2DeviceDecorator(LiveObjectDecorator, EventObject):
 
     def __init__(self, *a, **k):
-        super(Redux2DeviceDecorator, self).__init__(*a, **k)
-        self.postFilter_on_option = DeviceOnOffOption(name=u'Post-Filter', property_host=get_parameter_by_name(self, u'Post-Filter On'))
+        (super(Redux2DeviceDecorator, self).__init__)(*a, **k)
+        self.postFilter_on_option = DeviceOnOffOption(name='Post-Filter',
+          property_host=(get_parameter_by_name(self, 'Post-Filter On')))
         self.register_disconnectables(self.options)
 
     @property
     def options(self):
-        return (self.postFilter_on_option,)
-        self._additional_parameters = ()
-        self.register_disconnectable(self._additional_parameters)
+        return (
+         self.postFilter_on_option,)
 
     @property
     def parameters(self):

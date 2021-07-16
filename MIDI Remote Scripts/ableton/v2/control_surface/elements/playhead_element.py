@@ -15,8 +15,9 @@ class NullPlayhead(object):
 
 class PlayheadElement(ProxyElement):
 
-    def __init__(self, playhead = None, *a, **k):
-        super(PlayheadElement, self).__init__(proxied_object=playhead, proxied_interface=NullPlayhead())
+    def __init__(self, playhead=None, *a, **k):
+        super(PlayheadElement, self).__init__(proxied_object=playhead,
+          proxied_interface=(NullPlayhead()))
 
     def reset(self):
         self.track = None

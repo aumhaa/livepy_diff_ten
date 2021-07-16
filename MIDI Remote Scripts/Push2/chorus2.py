@@ -8,14 +8,17 @@ from .visualisation_settings import VisualisationGuides
 class Chorus2DeviceDecorator(LiveObjectDecorator, EventObject):
 
     def __init__(self, *a, **k):
-        super(Chorus2DeviceDecorator, self).__init__(*a, **k)
-        self.fb_inv_option = DeviceOnOffOption(name=u'FB Inv', property_host=get_parameter_by_name(self, u'FB Inv'))
-        self.hpf_enabled_option = DeviceOnOffOption(name=u'HPF', property_host=get_parameter_by_name(self, u'HPF Enabled'))
+        (super(Chorus2DeviceDecorator, self).__init__)(*a, **k)
+        self.fb_inv_option = DeviceOnOffOption(name='FB Inv',
+          property_host=(get_parameter_by_name(self, 'FB Inv')))
+        self.hpf_enabled_option = DeviceOnOffOption(name='HPF',
+          property_host=(get_parameter_by_name(self, 'HPF Enabled')))
         self.register_disconnectables(self.options)
 
     @property
     def options(self):
-        return (self.fb_inv_option, self.hpf_enabled_option)
+        return (
+         self.fb_inv_option, self.hpf_enabled_option)
 
     @property
     def parameters(self):
@@ -34,15 +37,14 @@ class Chorus2DeviceComponent(DeviceComponentWithTrackColorViewData):
     @property
     def _adjustment_view_data(self):
         adjusting_lfo = adjusting_lfo_phase = False
-        touched_parameters = [ self.parameters[button.index] for button in self.parameter_touch_buttons if button.is_pressed ]
+        touched_parameters = [self.parameters[button.index] for button in self.parameter_touch_buttons if button.is_pressed]
         for parameter in touched_parameters:
-            if parameter.name == u'Offset':
+            if parameter.name == 'Offset':
                 adjusting_lfo_phase = True
-            elif parameter.name in (u'Rate', u'Amount', u'Shaping'):
+            if parameter.name in ('Rate', 'Amount', 'Shaping'):
                 adjusting_lfo = True
 
-        return {u'AdjustingLfo': adjusting_lfo,
-         u'AdjustingLfoPhase': adjusting_lfo_phase}
+        return {'AdjustingLfo':adjusting_lfo,  'AdjustingLfoPhase':adjusting_lfo_phase}
 
     def _set_bank_index(self, bank):
         super(Chorus2DeviceComponent, self)._set_bank_index(bank)
@@ -57,7 +59,8 @@ class Chorus2DeviceComponent(DeviceComponentWithTrackColorViewData):
 
     @property
     def _shrink_parameters(self):
-        result = [False] * 8
+        result = [
+         False] * 8
         if self._visualisation_visible:
             lfo_config = self.LFO_VISUALISATION_CONFIGURATION_IN_BANKS.get(self._bank.index, ButtonRange(-1, -1))
             for x in range(lfo_config.left_index, lfo_config.right_index + 1):
@@ -68,8 +71,8 @@ class Chorus2DeviceComponent(DeviceComponentWithTrackColorViewData):
     @property
     def _configuration_view_data(self):
         lfo_left, lfo_right = self._calculate_view_size(self.LFO_VISUALISATION_CONFIGURATION_IN_BANKS)
-        return {u'LfoLeft': lfo_left,
-         u'LfoRight': lfo_right}
+        return {'LfoLeft':lfo_left, 
+         'LfoRight':lfo_right}
 
     def _basic_visualisation_view_data(self):
         view_data = super()._basic_visualisation_view_data()
@@ -87,4 +90,6 @@ class Chorus2DeviceComponent(DeviceComponentWithTrackColorViewData):
         if self._bank.index not in configuration:
             return (0, 0)
         config = configuration[self._bank.index]
-        return (VisualisationGuides.light_left_x(config.left_index), VisualisationGuides.light_right_x(config.right_index))
+        return (
+         VisualisationGuides.light_left_x(config.left_index),
+         VisualisationGuides.light_right_x(config.right_index))

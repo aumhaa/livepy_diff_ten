@@ -1,10 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from _Framework.ModeSelectorComponent import ModeSelectorComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 from .consts import *
 
 class EncoderModeSelector(ModeSelectorComponent):
-    u""" SelectorComponent that assigns encoders to different functions """
 
     def __init__(self, mixer, device, encoders):
         ModeSelectorComponent.__init__(self)
@@ -46,12 +45,14 @@ class EncoderModeSelector(ModeSelectorComponent):
                 if self._mode_index == 0:
                     strip.set_volume_control(encoder)
                     encoder.set_on_off_values(AMB_FULL, LED_OFF)
-                elif self._mode_index == 1:
-                    strip.set_pan_control(encoder)
-                    encoder.set_on_off_values(RED_FULL, LED_OFF)
-                elif self._mode_index == 2:
-                    encoder.set_on_off_values(GRN_FULL, LED_OFF)
-                elif self._mode_index == 3:
+                else:
+                    if self._mode_index == 1:
+                        strip.set_pan_control(encoder)
+                        encoder.set_on_off_values(RED_FULL, LED_OFF)
+                    else:
+                        if self._mode_index == 2:
+                            encoder.set_on_off_values(GRN_FULL, LED_OFF)
+                if self._mode_index == 3:
                     encoder.set_on_off_values(RED_FULL, LED_OFF)
 
             if self._mode_index == 0:
@@ -72,10 +73,11 @@ class EncoderModeSelector(ModeSelectorComponent):
             self._mixer.set_allow_update(True)
 
     def _mode_value(self, value, sender):
-        if self.is_enabled() and value is not 0 or not sender.is_momentary():
-            if self._modes_buttons.index(sender) == 0:
-                if self._mode_index != self.number_of_modes() - 1:
-                    self._submode_index = (self._submode_index + 1) % (self.number_of_modes() - 1)
-                self.set_mode(self._submode_index)
+        if self.is_enabled():
+            if value is not 0 or not sender.is_momentary():
+                if self._modes_buttons.index(sender) == 0:
+                    if self._mode_index != self.number_of_modes() - 1:
+                        self._submode_index = (self._submode_index + 1) % (self.number_of_modes() - 1)
+                    self.set_mode(self._submode_index)
             else:
                 self.set_mode(self.number_of_modes() - 1)
