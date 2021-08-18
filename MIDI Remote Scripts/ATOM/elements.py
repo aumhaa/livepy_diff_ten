@@ -4,7 +4,7 @@ from builtins import object
 from functools import partial
 import Live
 from ableton.v2.base import depends, recursive_map
-from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, PrioritizedResource
+from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, InputControlElement, PrioritizedResource
 from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement, ComboElement, EncoderElement
 SESSION_WIDTH = 4
 SESSION_HEIGHT = 4
@@ -65,3 +65,5 @@ class Elements(object):
         self.encoders = ButtonMatrixElement(rows=[
          [create_encoder(index + 14, 'Encoder_{}'.format(index)) for index in range(4)]],
           name='Encoders')
+        self.native_mode_reply_element = InputControlElement(MIDI_CC_TYPE,
+          15, 127, name='Native_Mode_Reply_Element')

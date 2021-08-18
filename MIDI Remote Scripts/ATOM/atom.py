@@ -6,7 +6,7 @@ from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, ModesCompon
 from . import midi
 from .channel_strip import ChannelStripComponent
 from .drum_group import DrumGroupComponent
-from .elements import Elements, SESSION_HEIGHT, SESSION_WIDTH
+from .elements import SESSION_HEIGHT, SESSION_WIDTH, Elements
 from .keyboard import KeyboardComponent
 from .lighting import LightingComponent
 from .mixer import MixerComponent
@@ -41,6 +41,7 @@ class ATOM(ControlSurface):
                 self._create_user_assignments_mode()
                 self._target_track = ArmedTargetTrackComponent(name='Target_Track')
                 self._ATOM__on_target_track_changed.subject = self._target_track
+                self._ATOM__on_native_mode_reply.subject = self._elements.native_mode_reply_element
         self._drum_group_finder = self.register_disconnectable(PercussionInstrumentFinder(device_parent=(self._target_track.target_track)))
         self._ATOM__on_drum_group_changed.subject = self._drum_group_finder
         self._ATOM__on_drum_group_changed()
@@ -51,6 +52,7 @@ class ATOM(ControlSurface):
         super(ATOM, self).disconnect()
 
     def port_settings_changed(self):
+        self._session_ring.set_enabled(False)
         self._send_midi(midi.NATIVE_MODE_ON_MESSAGE)
         super(ATOM, self).port_settings_changed()
 
@@ -102,6 +104,7 @@ class ATOM(ControlSurface):
 
     def _create_session(self):
         self._session_ring = SessionRingComponent(name='Session_Ring',
+          is_enabled=False,
           num_tracks=SESSION_WIDTH,
           num_scenes=SESSION_HEIGHT)
         self._session = SessionComponent(name='Session', session_ring=(self._session_ring))
@@ -256,3 +259,7 @@ class ATOM(ControlSurface):
         drum_group = self._drum_group_finder.drum_group
         self._drum_group.set_drum_group_device(drum_group)
         self._note_modes.selected_mode = 'drum' if liveobj_valid(drum_group) else 'keyboard'
+
+    @listens('value')
+    def __on_native_mode_reply(self, _):
+        self._session_ring.set_enabled(True)
