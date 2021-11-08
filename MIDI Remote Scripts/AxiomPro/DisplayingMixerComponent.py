@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 import _Framework.ButtonElement as ButtonElement
 import _Framework.MixerComponent as MixerComponent
 import _Framework.PhysicalDisplayElement as PhysicalDisplayElement

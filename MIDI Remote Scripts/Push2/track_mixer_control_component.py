@@ -3,11 +3,11 @@ from builtins import range
 from ableton.v2.base import clamp, depends, listens, liveobj_valid
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.components import SimpleItemSlot
-from ableton.v2.control_surface.control import control_list, ButtonControl, MappedSensitivitySettingControl
+from ableton.v2.control_surface.control import ButtonControl, MappedSensitivitySettingControl, control_list
 from pushbase.mixer_utils import has_pan_mode, is_set_to_split_stereo
 from .item_lister import IconItemSlot
-from .real_time_channel import RealTimeDataComponent
 from .mixer_control_component import assign_parameters
+from .real_time_channel import RealTimeDataComponent
 
 class TrackMixerControlComponent(Component):
     __events__ = ('parameters', 'scroll_offset', 'items')

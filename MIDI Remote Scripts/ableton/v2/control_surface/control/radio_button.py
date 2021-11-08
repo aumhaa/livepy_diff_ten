@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import nop
-from .control import control_event, control_color
 from .button import ButtonControlBase
+from .control import control_color, control_event
 
 class RadioButtonControl(ButtonControlBase):
     checked = control_event('checked')

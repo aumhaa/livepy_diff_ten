@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
 from future.utils import raise_
-from .Util import BooleanContext
 from ableton.v2.base import old_hasattr
+from .Util import BooleanContext
 
 class ProxyBase(object):
     _skip_wrapper_lookup = None

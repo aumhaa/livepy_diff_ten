@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import str
-from .ControlSurface import ControlSurface
 from . import Task
+from .ControlSurface import ControlSurface
 SYSEX_IDENTITY_REQUEST = (240, 126, 0, 6, 1, 247)
 
 class IdentifiableControlSurface(ControlSurface):

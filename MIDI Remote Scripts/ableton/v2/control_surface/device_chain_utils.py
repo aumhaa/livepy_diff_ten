@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import Live
 from builtins import map
-from itertools import chain
 from functools import partial
+from itertools import chain
+import Live
 from ..base import find_if, liveobj_valid
 
 def find_instrument_devices(track_or_chain):

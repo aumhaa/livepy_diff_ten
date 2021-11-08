@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import listens
 from ..component import Component
-from .scroll import ScrollComponent, Scrollable
+from .scroll import Scrollable, ScrollComponent
 
 class SessionRingScroller(Scrollable):
 

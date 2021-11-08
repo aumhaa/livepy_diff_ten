@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from future.moves.itertools import zip_longest
-from ableton.v2.base import in_range, clamp, task
+from ableton.v2.base import clamp, in_range, task
 from ableton.v2.control_surface import Component, defaults
-from ableton.v2.control_surface.elements import DisplayDataSource
 from ableton.v2.control_surface.control import ButtonControl, control_list
+from ableton.v2.control_surface.elements import DisplayDataSource
 from . import consts
 
 class ActionWithSettingsComponent(Component):

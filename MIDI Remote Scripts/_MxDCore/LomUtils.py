@@ -1,13 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter, object
 from past.builtins import basestring
-from builtins import filter
-from builtins import object
 import sys, types
 from itertools import chain
 from ableton.v2.base import old_hasattr
 from .ControlSurfaceWrapper import is_real_control_surface
+from .LomTypes import ENUM_TYPES, EXTRA_CS_FUNCTIONS, LIVE_APP, PROPERTY_TYPES, ROOT_KEYS, TUPLE_TYPES, LomAttributeError, LomObjectError, MFLPropertyFormats, cs_base_classes, get_exposed_property_info, get_exposed_property_names_for_type, get_root_prop, is_class, is_cplusplus_lom_object, is_lom_object, is_object_iterable
 from .MxDUtils import TupleWrapper
-from .LomTypes import cs_base_classes, TUPLE_TYPES, PROPERTY_TYPES, EXTRA_CS_FUNCTIONS, ENUM_TYPES, ROOT_KEYS, LIVE_APP, MFLPropertyFormats, LomObjectError, LomAttributeError, get_exposed_property_names_for_type, get_exposed_property_info, is_class, get_root_prop, is_lom_object, is_cplusplus_lom_object, is_object_iterable
 
 def create_lom_doc_string(lom_object):
     description = ''

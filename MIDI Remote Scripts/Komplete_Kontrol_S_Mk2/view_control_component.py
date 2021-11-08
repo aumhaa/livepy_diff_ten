@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.components import BasicTrackScroller, BasicSceneScroller
+from ableton.v2.control_surface.components import BasicSceneScroller, BasicTrackScroller
 from ableton.v2.control_surface.control import SendValueEncoderControl
 
 class ViewControlComponent(Component):

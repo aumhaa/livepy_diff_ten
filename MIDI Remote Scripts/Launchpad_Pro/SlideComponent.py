@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from _Framework.Util import clamp
-from _Framework.SubjectSlot import subject_slot, Subject
 import _Framework.CompoundComponent as CompoundComponent
-from _Framework.ScrollComponent import ScrollComponent, Scrollable
+from _Framework.ScrollComponent import Scrollable, ScrollComponent
+from _Framework.SubjectSlot import Subject, subject_slot
+from _Framework.Util import clamp
 
 class Slideable(Subject):
     __subject_events__ = ('page_offset', 'page_length', 'position', 'position_count',

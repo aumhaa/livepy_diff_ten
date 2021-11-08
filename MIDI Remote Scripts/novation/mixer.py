@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from functools import partial
 from future.moves.itertools import zip_longest
+from functools import partial
 import ableton.v2.control_surface.components as MixerComponentBase
 
 class MixerComponent(MixerComponentBase):

@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.ButtonElement as ButtonElement
 import _Framework.DisplayDataSource as DisplayDataSource
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 from .NotifyingMixerComponent import NotifyingMixerComponent
 
 class EncoderMixerModeSelector(ModeSelectorComponent):

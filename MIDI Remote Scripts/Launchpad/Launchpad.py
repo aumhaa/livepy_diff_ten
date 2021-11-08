@@ -1,11 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 import Live
-import _Framework.ControlSurface as ControlSurface
-from _Framework.InputControlElement import *
 import _Framework.ButtonElement as ButtonElement
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
+import _Framework.ControlSurface as ControlSurface
+from _Framework.InputControlElement import *
 from .ConfigurableButtonElement import ConfigurableButtonElement
 from .MainSelectorComponent import MainSelectorComponent
 SIDE_NOTES = (8, 24, 40, 56, 72, 88, 104, 120)

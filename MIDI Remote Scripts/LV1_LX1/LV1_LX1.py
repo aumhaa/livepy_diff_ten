@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import LV2_LX2_LC2_LD2.FaderfoxComponent as FaderfoxComponent
-import LV2_LX2_LC2_LD2.FaderfoxScript as FaderfoxScript
-import LV2_LX2_LC2_LD2.FaderfoxMixerController as FaderfoxMixerController
 import LV2_LX2_LC2_LD2.FaderfoxDeviceController as FaderfoxDeviceController
+import LV2_LX2_LC2_LD2.FaderfoxMixerController as FaderfoxMixerController
+import LV2_LX2_LC2_LD2.FaderfoxScript as FaderfoxScript
 import LV2_LX2_LC2_LD2.FaderfoxTransportController as FaderfoxTransportController
 
 class LV1_LX1(FaderfoxScript):

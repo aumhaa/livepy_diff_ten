@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.builtins import range
-from collections import defaultdict
 import gc
+from collections import defaultdict
 from .util import old_hasattr
 
 def typename(obj):

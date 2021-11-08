@@ -1,10 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 import Live
-from ableton.v2.base import EventObject, ObservablePropertyAlias, const, depends, flatten, nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, old_hasattr
+from ableton.v2.base import EventObject, ObservablePropertyAlias, const, depends, flatten, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, nop, old_hasattr
 from ableton.v2.control_surface import find_instrument_devices
-from ableton.v2.control_surface.components import ItemProvider, SessionRingComponent, RightAlignTracksTrackAssigner
-from ableton.v2.control_surface.components.view_control import has_next_item, next_item, TrackScroller as TrackScrollerBase, ViewControlComponent as ViewControlComponentBase
+from ableton.v2.control_surface.components import ItemProvider, RightAlignTracksTrackAssigner, SessionRingComponent
+import ableton.v2.control_surface.components.view_control as TrackScrollerBase
+import ableton.v2.control_surface.components.view_control as ViewControlComponentBase
+from ableton.v2.control_surface.components.view_control import has_next_item, next_item
 from .decoration import TrackDecoratorFactory
 
 def get_chains_recursive(track_or_chain):

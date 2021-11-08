@@ -1,12 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 import Live
 from _Generic.Devices import *
-import _Framework.DeviceComponent as DeviceComponent
-import _Framework.EncoderElement as EncoderElement
 import _Framework.ButtonElement as ButtonElement
+import _Framework.DeviceComponent as DeviceComponent
 import _Framework.DisplayDataSource as DisplayDataSource
+import _Framework.EncoderElement as EncoderElement
 SPECIAL_NAME_DICT = {'InstrumentImpulse':(('Pad1', 'Pad2'), ('Pad3', 'Pad4'), ('Pad5', 'Pad6'), ('Pad7', 'Pad8')), 
  'Operator':(('OscA', 'OscB', 'OscC', 'OscD'), ('LFO', 'Fltr'), ('Pitch',), ('Glob.',)), 
  'MultiSampler':(('Vol.', 'Pitch'), ('Fltr', 'FEnv'), ('LFO1', 'LFO2', 'LFO3'), ('Osc',)), 

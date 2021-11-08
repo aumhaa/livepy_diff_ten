@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ...base import lazy_attribute, task
-from ..defaults import MOMENTARY_DELAY, DOUBLE_CLICK_DELAY
+from ..defaults import DOUBLE_CLICK_DELAY, MOMENTARY_DELAY
 from ..input_control_element import ScriptForwarding
-from .control import InputControl, control_event, control_color
+from .control import InputControl, control_color, control_event
 __all__ = ('ButtonControl', 'PlayableControl', 'ButtonControlBase', 'DoubleClickContext')
 
 class DoubleClickContext(object):

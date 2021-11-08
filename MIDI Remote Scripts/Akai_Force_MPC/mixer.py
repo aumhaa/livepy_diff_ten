@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from functools import partial
 from future.moves.itertools import zip_longest
-from ableton.v2.base import clamp, listens, liveobj_valid, forward_property
+from functools import partial
+from ableton.v2.base import clamp, forward_property, listens, liveobj_valid
 import ableton.v2.control_surface.components as MixerComponentBase
 from ableton.v2.control_surface.control import ButtonControl, SendValueControl
 from .elements import MAX_NUM_SENDS

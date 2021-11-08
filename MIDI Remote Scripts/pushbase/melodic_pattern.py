@@ -1,12 +1,10 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import range, str
 from past.utils import old_div
-from ableton.v2.base import NamedTuple, lazy_attribute, memoize, find_if
+import Live
+from ableton.v2.base import NamedTuple, find_if, lazy_attribute, memoize
 from . import consts
 from .matrix_maps import FEEDBACK_CHANNELS
-import Live
 CIRCLE_OF_FIFTHS = tuple([7 * k % 12 for k in range(12)])
 ROOT_NOTES = CIRCLE_OF_FIFTHS[0:6] + CIRCLE_OF_FIFTHS[-1:5:-1]
 NOTE_NAMES = ('C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B')

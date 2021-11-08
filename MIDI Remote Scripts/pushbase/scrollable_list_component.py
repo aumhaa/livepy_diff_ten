@@ -1,9 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import zip
-from builtins import map
-from builtins import range
+from builtins import map, range, zip
 from functools import partial
-from ableton.v2.base import EventObject, in_range, Event
+from ableton.v2.base import Event, EventObject, in_range
 from ableton.v2.base.abl_signal import short_circuit_signal
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.elements import DisplayDataSource

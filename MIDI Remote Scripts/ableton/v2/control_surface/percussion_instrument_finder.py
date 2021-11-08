@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import Live
 from builtins import filter
 from itertools import chain
+import Live
 from ..base import EventObject, listens_group, liveobj_changed, old_hasattr
 from .device_chain_utils import find_instrument_devices, find_instrument_meeting_requirement
 from .mode import Mode

@@ -1,10 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from future.builtins import round
-from future.builtins import map
+from future.builtins import map, round
 from past.builtins import unicode
 import re
 from functools import partial
-from ableton.v2.base import EventObject, Slot, EventError, find_if, listenable_property, listens, liveobj_valid, old_hasattr
+from ableton.v2.base import EventError, EventObject, Slot, find_if, listenable_property, listens, liveobj_valid, old_hasattr
 from ..device_parameter_icons import get_image_filenames, get_image_filenames_from_ids
 DEVICE_TYPES_WITH_PRESET_NAME = [
  'InstrumentGroupDevice',
@@ -382,8 +381,8 @@ class DeviceAdapter(ModelAdapter):
     __events__ = ('is_active', )
 
     def __init__(self, *a, **k):
-        from ..device_util import is_drum_pad, find_chain_or_track, find_rack
         from ..device_navigation import is_bank_rack_2
+        from ..device_util import find_chain_or_track, find_rack, is_drum_pad
         (super(DeviceAdapter, self).__init__)(*a, **k)
         item = self._unwrapped_item()
         if old_hasattr(item, 'is_active'):
@@ -406,7 +405,7 @@ class DeviceAdapter(ModelAdapter):
 
     @listenable_property
     def navigation_name(self):
-        from ..device_navigation import is_rack_with_bank_2, is_bank_rack_2
+        from ..device_navigation import is_bank_rack_2, is_rack_with_bank_2
         item = self._unwrapped_item()
         name = getattr(item, 'name', '')
         class_name = getattr(item, 'class_name', None)

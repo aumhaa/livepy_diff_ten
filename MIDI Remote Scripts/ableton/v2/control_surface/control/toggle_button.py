@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from .control import Connectable, control_event, control_color
 from .button import ButtonControlBase
+from .control import Connectable, control_color, control_event
 
 class ToggleButtonControl(ButtonControlBase):
     toggled = control_event('toggled')

@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import str
-from builtins import object
+from builtins import map, object, str
 from future.utils import raise_
 from itertools import chain
 

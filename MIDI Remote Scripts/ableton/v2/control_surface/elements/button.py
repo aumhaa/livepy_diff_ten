@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import Live
 from past.builtins import long
-from ...base import BooleanContext, const, in_range, has_event, listens, old_hasattr
-from ..input_control_element import InputControlElement, MIDI_CC_TYPE
+import Live
+from ...base import BooleanContext, const, has_event, in_range, listens, old_hasattr
+from ..input_control_element import MIDI_CC_TYPE, InputControlElement
 from ..skin import Skin
 from .color import Color
 

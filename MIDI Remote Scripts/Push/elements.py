@@ -6,9 +6,9 @@ from pushbase import consts
 from pushbase.control_element_factory import create_note_button, make_send_message_generator
 import pushbase.elements as ElementsBase
 from pushbase.touch_strip_element import TouchStripElement
+from . import sysex
 from .parameter_mapping_sensitivities import CONTINUOUS_MAPPING_SENSITIVITY, FINE_GRAINED_CONTINUOUS_MAPPING_SENSITIVITY
 from .special_physical_display import SpecialPhysicalDisplay
-from . import sysex
 
 class Elements(ElementsBase):
 

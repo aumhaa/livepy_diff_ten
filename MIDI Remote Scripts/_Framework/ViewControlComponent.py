@@ -3,7 +3,7 @@ import Live
 NavDirection = Live.Application.Application.View.NavDirection
 from .CompoundComponent import CompoundComponent
 from .Dependency import depends
-from .ScrollComponent import ScrollComponent, Scrollable
+from .ScrollComponent import Scrollable, ScrollComponent
 from .Util import in_range
 VIEWS = ('Browser', 'Arranger', 'Session', 'Detail', 'Detail/Clip', 'Detail/DeviceChain')
 

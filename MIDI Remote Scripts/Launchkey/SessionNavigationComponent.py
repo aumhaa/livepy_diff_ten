@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
+from _Framework import Task
 import _Framework.CompoundComponent as CompoundComponent
 import _Framework.ScrollComponent as ScrollComponent
-from _Framework import Task
-from _Framework.ViewControlComponent import TrackScroller, BasicSceneScroller
+from _Framework.ViewControlComponent import BasicSceneScroller, TrackScroller
 
 def is_recording_clip(tracks, check_arrangement):
     found_recording_clip = False

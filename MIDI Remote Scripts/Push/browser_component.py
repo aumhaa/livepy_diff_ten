@@ -1,19 +1,17 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import map
-from builtins import range
-from past.utils import old_div
-from functools import partial
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import map, range, str
 from future.moves.itertools import zip_longest
-import re, Live
-from ableton.v2.base import find_if, clamp, nop, memoize, listens, listens_group, task
+from past.utils import old_div
+import re
+from functools import partial
+import Live
+from ableton.v2.base import clamp, find_if, listens, listens_group, memoize, nop, task
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, ToggleButtonControl
 from ableton.v2.control_surface.elements import DisplayDataSource
 from pushbase import consts
-from pushbase.scrollable_list import ListComponent, DefaultItemFormatter
-from .browser_model import filter_type_for_browser, EmptyBrowserModel
+from pushbase.scrollable_list import DefaultItemFormatter, ListComponent
+from .browser_model import EmptyBrowserModel, filter_type_for_browser
 FilterType = Live.Browser.FilterType
 DeviceType = Live.Device.DeviceType
 

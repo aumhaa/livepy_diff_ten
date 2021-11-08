@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from past.builtins import unicode
-from .declaration import Binding, custom_property, id_property, listmodel, listof, view_property, ViewModel, ModelVisitor
+from .declaration import Binding, ModelVisitor, ViewModel, custom_property, id_property, listmodel, listof, view_property
 from .repr import BrowserItemAdapter, BrowserListWrapper, ClipAdapter, DeviceAdapter, DeviceParameterAdapter, EditModeOptionAdapter, ItemListAdapter, ItemSlotAdapter, LiveDialogAdapter, OptionsListAdapter, RoutingAdapter, SimplerDeviceAdapter, TrackAdapter, TrackControlAdapter, TrackListAdapter, TrackMixAdapter, VisibleAdapter
 __all__ = (
  ModelVisitor,)

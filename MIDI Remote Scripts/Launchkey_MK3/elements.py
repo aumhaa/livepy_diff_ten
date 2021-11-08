@@ -3,7 +3,7 @@ from ableton.v2.base import depends
 from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 from ableton.v2.control_surface.elements import ButtonMatrixElement
 from novation import sysex
-from novation.launchkey_elements import create_button, create_encoder, LaunchkeyElements, SESSION_WIDTH
+from novation.launchkey_elements import SESSION_WIDTH, LaunchkeyElements, create_button, create_encoder
 from . import midi
 from .rgb_button import RgbButtonElement
 from .simple_display import SimpleDisplayElement

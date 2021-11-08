@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ...base import const, depends, nop, listens
+from ...base import const, depends, listens, nop
 from ..component import Component
 
 class SessionRingModel(object):

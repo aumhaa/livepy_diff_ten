@@ -1,12 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import str
-from builtins import object
+from builtins import map, object, str
 from future.utils import string_types
 from collections import namedtuple
 from ableton.v2.base import old_hasattr
 from _MxDCore.ControlSurfaceWrapper import WrapperRegistry
-from _MxDCore.LomTypes import is_control_surface, get_control_surfaces
+from _MxDCore.LomTypes import get_control_surfaces, is_control_surface
 RECEIVE_MIDI_TIMEOUT = 0.2
 
 def midi_byte_to_int(byte):

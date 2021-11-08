@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from .FaderfoxScript import FaderfoxScript
-from .LV2MixerController import LV2MixerController
-from .LV2DeviceController import LV2DeviceController
-from .FaderfoxDeviceController import FaderfoxDeviceController
-from .LV2TransportController import LV2TransportController
 from .consts import *
+from .FaderfoxDeviceController import FaderfoxDeviceController
+from .FaderfoxScript import FaderfoxScript
+from .LV2DeviceController import LV2DeviceController
+from .LV2MixerController import LV2MixerController
+from .LV2TransportController import LV2TransportController
 
 class LV2_LX2_LC2_LD2(FaderfoxScript):
     __module__ = __name__

@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-from .ParamMap import ParamMap
-from .FaderfoxMixerController import FaderfoxMixerController
-from .consts import *
 from ableton.v2.base import old_hasattr
+from .consts import *
+from .FaderfoxMixerController import FaderfoxMixerController
+from .ParamMap import ParamMap
 
 class LV2MixerController(FaderfoxMixerController):
     __module__ = __name__

@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from _Framework.SubjectSlot import Subject, subject_slot
-import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 from _Framework.Control import ButtonControl
+import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
+from _Framework.SubjectSlot import Subject, subject_slot
 from .consts import ACTION_BUTTON_COLORS
 _Q = Live.Song.Quantization
 

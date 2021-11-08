@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
+from itertools import chain
 import Live
 import _Framework.ChannelStripComponent as ChannelStripComponent
 from .ConfigurableButtonElement import ConfigurableButtonElement
-from itertools import chain
 
 class DefChannelStripComponent(ChannelStripComponent):
 

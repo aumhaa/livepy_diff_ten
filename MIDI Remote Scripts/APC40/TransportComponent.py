@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from _Framework.Control import ButtonControl
-import _Framework.TransportComponent as TransportComponentBase
 from _Framework.SubjectSlot import subject_slot
+import _Framework.TransportComponent as TransportComponentBase
 
 class TransportComponent(TransportComponentBase):
     rec_quantization_button = ButtonControl()

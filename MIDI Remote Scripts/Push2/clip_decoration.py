@@ -1,8 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import zip
-from builtins import object
-from ableton.v2.base import liveobj_valid, listenable_property, listens, EventObject
-from ableton.v2.control_surface import InternalParameter, DecoratorFactory, LiveObjectDecorator
+from builtins import object, zip
+from ableton.v2.base import EventObject, listenable_property, listens, liveobj_valid
+from ableton.v2.control_surface import DecoratorFactory, InternalParameter, LiveObjectDecorator
 from .decoration import find_decorated_object
 from .timeline_navigation import AudioClipTimelineNavigation, MidiClipTimelineNavigation
 

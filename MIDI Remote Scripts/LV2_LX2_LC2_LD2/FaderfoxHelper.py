@@ -1,14 +1,12 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import object, range
 from past.builtins import cmp
-from builtins import range
-from builtins import object
 from past.utils import old_div
 import Live
-from .ParamMap import Callable
-from .Devices import *
-from .Params import *
 from ableton.v2.base import old_hasattr
+from .Devices import *
+from .ParamMap import Callable
+from .Params import *
 
 class FaderfoxHelper(object):
     __module__ = __name__

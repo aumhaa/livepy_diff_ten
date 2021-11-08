@@ -1,19 +1,16 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import zip
-from builtins import map
-from builtins import range
-from past.utils import old_div
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import map, range, zip
 from future.utils import raise_
-from itertools import starmap, chain
+from past.utils import old_div
 from functools import partial
+from itertools import chain, starmap
 from . import Task
 from .ControlElement import ControlElement
 from .DisplayDataSource import adjust_string
 from .LogicalDisplaySegment import LogicalDisplaySegment
 from .NotifyingControlElement import NotifyingControlElement
-from .Resource import StackingResource, ProxyResource, ClientWrapper
-from .Util import in_range, slicer, to_slice, slice_size, const, group, second, maybe, lazy_attribute, first, nop
+from .Resource import ClientWrapper, ProxyResource, StackingResource
+from .Util import const, first, group, in_range, lazy_attribute, maybe, nop, second, slice_size, slicer, to_slice
 
 class _DisplayCentralResource(StackingResource):
 

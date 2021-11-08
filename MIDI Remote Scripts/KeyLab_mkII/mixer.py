@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import liveobj_valid
-import ableton.v2.control_surface.components as MixerComponentBase
+import novation.mixer as MixerComponentBase
 
 class MixerComponent(MixerComponentBase):
 

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import str
-from ableton.v2.base import clamp, listenable_property, liveobj_valid, nop, EventError, EventObject, forward_property, Proxy, Slot
+from ableton.v2.base import EventError, EventObject, Proxy, Slot, clamp, forward_property, listenable_property, liveobj_valid, nop
 from ableton.v2.control_surface import EnumWrappingParameter, InternalParameter, InternalParameterBase, RelativeInternalParameter, WrappingParameter, to_percentage_display
 
 class ConstantParameter(InternalParameterBase):

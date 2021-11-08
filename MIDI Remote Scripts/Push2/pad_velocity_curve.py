@@ -1,9 +1,6 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import range
-from builtins import round
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import object, range, round
 from past.utils import old_div
-from builtins import object
 import math
 from ableton.v2.base import SerializableListenableProperties, chunks, clamp, listenable_property, task
 from ableton.v2.control_surface import Component

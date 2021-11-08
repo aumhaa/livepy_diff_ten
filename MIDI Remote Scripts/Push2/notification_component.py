@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from weakref import ref
 import Live
-from ableton.v2.base import nop, listenable_property
-from ableton.v2.control_surface import ControlElement, Component
+from ableton.v2.base import listenable_property, nop
+from ableton.v2.control_surface import Component, ControlElement
 from pushbase.message_box_component import Notification, strip_restriction_markup_and_format
 from model.repr import strip_formatted_string
 

@@ -1,9 +1,8 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from past.utils import old_div
 import Live
 from ableton.v2.base import listenable_property, product
-from ableton.v2.control_surface.control import control_list, ControlManager, RadioButtonControl
+from ableton.v2.control_surface.control import ControlManager, RadioButtonControl, control_list
 GridQuantization = Live.Clip.GridQuantization
 QUANTIZATION_FACTOR = 24
 QUANTIZATION_LIST = [

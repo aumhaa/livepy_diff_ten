@@ -1,21 +1,19 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
-from builtins import object
+from builtins import object, range, str
 import Live
-import _Framework.ControlSurface as ControlSurface
-from _Framework.InputControlElement import InputControlElement, MIDI_CC_TYPE, MIDI_NOTE_TYPE
-import _Framework.SliderElement as SliderElement
 import _Framework.ButtonElement as ButtonElement
-import _Framework.EncoderElement as EncoderElement
+import _Framework.ControlSurface as ControlSurface
 import _Framework.DeviceComponent as DeviceComponent
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE, InputControlElement
 import _Framework.SessionComponent as SessionComponent
+import _Framework.SliderElement as SliderElement
 import _Framework.TransportComponent as TransportComponent
 import Launchpad.ConfigurableButtonElement as ConfigurableButtonElement
-from .SessionNavigationComponent import SessionNavigationComponent
-from .TransportViewModeSelector import TransportViewModeSelector
-from .SpecialMixerComponent import SpecialMixerComponent
 from .consts import *
+from .SessionNavigationComponent import SessionNavigationComponent
+from .SpecialMixerComponent import SpecialMixerComponent
+from .TransportViewModeSelector import TransportViewModeSelector
 IS_MOMENTARY = True
 
 def make_button(cc_no, name):

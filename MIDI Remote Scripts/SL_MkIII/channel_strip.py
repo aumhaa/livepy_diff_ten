@@ -1,12 +1,11 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import str
 from past.utils import old_div
 import Live
 from ableton.v2.base import clamp, listens, liveobj_valid, old_round
 import ableton.v2.control_surface.components as ChannelStripComponentBase
-from ableton.v2.control_surface.elements import DisplayDataSource, SysexRGBColor
 from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl
+from ableton.v2.control_surface.elements import DisplayDataSource, SysexRGBColor
 from .control import BinaryControl
 from .messenger import Messenger
 from .parameter_mapping_sensitivities import CONTINUOUS_MAPPING_SENSITIVITY

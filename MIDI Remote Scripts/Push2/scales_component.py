@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from collections import namedtuple
-from math import ceil
-from functools import partial
 from past.utils import old_div
-from ableton.v2.base import clamp, index_if, listens, listenable_property
+from collections import namedtuple
+from functools import partial
+from math import ceil
+from ableton.v2.base import clamp, index_if, listenable_property, listens
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, RadioButtonControl, StepEncoderControl, ToggleButtonControl, control_list
-from pushbase.melodic_pattern import ROOT_NOTES, SCALES, NOTE_NAMES
+from pushbase.melodic_pattern import NOTE_NAMES, ROOT_NOTES, SCALES
 Layout = namedtuple('Layout', ('name', 'interval'))
 
 class ScalesComponent(Component):

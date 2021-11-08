@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.ModesComponent import ReenterBehaviour, ModesComponent
+from _Framework.ModesComponent import ModesComponent, ReenterBehaviour
 
 class SpecialModesComponent(ModesComponent):
 

@@ -1,15 +1,11 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import filter
-from builtins import map
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import filter, map, object, range
 from past.utils import old_div
-from builtins import object
 import logging, math
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict, namedtuple
 from functools import partial
 import Live
-from ableton.v2.base import EventObject, const, clamp, depends, find_if, index_if, isclose, lazy_attribute, listenable_property, listens, listens_group, liveobj_valid, nop, old_hasattr, task
+from ableton.v2.base import EventObject, clamp, const, depends, find_if, index_if, isclose, lazy_attribute, listenable_property, listens, listens_group, liveobj_valid, nop, old_hasattr, task
 from ableton.v2.control_surface.control import EncoderControl
 logger = logging.getLogger(__name__)
 FocusMarker = namedtuple('FocusMarker', ['name', 'position'])

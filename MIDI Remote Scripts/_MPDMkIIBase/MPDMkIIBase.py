@@ -1,13 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import _Framework.ControlSurface as ControlSurface
-import _Framework.Layer as Layer
-import _Framework.DrumRackComponent as DrumRackComponent
-import _Framework.DeviceComponent as DeviceComponent
-import _Framework.TransportComponent as TransportComponent
-import _Framework.MixerComponent as MixerComponent
 import _Framework.ButtonElement as ButtonElement
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
+import _Framework.ControlSurface as ControlSurface
+import _Framework.DeviceComponent as DeviceComponent
+import _Framework.DrumRackComponent as DrumRackComponent
 from _Framework.InputControlElement import MIDI_NOTE_TYPE
+import _Framework.Layer as Layer
+import _Framework.MixerComponent as MixerComponent
+import _Framework.TransportComponent as TransportComponent
 
 class MPDMkIIBase(ControlSurface):
 

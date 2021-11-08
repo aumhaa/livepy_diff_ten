@@ -1,16 +1,13 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import range
-from builtins import round
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import range, round, str
 from past.utils import old_div
 import sys, Live
-from .FaderfoxComponent import FaderfoxComponent
+from ableton.v2.base import old_hasattr
 from .consts import *
 from .Devices import *
 from .DevicesXY import *
+from .FaderfoxComponent import FaderfoxComponent
 from .ParamMap import ParamMap
-from ableton.v2.base import old_hasattr
 
 class FaderfoxDeviceController(FaderfoxComponent):
     __module__ = __name__

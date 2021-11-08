@@ -1,13 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from past.builtins import basestring
 from builtins import object
-from itertools import repeat
-from functools import partial, wraps
-from .Disconnectable import Disconnectable, CompoundDisconnectable
-from .Signal import Signal
-from .Util import instance_decorator, monkeypatch, monkeypatch_extend, NamedTuple, mixin
 from future.utils import with_metaclass
+from past.builtins import basestring
+from functools import partial, wraps
+from itertools import repeat
 from ableton.v2.base import old_hasattr
+from .Disconnectable import CompoundDisconnectable, Disconnectable
+from .Signal import Signal
+from .Util import NamedTuple, instance_decorator, mixin, monkeypatch, monkeypatch_extend
 
 class SubjectSlotError(Exception):
     pass

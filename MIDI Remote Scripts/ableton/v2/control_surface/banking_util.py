@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from past.utils import old_div
-from math import ceil
 from copy import deepcopy
+from math import ceil
 from ..base import liveobj_valid
 MX_MAIN_BANK_INDEX = -1
 BANK_FORMAT = 'Bank %d'

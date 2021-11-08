@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 from .MackieControlComponent import *
 
 class TimeDisplay(MackieControlComponent):

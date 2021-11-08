@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from past.utils import old_div
 from ableton.v2.base import listens
-import ableton.v2.control_surface.components as TransportComponentBase
 from ableton.v2.control_surface.components import ToggleComponent
+import ableton.v2.control_surface.components as TransportComponentBase
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl
 
 class TransportComponent(TransportComponentBase):

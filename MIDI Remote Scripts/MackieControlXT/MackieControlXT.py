@@ -1,10 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import object
+from builtins import object, range
+import Live
+import MackieControl.ChannelStrip as ChannelStrip
 from MackieControl.consts import *
 import MackieControl.MainDisplay as MainDisplay
-import MackieControl.ChannelStrip as ChannelStrip
-import Live
 
 class MackieControlXT(object):
 

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Dependency import depends
-from _Framework.ModesComponent import ModesComponent, ModeButtonBehaviour
+from _Framework.ModesComponent import ModeButtonBehaviour, ModesComponent
 from . import consts
 
 def to_class_name(mode_name):

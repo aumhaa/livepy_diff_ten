@@ -19,7 +19,7 @@ from novation.track_recording import FixedLengthTrackRecordingComponent
 from . import sysex_ids as ids
 from .channel_strip import ChannelStripComponent
 from .drum_group import DrumGroupComponent
-from .elements import Elements, FADER_MODES
+from .elements import FADER_MODES, Elements
 from .mixer import MixerComponent
 from .session import SessionComponent
 from .simple_device import SimpleDeviceParameterComponent

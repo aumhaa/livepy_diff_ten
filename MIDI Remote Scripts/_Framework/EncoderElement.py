@@ -3,9 +3,9 @@ from past.utils import old_div
 import Live
 from .ComboElement import WrapperElement
 from .CompoundElement import CompoundElement
-from .InputControlElement import InputControlElement, MIDI_CC_TYPE, InputSignal
+from .InputControlElement import MIDI_CC_TYPE, InputControlElement, InputSignal
 from .SubjectSlot import SubjectEvent, subject_slot
-from .Util import nop, const
+from .Util import const, nop
 
 def _not_implemented(value):
     raise NotImplementedError

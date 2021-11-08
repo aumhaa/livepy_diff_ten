@@ -1,12 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import range
-from _Framework.Util import find_if, first, clamp
+from builtins import map, range
+from _Framework.Control import ButtonControl, PlayableControl, control_matrix
 from _Framework.Dependency import depends
-from _Framework.SubjectSlot import subject_slot_group, subject_slot
-from _Framework.Control import PlayableControl, ButtonControl, control_matrix
+from _Framework.SubjectSlot import subject_slot, subject_slot_group
+from _Framework.Util import clamp, find_if, first
 from .consts import ACTION_BUTTON_COLORS
-from .SlideComponent import SlideComponent, Slideable, ScrollComponent
+from .SlideComponent import ScrollComponent, Slideable, SlideComponent
 BASE_DRUM_RACK_NOTE = 36
 DEFAULT_POSITION = 9
 

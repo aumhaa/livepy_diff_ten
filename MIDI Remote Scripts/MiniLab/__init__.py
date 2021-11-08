@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from .MiniLab import MiniLab
 import _Framework.Capabilities as caps
+from .MiniLab import MiniLab
 
 def get_capabilities():
     return {caps.CONTROLLER_ID_KEY: caps.controller_id(vendor_id=7285,

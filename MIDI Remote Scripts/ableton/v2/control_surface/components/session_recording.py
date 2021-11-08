@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ...base import EventObject, find_if, listens, liveobj_valid
 from ..component import Component
-from ..control import ToggleButtonControl, ButtonControl
+from ..control import ButtonControl, ToggleButtonControl
 
 def track_fired_slot(track):
     index = track.fired_slot_index

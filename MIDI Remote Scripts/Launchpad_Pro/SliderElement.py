@@ -1,9 +1,8 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import round
 from past.utils import old_div
-import _Framework.SliderElement as SliderElementBase
 from _Framework.Skin import Skin, SkinColorMissingError
+import _Framework.SliderElement as SliderElementBase
 from . import consts
 FADER_TYPES = (
  consts.FADER_TYPE_STANDARD, consts.FADER_TYPE_BIPOLAR)

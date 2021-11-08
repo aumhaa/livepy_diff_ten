@@ -1,18 +1,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-import _Framework.ControlSurface as ControlSurface
-from _Framework.InputControlElement import *
-import _Framework.SliderElement as SliderElement
 import _Framework.ButtonElement as ButtonElement
-import _Framework.EncoderElement as EncoderElement
-import _Framework.MixerComponent as MixerComponent
-import _Framework.ClipSlotComponent as ClipSlotComponent
 import _Framework.ChannelStripComponent as ChannelStripComponent
+import _Framework.ClipSlotComponent as ClipSlotComponent
+import _Framework.ControlSurface as ControlSurface
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import *
+import _Framework.MixerComponent as MixerComponent
 import _Framework.SceneComponent as SceneComponent
 import _Framework.SessionComponent as SessionComponent
-from .SpecialTransportComponent import SpecialTransportComponent
+import _Framework.SliderElement as SliderElement
 from .SpecialDeviceComponent import SpecialDeviceComponent
+from .SpecialTransportComponent import SpecialTransportComponent
 
 class OpenLabs(ControlSurface):
 

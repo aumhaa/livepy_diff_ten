@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
-import _Framework.Skin as Skin
 from _Framework.ButtonElement import Color
-from pushbase.colors import Rgb, Pulse, Blink
+import _Framework.Skin as Skin
+from pushbase.colors import Blink, Pulse, Rgb
 GREEN = Color(1)
 GREEN_BLINK = Color(2)
 RED = Color(3)

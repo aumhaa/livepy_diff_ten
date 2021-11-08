@@ -2,24 +2,24 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from functools import partial
 import Live
-from _Framework.Util import const, mixin, recursive_map
-from _Framework.Dependency import inject
-import _Framework.Layer as Layer
-from _Framework.ControlSurface import OptimizedControlSurface
-import _Framework.IdentifiableControlSurface as IdentifiableControlSurface
-from _Framework.ModesComponent import ImmediateBehaviour, LayerMode, AddLayerMode
-from _Framework.InputControlElement import MIDI_CC_TYPE
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
-from .Skin import make_default_skin
-from .Colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
-from .ModeUtils import NotifyingModesComponent, SkinableBehaviourMixin, EnablingReenterBehaviour
-from .ControlElementUtils import make_button, with_modifier, FilteringMultiElement
-from .SliderElement import SliderElement
+from _Framework.ControlSurface import OptimizedControlSurface
+from _Framework.Dependency import inject
+import _Framework.IdentifiableControlSurface as IdentifiableControlSurface
+from _Framework.InputControlElement import MIDI_CC_TYPE
+import _Framework.Layer as Layer
+from _Framework.ModesComponent import AddLayerMode, ImmediateBehaviour, LayerMode
+from _Framework.Util import const, mixin, recursive_map
+from . import consts
 from .BackgroundComponent import TranslatingBackgroundComponent
+from .Colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
+from .ControlElementUtils import FilteringMultiElement, make_button, with_modifier
+from .MixerComponent import MixerComponent
+from .ModeUtils import EnablingReenterBehaviour, NotifyingModesComponent, SkinableBehaviourMixin
 from .SessionComponent import SessionComponent
 from .SessionZoomingComponent import SessionZoomingComponent
-from .MixerComponent import MixerComponent
-from . import consts
+from .Skin import make_default_skin
+from .SliderElement import SliderElement
 USER_1_MATRIX_IDENTIFIERS = [
  [
   64, 65, 66, 67, 96, 97, 98, 99],

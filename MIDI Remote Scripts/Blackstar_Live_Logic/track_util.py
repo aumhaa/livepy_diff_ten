@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
-from ableton.v2.base import const, compose, depends, find_if, liveobj_valid
 import Live
+from ableton.v2.base import compose, const, depends, find_if, liveobj_valid
 from .clip_util import clip_of_slot, has_clip
 
 def playing_slot_index(track):

@@ -1,13 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import filter
-from builtins import object
-import fnmatch
-from functools import total_ordering
-import logging, os, re
+from builtins import filter, object
+import fnmatch, logging, os, re
 from collections import namedtuple
+from functools import total_ordering
+import Live
 from ableton.v2.base import find_if, listenable_property, task
 from ableton.v2.control_surface import Component
-import Live
 logger = logging.getLogger(__name__)
 WELCOME_STATE_TIME = 2.0
 FIRMWARE_PATH = os.path.join(os.path.dirname(__file__), 'firmware')

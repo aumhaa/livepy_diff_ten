@@ -1,21 +1,21 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-import _Framework.ControlSurface as ControlSurface
-import _Framework.ControlElement as ControlElement
-from _Framework.InputControlElement import *
-import _Framework.SliderElement as SliderElement
 import _Framework.ButtonElement as ButtonElement
-import _Framework.EncoderElement as EncoderElement
 import _Framework.ChannelStripComponent as ChannelStripComponent
-import _Framework.TransportComponent as TransportComponent
-import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.ClipSlotComponent as ClipSlotComponent
+import _Framework.ControlElement as ControlElement
+import _Framework.ControlSurface as ControlSurface
+import _Framework.DeviceComponent as DeviceComponent
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import *
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.SceneComponent as SceneComponent
 import _Framework.SessionComponent as SessionComponent
-import _Framework.DeviceComponent as DeviceComponent
-from .TransportViewModeSelector import TransportViewModeSelector
+import _Framework.SliderElement as SliderElement
+import _Framework.TransportComponent as TransportComponent
 from .SpecialMixerComponent import SpecialMixerComponent
+from .TransportViewModeSelector import TransportViewModeSelector
 IDENTITY_REQUEST = (240, 126, 127, 6, 1, 247)
 IDENTITY_RESPONSE = (240, 126, 127, 6, 2)
 NUM_TRACKS = 8

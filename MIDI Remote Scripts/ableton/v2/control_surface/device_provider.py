@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ..base import listenable_property, listens, liveobj_changed, liveobj_valid, EventObject
+from ..base import EventObject, listenable_property, listens, liveobj_changed, liveobj_valid
 
 def device_to_appoint(device):
     appointed_device = device

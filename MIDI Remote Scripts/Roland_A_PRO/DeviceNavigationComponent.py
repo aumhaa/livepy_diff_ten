@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 from _Framework.Control import ButtonControl
+import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 NavDirection = Live.Application.Application.View.NavDirection
 
 class DeviceNavigationComponent(ControlSurfaceComponent):

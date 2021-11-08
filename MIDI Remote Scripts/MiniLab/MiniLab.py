@@ -1,15 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-import _Arturia.ArturiaControlSurface as ArturiaControlSurface
-import _Arturia.SessionComponent as SessionComponent
-import _Arturia.MixerComponent as MixerComponent
-import _Framework.Layer as Layer
-import _Framework.DeviceComponent as DeviceComponent
-from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
-import _Framework.ButtonMatrixElement as ButtonMatrixElement
 import _Framework.ButtonElement as ButtonElement
+import _Framework.ButtonMatrixElement as ButtonMatrixElement
+import _Framework.DeviceComponent as DeviceComponent
 import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
+import _Framework.Layer as Layer
+import _Arturia.ArturiaControlSurface as ArturiaControlSurface
+import _Arturia.MixerComponent as MixerComponent
+import _Arturia.SessionComponent as SessionComponent
 HARDWARE_ENCODER_IDS = (48, 1, 2, 9, 11, 12, 13, 14, 51, 3, 4, 10, 5, 6, 7, 8)
 HARDWARE_BUTTON_IDS = list(range(112, 128))
 PAD_IDENTIFIER_OFFSET = 36

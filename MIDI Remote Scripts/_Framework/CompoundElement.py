@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import filter
-from builtins import map
+from builtins import filter, map
 from .ControlElement import ControlElementClient
-from .SubjectSlot import subject_slot_group, SlotManager
 from .NotifyingControlElement import NotifyingControlElement
+from .SubjectSlot import SlotManager, subject_slot_group
 from .Util import BooleanContext, first, second
 
 class NestedElementClient(ControlElementClient):

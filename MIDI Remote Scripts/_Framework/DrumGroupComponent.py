@@ -1,11 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import range
-from .Control import PlayableControl, ButtonControl, control_matrix
+from builtins import map, range
+from .Control import ButtonControl, PlayableControl, control_matrix
 from .Dependency import depends
-from .SubjectSlot import subject_slot_group, subject_slot
-from .SlideComponent import SlideComponent, Slideable
-from .Util import find_if, first, clamp
+from .SlideComponent import Slideable, SlideComponent
+from .SubjectSlot import subject_slot, subject_slot_group
+from .Util import clamp, find_if, first
 BASE_DRUM_RACK_NOTE = 36
 
 class DrumGroupComponent(SlideComponent, Slideable):

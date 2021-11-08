@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import filter
 import Live
-from ableton.v2.base import listens, liveobj_valid, EventObject
-from ableton.v2.control_surface.control import ButtonControl
+from ableton.v2.base import EventObject, listens, liveobj_valid
 from ableton.v2.control_surface.components import SessionRecordingComponent
+from ableton.v2.control_surface.control import ButtonControl
 from .consts import MessageBoxText
 from .message_box_component import Messenger
 Quantization = Live.Song.Quantization

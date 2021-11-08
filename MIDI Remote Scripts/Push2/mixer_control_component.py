@@ -1,15 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import filter
-from builtins import range
+from builtins import filter, range
+from future.moves.itertools import zip_longest
 from past.utils import old_div
 from contextlib import contextmanager
 from functools import partial
-from future.moves.itertools import zip_longest
 from math import ceil
 import Live
-from ableton.v2.base import clamp, depends, listens, listens_group, liveobj_valid, NamedTuple
+from ableton.v2.base import NamedTuple, clamp, depends, listens, listens_group, liveobj_valid
 from ableton.v2.control_surface.components import SimpleItemSlot
-from ableton.v2.control_surface.control import control_list, ButtonControl, MappedSensitivitySettingControl
+from ableton.v2.control_surface.control import ButtonControl, MappedSensitivitySettingControl, control_list
 from ableton.v2.control_surface.mode import ModesComponent
 from pushbase.internal_parameter import ConstantParameter
 from pushbase.mixer_utils import has_pan_mode, is_set_to_split_stereo

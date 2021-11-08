@@ -2,9 +2,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import zip
 from future.utils import iteritems
 from itertools import repeat
-from .control_element import ControlElementClient, get_element
-from .resource import ExclusiveResource, CompoundResource
 from ..base import Disconnectable, nop
+from .control_element import ControlElementClient, get_element
+from .resource import CompoundResource, ExclusiveResource
 
 class LayerError(Exception):
     pass

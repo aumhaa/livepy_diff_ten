@@ -1,10 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import filter
+from builtins import filter, map
 from past.utils import old_div
 import functools, logging, traceback
 from .dependency import depends
-from .util import remove_if, find_if, linear as linear_fn, const, nop
+from .util import const, find_if
+from .util import linear as linear_fn
+from .util import nop, remove_if
 logger = logging.getLogger(__name__)
 
 class TaskError(Exception):

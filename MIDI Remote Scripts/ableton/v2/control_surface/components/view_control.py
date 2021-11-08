@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ...base import depends, in_range, liveobj_valid
 from ..component import Component
-from .scroll import ScrollComponent, Scrollable
+from .scroll import Scrollable, ScrollComponent
 NavDirection = Live.Application.Application.View.NavDirection
 VIEWS = ('Browser', 'Arranger', 'Session', 'Detail', 'Detail/Clip', 'Detail/DeviceChain')
 

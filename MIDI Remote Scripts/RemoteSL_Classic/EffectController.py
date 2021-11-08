@@ -1,12 +1,9 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import range
-from builtins import object
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import object, range, str
 from past.utils import old_div
 import Live
-from .RemoteSLComponent import RemoteSLComponent
 from .consts import *
+from .RemoteSLComponent import RemoteSLComponent
 
 class EffectController(RemoteSLComponent):
 

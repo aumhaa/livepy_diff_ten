@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from past.builtins import unicode
 from Live import DeviceParameter
-from ..base import clamp, listenable_property, liveobj_valid, nop, old_hasattr, EventError, EventObject, Slot
+from ..base import EventError, EventObject, Slot, clamp, listenable_property, liveobj_valid, nop, old_hasattr
 
 def identity(value, _parent):
     return value

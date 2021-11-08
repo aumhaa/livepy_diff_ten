@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from functools import partial
 from contextlib import contextmanager
+from functools import partial
 import Live.DrumPad
-from ableton.v2.base import BooleanContext, const, depends, disconnectable, inject, in_range, listens, liveobj_valid, NamedTuple
+from ableton.v2.base import BooleanContext, NamedTuple, const, depends, disconnectable, in_range, inject, listens, liveobj_valid
 from ableton.v2.control_surface import Component
 from pushbase import consts
 from pushbase.device_chain_utils import is_first_device_on_pad

@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from functools import partial
 from ableton.v2.base import const, inject
-from ableton.v2.control_surface import ControlSurface, Layer, MIDI_NOTE_TYPE
+from ableton.v2.control_surface import MIDI_NOTE_TYPE, ControlSurface, Layer
 from ableton.v2.control_surface.components import DrumGroupComponent, MixerComponent, SessionRecordingComponent, SessionRingComponent
 from ableton.v2.control_surface.elements import ButtonMatrixElement
 from ableton.v2.control_surface.mode import LayerMode, ModesComponent

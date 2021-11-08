@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from _Framework.Capabilities import CONTROLLER_ID_KEY, NOTES_CC, PORTS_KEY, REMOTE, SCRIPT, controller_id, inport, outport
 from .Alesis_VI import Alesis_VI
-from _Framework.Capabilities import controller_id, inport, outport, CONTROLLER_ID_KEY, PORTS_KEY, NOTES_CC, SCRIPT, REMOTE
 
 def get_capabilities():
     return {CONTROLLER_ID_KEY: controller_id(vendor_id=5042,

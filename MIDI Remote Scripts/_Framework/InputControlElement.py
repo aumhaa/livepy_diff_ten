@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 import contextlib, logging
 from . import Task
 from .Dependency import depends
@@ -8,7 +7,7 @@ from .Disconnectable import Disconnectable
 from .NotifyingControlElement import NotifyingControlElement
 from .Signal import Signal
 from .SubjectSlot import SubjectEvent
-from .Util import in_range, const, nop
+from .Util import const, in_range, nop
 logger = logging.getLogger(__name__)
 MIDI_NOTE_TYPE = 0
 MIDI_CC_TYPE = 1

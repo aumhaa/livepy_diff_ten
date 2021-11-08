@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.mode import tomode, Mode
+from ableton.v2.control_surface.mode import Mode, tomode
 
 class MultiEntryMode(Mode):
 

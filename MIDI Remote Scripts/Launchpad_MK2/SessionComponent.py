@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
-from _Framework.Util import in_range
-from _Framework.SubjectSlot import subject_slot_group
 import _Framework.SessionComponent as SessionComponentBase
+from _Framework.SubjectSlot import subject_slot_group
+from _Framework.Util import in_range
 from .ComponentUtils import skin_scroll_component
 
 class SessionComponent(SessionComponentBase):

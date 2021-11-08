@@ -1,8 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import filter
+from builtins import filter, map
 from Live import DeviceParameter
-from ableton.v2.base import liveobj_valid, listenable_property, listens, old_hasattr
+from ableton.v2.base import listenable_property, listens, liveobj_valid, old_hasattr
 from ableton.v2.control_surface import InternalParameterBase, ParameterInfo, PitchParameter
 import pushbase.automation_component as AutomationComponentBase
 

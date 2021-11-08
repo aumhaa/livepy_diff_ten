@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.ButtonElement as ButtonElement
-import _Framework.TransportComponent as TransportComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.SessionComponent as SessionComponent
+import _Framework.TransportComponent as TransportComponent
 
 class TransportViewModeSelector(ModeSelectorComponent):
 

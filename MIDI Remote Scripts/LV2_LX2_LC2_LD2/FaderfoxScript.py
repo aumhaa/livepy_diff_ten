@@ -1,13 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import object
-import Live, sys
-from .consts import *
-from .FaderfoxHelper import FaderfoxHelper
-from .ParamMap import ParamMap
-from .Devices import *
+from builtins import object, str
+import sys, Live
 from _Generic.util import DeviceAppointer
 from ableton.v2.base import old_hasattr
+from .consts import *
+from .Devices import *
+from .FaderfoxHelper import FaderfoxHelper
+from .ParamMap import ParamMap
 
 class FaderfoxScript(object):
     __filter_funcs__ = [

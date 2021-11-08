@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Control import ButtonControl
 import _Framework.MixerComponent as MixerComponentBase
-from .ChannelStripComponent import ChannelStripComponent
 from . import consts
+from .ChannelStripComponent import ChannelStripComponent
 
 class MixerComponent(MixerComponentBase):
     unmute_all_button = ButtonControl(color='Mixer.Mute.Off',

@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import object
+from builtins import object, range
 import Live
-from ableton.v2.base import in_range, nop, NamedTuple, clamp
-from ableton.v2.control_surface import InputControlElement, MIDI_PB_TYPE
+from ableton.v2.base import NamedTuple, clamp, in_range, nop
+from ableton.v2.control_surface import MIDI_PB_TYPE, InputControlElement
 MAX_PITCHBEND = 16384.0
 
 class TouchStripModes(object):

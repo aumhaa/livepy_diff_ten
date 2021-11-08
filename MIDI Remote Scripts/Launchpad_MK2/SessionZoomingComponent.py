@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
+import _Framework.SessionComponent as SessionComponent
 import _Framework.SessionZoomingComponent as SessionZoomingComponentBase
 from .ComponentUtils import skin_scroll_component
-import _Framework.SessionComponent as SessionComponent
 
 class SessionZoomingComponent(SessionZoomingComponentBase):
 

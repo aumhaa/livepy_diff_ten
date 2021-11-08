@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface import Component
 from ableton.v2.base import depends, listenable_property, liveobj_changed, liveobj_valid
+from ableton.v2.control_surface import Component
 
 def update_real_time_attachments(real_time_data_components):
     for d in real_time_data_components:

@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.Layer as Layer
-from .consts import NOTE_MODE, ABLETON_MODE
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
+from .consts import ABLETON_MODE, NOTE_MODE
 
 class ShiftableSelectorComponent(ModeSelectorComponent):
 

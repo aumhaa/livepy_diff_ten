@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import _Framework.ButtonElement as ButtonElement
-from _Framework.InputControlElement import MIDI_NOTE_TYPE, MIDI_CC_TYPE, MIDI_CC_STATUS
+from _Framework.InputControlElement import MIDI_CC_STATUS, MIDI_CC_TYPE, MIDI_NOTE_TYPE
 from .consts import *
 
 class ConfigurableButtonElement(ButtonElement):

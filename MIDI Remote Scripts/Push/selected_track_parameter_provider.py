@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.control_surface import ParameterInfo
 import pushbase.selected_track_parameter_provider as SelectedTrackParameterProviderBase
-from .parameter_mapping_sensitivities import parameter_mapping_sensitivity, fine_grain_parameter_mapping_sensitivity
+from .parameter_mapping_sensitivities import fine_grain_parameter_mapping_sensitivity, parameter_mapping_sensitivity
 
 class SelectedTrackParameterProvider(SelectedTrackParameterProviderBase):
 

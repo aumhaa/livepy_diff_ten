@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.components import ToggleComponent, TransportComponent as TransportComponentBase
+from ableton.v2.control_surface.components import ToggleComponent
+import ableton.v2.control_surface.components as TransportComponentBase
 from ableton.v2.control_surface.control import ButtonControl
 
 class TransportComponent(TransportComponentBase):

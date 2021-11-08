@@ -1,20 +1,20 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from functools import partial
+from ableton.v2.base import listens, nop, task
 from ableton.v2.control_surface import ControlSurface, Layer, midi
 from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, SessionRecordingComponent, SimpleTrackAssigner, UndoRedoComponent
-from ableton.v2.base import listens, nop, task
-from ableton.v2.control_surface.mode import ModesComponent, AddLayerMode, EnablingMode
 from ableton.v2.control_surface.elements import ButtonMatrixElement, MultiElement, SysexElement
+from ableton.v2.control_surface.mode import AddLayerMode, EnablingMode, ModesComponent
+from . import sysex
+from .channel_strip_component import ChannelStripComponent
 from .clip_launch_component import ClipLaunchComponent
+from .control_element_util import MIDI_CHANNEL, create_button, create_display_line, create_encoder, create_sysex_element
 from .detail_clip_component import DetailClipComponent
 from .focus_follow_component import FocusFollowComponent
 from .mixer_component import MixerComponent
 from .selection_linked_session_ring_component import SelectionLinkedSessionRingComponent
 from .transport_component import TransportComponent
-from .channel_strip_component import ChannelStripComponent
-from .control_element_util import MIDI_CHANNEL, create_button, create_display_line, create_encoder, create_sysex_element
-from . import sysex
 NUM_TRACKS = 8
 GOODBYE_MESSAGE = (
  midi.CC_STATUS + MIDI_CHANNEL, 2, 0)

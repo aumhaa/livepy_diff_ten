@@ -1,9 +1,8 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import range
 from past.utils import old_div
 from .ButtonElement import ButtonElement
-from .InputControlElement import InputControlElement, MIDI_INVALID_TYPE
+from .InputControlElement import MIDI_INVALID_TYPE, InputControlElement
 from .SliderElement import SliderElement
 from .SubjectSlot import SlotManager
 

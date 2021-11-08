@@ -1,14 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import zip
-from builtins import str
-from builtins import range
+from builtins import range, str, zip
 import Live
-from _Generic.Devices import device_parameters_to_map, number_of_parameter_banks, parameter_banks, parameter_bank_names, best_of_parameter_bank
+from _Generic.Devices import best_of_parameter_bank, device_parameters_to_map, number_of_parameter_banks, parameter_bank_names, parameter_banks
 from .ButtonElement import ButtonElement
 from .ControlSurfaceComponent import ControlSurfaceComponent
 from .DeviceBankRegistry import DeviceBankRegistry
 from .DisplayDataSource import DisplayDataSource
-from .SubjectSlot import subject_slot, subject_slot_group, Subject
+from .SubjectSlot import Subject, subject_slot, subject_slot_group
 
 def device_to_appoint(device):
     appointed_device = device

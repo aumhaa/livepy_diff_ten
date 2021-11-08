@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import round
-from builtins import map
-from builtins import filter
+from builtins import filter, map, round
 from future.utils import iteritems
 import Live
 AutomationState = Live.DeviceParameter.AutomationState

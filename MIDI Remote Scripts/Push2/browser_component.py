@@ -6,13 +6,13 @@ from math import ceil
 import Live
 from ableton.v2.base import BooleanContext, depends, index_if, lazy_attribute, listenable_property, listens, liveobj_changed, liveobj_valid, nop, task
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.control import control_list, ButtonControl, StepEncoderControl, ToggleButtonControl
+from ableton.v2.control_surface.control import ButtonControl, StepEncoderControl, ToggleButtonControl, control_list
 from pushbase.browser_util import filter_type_for_hotswap_target, get_selection_for_new_device
 from pushbase.consts import MessageBoxText
 from pushbase.message_box_component import Messenger
-from .colors import DISPLAY_BUTTON_SHADE_LEVEL, IndexedColor
-from .browser_list import BrowserList
 from .browser_item import BrowserItem, ProxyBrowserItem
+from .browser_list import BrowserList
+from .colors import DISPLAY_BUTTON_SHADE_LEVEL, IndexedColor
 NAVIGATION_COLORS = dict(color='Browser.Navigation',
   disabled_color='Browser.NavigationDisabled')
 

@@ -1,10 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
+from functools import partial
 from ableton.v2.base import listens
-from ableton.v2.control_surface import Layer
+from ableton.v2.control_surface import MIDI_NOTE_TYPE, Layer
 from ableton.v2.control_surface.components import SessionRecordingComponent
-from ableton.v2.control_surface.elements import ButtonMatrixElement, PhysicalDisplayElement, SysexElement
+from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement, PhysicalDisplayElement, SysexElement
 from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
+from novation.simple_device import SimpleDeviceParameterComponent
 from KeyLab_Essential import sysex
 from KeyLab_Essential.control_element_utils import create_button, create_pad_led
 from KeyLab_Essential.keylab_essential import KeyLabEssential
@@ -15,7 +17,17 @@ from .session import SessionComponent
 from .view_control import ViewControlComponent
 PAD_IDS = ((36, 37, 38, 39, 44, 45, 46, 47), (40, 41, 42, 43, 48, 49, 50, 51))
 PAD_LED_IDS = ((112, 113, 114, 115, 120, 121, 122, 123), (116, 117, 118, 119, 124, 125, 126, 127))
+ENCODER_MODE_TO_COLOR = {'pan_mode':(127, 127, 127), 
+ 'sends_a_mode':(0, 127, 0), 
+ 'sends_b_mode':(0, 100, 0), 
+ 'device_mode':(0, 0, 100)}
 DISPLAY_LINE_WIDTH = 16
+
+class InputOnlyButton(ButtonElement):
+
+    def send_value(self, value, force=False, channel=None):
+        pass
+
 
 class KeyLabMkII(KeyLabEssential):
     mixer_component_type = MixerComponent
@@ -27,6 +39,8 @@ class KeyLabMkII(KeyLabEssential):
     def __init__(self, *a, **k):
         (super(KeyLabMkII, self).__init__)(*a, **k)
         with self.component_guard():
+            self._create_device_parameters()
+            self._create_encoder_modes()
             self._create_session_recording()
 
     def _create_controls(self):
@@ -45,16 +59,21 @@ class KeyLabMkII(KeyLabEssential):
         self._re_enable_automation_button = create_button(57,
           name='Re_Enable_Automation_Button')
         self._view_button = create_button(74, name='View_Button')
-        self._pads = ButtonMatrixElement(rows=[[create_button(identifier, channel=9, name=('Pad_{}_{}'.format(col_index, row_index))) for col_index, identifier in enumerate(row)] for row_index, row in enumerate(PAD_IDS)])
+        self._pads = ButtonMatrixElement(rows=[[InputOnlyButton(True, MIDI_NOTE_TYPE, 9, identifier, name=('Pad_{}_{}'.format(col_index, row_index))) for col_index, identifier in enumerate(row)] for row_index, row in enumerate(PAD_IDS)])
         self._pad_leds = ButtonMatrixElement(rows=[[create_pad_led(identifier, 'Pad_LED_{}_{}'.format(col_index, row_index)) for col_index, identifier in enumerate(row)] for row_index, row in enumerate(PAD_LED_IDS)],
           name='Pad_LED_Matrix')
         self._display = PhysicalDisplayElement(DISPLAY_LINE_WIDTH, name='Display')
         self._display.set_message_parts(sysex.LCD_SET_STRING_MESSAGE_HEADER + (sysex.LCD_LINE_1_ITEM_ID,), (
          sysex.NULL, sysex.LCD_LINE_2_ITEM_ID) + (ord(' '),) * DISPLAY_LINE_WIDTH + (sysex.NULL, sysex.END_BYTE))
-        self._mixer_mode_cycle_button = create_button(51, name='Mixer_Mode_Cycle_Button')
+        self._encoder_mode_cycle_button = InputOnlyButton(True,
+          MIDI_NOTE_TYPE,
+          0,
+          51,
+          name='Mixer_Mode_Cycle_Button')
         self._vegas_mode_switch = SysexElement(send_message_generator=(lambda b: sysex.VEGAS_MODE_MESSAGE_HEADER + (
          b, sysex.END_BYTE)),
           name='Vegas_Mode_Switch')
+        self._encoder_mode_led = create_pad_led(42, name='Encoder_Mode_Led')
 
     def _create_mixer(self):
         super(KeyLabMkII, self)._create_mixer()
@@ -62,12 +81,31 @@ class KeyLabMkII(KeyLabEssential):
           solo_buttons=(self._solo_buttons),
           mute_buttons=(self._mute_buttons),
           arm_buttons=(self._record_arm_buttons),
-          selected_track_name_display=(self._display))
-        self._mixer_modes = ModesComponent(name='Mixer_Modes')
-        self._mixer_modes.add_mode('volume_mode', AddLayerMode(self._mixer, Layer(volume_controls=(self._faders))))
-        self._mixer_modes.add_mode('sends_a_mode', AddLayerMode(self._mixer, Layer(send_controls=(self._faders))))
-        self._mixer_modes.layer = Layer(cycle_mode_button=(self._mixer_mode_cycle_button))
-        self._mixer_modes.selected_mode = 'volume_mode'
+          selected_track_name_display=(self._display),
+          volume_controls=(self._faders))
+
+    def _create_encoder_modes(self):
+        self._encoder_modes = ModesComponent(name='Mixer_Modes')
+        self._encoder_modes.add_mode('pan_mode', (
+         AddLayerMode(self._mixer, Layer(pan_controls=(self._encoders))),
+         partial(self._encoder_mode_led.send_value, ENCODER_MODE_TO_COLOR['pan_mode'])))
+        self._encoder_modes.add_mode('sends_a_mode', (
+         AddLayerMode(self._mixer, Layer(send_a_controls=(self._encoders))),
+         partial(self._encoder_mode_led.send_value, ENCODER_MODE_TO_COLOR['sends_a_mode'])))
+        self._encoder_modes.add_mode('sends_b_mode', (
+         AddLayerMode(self._mixer, Layer(send_b_controls=(self._encoders))),
+         partial(self._encoder_mode_led.send_value, ENCODER_MODE_TO_COLOR['sends_b_mode'])))
+        self._encoder_modes.layer = Layer(cycle_mode_button=(self._encoder_mode_cycle_button))
+        self._encoder_modes.add_mode('device_mode', (
+         self._device_parameters,
+         partial(self._encoder_mode_led.send_value, ENCODER_MODE_TO_COLOR['device_mode'])))
+        self._encoder_modes.selected_mode = 'pan_mode'
+
+    def _create_device_parameters(self):
+        self._device_parameters = SimpleDeviceParameterComponent(name='Device_Parameters',
+          is_enabled=False,
+          device_bank_registry=(self._device_bank_registry),
+          layer=Layer(parameter_controls=(self._encoders)))
 
     def _create_session_recording(self):
         self._session_recording = SessionRecordingComponent(name='Session_Recording',
@@ -83,3 +121,9 @@ class KeyLabMkII(KeyLabEssential):
     def _create_hardware_settings(self):
         super(KeyLabMkII, self)._create_hardware_settings()
         self._hardware_settings.layer += Layer(vegas_mode_switch=(self._vegas_mode_switch))
+
+    @listens('daw_preset')
+    def _on_memory_preset_changed_on_hardware(self, is_daw_preset_on):
+        super(KeyLabMkII, self)._on_memory_preset_changed_on_hardware(is_daw_preset_on)
+        if is_daw_preset_on:
+            self._encoder_mode_led.send_value(ENCODER_MODE_TO_COLOR[self._encoder_modes.selected_mode])

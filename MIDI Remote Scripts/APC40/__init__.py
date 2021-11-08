@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.Capabilities import CONTROLLER_ID_KEY, PORTS_KEY, NOTES_CC, SCRIPT, REMOTE, controller_id, inport, outport
+from _Framework.Capabilities import CONTROLLER_ID_KEY, NOTES_CC, PORTS_KEY, REMOTE, SCRIPT, controller_id, inport, outport
 from .APC40 import APC40
 
 def create_instance(c_instance):

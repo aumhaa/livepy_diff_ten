@@ -2167,7 +2167,7 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
    BANK_MAIN_KEY,
    {BANK_PARAMETERS_KEY: (
                           'Decay',
-                          use('Freq. Hz').with_name('Freq').if_parameter('Frequency Dial Mode').has_value('ModulationHertz').else_use('Note').with_name('Freq'),
+                          use('Transpose').if_parameter('Pitch Mode').has_value('MIDI').else_use('Freq. Hz').with_name('Freq').if_parameter('Frequency Dial Mode').has_value('ModulationHertz').else_use('Note').with_name('Freq'),
                           'LF Damp',
                           'HF Damp',
                           'Stretch',

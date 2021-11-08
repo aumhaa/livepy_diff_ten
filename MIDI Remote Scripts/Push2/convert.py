@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import map
-from builtins import object
+from builtins import map, object, str
 from functools import partial
 import Live
 from ableton.v2.base import EventObject, find_if, listenable_property, listens, liveobj_valid, old_hasattr, task

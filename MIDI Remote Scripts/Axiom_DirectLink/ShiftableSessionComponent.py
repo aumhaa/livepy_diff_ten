@@ -1,9 +1,8 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import range
 from past.utils import old_div
-import _Framework.SessionComponent as SessionComponent
 import _Framework.ButtonElement as ButtonElement
+import _Framework.SessionComponent as SessionComponent
 
 class ShiftableSessionComponent(SessionComponent):
 

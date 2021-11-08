@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import open
-from builtins import range
+from builtins import open, range, str
 from os import path
 VERSION_PREFIX = b'10F4000041444139204E69636F6C6C73'
 NUM_VERSION_BYTES = 8

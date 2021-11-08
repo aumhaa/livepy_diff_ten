@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from numbers import Number
 from ...base import listenable_property
 from ..component import Component
-from ..control import PlayableControl, ButtonControl, control_matrix
+from ..control import ButtonControl, PlayableControl, control_matrix
 from . import AccentComponent
 
 def apply_to_list(original_list, operation, item):

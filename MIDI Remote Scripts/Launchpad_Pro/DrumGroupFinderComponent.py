@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
 import Live
-from _Framework.Util import find_if
-from _Framework.SubjectSlot import Subject, subject_slot_group, subject_slot
 import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
+from _Framework.SubjectSlot import Subject, subject_slot, subject_slot_group
+from _Framework.Util import find_if
 
 class DrumGroupFinderComponent(ControlSurfaceComponent, Subject):
     __subject_events__ = ('drum_group', )

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.utils import iteritems
 from itertools import chain
-from ableton.v2.base import depends, const, liveobj_valid, EventObject
+from ableton.v2.base import EventObject, const, depends, liveobj_valid
 from ableton.v2.control_surface.elements.color import is_dynamic_color_factory
 
 class SkinColorMissingError(Exception):

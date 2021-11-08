@@ -1,10 +1,9 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import str
 from past.utils import old_div
 from ableton.v2.base import listenable_property, listens
 from ableton.v2.control_surface import Component, ParameterSlot
-from ableton.v2.control_surface.control import EncoderControl, ButtonControl
+from ableton.v2.control_surface.control import ButtonControl, EncoderControl
 from ableton.v2.control_surface.elements import DisplayDataSource
 from . import consts
 from .device_parameter_component import convert_parameter_value_to_graphic

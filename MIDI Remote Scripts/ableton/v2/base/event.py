@@ -1,13 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.builtins import filter, zip
-from itertools import repeat, chain
-from functools import partial, wraps
 from future.utils import iteritems, string_types, with_metaclass
 import weakref
-from .disconnectable import Disconnectable, CompoundDisconnectable
-from .live_api_utils import liveobj_valid
+from functools import partial, wraps
+from itertools import chain, repeat
 from .abl_signal import Signal
-from .util import instance_decorator, monkeypatch, monkeypatch_extend, NamedTuple, old_hasattr
+from .disconnectable import CompoundDisconnectable, Disconnectable
+from .live_api_utils import liveobj_valid
+from .util import NamedTuple, instance_decorator, monkeypatch, monkeypatch_extend, old_hasattr
 __all__ = ('EventObject', 'Event', 'EventError', 'listenable_property', 'listens',
            'listens_group', 'Slot', 'SlotGroup', 'MultiSlot', 'has_event', 'validate_event_interface')
 

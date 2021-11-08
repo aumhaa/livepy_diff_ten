@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from _Framework.ButtonElement import OFF_VALUE, ON_VALUE, ButtonElement
 from _Framework.Skin import SkinColorMissingError
-from _Framework.ButtonElement import ButtonElement, ON_VALUE, OFF_VALUE
 
 class ConfigurableButtonElement(ButtonElement):
     default_states = {True:'DefaultButton.On', 

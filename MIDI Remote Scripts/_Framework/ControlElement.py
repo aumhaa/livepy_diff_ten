@@ -5,7 +5,7 @@ from . import Task
 from .Dependency import depends
 from .Disconnectable import Disconnectable
 from .Resource import StackingResource
-from .Util import lazy_attribute, nop, const, second, print_message
+from .Util import const, lazy_attribute, nop, print_message, second
 
 class ControlElementClient(object):
 

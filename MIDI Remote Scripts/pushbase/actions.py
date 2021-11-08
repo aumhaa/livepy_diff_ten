@@ -1,18 +1,16 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import range, str
 from past.utils import old_div
 from itertools import count
 import Live
 from ableton.v2.base import forward_property, listens, listens_group, liveobj_changed, liveobj_valid, old_hasattr
 from ableton.v2.control_surface import Component
 import ableton.v2.control_surface.components as UndoRedoComponentBase
-from ableton.v2.control_surface.control import control_list, ButtonControl
+from ableton.v2.control_surface.control import ButtonControl, control_list
 from ableton.v2.control_surface.elements import DisplayDataSource
 from .action_with_options_component import ActionWithSettingsComponent
 from .clip_control_component import convert_beat_length_to_bars_beats_sixteenths
-from .consts import MessageBoxText, SIDE_BUTTON_COLORS
+from .consts import SIDE_BUTTON_COLORS, MessageBoxText
 from .message_box_component import Messenger
 AutomationState = Live.DeviceParameter.AutomationState
 _Q = Live.Song.Quantization

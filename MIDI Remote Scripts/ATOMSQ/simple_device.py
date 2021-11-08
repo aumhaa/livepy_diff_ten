@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.moves.itertools import zip_longest
-from _Generic.Devices import parameter_banks, parameter_bank_names
-from ableton.v2.base import clamp, depends, EventObject, listens, liveobj_valid, nop, task
+from _Generic.Devices import parameter_bank_names, parameter_banks
+from ableton.v2.base import EventObject, clamp, depends, listens, liveobj_valid, nop, task
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, ToggleButtonControl
 from .control import DisplayControl

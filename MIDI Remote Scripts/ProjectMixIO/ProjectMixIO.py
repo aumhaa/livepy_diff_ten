@@ -1,15 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import object
+from builtins import object, range
+import Live
+from MackieControl.ChannelStrip import ChannelStrip, MasterChannelStrip
+import MackieControl.ChannelStripController as ChannelStripController
 from MackieControl.consts import *
 import MackieControl.MainDisplay as MainDisplay
 import MackieControl.MainDisplayController as MainDisplayController
-import MackieControl.ChannelStripController as ChannelStripController
-import MackieControl.ChannelStrip as ChannelStrip
-from MackieControl.ChannelStrip import MasterChannelStrip
 import MackieControl.SoftwareController as SoftwareController
 import MackieControl.Transport as Transport
-import Live
 
 class ProjectMixIO(object):
 

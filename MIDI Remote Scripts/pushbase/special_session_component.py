@@ -6,10 +6,10 @@ from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.components import ClipSlotComponent, SceneComponent, SessionComponent
 from ableton.v2.control_surface.control import ButtonControl
 from ableton.v2.control_surface.mode import EnablingModesComponent
-from pushbase.touch_strip_element import TouchStripStates, TouchStripModes
+from pushbase.touch_strip_element import TouchStripModes, TouchStripStates
 from .actions import clip_name_from_clip_slot, scene_description
-from .message_box_component import Messenger
 from .consts import MessageBoxText
+from .message_box_component import Messenger
 
 class ClipSlotCopyHandler(Messenger):
 

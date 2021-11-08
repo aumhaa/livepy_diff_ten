@@ -1,10 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
-from builtins import object
+from builtins import object, range, str
 import Live
-from .RemoteSLComponent import RemoteSLComponent
 from .consts import *
+from .RemoteSLComponent import RemoteSLComponent
 SLIDER_MODE_VOLUME = 0
 SLIDER_MODE_PAN = 1
 SLIDER_MODE_SEND = 2

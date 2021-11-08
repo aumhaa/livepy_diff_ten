@@ -1,30 +1,28 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import chr
-from builtins import range
+from builtins import chr, range, str
 import Live
-import _Framework.ControlSurface as ControlSurface
-import _Framework.ControlElement as ControlElement
-from _Framework.InputControlElement import *
-import _Framework.SliderElement as SliderElement
 import _Framework.ButtonElement as ButtonElement
-import _Framework.EncoderElement as EncoderElement
-import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
-import _Framework.DisplayDataSource as DisplayDataSource
 import _Framework.ChannelStripComponent as ChannelStripComponent
-import _Framework.MixerComponent as MixerComponent
-import _Framework.TransportComponent as TransportComponent
-import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.ClipSlotComponent as ClipSlotComponent
+import _Framework.ControlElement as ControlElement
+import _Framework.ControlSurface as ControlSurface
+import _Framework.DisplayDataSource as DisplayDataSource
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import *
+import _Framework.MixerComponent as MixerComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
+import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
 import _Framework.SceneComponent as SceneComponent
 import _Framework.SessionComponent as SessionComponent
-from .TransportViewModeSelector import TransportViewModeSelector
+import _Framework.SliderElement as SliderElement
+import _Framework.TransportComponent as TransportComponent
+from .BestBankDeviceComponent import BestBankDeviceComponent
+from .DetailViewCntrlComponent import DetailViewCntrlComponent
+from .PeekableEncoderElement import PeekableEncoderElement
 from .ShiftableMixerComponent import ShiftableMixerComponent
 from .ShiftableSessionComponent import ShiftableSessionComponent
 from .ShiftableTransportComponent import ShiftableTransportComponent
-from .PeekableEncoderElement import PeekableEncoderElement
-from .BestBankDeviceComponent import BestBankDeviceComponent
-from .DetailViewCntrlComponent import DetailViewCntrlComponent
+from .TransportViewModeSelector import TransportViewModeSelector
 INITIAL_DISPLAY_DELAY = 20
 STANDARD_DISPLAY_DELAY = 10
 IS_MOMENTARY = True

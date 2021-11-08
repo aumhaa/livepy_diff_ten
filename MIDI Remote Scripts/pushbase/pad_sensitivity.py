@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import zip
 from itertools import repeat
-from ableton.v2.base import find_if, second, nop, task
+from ableton.v2.base import find_if, nop, second, task
 from ableton.v2.control_surface import Component
 
 class PadUpdateComponent(Component):

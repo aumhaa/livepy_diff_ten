@@ -1,17 +1,15 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import map
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import map, range
 from past.utils import old_div
 from contextlib import contextmanager
 from functools import partial
 from ableton.v2.base import EventObject, clamp, listenable_property, listens, liveobj_changed, liveobj_valid, nop, task
-from ableton.v2.control_surface import defaults, Component
-from ableton.v2.control_surface.control import ButtonControl, control_matrix, PlayableControl
-from .step_duplicator import NullStepDuplicator, set_loop
+from ableton.v2.control_surface import Component, defaults
+from ableton.v2.control_surface.control import ButtonControl, PlayableControl, control_matrix
 from .consts import MessageBoxText
 from .message_box_component import Messenger
 from .pad_control import PadControl
+from .step_duplicator import NullStepDuplicator, set_loop
 
 def create_clip_in_selected_slot(creator, song, clip_length=None):
     selected_slot = song.view.highlighted_clip_slot

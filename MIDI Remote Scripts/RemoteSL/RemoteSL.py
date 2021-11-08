@@ -1,12 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import object
+from builtins import object, str
 import Live, MidiRemoteScript
+from _Generic.util import DeviceAppointer
+from .consts import *
+from .DisplayController import DisplayController
 from .EffectController import EffectController
 from .MixerController import MixerController
-from .DisplayController import DisplayController
-from .consts import *
-from _Generic.util import DeviceAppointer
 
 class RemoteSL(object):
 

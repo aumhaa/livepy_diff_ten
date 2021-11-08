@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import map
+from builtins import map, str
 from itertools import chain
 from ableton.v2.base import first
 import ableton.v2.control_surface.elements as PhysicalDisplayElementBase

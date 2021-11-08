@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
+import json, logging
 from pprint import pformat
-import logging, json
 from ableton.v2.base import PY2
 from .model import RootModel
-from model.generation import generate_mrs_model, ModelUpdateNotifier
+from model.generation import ModelUpdateNotifier, generate_mrs_model
 logger = logging.getLogger(__name__)
 
 class Sender(object):

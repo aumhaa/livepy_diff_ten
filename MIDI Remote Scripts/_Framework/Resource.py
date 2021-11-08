@@ -1,10 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import object
-from functools import partial
+from builtins import map, object
+from functools import partial, reduce
 from .Proxy import Proxy
-from .Util import index_if, nop, first, NamedTuple
-from functools import reduce
+from .Util import NamedTuple, first, index_if, nop
 DEFAULT_PRIORITY = 0
 
 class Resource(object):

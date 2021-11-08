@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import _Framework.DeviceComponent as DeviceComponent
-from .consts import FADER_TYPE_STANDARD, DEVICE_MAP_CHANNEL
+from .consts import DEVICE_MAP_CHANNEL, FADER_TYPE_STANDARD
 
 class SpecialDeviceComponent(DeviceComponent):
 

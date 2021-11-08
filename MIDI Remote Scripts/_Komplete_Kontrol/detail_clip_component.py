@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ableton.v2.base import liveobj_valid, listens
+from ableton.v2.base import listens, liveobj_valid
 from ableton.v2.control_surface.component import Component
 from ableton.v2.control_surface.control import ButtonControl
 RecordingQuantization = Live.Song.RecordingQuantization

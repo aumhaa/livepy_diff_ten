@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from functools import wraps, partial
+from functools import partial, wraps
 ENABLE_PROFILING = False
 if ENABLE_PROFILING:
     import cProfile

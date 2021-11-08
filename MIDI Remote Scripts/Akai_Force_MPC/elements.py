@@ -1,10 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import object
+from builtins import object, range
 import Live
 from ableton.v2.base import depends
 from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, PrioritizedResource
-from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement as ButtonMatrixElementBase, ComboElement, EncoderElement, SliderElement, SysexElement, TouchEncoderElement
+from ableton.v2.control_surface.elements import ButtonElement
+import ableton.v2.control_surface.elements as ButtonMatrixElementBase
+from ableton.v2.control_surface.elements import ComboElement, EncoderElement, SliderElement, SysexElement, TouchEncoderElement
 from . import sysex
 from .multi_element import MultiElement
 from .physical_display import PhysicalDisplayElement

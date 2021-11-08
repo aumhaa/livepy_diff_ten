@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from .SubjectSlot import Subject, subject_slot, SlotManager
+from .SubjectSlot import SlotManager, Subject, subject_slot
 
 class TrackArmState(Subject, SlotManager):
     __subject_events__ = ('arm', )

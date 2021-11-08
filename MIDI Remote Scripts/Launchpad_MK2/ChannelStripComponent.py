@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
-from _Framework.SubjectSlot import subject_slot
-from _Framework.Control import ButtonControl
 import _Framework.ChannelStripComponent as ChannelstripComponentBase
+from _Framework.Control import ButtonControl
+from _Framework.SubjectSlot import subject_slot
 PAN_VALUE_DEVIATION_TOLERANCE = 0.01563
 
 class ChannelStripComponent(ChannelstripComponentBase):

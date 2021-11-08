@@ -3,13 +3,15 @@ from builtins import range
 import re, Live
 AutomationState = Live.DeviceParameter.AutomationState
 ModulationSource = Live.WavetableDevice.ModulationSource
-from ableton.v2.base import const, find_if, listens, listenable_property, liveobj_valid
-from ableton.v2.control_surface import EnumWrappingParameter, InternalParameter, InternalParameterBase, Layer, PitchParameter, WavetableDeviceDecorator as WavetableDeviceDecoratorBase, WavetableEnvelopeType, WavetableFilterType, WavetableLfoType, WavetableOscillatorType, get_parameter_by_name
+from ableton.v2.base import const, find_if, listenable_property, listens, liveobj_valid
+from ableton.v2.control_surface import EnumWrappingParameter, InternalParameter, InternalParameterBase, Layer, PitchParameter
+import ableton.v2.control_surface as WavetableDeviceDecoratorBase
+from ableton.v2.control_surface import WavetableEnvelopeType, WavetableFilterType, WavetableLfoType, WavetableOscillatorType, get_parameter_by_name
 from pushbase.actions import DeleteAndReturnToDefaultComponent
 from pushbase.consts import MessageBoxText
-from .device_decoration import IndexProvider, ModMatrixParameter
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData, extend_with_envelope_features_for_parameter, make_vector
-from .device_options import DeviceTriggerOption, DeviceSwitchOption, DeviceOnOffOption
+from .device_decoration import IndexProvider, ModMatrixParameter
+from .device_options import DeviceOnOffOption, DeviceSwitchOption, DeviceTriggerOption
 from .visualisation_settings import VisualisationGuides
 
 class WavetableDeviceDecorator(WavetableDeviceDecoratorBase):

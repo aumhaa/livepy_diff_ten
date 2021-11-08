@@ -3,8 +3,8 @@ from ableton.v2.control_surface.elements import SysexElement
 from pushbase.control_element_factory import create_button, create_note_button
 import pushbase.elements as ElementsBase
 from pushbase.touch_strip_element import TouchStripElement
-from .parameter_mapping_sensitivities import CONTINUOUS_MAPPING_SENSITIVITY, FINE_GRAINED_CONTINUOUS_MAPPING_SENSITIVITY
 from . import sysex
+from .parameter_mapping_sensitivities import CONTINUOUS_MAPPING_SENSITIVITY, FINE_GRAINED_CONTINUOUS_MAPPING_SENSITIVITY
 
 class Elements(ElementsBase):
 

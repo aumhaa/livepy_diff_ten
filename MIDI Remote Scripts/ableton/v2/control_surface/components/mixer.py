@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import zip
+from builtins import range, zip
 from future.moves.itertools import zip_longest
 from ...base import clamp, listens, liveobj_valid
 from ..component import Component

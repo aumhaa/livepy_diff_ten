@@ -3,7 +3,7 @@ import Live
 from ableton.v2.base import clamp, listenable_property, listens
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl, StepEncoderControl, ToggleButtonControl
-from .consts import MessageBoxText, SIDE_BUTTON_COLORS
+from .consts import SIDE_BUTTON_COLORS, MessageBoxText
 from .message_box_component import Messenger
 RecordingQuantization = Live.Song.RecordingQuantization
 QUANTIZATION_OPTIONS = [

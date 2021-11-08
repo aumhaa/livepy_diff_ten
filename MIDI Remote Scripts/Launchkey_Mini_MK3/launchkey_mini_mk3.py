@@ -56,12 +56,12 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
         self._create_auto_arm()
         self._create_view_control()
         self._create_transport()
-        self._create_recording_modes()
         self._create_device()
         self._create_drum_group()
         self._create_pot_modes()
         self._create_stop_solo_mute_modes()
         self._create_pad_modes()
+        self._create_recording_modes()
 
     def _create_session_layer(self):
         return super(Launchkey_Mini_MK3, self)._create_session_layer() + Layer(scene_launch_buttons='scene_launch_buttons')
@@ -90,6 +90,12 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
           continue_playing_button='play_button_with_shift',
           capture_midi_button='record_button_with_shift'))
         self._transport.set_enabled(True)
+
+    def _create_recording_modes(self):
+        super(Launchkey_Mini_MK3, self)._create_recording_modes()
+        self._recording_modes.add_mode('arrange', AddLayerMode(self._transport, Layer(record_button='record_button')))
+        self._Launchkey_Mini_MK3__on_main_view_changed.subject = self.application.view
+        self._select_recording_mode()
 
     def _create_device(self):
         self._device = SimpleDeviceParameterComponent(name='Device',
@@ -152,9 +158,19 @@ class Launchkey_Mini_MK3(InstrumentControlMixin, NovationBase):
         self._Launchkey_Mini_MK3__on_pad_mode_changed.subject = self._pad_modes
         self._Launchkey_Mini_MK3__on_pad_mode_byte_changed.subject = self._pad_modes
 
+    def _select_recording_mode(self):
+        if self.application.view.is_view_visible('Session'):
+            self._recording_modes.selected_mode = 'track' if self._pad_modes.selected_mode == 'drum' else 'session'
+        else:
+            self._recording_modes.selected_mode = 'arrange'
+
+    @listens('is_view_visible', 'Session')
+    def __on_main_view_changed(self):
+        self._select_recording_mode()
+
     @listens('selected_mode')
     def __on_pad_mode_changed(self, mode):
-        self._recording_modes.selected_mode = 'track' if mode == 'drum' else 'session'
+        self._select_recording_mode()
         self._update_controlled_track()
 
     @listens('mode_byte')

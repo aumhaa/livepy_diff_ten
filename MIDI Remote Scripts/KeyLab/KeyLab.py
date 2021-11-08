@@ -1,24 +1,26 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
+from functools import partial
 import Live
-from _Arturia.ArturiaControlSurface import ArturiaControlSurface, MODE_PROPERTY, SETUP_MSG_PREFIX, SETUP_MSG_SUFFIX
-import _Framework.Layer as Layer
-import _Framework.DeviceComponent as DeviceComponent
-import _Framework.DrumRackComponent as DrumRackComponent
-import _Framework.TransportComponent as TransportComponent
-import _Framework.SessionRecordingComponent as SessionRecordingComponent
-import _Framework.ClipCreator as ClipCreator
-import _Framework.ViewControlComponent as ViewControlComponent
-from _Framework.InputControlElement import MIDI_CC_TYPE
-import _Framework.ButtonMatrixElement as ButtonMatrixElement
+from _Framework import Task
 import _Framework.ButtonElement as ButtonElement
-import _Framework.EncoderElement as EncoderElement
-import _Framework.SliderElement as SliderElement
+import _Framework.ButtonMatrixElement as ButtonMatrixElement
+import _Framework.ClipCreator as ClipCreator
+import _Framework.DeviceComponent as DeviceComponent
 import _Framework.DisplayDataSource as DisplayDataSource
+import _Framework.DrumRackComponent as DrumRackComponent
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE
+import _Framework.Layer as Layer
+import _Framework.SessionRecordingComponent as SessionRecordingComponent
+import _Framework.SliderElement as SliderElement
+import _Framework.TransportComponent as TransportComponent
+import _Framework.ViewControlComponent as ViewControlComponent
+from _Arturia.ArturiaControlSurface import MODE_PROPERTY, SETUP_MSG_PREFIX, SETUP_MSG_SUFFIX, ArturiaControlSurface
 from .DeviceNavigationComponent import DeviceNavigationComponent
+from .DisplayElement import DisplayElement
 from .MixerComponent import MixerComponent
 from .SessionComponent import SessionComponent
-from .DisplayElement import DisplayElement
 PAD_NOTE_MODE = 10
 ENCODER_HARDWARE_IDS = list(range(33, 43))
 SLIDER_HARDWARE_IDS = (43, 44, 45, 46, 107, 108, 109, 110, 111)
@@ -26,6 +28,7 @@ PAD_HARDWARE_IDS = list(range(112, 128))
 ENCODER_MSG_IDS = (74, 71, 76, 77, 18, 19, 16, 17, 93, 91)
 SLIDER_MSG_IDS = (73, 75, 79, 72, 80, 81, 82, 83, 85)
 PAD_MSG_IDS = list(range(36, 52))
+MESSAGE_DELAY = 0.001
 BUTTON_HARDWARE_AND_MESSAGE_IDS = {'session_record_button':(91, 5), 
  'stop_all_clips_button':(92, 4), 
  'stop_button':(89, 102), 
@@ -195,3 +198,9 @@ class KeyLab(ArturiaControlSurface):
 
     def _set_pad_note_msg_type(self, hardware_id):
         self._collect_setup_message(MODE_PROPERTY, hardware_id, PAD_NOTE_MODE)
+
+    def _setup_hardware(self):
+        for msg in self._messages_to_send:
+            self._tasks.add(Task.sequence(partial(self._send_midi, msg), Task.wait(MESSAGE_DELAY)))
+
+        self._messages_to_send = []

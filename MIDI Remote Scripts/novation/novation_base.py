@@ -7,7 +7,7 @@ from ableton.v2.control_surface.mode import ModesComponent
 from . import sysex
 from .channel_strip import ChannelStripComponent
 from .colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE
-from .launchpad_elements import LaunchpadElements, SESSION_HEIGHT, SESSION_WIDTH
+from .launchpad_elements import SESSION_HEIGHT, SESSION_WIDTH, LaunchpadElements
 from .mixer import MixerComponent
 from .session_navigation import SessionNavigationComponent
 from .skin import skin

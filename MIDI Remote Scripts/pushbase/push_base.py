@@ -3,17 +3,18 @@ from builtins import range
 from past.utils import old_div
 from contextlib import contextmanager
 from functools import partial
-from ableton.v2.base import clamp, const, inject, listens, listens_group, liveobj_valid, NamedTuple, nop
-from ableton.v2.control_surface import BackgroundLayer, BankingInfo, ClipCreator, ControlSurface, DeviceBankRegistry, PercussionInstrumentFinder, Layer, midi
-from ableton.v2.control_surface.components import BackgroundComponent, ModifierBackgroundComponent, SessionNavigationComponent, SessionRingComponent, SessionOverviewComponent, ViewControlComponent
+from ableton.v2.base import NamedTuple, clamp, const, inject, listens, listens_group, liveobj_valid, nop
+from ableton.v2.control_surface import BackgroundLayer, BankingInfo, ClipCreator, ControlSurface, DeviceBankRegistry, Layer, PercussionInstrumentFinder, midi
+from ableton.v2.control_surface.components import BackgroundComponent, ModifierBackgroundComponent, SessionNavigationComponent, SessionOverviewComponent, SessionRingComponent, ViewControlComponent
 from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement, ChoosingElement, ComboElement, DoublePressContext, MultiElement, OptionalElement, to_midi_value
-from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, LazyEnablingMode, ReenterBehaviour, ModesComponent
+from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, LazyEnablingMode, ModesComponent, ReenterBehaviour
+from . import consts, sysex
 from .actions import CaptureAndInsertSceneComponent, DeleteAndReturnToDefaultComponent, DeleteComponent, DeleteSelectedClipComponent, DeleteSelectedSceneComponent, DuplicateDetailClipComponent, DuplicateLoopComponent, UndoRedoComponent
 from .auto_arm_component import RestoringAutoArmComponent
 from .clip_control_component import ClipControlComponent
 from .device_parameter_component import DeviceParameterComponent
+from .fixed_length import DEFAULT_LENGTH_OPTION_INDEX, FixedLengthComponent, FixedLengthSetting
 from .grid_resolution import GridResolution
-from .fixed_length import FixedLengthComponent, FixedLengthSetting, DEFAULT_LENGTH_OPTION_INDEX
 from .instrument_component import NoteLayout, SelectedNotesInstrumentComponent
 from .loop_selector_component import LoopSelectorComponent
 from .matrix_maps import FEEDBACK_CHANNELS
@@ -24,18 +25,16 @@ from .note_editor_component import DEFAULT_VELOCITY_RANGE_THRESHOLDS, get_all_no
 from .note_layout_switcher import NoteLayoutSwitcher
 from .note_repeat_component import NoteRepeatEnabler
 from .note_settings_component import NoteEditorSettingsComponent
-from .selection import PushSelection
 from .select_playing_clip_component import SelectPlayingClipComponent
+from .selection import PushSelection
 from .session_recording_component import FixedLengthRecording, FixedLengthSessionRecordingComponent
 from .skin_default import make_default_skin
 from .step_seq_component import DrumStepSeqComponent, StepSeqComponent
 from .touch_strip_controller import TouchStripControllerComponent, TouchStripEncoderConnection, TouchStripPitchModComponent
 from .track_frozen_mode import TrackFrozenModesComponent
 from .transport_component import TransportComponent
-from .value_component import ValueComponent, ParameterValueComponent
+from .value_component import ParameterValueComponent, ValueComponent
 from .velocity_levels_component import VelocityLevelsComponent
-from . import consts
-from . import sysex
 NUM_TRACKS = 8
 NUM_SCENES = 8
 TEMPO_SWING_TOUCH_DELAY = 0.4

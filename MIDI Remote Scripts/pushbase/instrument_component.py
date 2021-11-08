@@ -1,13 +1,11 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import map
-from builtins import round
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import map, round
 from past.utils import old_div
 from contextlib import contextmanager
-from ableton.v2.base import EventObject, index_if, listenable_property, listens, liveobj_valid, find_if, task
+from ableton.v2.base import EventObject, find_if, index_if, listenable_property, listens, liveobj_valid, task
 from ableton.v2.control_surface import defaults
-from ableton.v2.control_surface.control import ButtonControl, control_matrix, PlayableControl
 from ableton.v2.control_surface.components import PlayableComponent, Slideable, SlideComponent
+from ableton.v2.control_surface.control import ButtonControl, PlayableControl, control_matrix
 from . import consts
 from .melodic_pattern import SCALES, MelodicPattern, pitch_index_to_string
 from .message_box_component import Messenger

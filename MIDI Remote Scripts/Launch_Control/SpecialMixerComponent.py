@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from future.moves.itertools import zip_longest
 import _Framework.MixerComponent as MixerComponent
-from _Framework.ModesComponent import ModesComponent, LayerMode, LatchingBehaviour
+from _Framework.ModesComponent import LatchingBehaviour, LayerMode, ModesComponent
 from _Framework.SubjectSlot import subject_slot
 from _Framework.Util import clamp
 

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from Live import DeviceParameter
-from ableton.v2.base import clamp, liveobj_valid, listenable_property, listens, const, EventObject, Slot
+from ableton.v2.base import EventObject, Slot, clamp, const, listenable_property, listens, liveobj_valid
 
 class DeviceTriggerOption(EventObject):
     __events__ = ('default_label', )

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-from ...base import lazy_attribute, mixin, nop, old_hasattr, task, Disconnectable, EventObject, NamedTuple
+from ...base import Disconnectable, EventObject, NamedTuple, lazy_attribute, mixin, nop, old_hasattr, task
 __all__ = ('Control', 'InputControl', 'ControlManager', 'control_event', 'control_color',
            'Connectable')
 

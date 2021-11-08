@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
+from functools import reduce
 from ableton.v2.base import group, in_range
 from pushbase.touch_strip_element import TouchStripModes, TouchStripStates
-from functools import reduce
 START = (240, 71, 127, 21)
 CLEAR_LINE1 = START + (28, 0, 0, 247)
 CLEAR_LINE2 = START + (29, 0, 0, 247)

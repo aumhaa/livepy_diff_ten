@@ -1,5 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.control import Control, ConfigurableTextDisplayControl as ConfigurableTextDisplayControlBase, TextDisplayControl as TextDisplayControlBase
+import ableton.v2.control_surface.control as ConfigurableTextDisplayControlBase
+from ableton.v2.control_surface.control import Control
+import ableton.v2.control_surface.control as TextDisplayControlBase
 
 class BinaryControl(Control):
 

@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 MapMode = Live.MidiMap.MapMode
-import _Framework.EncoderElement as EncoderElement
-import _Framework.SliderElement as SliderElement
 import _Framework.ButtonElement as ButtonElement
-from _Framework.InputControlElement import MIDI_NOTE_TYPE, MIDI_CC_TYPE
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
+import _Framework.SliderElement as SliderElement
 import _APC.RingedEncoderElement as RingedEncoderElement
 
 def make_button(channel, identifier, *a, **k):

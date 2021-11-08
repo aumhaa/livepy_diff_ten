@@ -1,12 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
-from builtins import object
+from builtins import object, range, str
 from past.utils import old_div
 import Live
-from .RemoteSLComponent import RemoteSLComponent
-from .consts import *
 from _Generic.Devices import *
+from .consts import *
+from .RemoteSLComponent import RemoteSLComponent
 
 class EffectController(RemoteSLComponent):
 
@@ -64,7 +62,7 @@ class EffectController(RemoteSLComponent):
                     feedback_rule.cc_no = fx_encoder_feedback_ccs[strip_index]
                     feedback_rule.channel = SL_MIDI_CHANNEL
                     feedback_rule.delay_in_ms = 0
-                    feedback_rule.cc_value_map = tuple([int(1.5 + old_div(float(index), 1270.0)) for index in range(128)])
+                    feedback_rule.cc_value_map = tuple([int(1.5 + old_div(float(index), 127.0) * 10.0) for index in range(128)])
                     ring_mode_value = FX_RING_VOL_VALUE
                     if parameter.min == -1 * parameter.max:
                         ring_mode_value = FX_RING_PAN_VALUE
@@ -217,15 +215,15 @@ class EffectController(RemoteSLComponent):
 
     def __report_bank--- This code section failed: ---
 
- L. 383         0  LOAD_FAST                'self'
+ L. 379         0  LOAD_FAST                'self'
                 2  LOAD_ATTR                _EffectController__show_bank
                 4  POP_JUMP_IF_FALSE   140  'to 140'
 
- L. 384         6  LOAD_CONST               False
+ L. 380         6  LOAD_CONST               False
                 8  LOAD_FAST                'self'
                10  STORE_ATTR               _EffectController__show_bank
 
- L. 386        12  LOAD_FAST                'self'
+ L. 382        12  LOAD_FAST                'self'
                14  LOAD_ATTR                _EffectController__assigned_device
                16  LOAD_ATTR                class_name
                18  LOAD_GLOBAL              list
@@ -236,7 +234,7 @@ class EffectController(RemoteSLComponent):
                28  COMPARE_OP               in
                30  POP_JUMP_IF_FALSE   116  'to 116'
 
- L. 388        32  LOAD_FAST                'self'
+ L. 384        32  LOAD_FAST                'self'
                34  LOAD_ATTR                _EffectController__assigned_device
                36  LOAD_ATTR                class_name
                38  LOAD_GLOBAL              list
@@ -247,14 +245,14 @@ class EffectController(RemoteSLComponent):
                48  COMPARE_OP               in
                50  POP_JUMP_IF_FALSE   104  'to 104'
 
- L. 390        52  LOAD_GLOBAL              BANK_NAME_DICT
+ L. 386        52  LOAD_GLOBAL              BANK_NAME_DICT
                54  LOAD_FAST                'self'
                56  LOAD_ATTR                _EffectController__assigned_device
                58  LOAD_ATTR                class_name
                60  BINARY_SUBSCR    
                62  STORE_FAST               'bank_names'
 
- L. 392        64  LOAD_FAST                'bank_names'
+ L. 388        64  LOAD_FAST                'bank_names'
                66  POP_JUMP_IF_FALSE   114  'to 114'
                68  LOAD_GLOBAL              len
                70  LOAD_FAST                'bank_names'
@@ -264,13 +262,13 @@ class EffectController(RemoteSLComponent):
                78  COMPARE_OP               >
                80  POP_JUMP_IF_FALSE   114  'to 114'
 
- L. 393        82  LOAD_FAST                'bank_names'
+ L. 389        82  LOAD_FAST                'bank_names'
                84  LOAD_FAST                'self'
                86  LOAD_ATTR                _EffectController__bank
                88  BINARY_SUBSCR    
                90  STORE_FAST               'bank_name'
 
- L. 394        92  LOAD_FAST                'self'
+ L. 390        92  LOAD_FAST                'self'
                94  LOAD_METHOD              _EffectController__show_bank_select
                96  LOAD_FAST                'bank_name'
                98  CALL_METHOD_1         1  '1 positional argument'
@@ -278,7 +276,7 @@ class EffectController(RemoteSLComponent):
               102  JUMP_FORWARD        140  'to 140'
             104_0  COME_FROM            50  '50'
 
- L. 398       104  LOAD_FAST                'self'
+ L. 394       104  LOAD_FAST                'self'
               106  LOAD_METHOD              _EffectController__show_bank_select
               108  LOAD_STR                 'Best of Parameters'
               110  CALL_METHOD_1         1  '1 positional argument'
@@ -288,7 +286,7 @@ class EffectController(RemoteSLComponent):
               114  JUMP_FORWARD        140  'to 140'
             116_0  COME_FROM            30  '30'
 
- L. 402       116  LOAD_FAST                'self'
+ L. 398       116  LOAD_FAST                'self'
               118  LOAD_METHOD              _EffectController__show_bank_select
               120  LOAD_STR                 'Bank'
               122  LOAD_GLOBAL              str

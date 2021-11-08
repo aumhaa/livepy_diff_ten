@@ -1,15 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import filter
-from builtins import map
-from builtins import zip
+from builtins import filter, map, range, zip
 from past.builtins import unicode
 from past.utils import old_div
-from itertools import starmap, chain
 from functools import partial
+from itertools import chain, starmap
 from ...base import const, first, group, in_range, lazy_attribute, maybe, nop, second, slice_size, slicer, task, to_slice
 from ..control_element import ControlElement, NotifyingControlElement
-from ..resource import StackingResource, ProxyResource, ClientWrapper
+from ..resource import ClientWrapper, ProxyResource, StackingResource
 from .display_data_source import adjust_string
 from .logical_display_segment import LogicalDisplaySegment
 

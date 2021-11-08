@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import round
+from builtins import range, round
 from past.utils import old_div
 import Live
-from ableton.v2.control_surface import CompoundElement, MIDI_CC_TYPE
+from ableton.v2.control_surface import MIDI_CC_TYPE, CompoundElement
 from ableton.v2.control_surface.elements import EncoderElement
 RING_VALUE_MIN = 17
 RING_VALUE_MAX = 27

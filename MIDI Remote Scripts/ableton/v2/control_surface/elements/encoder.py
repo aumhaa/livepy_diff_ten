@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from past.utils import old_div
 import Live
-from ...base import Event, in_range, nop, const, clamp, listens
-from ..input_control_element import InputControlElement, MIDI_CC_TYPE, InputSignal
-from ..compound_element import CompoundElement
+from ...base import Event, clamp, const, in_range, listens, nop
 from .. import midi
+from ..compound_element import CompoundElement
+from ..input_control_element import MIDI_CC_TYPE, InputControlElement, InputSignal
 from .combo import WrapperElement
 _map_modes = map_modes = Live.MidiMap.MapMode
 

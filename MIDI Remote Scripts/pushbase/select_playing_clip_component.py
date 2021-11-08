@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-from ableton.v2.base import index_if, nop, listens, task
+from ableton.v2.base import index_if, listens, nop, task
 from ableton.v2.control_surface.control import ButtonControl
 from ableton.v2.control_surface.mode import AddLayerMode
 from .consts import MessageBoxText

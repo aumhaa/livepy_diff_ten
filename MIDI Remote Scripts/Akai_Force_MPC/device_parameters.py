@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
-from past.utils import old_div
 from future.moves.itertools import zip_longest
+from past.utils import old_div
 from itertools import chain
 from ableton.v2.base import clamp, is_parameter_bipolar, listens, liveobj_valid
 import ableton.v2.control_surface.components as DeviceParameterComponentBase

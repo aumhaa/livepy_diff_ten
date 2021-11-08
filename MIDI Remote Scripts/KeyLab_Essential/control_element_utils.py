@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import depends
-from ableton.v2.control_surface import InputControlElement, MIDI_CC_TYPE, MIDI_NOTE_TYPE
+from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, InputControlElement
 from ableton.v2.control_surface.elements import ButtonElement, ColorSysexElement
 from . import sysex
 from .ringed_encoder import RingedEncoderElement

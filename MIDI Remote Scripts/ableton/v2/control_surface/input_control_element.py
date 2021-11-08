@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import contextlib, logging
-from ..base import const, depends, Disconnectable, in_range, nop, Signal, Event, task
+from ..base import Disconnectable, Event, Signal, const, depends, in_range, nop, task
 from . import midi
 from .control_element import NotifyingControlElement
 logger = logging.getLogger(__name__)

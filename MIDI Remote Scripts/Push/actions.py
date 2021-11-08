@@ -2,11 +2,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 import Live
 from ableton.v2.base import depends, listens, task
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.mode import SetAttributeMode, ModesComponent
+from ableton.v2.control_surface.mode import ModesComponent, SetAttributeMode
+from pushbase.action_with_options_component import OptionsComponent
+from pushbase.browser_modes import BrowserAddEffectMode
 from pushbase.consts import MessageBoxText
 from pushbase.device_chain_utils import is_empty_drum_pad
-from pushbase.browser_modes import BrowserAddEffectMode
-from pushbase.action_with_options_component import OptionsComponent
 from pushbase.message_box_component import Messenger
 
 class CreateDefaultTrackComponent(Component, Messenger):

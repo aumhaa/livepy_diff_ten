@@ -1,12 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import EventObject, listens
-from ableton.v2.control_surface import NotifyingList, EnumWrappingParameter, BoolWrappingParameter, WrappingParameter
-from ableton.v2.control_surface import LiveObjectDecorator, get_parameter_by_name
-from .device_options import DeviceSwitchOption, DeviceOnOffOption
-from ableton.v2.base import clamp
+import math, re, Live
+from ableton.v2.base import EventObject, clamp, listens
+from ableton.v2.control_surface import BoolWrappingParameter, EnumWrappingParameter, LiveObjectDecorator, NotifyingList, WrappingParameter, get_parameter_by_name
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData
+from .device_options import DeviceOnOffOption, DeviceSwitchOption
 from .visualisation_settings import VisualisationGuides
-import re, Live, math
 ParameterState = Live.DeviceParameter.ParameterState
 
 def user_to_linear_log(minv, maxv):

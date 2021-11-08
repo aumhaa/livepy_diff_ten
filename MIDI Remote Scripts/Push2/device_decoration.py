@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import object
+from builtins import object, str
 from ableton.v2.base import EventObject, const, inject, listenable_property, listens, liveobj_valid
-from ableton.v2.control_surface import NotifyingList, EnumWrappingParameter, InternalParameter, LiveObjectDecorator, get_parameter_by_name
-from .device_options import DeviceSwitchOption, DeviceOnOffOption
+from ableton.v2.control_surface import EnumWrappingParameter, InternalParameter, LiveObjectDecorator, NotifyingList, get_parameter_by_name
+from .device_options import DeviceOnOffOption, DeviceSwitchOption
 from .timeline_navigation import Region, SimplerWaveformNavigation
 
 class IndexProvider(EventObject):

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-from ableton.v2.base import listenable_property, listens, listens_group, liveobj_valid, EventObject, MultiSlot
+from ableton.v2.base import EventObject, MultiSlot, listenable_property, listens, listens_group, liveobj_valid
 from ableton.v2.control_surface import Component, Layer
 from ableton.v2.control_surface.control import ButtonControl
 from pushbase.message_box_component import Messenger

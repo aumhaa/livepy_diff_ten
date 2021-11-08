@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
-from . import Defaults
-from . import Task
+from . import Defaults, Task
 from .Control import ButtonControl
 from .ControlSurfaceComponent import ControlSurfaceComponent
 

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from .elements import ButtonMatrixElement, ButtonElement, EncoderElement, SliderElement
+from .elements import ButtonElement, ButtonMatrixElement, EncoderElement, SliderElement
 
 def make_button(name, channel, number, midi_message_type):
     is_momentary = True

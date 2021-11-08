@@ -1,10 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
-from builtins import object
+from builtins import object, range, str
 import Live
-from .consts import *
 from _Generic.Devices import *
+from .consts import *
 
 class Encoders(object):
 

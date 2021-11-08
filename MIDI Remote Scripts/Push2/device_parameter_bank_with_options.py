@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import str
-from ableton.v2.base import listenable_property, liveobj_valid, find_if
-from ableton.v2.control_surface import create_device_bank, DescribedDeviceParameterBank
+from ableton.v2.base import find_if, listenable_property, liveobj_valid
+from ableton.v2.control_surface import DescribedDeviceParameterBank, create_device_bank
 from .custom_bank_definitions import OPTIONS_KEY, VIEW_DESCRIPTION_KEY
 OPTIONS_PER_BANK = 7
 

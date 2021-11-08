@@ -1,18 +1,14 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import filter
-from builtins import map
-from builtins import range
-from builtins import object
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import filter, map, object, range
 from past.utils import old_div
 from bisect import bisect
 from contextlib import contextmanager
 from functools import cmp_to_key, partial
 from itertools import chain, product
 import Live
-from ableton.v2.base import clamp, first, index_if, in_range, listens, listenable_property, liveobj_changed, liveobj_valid, sign, EventObject, task
+from ableton.v2.base import EventObject, clamp, first, in_range, index_if, listenable_property, listens, liveobj_changed, liveobj_valid, sign, task
 from ableton.v2.control_surface import Component, defaults
-from ableton.v2.control_surface.control import ButtonControl, control_matrix, PlayableControl
+from ableton.v2.control_surface.control import ButtonControl, PlayableControl, control_matrix
 from .loop_selector_component import create_clip_in_selected_slot
 from .matrix_maps import PLAYHEAD_FEEDBACK_CHANNELS
 from .pad_control import PadControl

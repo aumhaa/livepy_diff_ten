@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import filter
-from ..base import EventObject, find_if, listens, listens_group, listenable_property, liveobj_valid, old_hasattr, clamp
+from ..base import EventObject, clamp, find_if, listenable_property, listens, listens_group, liveobj_valid, old_hasattr
 from .banking_util import BANK_FORMAT, BANK_MAIN_KEY, BANK_PARAMETERS_KEY, all_parameters
 
 class DeviceParameterBank(EventObject):

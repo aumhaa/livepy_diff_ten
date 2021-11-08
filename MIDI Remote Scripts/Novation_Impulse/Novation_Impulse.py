@@ -1,24 +1,21 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import chr
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import chr, range, str
 from future.utils import string_types
 from past.utils import old_div
 import Live
-import _Framework.ControlSurface as ControlSurface
-from _Framework.InputControlElement import *
-import _Framework.SliderElement as SliderElement
 import _Framework.ButtonElement as ButtonElement
-import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
-import _Framework.DisplayDataSource as DisplayDataSource
-import _Framework.SessionComponent as SessionComponent
+import _Framework.ControlSurface as ControlSurface
 import _Framework.DeviceComponent as DeviceComponent
-from .TransportViewModeSelector import TransportViewModeSelector
-from .SpecialMixerComponent import SpecialMixerComponent
-from .ShiftableTransportComponent import ShiftableTransportComponent
-from .PeekableEncoderElement import PeekableEncoderElement
+import _Framework.DisplayDataSource as DisplayDataSource
+from _Framework.InputControlElement import *
+import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
+import _Framework.SessionComponent as SessionComponent
+import _Framework.SliderElement as SliderElement
 from .EncoderModeSelector import EncoderModeSelector
+from .PeekableEncoderElement import PeekableEncoderElement
+from .ShiftableTransportComponent import ShiftableTransportComponent
+from .SpecialMixerComponent import SpecialMixerComponent
+from .TransportViewModeSelector import TransportViewModeSelector
 INITIAL_DISPLAY_DELAY = 30
 STANDARD_DISPLAY_DELAY = 20
 IS_MOMENTARY = True

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v2.base import const, inject, listens
-from ableton.v2.control_surface import ControlSurface, Layer, SessionRingSelectionLinking
+from ableton.v2.control_surface import IdentifiableControlSurface, Layer, SessionRingSelectionLinking
 from ableton.v2.control_surface.components import BackgroundComponent, MixerComponent, SessionNavigationComponent, SessionRecordingComponent, SessionRingComponent, SimpleTrackAssigner, UndoRedoComponent
 from ableton.v2.control_surface.mode import AddLayerMode, EnablingMode, ModesComponent
 from novation.simple_device_navigation import SimpleDeviceNavigationComponent
@@ -9,7 +9,7 @@ from novation.view_control import NotifyingViewControlComponent
 from . import midi
 from .button_labels import ButtonLabelsComponent
 from .channel_strip import ChannelStripComponent
-from .elements import BANK_BUTTON_NAMES, Elements, SESSION_HEIGHT, SESSION_WIDTH
+from .elements import BANK_BUTTON_NAMES, SESSION_HEIGHT, SESSION_WIDTH, Elements
 from .launch_and_stop import LaunchAndStopComponent
 from .session import SessionComponent
 from .simple_device import SimpleDeviceParameterComponent
@@ -17,10 +17,10 @@ from .translating_background import TranslatingBackgroundComponent
 from .transport import TransportComponent
 from .view_toggle import ViewToggleComponent
 
-class ATOMSQ(ControlSurface):
+class ATOMSQ(IdentifiableControlSurface):
 
     def __init__(self, *a, **k):
-        (super(ATOMSQ, self).__init__)(*a, **k)
+        (super(ATOMSQ, self).__init__)(a, product_id_bytes=midi.PRODUCT_ID_BYTES, **k)
         with self.component_guard():
             self._elements = Elements()
             with inject(element_container=(const(self._elements))).everywhere():
@@ -45,12 +45,17 @@ class ATOMSQ(ControlSurface):
         super(ATOMSQ, self).disconnect()
         self._send_midi(midi.NATIVE_MODE_OFF_MESSAGE)
 
-    def port_settings_changed(self):
+    def on_identified(self, midi_bytes):
+        self._session_ring.set_enabled(True)
         self._send_midi(midi.NATIVE_MODE_ON_MESSAGE)
         if self._main_modes.selected_mode == 'instrument':
             self.schedule_message(1, self._elements.upper_firmware_toggle_switch.send_value, 1)
         if self._main_modes.selected_mode != 'song':
             self.schedule_message(1, self._elements.lower_firmware_toggle_switch.send_value, 1)
+        super(ATOMSQ, self).on_identified(midi_bytes)
+
+    def port_settings_changed(self):
+        self._session_ring.set_enabled(False)
         super(ATOMSQ, self).port_settings_changed()
 
     def _create_background(self):
@@ -117,6 +122,7 @@ class ATOMSQ(ControlSurface):
 
     def _create_session(self):
         self._session_ring = SessionRingComponent(name='Session_Ring',
+          is_enabled=False,
           num_tracks=SESSION_WIDTH,
           num_scenes=SESSION_HEIGHT)
         self._session = SessionComponent(name='Session',

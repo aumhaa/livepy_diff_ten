@@ -1,10 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import zip
-from builtins import filter
-from builtins import range
+from builtins import filter, range, zip
 from functools import partial
 import Live
-from ableton.v2.base import nop, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, old_hasattr
+from ableton.v2.base import listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, nop, old_hasattr
 from ableton.v2.control_surface import Component, find_instrument_devices
 from ableton.v2.control_surface.control import ButtonControl, control_list
 from ableton.v2.control_surface.mode import ModeButtonBehaviour, ModesComponent
@@ -17,7 +15,7 @@ from .colors import DISPLAY_BUTTON_SHADE_LEVEL, IndexedColor, make_blinking_trac
 from .mixable_utilities import can_play_clips, is_chain
 from .real_time_channel import RealTimeDataComponent
 from .skin_default import RECORDING_COLOR, UNLIT_COLOR
-from .track_selection import get_all_mixer_tracks, SelectedMixerTrackProvider
+from .track_selection import SelectedMixerTrackProvider, get_all_mixer_tracks
 DeviceType = Live.Device.DeviceType
 
 def track_color_with_pending_stop(track):

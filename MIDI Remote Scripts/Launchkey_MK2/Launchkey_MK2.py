@@ -1,28 +1,27 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 from functools import partial
 from _Framework import Task
-from _Framework.Util import const, nop, mixin
-from _Framework.Dependency import inject
-from _Framework.SubjectSlot import subject_slot
+import _Framework.BackgroundComponent as BackgroundComponent
+import _Framework.ButtonMatrixElement as ButtonMatrixElement
 from _Framework.ControlSurface import OptimizedControlSurface
+from _Framework.Dependency import inject
 from _Framework.InputControlElement import MIDI_CC_TYPE
 import _Framework.Layer as Layer
-import _Framework.ButtonMatrixElement as ButtonMatrixElement
-from _Framework.ModesComponent import ModesComponent, LayerMode, AddLayerMode, ImmediateBehaviour, CancellableBehaviour
-import _Framework.BackgroundComponent as BackgroundComponent
+from _Framework.ModesComponent import AddLayerMode, CancellableBehaviour, ImmediateBehaviour, LayerMode, ModesComponent
+from _Framework.SubjectSlot import subject_slot
 import _Framework.TransportComponent as TransportComponent
+from _Framework.Util import const, mixin, nop
 import Launchkey.SessionNavigationComponent as SessionNavigationComponent
-from .Skin import make_skin
-from .Colors import RGB_COLOR_TABLE, LIVE_COLORS_TO_MIDI_VALUES
-from .ControlElementUtils import make_button, make_encoder, make_slider
-from .ModeUtils import MomentaryBehaviour, SkinableBehaviourMixin, DisablingModesComponent
-from .SessionComponent import SessionComponent
-from .DeviceComponent import DeviceComponent
-from .MixerComponent import MixerComponent
-from .InControlStatusComponent import InControlStatusComponent
 from . import consts
+from .Colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
+from .ControlElementUtils import make_button, make_encoder, make_slider
+from .DeviceComponent import DeviceComponent
+from .InControlStatusComponent import InControlStatusComponent
+from .MixerComponent import MixerComponent
+from .ModeUtils import DisablingModesComponent, MomentaryBehaviour, SkinableBehaviourMixin
+from .SessionComponent import SessionComponent
+from .Skin import make_skin
 
 class Launchkey_MK2(OptimizedControlSurface):
     identity_request_delay = 0.5

@@ -1,17 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import object
+from builtins import map, object
 from functools import partial
 from ableton.v2.base import old_hasattr
-from . import Defaults
-from . import Task
+from . import Defaults, Task
 from .CompoundComponent import CompoundComponent
 from .ControlSurfaceComponent import ControlSurfaceComponent
 from .Dependency import depends
 from .Layer import LayerBase
 from .Resource import StackingResource
 from .SubjectSlot import subject_slot
-from .Util import is_iterable, is_contextmanager, lazy_attribute, infinite_context_manager, NamedTuple
+from .Util import NamedTuple, infinite_context_manager, is_contextmanager, is_iterable, lazy_attribute
 
 def tomode(thing):
     if thing == None:

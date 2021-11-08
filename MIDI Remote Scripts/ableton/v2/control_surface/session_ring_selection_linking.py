@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from base.event import EventObject, listens
 from base.dependency import depends
+from base.event import EventObject, listens
 from base.util import index_if
 
 class SessionRingSelectionLinking(EventObject):

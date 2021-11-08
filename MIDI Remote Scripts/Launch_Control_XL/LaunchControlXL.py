@@ -1,21 +1,19 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import chr
-from builtins import range
+from builtins import chr, map, range
 from functools import partial
 from itertools import chain
 import Live
+from _Framework import Task
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
 import _Framework.EncoderElement as EncoderElement
 import _Framework.IdentifiableControlSurface as IdentifiableControlSurface
 from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 import _Framework.Layer as Layer
-from _Framework.ModesComponent import ModeButtonBehaviour, ModesComponent, AddLayerMode
+from _Framework.ModesComponent import AddLayerMode, ModeButtonBehaviour, ModesComponent
 import _Framework.SessionComponent as SessionComponent
 import _Framework.SliderElement as SliderElement
 from _Framework.SubjectSlot import subject_slot
 from _Framework.Util import nop
-from _Framework import Task
 from .ButtonElement import ButtonElement
 from .DeviceComponent import DeviceComponent, DeviceModeComponent
 from .MixerComponent import MixerComponent

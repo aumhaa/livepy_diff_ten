@@ -1,24 +1,21 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from future.utils import itervalues
-import logging, traceback
-from builtins import filter
-from builtins import map
+from builtins import filter, map
 from future.utils import iteritems, itervalues
 from past.builtins import unicode
+import logging, traceback
 from collections import OrderedDict
 from contextlib import contextmanager
 from functools import partial
 from itertools import chain
-from pickle import loads, dumps
+from pickle import dumps, loads
 import Live
 from ..base import BooleanContext, EventObject, const, find_if, first, in_range, inject, lazy_attribute, liveobj_valid, old_hasattr, task
-from . import defaults
-from . import midi
+from . import defaults, midi
 from .control_element import OptimizedOwnershipHandler
 from .device_bank_registry import DeviceBankRegistry
 from .device_provider import DeviceProvider
 from .elements import PhysicalDisplayElement
-from .input_control_element import InputControlElement, MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_TYPE, MIDI_SYSEX_TYPE, ScriptForwarding
+from .input_control_element import MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_TYPE, MIDI_SYSEX_TYPE, InputControlElement, ScriptForwarding
 from .message_scheduler import MessageScheduler
 from .profile import profile
 __all__ = ('SimpleControlSurface', 'ControlSurface')

@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
 NavDirection = Live.Application.Application.View.NavDirection
+from _Framework import Task
 from _Framework.Control import ButtonControl, ToggleButtonControl
 import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 from _Framework.SubjectSlot import subject_slot
-from _Framework import Task
 SHOW_PLAYING_CLIP_DELAY = 0.5
 
 class DetailViewCntrlComponent(ControlSurfaceComponent):

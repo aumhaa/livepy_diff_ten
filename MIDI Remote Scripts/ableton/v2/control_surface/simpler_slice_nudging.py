@@ -3,7 +3,7 @@ from builtins import round
 from past.utils import old_div
 from contextlib import contextmanager
 import Live
-from ..base import EventObject, find_if, liveobj_valid, clamp, listens
+from ..base import EventObject, clamp, find_if, listens, liveobj_valid
 CENTERED_NUDGE_VALUE = 0.5
 MINIMUM_SLICE_DISTANCE = 2
 

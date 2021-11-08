@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from _Framework.Dependency import depends
-from _Framework.ModesComponent import ModesComponent, ModeButtonBehaviour, ImmediateBehaviour
+from _Framework.ModesComponent import ImmediateBehaviour, ModeButtonBehaviour, ModesComponent
 
 def to_class_name(mode_name):
     return ''.join([s.capitalize() for s in mode_name.split('_')])

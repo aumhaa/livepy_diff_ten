@@ -5,9 +5,9 @@ from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.components import AccentComponent
 from ableton.v2.control_surface.elements import to_midi_value
 from .loop_selector_component import LoopSelectorComponent
-from .playhead_component import PlayheadComponent
-from .note_editor_paginator import NoteEditorPaginator
 from .matrix_maps import PLAYHEAD_FEEDBACK_CHANNELS
+from .note_editor_paginator import NoteEditorPaginator
+from .playhead_component import PlayheadComponent
 from .step_duplicator import StepDuplicatorComponent
 
 class StepSeqComponent(Component):

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import CompoundDisconnectable, SerializableListenableProperties, EventObject, clamp, listenable_property
+from ableton.v2.base import CompoundDisconnectable, EventObject, SerializableListenableProperties, clamp, listenable_property
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.control import RadioButtonControl, StepEncoderControl, ToggleButtonControl, ButtonControl, control_list
+from ableton.v2.control_surface.control import ButtonControl, RadioButtonControl, StepEncoderControl, ToggleButtonControl, control_list
 from ableton.v2.control_surface.mode import ModesComponent
 from .pad_velocity_curve import PadVelocityCurveSettings
 PAD_SETTING_STEP_SIZE = 20

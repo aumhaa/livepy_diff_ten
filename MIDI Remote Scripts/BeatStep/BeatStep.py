@@ -1,19 +1,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import object
+from builtins import object, range
 from itertools import chain
 import Live
-import _Arturia.ArturiaControlSurface as ArturiaControlSurface
-import _Arturia.SessionComponent as SessionComponent
-import _Arturia.MixerComponent as MixerComponent
+from _Framework.ButtonElement import ButtonElement, Color
+import _Framework.ButtonMatrixElement as ButtonMatrixElement
+import _Framework.DeviceComponent as DeviceComponent
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 import _Framework.Layer as Layer
 import _Framework.Skin as Skin
-import _Framework.DeviceComponent as DeviceComponent
 import _Framework.TransportComponent as TransportComponent
-from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
-import _Framework.ButtonMatrixElement as ButtonMatrixElement
-from _Framework.ButtonElement import ButtonElement, Color
-import _Framework.EncoderElement as EncoderElement
+import _Arturia.ArturiaControlSurface as ArturiaControlSurface
+import _Arturia.MixerComponent as MixerComponent
+import _Arturia.SessionComponent as SessionComponent
 HARDWARE_ENCODER_IDS = list(range(32, 48))
 HARDWARE_STOP_BUTTON_ID = 89
 HARDWARE_PLAY_BUTTON_ID = 88

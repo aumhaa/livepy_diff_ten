@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import has_event, NamedTuple, listenable_property, listens, listens_group, liveobj_valid, nop
+from ableton.v2.base import NamedTuple, has_event, listenable_property, listens, listens_group, liveobj_valid, nop
 from ableton.v2.control_surface import BANK_MAIN_KEY, Component
 from ableton.v2.control_surface.components import ItemProvider
-from ableton.v2.control_surface.control import control_list, ButtonControl
+from ableton.v2.control_surface.control import ButtonControl, control_list
 from .item_lister import ItemListerComponent
 
 class BankProvider(ItemProvider):

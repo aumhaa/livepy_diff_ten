@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
 import Live
+from ..base import BooleanContext, depends, is_iterable, lazy_attribute, task
 from .control import ControlManager
-from ..base import BooleanContext, depends, lazy_attribute, task, is_iterable
 
 class Component(ControlManager):
     __events__ = ('enabled', )

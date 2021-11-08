@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-from ableton.v2.base import listenable_property, listens, liveobj_valid, NamedTuple, EventObject, task
+from ableton.v2.base import EventObject, NamedTuple, listenable_property, listens, liveobj_valid, task
 from ableton.v2.control_surface.components import PlayableComponent
 from ableton.v2.control_surface.control import ButtonControl, control_matrix
 from .matrix_maps import NON_FEEDBACK_CHANNEL

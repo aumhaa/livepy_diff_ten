@@ -4,10 +4,10 @@ from past.utils import old_div
 from functools import partial
 from math import ceil, floor
 import Live
-from ..base import clamp, liveobj_valid, listenable_property, listens, sign, EventObject
+from ..base import EventObject, clamp, listenable_property, listens, liveobj_valid, sign
 from base.collection import IndexedDict
 from .decoration import LiveObjectDecorator
-from .internal_parameter import EnumWrappingParameter, RelativeInternalParameter, to_percentage_display, WrappingParameter
+from .internal_parameter import EnumWrappingParameter, RelativeInternalParameter, WrappingParameter, to_percentage_display
 BoolWrappingParameter = partial(WrappingParameter,
   to_property_value=(lambda integer, _simpler: bool(integer)),
   from_property_value=(lambda boolean, _simpler: int(boolean)),

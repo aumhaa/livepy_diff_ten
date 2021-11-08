@@ -1,10 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import map
-from ...base import depends, find_if, first, clamp, listens_group, listens, liveobj_changed, liveobj_valid
+from builtins import map, range
+from ...base import clamp, depends, find_if, first, listens, listens_group, liveobj_changed, liveobj_valid
 from ..control import ButtonControl
-from .slide import SlideComponent, Slideable
 from .playable import PlayableComponent
+from .slide import Slideable, SlideComponent
 BASE_DRUM_RACK_NOTE = 36
 
 class DrumGroupComponent(PlayableComponent, SlideComponent, Slideable):

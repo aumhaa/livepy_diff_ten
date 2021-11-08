@@ -1,13 +1,9 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import zip
-from builtins import map
-from builtins import str
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import map, range, str, zip
 from past.utils import old_div
 import Live
 from ableton.v2.base import flatten, listens, listens_group, liveobj_valid, old_hasattr, task
-from ableton.v2.control_surface import components, ParameterSlot
+from ableton.v2.control_surface import ParameterSlot, components
 from ableton.v2.control_surface.elements import DisplayDataSource
 from pushbase import consts
 from pushbase.consts import MessageBoxText

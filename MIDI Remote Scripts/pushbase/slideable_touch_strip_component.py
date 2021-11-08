@@ -1,11 +1,10 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import range
 from past.utils import old_div
 from math import ceil
 from ableton.v2.base import clamp, listens
 from ableton.v2.control_surface import Component
-from .touch_strip_element import DraggingBehaviour, MAX_PITCHBEND, SelectingBehaviour, TouchStripStates, TouchStripHandle
+from .touch_strip_element import MAX_PITCHBEND, DraggingBehaviour, SelectingBehaviour, TouchStripHandle, TouchStripStates
 
 class SlideableTouchStripComponent(Component):
 

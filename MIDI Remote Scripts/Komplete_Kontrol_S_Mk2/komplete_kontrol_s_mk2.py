@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from _Komplete_Kontrol.komplete_kontrol_base import NUM_TRACKS, KompleteKontrolBase, ButtonMatrixElement, Layer, create_button, create_encoder, create_sysex_element, sysex
 from _Komplete_Kontrol.control_element_util import create_slider_element
+from _Komplete_Kontrol.komplete_kontrol_base import NUM_TRACKS, ButtonMatrixElement, KompleteKontrolBase, Layer, create_button, create_encoder, create_sysex_element, sysex
 from .channel_strip_component import ChannelStripComponent
+from .meter_display_element import MeterDisplayElement
 from .mixer_component import MixerComponent
 from .session_ring_navigation_component import SessionRingNavigationComponent
 from .view_control_component import ViewControlComponent
-from .meter_display_element import MeterDisplayElement
 
 class Komplete_Kontrol_S_Mk2(KompleteKontrolBase):
     mixer_component_class = MixerComponent

@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
+from future.moves.itertools import zip_longest
 from past.utils import old_div
 from functools import partial
-from future.moves.itertools import zip_longest
-from ...base import clamp, first, second, mixin, old_hasattr, product, flatten, is_matrix, find_if
+from ...base import clamp, find_if, first, flatten, is_matrix, mixin, old_hasattr, product, second
 from .control import Connectable, Control
 from .radio_button import RadioButtonControl
 _DYNAMIC_CONTROL_COUNT = None
@@ -31,13 +31,13 @@ class ControlList(Control):
         @control_count.setter
         def control_count--- This code section failed: ---
 
- L.  73         0  LOAD_FAST                'count'
+ L.  72         0  LOAD_FAST                'count'
                 2  LOAD_GLOBAL              ControlList
                 4  LOAD_ATTR                DYNAMIC_CONTROL_COUNT
                 6  COMPARE_OP               ==
                 8  STORE_FAST               'dynamic_create'
 
- L.  75        10  LOAD_GLOBAL              len
+ L.  74        10  LOAD_GLOBAL              len
                12  LOAD_FAST                'self'
                14  LOAD_ATTR                _controls
                16  CALL_FUNCTION_1       1  '1 positional argument'
@@ -48,25 +48,25 @@ class ControlList(Control):
                26  POP_JUMP_IF_FALSE    38  'to 38'
              28_0  COME_FROM            22  '22'
 
- L.  76        28  LOAD_FAST                'self'
+ L.  75        28  LOAD_FAST                'self'
                30  LOAD_ATTR                _dynamic_create
                32  LOAD_FAST                'dynamic_create'
                34  COMPARE_OP               !=
                36  POP_JUMP_IF_FALSE    94  'to 94'
              38_0  COME_FROM            26  '26'
 
- L.  77        38  LOAD_FAST                'count'
+ L.  76        38  LOAD_FAST                'count'
                40  LOAD_GLOBAL              ControlList
                42  LOAD_ATTR                DYNAMIC_CONTROL_COUNT
                44  COMPARE_OP               ==
                46  LOAD_FAST                'self'
                48  STORE_ATTR               _dynamic_create
 
- L.  78        50  LOAD_FAST                'self'
+ L.  77        50  LOAD_FAST                'self'
                52  LOAD_ATTR                _dynamic_create
                54  POP_JUMP_IF_FALSE    76  'to 76'
 
- L.  79        56  LOAD_FAST                'self'
+ L.  78        56  LOAD_FAST                'self'
                58  LOAD_ATTR                _control_elements
                60  POP_JUMP_IF_FALSE    72  'to 72'
                62  LOAD_GLOBAL              len
@@ -80,13 +80,13 @@ class ControlList(Control):
                74  STORE_FAST               'count'
              76_0  COME_FROM            54  '54'
 
- L.  80        76  LOAD_FAST                'self'
+ L.  79        76  LOAD_FAST                'self'
                78  LOAD_METHOD              _create_controls
                80  LOAD_FAST                'count'
                82  CALL_METHOD_1         1  '1 positional argument'
                84  POP_TOP          
 
- L.  81        86  LOAD_FAST                'self'
+ L.  80        86  LOAD_FAST                'self'
                88  LOAD_METHOD              _update_controls
                90  CALL_METHOD_0         0  '0 positional arguments'
                92  POP_TOP          

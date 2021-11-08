@@ -1,30 +1,30 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-import _Framework.ControlSurface as ControlSurface
-import _Framework.ControlElement as ControlElement
-from _Framework.InputControlElement import *
-import _Framework.SliderElement as SliderElement
 import _Framework.ButtonElement as ButtonElement
-import _Framework.EncoderElement as EncoderElement
-import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
-import _Framework.LogicalDisplaySegment as LogicalDisplaySegment
-import _Framework.DisplayDataSource as DisplayDataSource
 import _Framework.ChannelStripComponent as ChannelStripComponent
-import _Framework.MixerComponent as MixerComponent
-import _Framework.TransportComponent as TransportComponent
-import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.ClipSlotComponent as ClipSlotComponent
+import _Framework.ControlElement as ControlElement
+import _Framework.ControlSurface as ControlSurface
+import _Framework.DisplayDataSource as DisplayDataSource
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import *
+import _Framework.LogicalDisplaySegment as LogicalDisplaySegment
+import _Framework.MixerComponent as MixerComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
+import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
 import _Framework.SceneComponent as SceneComponent
 import _Framework.SessionComponent as SessionComponent
-from .TransportViewModeSelector import TransportViewModeSelector
-from .SelectButtonModeSelector import SelectButtonModeSelector
-from .PageableDeviceComponent import PageableDeviceComponent
+import _Framework.SliderElement as SliderElement
+import _Framework.TransportComponent as TransportComponent
+from .DisplayingMixerComponent import DisplayingMixerComponent
 from .EncoderMixerModeSelector import EncoderMixerModeSelector
 from .MixerOrDeviceModeSelector import MixerOrDeviceModeSelector
 from .NotifyingMixerComponent import NotifyingMixerComponent
-from .DisplayingMixerComponent import DisplayingMixerComponent
+from .PageableDeviceComponent import PageableDeviceComponent
 from .PeekableEncoderElement import PeekableEncoderElement
+from .SelectButtonModeSelector import SelectButtonModeSelector
+from .TransportViewModeSelector import TransportViewModeSelector
 SYSEX_START = (240, 0, 1, 5, 32, 127)
 PAD_TRANSLATIONS = ((0, 2, 85, 15), (1, 2, 86, 15), (2, 2, 87, 15), (3, 2, 88, 15),
                     (0, 3, 81, 15), (1, 3, 82, 15), (2, 3, 83, 15), (3, 3, 84, 15))

@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-import _Framework.TransportComponent as TransportComponent
-from _Framework.InputControlElement import *
 import _Framework.ButtonElement as ButtonElement
 import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import *
+import _Framework.TransportComponent as TransportComponent
 
 class SpecialTransportComponent(TransportComponent):
 

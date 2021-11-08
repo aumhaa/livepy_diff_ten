@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.SubjectSlot import Subject, subject_slot, subject_slot_group
 import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
+from _Framework.SubjectSlot import Subject, subject_slot, subject_slot_group
 
 class TargetTrackComponent(ControlSurfaceComponent, Subject):
     __subject_events__ = ('target_track', )

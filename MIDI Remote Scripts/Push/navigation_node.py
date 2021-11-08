@@ -1,11 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import zip
-from builtins import map
-from builtins import filter
-from builtins import range
+from builtins import filter, map, range, zip
 from functools import partial
 import Live.DrumPad, Live.Song, Live.Track
-from ableton.v2.base import compose, depends, find_if, flatten, index_if, in_range, listens, listens_group, liveobj_changed, liveobj_valid, second, EventObject, listenable_property
+from ableton.v2.base import EventObject, compose, depends, find_if, flatten, in_range, index_if, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, second
 from ableton.v2.control_surface import select_and_appoint_device
 from pushbase import consts
 DeviceType = Live.Device.DeviceType

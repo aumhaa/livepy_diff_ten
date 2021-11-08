@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-import _Framework.ControlSurface as ControlSurface
-import _Framework.Layer as Layer
-import _Framework.EncoderElement as EncoderElement
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
-from _Framework.InputControlElement import MIDI_CC_TYPE
+import _Framework.ControlSurface as ControlSurface
 import _Framework.DeviceComponent as DeviceComponent
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE
+import _Framework.Layer as Layer
 
 class Alesis_V(ControlSurface):
 

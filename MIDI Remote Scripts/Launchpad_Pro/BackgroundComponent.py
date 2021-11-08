@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.SubjectSlot import SubjectSlotError
 import _Framework.BackgroundComponent as BackgroundComponentBase
+from _Framework.SubjectSlot import SubjectSlotError
 
 class BackgroundComponent(BackgroundComponentBase):
 

@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from past.utils import old_div
 from ...base import EventObject
-from ..input_control_element import InputControlElement, MIDI_INVALID_TYPE
+from ..input_control_element import MIDI_INVALID_TYPE, InputControlElement
 from .button import ButtonElement
 from .slider import SliderElement
 

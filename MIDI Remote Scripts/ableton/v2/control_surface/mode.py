@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.utils import iteritems
-from ..base import depends, infinite_context_manager, listens, is_contextmanager, is_iterable, lazy_attribute, listenable_property, NamedTuple, old_hasattr, task
+from ..base import NamedTuple, depends, infinite_context_manager, is_contextmanager, is_iterable, lazy_attribute, listenable_property, listens, old_hasattr, task
 from . import defaults
-from .layer import Layer, CompoundLayer
-from .resource import StackingResource
 from .component import Component
-from .control import control_color, ButtonControl, ButtonControlBase
+from .control import ButtonControl, ButtonControlBase, control_color
+from .layer import CompoundLayer, Layer
+from .resource import StackingResource
 
 def tomode(thing):
     if thing is None:

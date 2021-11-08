@@ -1,14 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 from past.utils import old_div
 from itertools import count
 from ableton.v2.base import forward_property, listens_group
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ButtonControl
-from ableton.v2.control_surface.elements import adjust_string, DisplayDataSource
-from pushbase.user_component import UserComponentBase
+from ableton.v2.control_surface.elements import DisplayDataSource, adjust_string
 from pushbase import consts
+from pushbase.user_component import UserComponentBase
 
 def combine_strings(string1, string2, length):
     part_length = old_div(length - 1, 2)

@@ -1,9 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from past.builtins import cmp
-from builtins import str
-from builtins import range
-from builtins import object
+from builtins import object, range, str
 from future.utils import string_types
+from past.builtins import cmp
 import logging
 from ableton.v2.base import old_hasattr
 logger = logging.getLogger(__name__)

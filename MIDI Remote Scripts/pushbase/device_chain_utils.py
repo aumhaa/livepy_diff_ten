@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import Live
-from itertools import chain
 from functools import partial
+from itertools import chain
+import Live
 from ableton.v2.base import find_if, liveobj_valid
 
 def is_empty_drum_pad(drum_pad):

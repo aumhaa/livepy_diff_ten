@@ -1,17 +1,17 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import map
-from builtins import round
-from builtins import str
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import map, round, str
 from past.utils import old_div
-from itertools import chain
 from contextlib import contextmanager
+from itertools import chain
 from MidiRemoteScript import MutableVector
-from ableton.v2.base import listens, listens_group, liveobj_valid, listenable_property, old_hasattr, task
+from ableton.v2.base import listenable_property, listens, listens_group, liveobj_valid, old_hasattr, task
 from ableton.v2.control_surface import Component, WrappingParameter
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl, MappedSensitivitySettingControl, ToggleButtonControl
 from ableton.v2.control_surface.mode import ModesComponent
-from pushbase.clip_control_component import convert_beat_length_to_bars_beats_sixteenths, convert_beat_time_to_bars_beats_sixteenths, LoopSettingsControllerComponent as LoopSettingsControllerComponentBase, AudioClipSettingsControllerComponent as AudioClipSettingsControllerComponentBase, ONE_YEAR_AT_120BPM_IN_BEATS, WARP_MODE_NAMES
+from pushbase.clip_control_component import ONE_YEAR_AT_120BPM_IN_BEATS, WARP_MODE_NAMES
+import pushbase.clip_control_component as AudioClipSettingsControllerComponentBase
+import pushbase.clip_control_component as LoopSettingsControllerComponentBase
+from pushbase.clip_control_component import convert_beat_length_to_bars_beats_sixteenths, convert_beat_time_to_bars_beats_sixteenths
 from pushbase.note_editor_component import DEFAULT_START_NOTE
 from .clip_decoration import ClipDecoratorFactory
 from .colors import COLOR_INDEX_TO_SCREEN_COLOR

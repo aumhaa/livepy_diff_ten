@@ -3,7 +3,7 @@ from builtins import range
 from ableton.v2.control_surface import PrioritizedResource
 from ableton.v2.control_surface.elements import ButtonMatrixElement, ComboElement, SysexElement
 from novation import sysex
-from novation.launchpad_elements import create_button, create_slider, LaunchpadElements, SESSION_WIDTH, BUTTON_FADER_COLOR_CHANNEL
+from novation.launchpad_elements import BUTTON_FADER_COLOR_CHANNEL, SESSION_WIDTH, LaunchpadElements, create_button, create_slider
 from . import sysex_ids as ids
 FADER_MODES = [
  'volume', 'pan', 'sends', 'device']

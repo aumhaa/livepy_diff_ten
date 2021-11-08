@@ -1,22 +1,20 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import map
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import map, range
 from past.utils import old_div
+from functools import partial
 import Live
-import _Framework.ControlSurface as ControlSurface
-import _Framework.Layer as Layer
-from _Framework.InputControlElement import MIDI_CC_TYPE
-import _Framework.SliderElement as SliderElement
-import _Framework.EncoderElement as EncoderElement
 import _Framework.ButtonElement as ButtonElement
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
+import _Framework.ControlSurface as ControlSurface
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE
+import _Framework.Layer as Layer
 import _Framework.MixerComponent as MixerComponent
-import _Framework.TransportComponent as TransportComponent
 import _Framework.SessionComponent as SessionComponent
-from .CuePointControlComponent import CuePointControlComponent
+import _Framework.SliderElement as SliderElement
+import _Framework.TransportComponent as TransportComponent
 from .CombinedButtonsElement import CombinedButtonsElement
-from functools import partial
+from .CuePointControlComponent import CuePointControlComponent
 NUM_CHANNEL_STRIPS = 16
 pads = [
  1, 2, 3, 4, 9, 10, 11, 12, 5, 6, 7, 8, 13, 14, 15, 16]

@@ -1,15 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
+import _Framework.ButtonElement as ButtonElement
+import _Framework.ButtonMatrixElement as ButtonMatrixElement
 import _Framework.ControlSurface as ControlSurface
-import _Framework.Layer as Layer
 import _Framework.DeviceComponent as DeviceComponent
 import _Framework.DrumRackComponent as DrumRackComponent
-import _Framework.TransportComponent as TransportComponent
-from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
-import _Framework.ButtonMatrixElement as ButtonMatrixElement
-import _Framework.ButtonElement as ButtonElement
 import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
+import _Framework.Layer as Layer
+import _Framework.TransportComponent as TransportComponent
 PAD_CHANNEL = 1
 PAD_IDS = ((81, 83, 84, 86), (74, 76, 77, 79), (67, 69, 71, 72), (60, 62, 64, 65))
 

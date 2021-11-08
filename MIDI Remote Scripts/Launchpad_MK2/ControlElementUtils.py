@@ -1,9 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.Dependency import depends
-from _Framework.Resource import PrioritizedResource
-from _Framework.InputControlElement import MIDI_NOTE_TYPE
-from _Framework.ComboElement import ComboElement, MultiElement as MultiElementBase
 import _Framework.ButtonElement as ButtonElement
+import _Framework.ComboElement as ComboElement
+import _Framework.ComboElement as MultiElementBase
+from _Framework.Dependency import depends
+from _Framework.InputControlElement import MIDI_NOTE_TYPE
+from _Framework.Resource import PrioritizedResource
 
 @depends(skin=None)
 def make_button(identifier, channel, name, msg_type=MIDI_NOTE_TYPE, skin=None, is_modifier=False):

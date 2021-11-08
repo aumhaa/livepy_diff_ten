@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from _Framework.Dependency import depends
-from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
-import _Framework.ButtonMatrixElement as ButtonMatrixElement
 import _Framework.ButtonElement as ButtonElement
-import _Framework.SliderElement as SliderElement
+import _Framework.ButtonMatrixElement as ButtonMatrixElement
+from _Framework.Dependency import depends
 import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
+import _Framework.SliderElement as SliderElement
 
 @depends(skin=None)
 def make_button(identifier, name, skin=None):

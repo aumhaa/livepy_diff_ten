@@ -296,33 +296,33 @@ class ChannelStripComponent(ControlSurfaceComponent):
 
     def update_solo_state--- This code section failed: ---
 
- L. 378         0  LOAD_FAST                'track'
+ L. 379         0  LOAD_FAST                'track'
                 2  LOAD_FAST                'self'
                 4  LOAD_ATTR                _track
                 6  COMPARE_OP               ==
                 8  POP_JUMP_IF_TRUE     20  'to 20'
 
- L. 379        10  LOAD_FAST                'respect_multi_selection'
+ L. 380        10  LOAD_FAST                'respect_multi_selection'
                12  POP_JUMP_IF_FALSE    28  'to 28'
                14  LOAD_FAST                'track'
                16  LOAD_ATTR                is_part_of_selection
                18  POP_JUMP_IF_FALSE    28  'to 28'
              20_0  COME_FROM             8  '8'
 
- L. 381        20  LOAD_FAST                'new_value'
+ L. 382        20  LOAD_FAST                'new_value'
                22  LOAD_FAST                'track'
                24  STORE_ATTR               solo
                26  JUMP_FORWARD         44  'to 44'
              28_0  COME_FROM            18  '18'
              28_1  COME_FROM            12  '12'
 
- L. 382        28  LOAD_FAST                'solo_exclusive'
+ L. 383        28  LOAD_FAST                'solo_exclusive'
                30  POP_JUMP_IF_FALSE    44  'to 44'
                32  LOAD_FAST                'track'
                34  LOAD_ATTR                solo
                36  POP_JUMP_IF_FALSE    44  'to 44'
 
- L. 383        38  LOAD_CONST               False
+ L. 384        38  LOAD_CONST               False
                40  LOAD_FAST                'track'
                42  STORE_ATTR               solo
              44_0  COME_FROM            36  '36'
@@ -345,12 +345,12 @@ Parse error at or near `COME_FROM' instruction at offset 44_1
 
     def _arm_value--- This code section failed: ---
 
- L. 417         0  LOAD_FAST                'self'
+ L. 418         0  LOAD_FAST                'self'
                 2  LOAD_METHOD              is_enabled
                 4  CALL_METHOD_0         0  '0 positional arguments'
                 6  POP_JUMP_IF_FALSE   206  'to 206'
 
- L. 418         8  LOAD_FAST                'self'
+ L. 419         8  LOAD_FAST                'self'
                10  LOAD_ATTR                _track
                12  LOAD_CONST               None
                14  COMPARE_OP               !=
@@ -360,7 +360,7 @@ Parse error at or near `COME_FROM' instruction at offset 44_1
                22  LOAD_ATTR                can_be_armed
                24  POP_JUMP_IF_FALSE   206  'to 206'
 
- L. 419        26  LOAD_FAST                'value'
+ L. 420        26  LOAD_FAST                'value'
                28  LOAD_CONST               0
                30  COMPARE_OP               !=
                32  JUMP_IF_FALSE_OR_POP    42  'to 42'
@@ -372,7 +372,7 @@ Parse error at or near `COME_FROM' instruction at offset 44_1
                42  LOAD_FAST                'self'
                44  STORE_ATTR               _arm_pressed
 
- L. 421        46  LOAD_FAST                'self'
+ L. 422        46  LOAD_FAST                'self'
                48  LOAD_ATTR                _arm_button
                50  LOAD_METHOD              is_momentary
                52  CALL_METHOD_0         0  '0 positional arguments'
@@ -383,7 +383,7 @@ Parse error at or near `COME_FROM' instruction at offset 44_1
                62  POP_JUMP_IF_FALSE   206  'to 206'
              64_0  COME_FROM            54  '54'
 
- L. 422        64  LOAD_FAST                'self'
+ L. 423        64  LOAD_FAST                'self'
                66  LOAD_ATTR                _arm_pressed
                68  POP_JUMP_IF_FALSE    74  'to 74'
                70  LOAD_CONST               1
@@ -393,7 +393,7 @@ Parse error at or near `COME_FROM' instruction at offset 44_1
              76_0  COME_FROM            72  '72'
                76  STORE_FAST               'expected_arms_pressed'
 
- L. 425        78  LOAD_FAST                'self'
+ L. 426        78  LOAD_FAST                'self'
                80  LOAD_METHOD              song
                82  CALL_METHOD_0         0  '0 positional arguments'
                84  LOAD_ATTR                exclusive_arm
@@ -402,35 +402,35 @@ Parse error at or near `COME_FROM' instruction at offset 44_1
                90  COMPARE_OP               !=
                92  JUMP_IF_FALSE_OR_POP   116  'to 116'
 
- L. 427        94  LOAD_FAST                'self'
+ L. 428        94  LOAD_FAST                'self'
                96  LOAD_ATTR                _arm_button
                98  LOAD_METHOD              is_momentary
               100  CALL_METHOD_0         0  '0 positional arguments'
               102  UNARY_NOT        
               104  JUMP_IF_TRUE_OR_POP   116  'to 116'
 
- L. 428       106  LOAD_GLOBAL              ChannelStripComponent
+ L. 429       106  LOAD_GLOBAL              ChannelStripComponent
               108  LOAD_METHOD              number_of_arms_pressed
               110  CALL_METHOD_0         0  '0 positional arguments'
 
- L. 429       112  LOAD_FAST                'expected_arms_pressed'
+ L. 430       112  LOAD_FAST                'expected_arms_pressed'
               114  COMPARE_OP               ==
             116_0  COME_FROM           104  '104'
             116_1  COME_FROM            92  '92'
               116  STORE_FAST               'arm_exclusive'
 
- L. 432       118  LOAD_FAST                'self'
+ L. 433       118  LOAD_FAST                'self'
               120  LOAD_ATTR                _track
               122  LOAD_ATTR                arm
               124  UNARY_NOT        
               126  STORE_FAST               'new_value'
 
- L. 433       128  LOAD_FAST                'self'
+ L. 434       128  LOAD_FAST                'self'
               130  LOAD_ATTR                _track
               132  LOAD_ATTR                is_part_of_selection
               134  STORE_FAST               'respect_multi_selection'
 
- L. 436       136  SETUP_LOOP          206  'to 206'
+ L. 437       136  SETUP_LOOP          206  'to 206'
               138  LOAD_FAST                'self'
               140  LOAD_METHOD              song
               142  CALL_METHOD_0         0  '0 positional arguments'
@@ -444,37 +444,37 @@ Parse error at or near `COME_FROM' instruction at offset 44_1
               148  FOR_ITER            204  'to 204'
               150  STORE_FAST               'track'
 
- L. 437       152  LOAD_FAST                'track'
+ L. 438       152  LOAD_FAST                'track'
               154  LOAD_ATTR                can_be_armed
               156  POP_JUMP_IF_FALSE_BACK   148  'to 148'
 
- L. 438       158  LOAD_FAST                'track'
+ L. 439       158  LOAD_FAST                'track'
               160  LOAD_FAST                'self'
               162  LOAD_ATTR                _track
               164  COMPARE_OP               ==
               166  POP_JUMP_IF_TRUE    178  'to 178'
 
- L. 439       168  LOAD_FAST                'respect_multi_selection'
+ L. 440       168  LOAD_FAST                'respect_multi_selection'
               170  POP_JUMP_IF_FALSE   186  'to 186'
               172  LOAD_FAST                'track'
               174  LOAD_ATTR                is_part_of_selection
               176  POP_JUMP_IF_FALSE   186  'to 186'
             178_0  COME_FROM           166  '166'
 
- L. 441       178  LOAD_FAST                'new_value'
+ L. 442       178  LOAD_FAST                'new_value'
               180  LOAD_FAST                'track'
               182  STORE_ATTR               arm
               184  JUMP_BACK           148  'to 148'
             186_0  COME_FROM           176  '176'
             186_1  COME_FROM           170  '170'
 
- L. 443       186  LOAD_FAST                'arm_exclusive'
+ L. 444       186  LOAD_FAST                'arm_exclusive'
               188  POP_JUMP_IF_FALSE_BACK   148  'to 148'
               190  LOAD_FAST                'track'
               192  LOAD_ATTR                arm
               194  POP_JUMP_IF_FALSE_BACK   148  'to 148'
 
- L. 444       196  LOAD_CONST               False
+ L. 445       196  LOAD_CONST               False
               198  LOAD_FAST                'track'
               200  STORE_ATTR               arm
               202  JUMP_BACK           148  'to 148'

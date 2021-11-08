@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import _Framework.ButtonMatrixElement as ButtonMatrixElement
 from _Framework.ButtonElement import OFF_VALUE
-from _Framework.Util import const, BooleanContext
+import _Framework.ButtonMatrixElement as ButtonMatrixElement
+from _Framework.Util import BooleanContext, const
 
 class CombinedButtonsElement(ButtonMatrixElement):
 

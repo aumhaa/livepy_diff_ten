@@ -1,13 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from functools import partial
 from future.moves.itertools import zip_longest
-from _Framework.Util import clamp
+from functools import partial
+import _Framework.ChannelStripComponent as ChannelStripComponent
+from _Framework.Control import ControlList, RadioButtonControl, RadioButtonGroup
 from _Framework.Dependency import depends
 import _Framework.MixerComponent as MixerComponent
-import _Framework.ChannelStripComponent as ChannelStripComponent
-from _Framework.Control import RadioButtonControl, RadioButtonGroup, ControlList
-from .consts import FADER_TYPE_STANDARD, FADER_TYPE_BIPOLAR, VOLUME_MAP_CHANNEL, PAN_MAP_CHANNEL, SENDS_MAP_CHANNEL, FADER_LAYOUT_SYSEX_BYTE
+from _Framework.Util import clamp
+from .consts import FADER_LAYOUT_SYSEX_BYTE, FADER_TYPE_BIPOLAR, FADER_TYPE_STANDARD, PAN_MAP_CHANNEL, SENDS_MAP_CHANNEL, VOLUME_MAP_CHANNEL
 SEND_COLORS = (('Sends.A', 'Sends.AAvail'), ('Sends.B', 'Sends.BAvail'), ('Sends.C', 'Sends.CAvail'),
                ('Sends.D', 'Sends.DAvail'), ('Sends.E', 'Sends.EAvail'), ('Sends.F', 'Sends.FAvail'),
                ('Sends.G', 'Sends.GAvail'), ('Sends.H', 'Sends.HAvail'))

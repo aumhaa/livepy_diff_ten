@@ -1,7 +1,6 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from past.utils import old_div
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import object
+from past.utils import old_div
 import math
 from .colors import COLOR_INDEX_TO_SCREEN_COLOR, COLOR_INDEX_TO_SCREEN_COLOR_SHADES
 

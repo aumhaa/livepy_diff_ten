@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import logging
-from ...base import clamp, const, lazy_attribute, old_hasattr, task, sign
+from ...base import clamp, const, lazy_attribute, old_hasattr, sign, task
 from .control import Connectable, InputControl, SendValueMixin, control_event
 logger = logging.getLogger(__name__)
 __all__ = ('EncoderControl', 'StepEncoderControl', 'ListValueEncoderControl', 'ListIndexEncoderControl',

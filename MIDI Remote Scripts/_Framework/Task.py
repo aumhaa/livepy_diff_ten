@@ -1,13 +1,11 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import next
-from builtins import map
-from builtins import str
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import map, next, object, str
 from past.utils import old_div
-from builtins import object
 import functools, traceback
 from .Dependency import depends
-from .Util import remove_if, find_if, linear as linear_fn, print_message, const, nop
+from .Util import const, find_if
+from .Util import linear as linear_fn
+from .Util import nop, print_message, remove_if
 
 class TaskError(Exception):
     pass

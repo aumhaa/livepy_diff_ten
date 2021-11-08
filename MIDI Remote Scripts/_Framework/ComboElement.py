@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import PY3
 from contextlib import contextmanager
-from . import Task, Defaults
+from ableton.v2.base import PY3
+from . import Defaults, Task
 from .ButtonElement import ButtonElementMixin
 from .CompoundElement import CompoundElement
 from .Dependency import depends

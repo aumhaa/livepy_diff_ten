@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ...base import task
 from .. import defaults
-from ..control import ButtonControl
 from ..component import Component
+from ..control import ButtonControl
 
 class Scrollable(object):
 

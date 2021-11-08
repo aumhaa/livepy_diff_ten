@@ -1,13 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import object
+from builtins import map, object
 import os
 from functools import partial
 from itertools import chain
 import Live
-from ableton.v2.base import first, nop, find_if, index_if, in_range, lazy_attribute, BooleanContext, EventObject
-from pushbase.scrollable_list import ActionList, ActionListItem
+from ableton.v2.base import BooleanContext, EventObject, find_if, first, in_range, index_if, lazy_attribute, nop
 from pushbase.browser_util import filter_type_for_hotswap_target
+from pushbase.scrollable_list import ActionList, ActionListItem
 from .special_physical_display import SpecialPhysicalDisplay
 
 def filter_type_for_browser(browser):

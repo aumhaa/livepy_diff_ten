@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import range
-from ...base import in_range, product, const, slicer, to_slice
+from builtins import map, range
+from ...base import const, in_range, product, slicer, to_slice
 from ..compound_element import CompoundElement
 
 class ButtonMatrixElement(CompoundElement):

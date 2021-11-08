@@ -1,11 +1,10 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from past.utils import old_div
 from functools import partial
 import Live
-from ableton.v2.base import EventObject, listens, listenable_property, task
+from ableton.v2.base import EventObject, listenable_property, listens, task
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.control import RadioButtonControl, TextDisplayControl, ToggleButtonControl, ButtonControl, control_list
+from ableton.v2.control_surface.control import ButtonControl, RadioButtonControl, TextDisplayControl, ToggleButtonControl, control_list
 from . import consts
 from .message_box_component import Messenger
 Quantization = Live.Song.Quantization

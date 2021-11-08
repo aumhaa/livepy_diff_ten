@@ -1,15 +1,13 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import range
-from past.utils import old_div
-from builtins import object
-from functools import partial
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import object, range
 from future.moves.itertools import zip_longest
+from past.utils import old_div
+from functools import partial
 from ableton.v2.base import old_hasattr
 from . import Task
 from .Defaults import MOMENTARY_DELAY
 from .SubjectSlot import SlotManager
-from .Util import clamp, lazy_attribute, mixin, nop, first, second, is_matrix, flatten, product
+from .Util import clamp, first, flatten, is_matrix, lazy_attribute, mixin, nop, product, second
 
 class ControlManager(SlotManager):
 

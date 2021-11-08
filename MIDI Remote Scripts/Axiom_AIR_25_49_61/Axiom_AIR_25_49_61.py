@@ -1,30 +1,28 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import range, str
 from past.utils import old_div
 import Live
 from Live import MidiMap
-import _Framework.ControlSurface as ControlSurface
-from _Framework.InputControlElement import InputControlElement, MIDI_CC_TYPE, MIDI_NOTE_TYPE
 import _Framework.ButtonElement as ButtonElement
-import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
+import _Framework.ControlSurface as ControlSurface
 import _Framework.DisplayDataSource as DisplayDataSource
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE, InputControlElement
+import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
 import _Framework.TransportComponent as TransportComponent
-from .ConfigurableButtonElement import ConfigurableButtonElement
-from .IdentifyingEncoderElement import IdentifyingEncoderElement
-from .NumericalDisplayElement import NumericalDisplayElement
-from .FaderModeSelector import FaderModeSelector
-from .FaderButtonModeSelector import FaderButtonModeSelector
-from .SingleFaderButtonModeSelector import SingleFaderButtonModeSelector
-from .EncoderModeSelector import EncoderModeSelector
-from .MainModeSelector import MainModeSelector
-from .DeviceNavComponent import DeviceNavComponent
-from .SpecialSessionComponent import SpecialSessionComponent
-from .SpecialMixerComponent import SpecialMixerComponent
 from .BestBankDeviceComponent import BestBankDeviceComponent
-from .TransportViewModeSelector import TransportViewModeSelector
+from .ConfigurableButtonElement import ConfigurableButtonElement
 from .consts import *
+from .DeviceNavComponent import DeviceNavComponent
+from .EncoderModeSelector import EncoderModeSelector
+from .FaderButtonModeSelector import FaderButtonModeSelector
+from .FaderModeSelector import FaderModeSelector
+from .IdentifyingEncoderElement import IdentifyingEncoderElement
+from .MainModeSelector import MainModeSelector
+from .NumericalDisplayElement import NumericalDisplayElement
+from .SingleFaderButtonModeSelector import SingleFaderButtonModeSelector
+from .SpecialMixerComponent import SpecialMixerComponent
+from .SpecialSessionComponent import SpecialSessionComponent
+from .TransportViewModeSelector import TransportViewModeSelector
 
 def create_configurable_button(identifier, name, send_channel_offset=0, identifier_send_offset=0, send_msg_type=None):
     button = ConfigurableButtonElement(IS_MOMENTARY, MIDI_CC_TYPE, GLOBAL_CHANNEL, identifier, GLOBAL_SEND_CHANNEL + send_channel_offset, identifier_send_offset, send_msg_type)

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import _APC.MixerComponent as MixerComponentBase
-import _APC.MixerComponent as ChanStripComponentBase
 from _Framework.Util import nop
+import _APC.MixerComponent as ChanStripComponentBase
+import _APC.MixerComponent as MixerComponentBase
 
 class ChanStripComponent(ChanStripComponentBase):
 

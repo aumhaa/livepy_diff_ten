@@ -1,24 +1,21 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import filter
-from builtins import str
-from builtins import map
-from builtins import range
-from functools import partial, wraps
+from builtins import filter, map, range, str
 from future.utils import string_types
-from itertools import chain
+import logging, traceback
 from contextlib import contextmanager
-import logging, traceback, Live
+from functools import partial, wraps
+from itertools import chain
+import Live
 from ableton.v2.base import old_hasattr
-from . import Defaults
-from . import Task
+from . import Defaults, Task
 from .ControlElement import OptimizedOwnershipHandler
 from .Dependency import inject
-from .InputControlElement import InputControlElement, MIDI_CC_TYPE, MIDI_PB_TYPE, MIDI_NOTE_TYPE, MIDI_SYSEX_TYPE, MIDI_PB_STATUS
+from .InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_STATUS, MIDI_PB_TYPE, MIDI_SYSEX_TYPE, InputControlElement
+from .MessageScheduler import MessageScheduler
 from .PhysicalDisplayElement import PhysicalDisplayElement
 from .Profile import profile
 from .SubjectSlot import SlotManager, Subject
-from .Util import BooleanContext, first, find_if, const, in_range
-from .MessageScheduler import MessageScheduler
+from .Util import BooleanContext, const, find_if, first, in_range
 logger = logging.getLogger(__name__)
 
 def _scheduled_method(method):

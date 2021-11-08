@@ -3,18 +3,18 @@ from ableton.v2.base import depends, listenable_property, listens, liveobj_chang
 from ableton.v2.control_surface.mode import ModesComponent
 from .auto_filter import AutoFilterDeviceComponent
 from .channel_eq import ChannelEqDeviceComponent
-from .compressor import CompressorDeviceComponent
 from .chorus2 import Chorus2DeviceComponent
+from .compressor import CompressorDeviceComponent
 from .corpus import CorpusDeviceComponent
 from .delay import DelayDeviceComponent
+from .device_component import GenericDeviceComponent
 from .echo import EchoDeviceComponent
 from .eq8 import Eq8DeviceComponent
+from .hybrid_reverb import HybridReverbDeviceComponent
 from .operator import OperatorDeviceComponent
+from .real_time_channel import RealTimeDataComponent
 from .simpler import SimplerDeviceComponent
 from .wavetable import WavetableDeviceComponent
-from .hybrid_reverb import HybridReverbDeviceComponent
-from .device_component import GenericDeviceComponent
-from .real_time_channel import RealTimeDataComponent
 DEVICE_COMPONENT_MODES = {'Generic':GenericDeviceComponent, 
  'OriginalSimpler':SimplerDeviceComponent, 
  'Eq8':Eq8DeviceComponent, 

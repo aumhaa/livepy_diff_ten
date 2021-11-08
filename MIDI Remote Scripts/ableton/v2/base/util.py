@@ -1,14 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from future.builtins import range
+from future.builtins import map, range
 from future.moves.itertools import zip_longest
 from future.utils import iteritems
-from future.builtins import map
-from math import ceil, floor
-from contextlib import contextmanager
-from functools import wraps, partial, reduce
-from itertools import chain
-from numbers import Number
 import sys
+from contextlib import contextmanager
+from functools import partial, reduce, wraps
+from itertools import chain
+from math import ceil, floor
+from numbers import Number
 PY2 = sys.version_info[0] < 3
 PY3 = sys.version_info[0] >= 3
 
@@ -477,8 +476,9 @@ def print_message(*messages):
 
 def old_hasattr(obj, attr):
     try:
-        return hasattr(obj, attr)
-    except RuntimeError:
+        getattr(obj, attr)
+        return True
+    except Exception:
         return False
 
 

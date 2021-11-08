@@ -1,19 +1,18 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import range
 from past.utils import old_div
 from functools import partial
 import Live
 from ableton.v2.base import clamp, listens, liveobj_valid, nop
-from ableton.v2.control_surface import ControlSurface, Layer, MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_TYPE, PercussionInstrumentFinder
+from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_TYPE, ControlSurface, Layer, PercussionInstrumentFinder
 from ableton.v2.control_surface.components import DrumGroupComponent, SessionComponent, SessionNavigationComponent, SessionRingComponent
 from ableton.v2.control_surface.elements import ButtonMatrixElement, EncoderElement, SysexElement
 from ableton.v2.control_surface.midi import CC_STATUS
 from ableton.v2.control_surface.mode import LayerMode
 from .button import ButtonElement
 from .colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE, Rgb
-from .mode import ModesComponent
 from .element_translator import ElementTranslator
+from .mode import ModesComponent
 from .skin import skin
 from .target_track_provider import TargetTrackProvider
 NUM_TRACKS = 4

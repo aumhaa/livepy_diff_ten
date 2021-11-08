@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
+from _Generic.Devices import get_parameter_by_name
 import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 import _Framework.EncoderElement as EncoderElement
-from _Generic.Devices import get_parameter_by_name
 FILTER_DEVICES = {'AutoFilter':{'Frequency':'Frequency', 
   'Resonance':'Resonance'}, 
  'Operator':{'Frequency':'Filter Freq', 

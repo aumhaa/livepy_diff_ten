@@ -1,15 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import object
+from builtins import object, range
+import Live, MidiRemoteScript
+from .ChannelStrip import ChannelStrip, MasterChannelStrip
+from .ChannelStripController import ChannelStripController
 from .consts import *
 from .MainDisplay import MainDisplay
 from .MainDisplayController import MainDisplayController
-from .TimeDisplay import TimeDisplay
-from .ChannelStrip import ChannelStrip, MasterChannelStrip
-from .ChannelStripController import ChannelStripController
 from .SoftwareController import SoftwareController
+from .TimeDisplay import TimeDisplay
 from .Transport import Transport
-import Live, MidiRemoteScript
 
 class MackieControl(object):
 

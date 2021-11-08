@@ -5,8 +5,8 @@ from ableton.v2.control_surface import Layer, SessionRingSelectionLinking
 from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, UndoRedoComponent
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode
 from novation import sysex
-from novation.instrument_control import InstrumentControlMixin
 from novation.clip_actions import ClipActionsComponent
+from novation.instrument_control import InstrumentControlMixin
 from novation.launchkey_drum_group import DrumGroupComponent
 from novation.launchkey_elements import SESSION_HEIGHT
 from novation.mode import ModesComponent
@@ -70,7 +70,6 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
         self._create_notification()
         self._create_view_control()
         self._create_transport()
-        self._create_recording_modes()
         self._create_undo()
         self._create_quantization()
         self._create_device()
@@ -78,6 +77,7 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
         self._pot_modes = self._create_pot_or_fader_modes('pot')
         self._create_stop_solo_mute_modes()
         self._create_pad_modes()
+        self._create_recording_modes()
         if not self._is_small_model:
             self._fader_modes = self._create_pot_or_fader_modes('fader')
             self._setup_master_fader()
@@ -138,6 +138,12 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
           metronome_button='click_button',
           capture_midi_button='capture_midi_button'))
         self._transport.set_enabled(True)
+
+    def _create_recording_modes(self):
+        super(Launchkey_MK3, self)._create_recording_modes()
+        self._recording_modes.add_mode('arrange', AddLayerMode(self._transport, Layer(record_button='record_button')))
+        self._Launchkey_MK3__on_main_view_changed.subject = self.application.view
+        self._select_recording_mode()
 
     def _create_undo(self):
         self._undo = UndoRedoComponent(name='Undo',
@@ -270,9 +276,19 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
         self._Launchkey_MK3__on_pad_mode_changed.subject = self._pad_modes
         self._Launchkey_MK3__on_pad_mode_byte_changed.subject = self._pad_modes
 
+    def _select_recording_mode(self):
+        if self.application.view.is_view_visible('Session'):
+            self._recording_modes.selected_mode = 'track' if self._pad_modes.selected_mode == 'drum' else 'session'
+        else:
+            self._recording_modes.selected_mode = 'arrange'
+
+    @listens('is_view_visible', 'Session')
+    def __on_main_view_changed(self):
+        self._select_recording_mode()
+
     @listens('selected_mode')
     def __on_pad_mode_changed(self, mode):
-        self._recording_modes.selected_mode = 'track' if mode == 'drum' else 'session'
+        self._select_recording_mode()
         self._update_controlled_track()
 
     @listens('selected_mode')

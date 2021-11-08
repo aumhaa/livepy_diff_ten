@@ -3,24 +3,37 @@ from builtins import filter
 from ...base import listens, listens_group, task
 from ...control_surface import Component
 
-class AutoArmComponent(Component):
+class AutoArmBase(Component):
     active_instances = []
     active_push_instances = []
 
     def __init__(self, *a, **k):
+        (super(AutoArmBase, self).__init__)(*a, **k)
+        self.active_instances.append(self)
+        self._update_implicit_arm_task = self._tasks.add(task.run(self._update_implicit_arm))
+
+    def disconnect(self):
+        self.active_instances.remove(self)
+        if self.active_instances or (self.active_push_instances):
+            self._update_implicit_arm_task.restart()
+        super(AutoArmBase, self).disconnect()
+
+    def update(self):
+        super(AutoArmBase, self).update()
+        self._update_implicit_arm()
+
+    def _update_implicit_arm(self):
+        raise NotImplementedError
+
+
+class AutoArmComponent(AutoArmBase):
+
+    def __init__(self, *a, **k):
         (super(AutoArmComponent, self).__init__)(*a, **k)
-        AutoArmComponent.active_instances.append(self)
         self._on_tracks_changed.subject = self.song
         self._on_exclusive_arm_changed.subject = self.song
         self._on_tracks_changed()
         self._on_selected_track_changed.subject = self.song.view
-        self._update_implicit_arm_task = self._tasks.add(task.run(self._update_implicit_arm))
-
-    def disconnect(self):
-        AutoArmComponent.active_instances.remove(self)
-        if AutoArmComponent.active_instances:
-            self._update_implicit_arm_task.restart()
-        super(AutoArmComponent, self).disconnect()
 
     @property
     def needs_restore_auto_arm(self):
@@ -44,10 +57,6 @@ class AutoArmComponent(Component):
     @listens('selected_track')
     def _on_selected_track_changed(self):
         self.update()
-
-    def update(self):
-        super(AutoArmComponent, self).update()
-        self._update_implicit_arm()
 
     def _update_implicit_arm(self):
         self._update_implicit_arm_task.kill()

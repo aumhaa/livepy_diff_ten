@@ -1,8 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import map
-from past.utils import old_div
+from builtins import map, str
 from future.moves.itertools import zip_longest
+from past.utils import old_div
 import Live
 from ableton.v2.base import is_parameter_bipolar, listens_group
 import ableton.v2.control_surface.components as DeviceParameterComponentBase

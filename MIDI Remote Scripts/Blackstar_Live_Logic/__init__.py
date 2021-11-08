@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.capabilities import controller_id, CONTROLLER_ID_KEY, inport, NOTES_CC, outport, PORTS_KEY, REMOTE, SCRIPT
+from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC, PORTS_KEY, REMOTE, SCRIPT, controller_id, inport, outport
 from .blackstar_live_logic import Blackstar_Live_Logic
 
 def get_capabilities():

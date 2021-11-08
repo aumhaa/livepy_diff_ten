@@ -1,14 +1,12 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import range, str
 from past.utils import old_div
 import Live
 from ableton.v2.base import EventObject, clamp, forward_property, listenable_property, listens, liveobj_valid, nop
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.control import ButtonControl, control_list, EncoderControl, StepEncoderControl
-from ableton.v2.control_surface.mode import ModesComponent
+from ableton.v2.control_surface.control import ButtonControl, EncoderControl, StepEncoderControl, control_list
 from ableton.v2.control_surface.elements import DisplayDataSource
+from ableton.v2.control_surface.mode import ModesComponent
 ONE_THIRTYSECOND_IN_BEATS = 0.125
 ONE_SIXTEENTH_IN_BEATS = 0.25
 ONE_YEAR_AT_120BPM_IN_BEATS = 63072000.0

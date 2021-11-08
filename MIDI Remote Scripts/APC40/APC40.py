@@ -1,10 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import range
+from builtins import map, range
 from functools import partial
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
-import _Framework.ComboElement as ComboElement
 import _Framework.ChannelTranslationSelector as ChannelTranslationSelector
+import _Framework.ComboElement as ComboElement
 from _Framework.ControlSurface import OptimizedControlSurface
 from _Framework.Layer import Layer, SimpleLayerOwner
 import _Framework.ModesComponent as ModesComponent
@@ -12,14 +11,14 @@ from _Framework.Resource import PrioritizedResource
 import _Framework.SessionZoomingComponent as SessionZoomingComponent
 from _Framework.Util import nop, recursive_map
 import _APC.APC as APC
-from _APC.ControlElementUtils import make_button, make_pedal_button, make_encoder, make_ring_encoder, make_slider
+from _APC.ControlElementUtils import make_button, make_encoder, make_pedal_button, make_ring_encoder, make_slider
+import _APC.DetailViewCntrlComponent as DetailViewCntrlComponent
 import _APC.DeviceBankButtonElement as DeviceBankButtonElement
 import _APC.DeviceComponent as DeviceComponent
 import _APC.MixerComponent as MixerComponent
-from _APC.SkinDefault import make_default_skin, make_biled_skin
-import _APC.DetailViewCntrlComponent as DetailViewCntrlComponent
-from .TransportComponent import TransportComponent
+from _APC.SkinDefault import make_biled_skin, make_default_skin
 from .SessionComponent import SessionComponent
+from .TransportComponent import TransportComponent
 SESSION_WIDTH = 8
 SESSION_HEIGHT = 5
 MIXER_SIZE = 8

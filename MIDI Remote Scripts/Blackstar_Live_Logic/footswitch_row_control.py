@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from past.utils import old_div
 import weakref, Live
-from ableton.v2.base import const, depends, mixin, listens
-from ableton.v2.control_surface.control import ButtonControl, control_list, ControlList
+from ableton.v2.base import const, depends, listens, mixin
+from ableton.v2.control_surface.control import ButtonControl, ControlList, control_list
 PULSE_COLORS = set(['Beat_Pulse', 'Subdivision_Pulse'])
 PULSE_LENGTH_FRACTION = 0.2
 

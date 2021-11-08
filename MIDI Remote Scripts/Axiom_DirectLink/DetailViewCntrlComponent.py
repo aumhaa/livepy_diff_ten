@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 import _Framework.ButtonElement as ButtonElement
+import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 
 class DetailViewCntrlComponent(ControlSurfaceComponent):
 

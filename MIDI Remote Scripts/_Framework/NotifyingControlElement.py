@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from .SubjectSlot import Subject, SubjectEvent
 from .ControlElement import ControlElement
+from .SubjectSlot import Subject, SubjectEvent
 
 class NotifyingControlElement(Subject, ControlElement):
     __subject_events__ = (

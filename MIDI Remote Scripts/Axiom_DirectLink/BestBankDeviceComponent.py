@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
+from _Generic.Devices import BANK_NAME_DICT, DEVICE_BOB_DICT, DEVICE_DICT, parameter_bank_names, parameter_banks
 import _Framework.DeviceComponent as DeviceComponent
 import _Framework.DisplayDataSource as DisplayDataSource
-from _Generic.Devices import parameter_bank_names, parameter_banks, DEVICE_DICT, BANK_NAME_DICT, DEVICE_BOB_DICT
 BOP_BANK_NAME = 'Best of Parameters'
 
 class BestBankDeviceComponent(DeviceComponent):

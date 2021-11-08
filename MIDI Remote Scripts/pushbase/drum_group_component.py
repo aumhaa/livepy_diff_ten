@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
 from functools import partial
-from ableton.v2.base import find_if, nop, listens, liveobj_valid, listenable_property, NamedTuple
-from ableton.v2.control_surface.control import control_matrix, ButtonControl
+from ableton.v2.base import NamedTuple, find_if, listenable_property, listens, liveobj_valid, nop
 from ableton.v2.control_surface.components import DrumGroupComponent
-from .consts import MessageBoxText, DISTANT_FUTURE
+from ableton.v2.control_surface.control import ButtonControl, control_matrix
+from .consts import DISTANT_FUTURE, MessageBoxText
 from .instrument_component import SelectedNotesProvider
-from .matrix_maps import PAD_FEEDBACK_CHANNEL, NON_FEEDBACK_CHANNEL
+from .matrix_maps import NON_FEEDBACK_CHANNEL, PAD_FEEDBACK_CHANNEL
 from .message_box_component import Messenger
 from .pad_control import PadControl
 from .slideable_touch_strip_component import SlideableTouchStripComponent

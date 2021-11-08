@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import filter
-from builtins import object
+from builtins import filter, object
 from .sysex import NUM_SET_PROPERTY_HEADER_BYTES
 
 class MidiMessageCache(object):

@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from _Framework.Util import BooleanContext
-from _Framework.SubjectSlot import subject_slot
-import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
-import _Framework.ToggleComponent as ToggleComponent
 from _Framework.Control import ButtonControl, ToggleButtonControl
+import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
+from _Framework.SubjectSlot import subject_slot
+import _Framework.ToggleComponent as ToggleComponent
+from _Framework.Util import BooleanContext
 from .consts import ACTION_BUTTON_COLORS
 RecordingQuantization = Live.Song.RecordingQuantization
 

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
 from functools import partial, reduce
-from ..base import Proxy, index_if, nop, first, NamedTuple
+from ..base import NamedTuple, Proxy, first, index_if, nop
 DEFAULT_PRIORITY = 0
 
 class Resource(object):

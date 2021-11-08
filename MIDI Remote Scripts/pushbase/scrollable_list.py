@@ -1,13 +1,11 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import object, str
 from past.utils import old_div
-from builtins import object
 from functools import partial
 from ableton.v2.base import BooleanContext, EventObject, clamp, forward_property, in_range, index_if, listens, task
 from ableton.v2.control_surface import Component, defaults
+from ableton.v2.control_surface.components import Scrollable, ScrollComponent
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl, control_list
-from ableton.v2.control_surface.components import ScrollComponent, Scrollable
 from . import consts
 
 class ScrollableListItem(object):

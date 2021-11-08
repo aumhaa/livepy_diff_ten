@@ -1,14 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 import Live
-from _Framework.Dependency import depends
-from _Framework.Resource import PrioritizedResource
-from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
-import _Framework.ButtonMatrixElement as ButtonMatrixElement
 import _Framework.ButtonElement as ButtonElement
-import _Framework.EncoderElement as EncoderElement
-import _Framework.SliderElement as SliderElement
+import _Framework.ButtonMatrixElement as ButtonMatrixElement
 import _Framework.ComboElement as ComboElement
+from _Framework.Dependency import depends
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
+from _Framework.Resource import PrioritizedResource
+import _Framework.SliderElement as SliderElement
 from .consts import STANDARD_CHANNEL
 
 @depends(skin=None)

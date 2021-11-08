@@ -1,37 +1,38 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 from functools import partial
 import Live
-from _Framework.Util import const
-from _Framework.Dependency import inject
-from _Framework.SubjectSlot import subject_slot
-import _Framework.Layer as Layer
-from _Framework.ControlSurface import OptimizedControlSurface
-import _Framework.IdentifiableControlSurface as IdentifiableControlSurface
-from _Framework.ModesComponent import ModesComponent, LayerMode, AddLayerMode, ReenterBehaviour
-from _Framework.InputControlElement import MIDI_NOTE_TYPE, MIDI_CC_TYPE
-import _Framework.ComboElement as ComboElement
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
-from .Colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
-from .SkinDefault import make_default_skin
-from .SpecialMidiMap import SpecialMidiMap, make_button, make_multi_button, make_slider
-from .BackgroundComponent import ModifierBackgroundComponent, BackgroundComponent
-from .ActionsComponent import ActionsComponent
-from .ClipActionsComponent import ClipActionsComponent
-from .LedLightingComponent import LedLightingComponent
-from .TranslationComponent import TranslationComponent
-from .TargetTrackComponent import TargetTrackComponent
-from .SpecialDeviceComponent import SpecialDeviceComponent
-from .DeviceNavigationComponent import DeviceNavigationComponent
-from .SpecialSessionRecordingComponent import SpecialSessionRecordingComponent
-from .DrumGroupFinderComponent import DrumGroupFinderComponent
-from .DrumGroupComponent import DrumGroupComponent
-from .SpecialMixerComponent import SpecialMixerComponent
-from .SpecialSessionComponent import SpecialSessionComponent as SessionComponent, SpecialSessionZoomingComponent as SessionZoomingComponent, SessionZoomingManagerComponent
-from .SpecialModesComponent import SpecialModesComponent, SpecialReenterBehaviour, CancelingReenterBehaviour
-from .UserMatrixComponent import UserMatrixComponent
+import _Framework.ComboElement as ComboElement
+from _Framework.ControlSurface import OptimizedControlSurface
+from _Framework.Dependency import inject
+import _Framework.IdentifiableControlSurface as IdentifiableControlSurface
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
+import _Framework.Layer as Layer
+from _Framework.ModesComponent import AddLayerMode, LayerMode, ModesComponent, ReenterBehaviour
+from _Framework.SubjectSlot import subject_slot
+from _Framework.Util import const
 from . import consts
+from .ActionsComponent import ActionsComponent
+from .BackgroundComponent import BackgroundComponent, ModifierBackgroundComponent
+from .ClipActionsComponent import ClipActionsComponent
+from .Colors import LIVE_COLORS_TO_MIDI_VALUES, RGB_COLOR_TABLE
+from .DeviceNavigationComponent import DeviceNavigationComponent
+from .DrumGroupComponent import DrumGroupComponent
+from .DrumGroupFinderComponent import DrumGroupFinderComponent
+from .LedLightingComponent import LedLightingComponent
+from .SkinDefault import make_default_skin
+from .SpecialDeviceComponent import SpecialDeviceComponent
+from .SpecialMidiMap import SpecialMidiMap, make_button, make_multi_button, make_slider
+from .SpecialMixerComponent import SpecialMixerComponent
+from .SpecialModesComponent import CancelingReenterBehaviour, SpecialModesComponent, SpecialReenterBehaviour
+from .SpecialSessionComponent import SessionZoomingManagerComponent
+from .SpecialSessionComponent import SpecialSessionComponent as SessionComponent
+from .SpecialSessionComponent import SpecialSessionZoomingComponent as SessionZoomingComponent
+from .SpecialSessionRecordingComponent import SpecialSessionRecordingComponent
+from .TargetTrackComponent import TargetTrackComponent
+from .TranslationComponent import TranslationComponent
+from .UserMatrixComponent import UserMatrixComponent
 NUM_TRACKS = 8
 NUM_SCENES = 8
 

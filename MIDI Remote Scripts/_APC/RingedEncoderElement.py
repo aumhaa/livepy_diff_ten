@@ -1,8 +1,7 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from past.utils import old_div
-import _Framework.EncoderElement as EncoderElement
 import _Framework.ButtonElement as ButtonElement
+import _Framework.EncoderElement as EncoderElement
 RING_OFF_VALUE = 0
 RING_SIN_VALUE = 1
 RING_VOL_VALUE = 2

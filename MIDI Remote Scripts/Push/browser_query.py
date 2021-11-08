@@ -1,12 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import filter
-from builtins import map
-from builtins import object
+from builtins import filter, map, object
 from future.utils import string_types
 from functools import partial
-from ableton.v2.base import first, find_if, const
-from .browser_model import VirtualBrowserItem
 import Live
+from ableton.v2.base import const, find_if, first
+from .browser_model import VirtualBrowserItem
 
 class BrowserQuery(object):
 

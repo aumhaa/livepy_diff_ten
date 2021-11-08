@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import range
-from builtins import object
+from builtins import map, object, range
 from past.utils import old_div
 from ableton.v2.base import listens, task
 from ableton.v2.control_surface import Component

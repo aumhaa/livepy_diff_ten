@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.utils import iteritems, with_metaclass
-from past.builtins import unicode
-from past.builtins import long
+from past.builtins import long, unicode
 from itertools import count
 from ableton.v2.base import old_hasattr
 

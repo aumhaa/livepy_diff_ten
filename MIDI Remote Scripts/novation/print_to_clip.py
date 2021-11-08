@@ -1,10 +1,8 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import object, range
 from past.utils import old_div
-from builtins import object
-import Live
 from operator import itemgetter
+import Live
 from ableton.v2.base import listens, liveobj_valid, task
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import InputControl, SendValueControl

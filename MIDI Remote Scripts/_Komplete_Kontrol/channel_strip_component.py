@@ -1,11 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import round
+from builtins import round, str
 import re
 from ableton.v2.base import listens, liveobj_valid
 import ableton.v2.control_surface.components as ChannelStripComponentBase
-from ableton.v2.control_surface.elements import DisplayDataSource
 from ableton.v2.control_surface.control import SendValueControl
+from ableton.v2.control_surface.elements import DisplayDataSource
 from .sysex import DEFAULT_TRACK_TYPE_VALUE, EMPTY_TRACK_TYPE_VALUE, MASTER_TRACK_TYPE_VALUE
 volume_pattern = re.compile('-*\\d+.\\d+')
 

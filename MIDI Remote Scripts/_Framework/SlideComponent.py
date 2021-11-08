@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from .SubjectSlot import subject_slot, Subject
 from .CompoundComponent import CompoundComponent
-from .ScrollComponent import ScrollComponent, Scrollable
+from .ScrollComponent import Scrollable, ScrollComponent
+from .SubjectSlot import Subject, subject_slot
 from .Util import clamp
 
 class Slideable(Subject):

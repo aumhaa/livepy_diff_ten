@@ -1,70 +1,70 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import object
+from builtins import object, range
+import json, logging, weakref
 from contextlib import contextmanager
 from functools import partial
-import json, logging, weakref, Live, MidiRemoteScript
-from ableton.v2.base import const, inject, listens, listens_group, task, OutermostOnlyContext, EventObject, NamedTuple
-from ableton.v2.control_surface import BackgroundLayer, Component, IdentifiableControlSurface, Layer, get_element, find_instrument_meeting_requirement
+import Live, MidiRemoteScript
+from ableton.v2.base import EventObject, NamedTuple, OutermostOnlyContext, const, inject, listens, listens_group, task
+from ableton.v2.control_surface import BackgroundLayer, Component, IdentifiableControlSurface, Layer, find_instrument_meeting_requirement, get_element
 from ableton.v2.control_surface.components import DeviceParameterComponent
 from ableton.v2.control_surface.defaults import TIMER_DELAY
 from ableton.v2.control_surface.elements import ButtonMatrixElement, ComboElement, SysexElement
-from ableton.v2.control_surface.mode import EnablingModesComponent, LayerMode, ModesComponent, LazyEnablingMode, ReenterBehaviour, SetAttributeMode
+from ableton.v2.control_surface.mode import EnablingModesComponent, LayerMode, LazyEnablingMode, ModesComponent, ReenterBehaviour, SetAttributeMode
+from pushbase import consts
 from pushbase.actions import select_clip_and_get_name_from_slot, select_scene_and_get_description
+from pushbase.messenger_mode_component import MessengerModesComponent
 from pushbase.pad_sensitivity import PadUpdateComponent
+from pushbase.push_base import NUM_SCENES, NUM_TRACKS, PushBase
 from pushbase.quantization_component import QUANTIZATION_NAMES_UNICODE, QuantizationComponent, QuantizationSettingsComponent
 from pushbase.selection import PushSelection
-from pushbase import consts
-from pushbase.push_base import PushBase, NUM_TRACKS, NUM_SCENES
 from pushbase.track_frozen_mode import TrackFrozenModesComponent
-from pushbase.messenger_mode_component import MessengerModesComponent
 from pushbase.undo_step_handler import UndoStepHandler
 from . import sysex
 from .actions import CaptureAndInsertSceneComponent
 from .automation import AutomationComponent
-from .elements import Elements
 from .browser_component import BrowserComponent, NewTrackBrowserComponent
 from .browser_modes import AddDeviceMode, AddTrackMode, BrowseMode, BrowserComponentMode, BrowserModeBehaviour
-from .color_chooser import ColorChooserComponent
-from .device_decorator_factory import DeviceDecoratorFactory
-from .skin_default import make_default_skin
-from .mute_solo_stop import MuteSoloStopClipComponent
-from .device_component import Push2DeviceProvider
-from .device_component_provider import DeviceComponentProvider
-from .device_view_component import DeviceViewComponent
-from .device_navigation import is_empty_rack, DeviceNavigationComponent
-from .drum_group_component import DrumGroupComponent
-from .drum_pad_parameter_component import DrumPadParameterComponent
 from .clip_control import ClipControlComponent, MatrixModeWatcherComponent, register_matrix_mode
 from .clip_decoration import ClipDecoratorFactory
+from .color_chooser import ColorChooserComponent
 from .colors import COLOR_TABLE
 from .convert import ConvertComponent, ConvertEnabler
-from .firmware import FirmwareCollector, FirmwareUpdateComponent, FirmwareSwitcher, FirmwareVersion
+from .custom_bank_definitions import BANK_DEFINITIONS
+from .device_component import Push2DeviceProvider
+from .device_component_provider import DeviceComponentProvider
+from .device_decorator_factory import DeviceDecoratorFactory
+from .device_navigation import DeviceNavigationComponent, is_empty_rack
+from .device_view_component import DeviceViewComponent
+from .drum_group_component import DrumGroupComponent
+from .drum_pad_parameter_component import DrumPadParameterComponent
+from .elements import Elements
+from .firmware import FirmwareCollector, FirmwareSwitcher, FirmwareUpdateComponent, FirmwareVersion
 from .hardware_settings_component import HardwareSettingsComponent
 from .master_track import MasterTrackComponent
 from .mixer_control_component import MixerControlComponent
+from .mode_collector import ModeCollector
+from .mute_solo_stop import MuteSoloStopClipComponent
 from .note_editor import Push2NoteEditorComponent
 from .note_settings import NoteSettingsComponent
 from .notification_component import NotificationComponent
-from .pad_sensitivity import default_profile, loop_selector_profile, MONO_AFTERTOUCH_DISABLED, MONO_AFTERTOUCH_ENABLED, pad_parameter_sender, PadSettings, playing_profile
+from .pad_sensitivity import MONO_AFTERTOUCH_DISABLED, MONO_AFTERTOUCH_ENABLED, PadSettings, default_profile, loop_selector_profile, pad_parameter_sender, playing_profile
 from .pad_velocity_curve import PadVelocityCurveSender
+from .real_time_channel import update_real_time_attachments
 from .routing import RoutingControlComponent, TrackOrRoutingControlChooserComponent
 from .scales_component import ScalesComponent, ScalesEnabler
 from .selected_track_parameter_provider import SelectedTrackParameterProvider
 from .session_component import DecoratingCopyHandler, SessionComponent
 from .session_ring_selection_linking import SessionRingSelectionLinking
 from .settings import create_settings
-from .sliced_simpler import Push2SlicedSimplerComponent
-from .track_mixer_control_component import TrackMixerControlComponent
-from .mode_collector import ModeCollector
-from .real_time_channel import update_real_time_attachments
+from .setup_component import Settings, SetupComponent
 from .simple_mode_switcher import SimpleModeSwitcher
-from .setup_component import SetupComponent, Settings
+from .skin_default import make_default_skin
+from .sliced_simpler import Push2SlicedSimplerComponent
 from .track_list import TrackListComponent
+from .track_mixer_control_component import TrackMixerControlComponent
 from .track_selection import SessionRingTrackProvider, ViewControlComponent
 from .transport_state import TransportState
 from .user_component import UserButtonBehavior, UserComponent
-from .custom_bank_definitions import BANK_DEFINITIONS
 from .visualisation_settings import VisualisationSettings
 logger = logging.getLogger(__name__)
 VELOCITY_RANGE_THRESHOLDS = [

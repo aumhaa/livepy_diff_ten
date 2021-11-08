@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.ButtonElement as ButtonElement
-import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
 import _Framework.MixerComponent as MixerComponent
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
+import _Framework.PhysicalDisplayElement as PhysicalDisplayElement
 
 class SelectButtonModeSelector(ModeSelectorComponent):
 

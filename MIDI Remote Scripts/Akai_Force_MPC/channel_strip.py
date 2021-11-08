@@ -1,6 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 import re
 from itertools import count
 from ableton.v2.base import clamp, index_if, listens, listens_group, liveobj_valid

@@ -2,8 +2,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import EventObject
 from ableton.v2.control_surface import LiveObjectDecorator, get_parameter_by_name
 from .device_component import ButtonRange, DeviceComponentWithTrackColorViewData
-from .visualisation_settings import VisualisationGuides
 from .device_options import DeviceOnOffOption
+from .visualisation_settings import VisualisationGuides
 
 class CorpusDeviceDecorator(LiveObjectDecorator, EventObject):
 

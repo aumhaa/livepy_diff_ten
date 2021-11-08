@@ -1,13 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import object
-from _Axiom.consts import *
-import _Axiom.Transport as Transport
-import _Axiom.Pads as Pads
-import _Axiom.Encoders as Encoders
-from .SliderSection import SliderSection
-from _Generic.util import DeviceAppointer
+from builtins import object, str
 import Live, MidiRemoteScript
+from _Generic.util import DeviceAppointer
+from _Axiom.consts import *
+import _Axiom.Encoders as Encoders
+import _Axiom.Pads as Pads
+import _Axiom.Transport as Transport
+from .SliderSection import SliderSection
 
 class Axiom(object):
 

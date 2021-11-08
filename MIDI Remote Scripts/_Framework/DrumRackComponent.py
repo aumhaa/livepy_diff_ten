@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import filter
-from builtins import map
-from builtins import range
+from builtins import filter, map, range
 from .ControlSurfaceComponent import ControlSurfaceComponent
 from .Dependency import depends
 from .Util import product

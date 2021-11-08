@@ -1,15 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import object
+from builtins import object, str
 import Live
+from ableton.v2.base import NamedTuple, listenable_property, listens, liveobj_valid, task
 from ableton.v2.control_surface.components import PlayableComponent, Slideable, SlideComponent
 from ableton.v2.control_surface.control import ButtonControl
-from ableton.v2.base import liveobj_valid, listens, listenable_property, NamedTuple, task
+from .consts import DISTANT_FUTURE, MessageBoxText
 from .instrument_component import SelectedNotesProvider
-from .slideable_touch_strip_component import SlideableTouchStripComponent
 from .matrix_maps import PAD_FEEDBACK_CHANNEL
 from .message_box_component import Messenger
-from .consts import MessageBoxText, DISTANT_FUTURE
+from .slideable_touch_strip_component import SlideableTouchStripComponent
 BASE_SLICING_NOTE = 36
 MAX_NUMBER_SLICES = 64
 

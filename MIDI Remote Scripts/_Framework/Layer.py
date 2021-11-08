@@ -1,12 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import object
+from builtins import object, str
 from future.utils import raise_
 from itertools import repeat
 from .ControlElement import ControlElementClient
-from .Util import nop
-from .Resource import ExclusiveResource, CompoundResource
 from .Disconnectable import Disconnectable
+from .Resource import CompoundResource, ExclusiveResource
+from .Util import nop
 
 class LayerError(Exception):
     pass

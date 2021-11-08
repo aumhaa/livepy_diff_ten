@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import str
 from future.utils import string_types
-from .MxDCore import MxDCore as _MxDCore
 import sys, warnings
 from ableton.v2.base import old_hasattr
+from .MxDCore import MxDCore as _MxDCore
 
 def set_manager(manager):
     _MxDCore.instance = _MxDCore()

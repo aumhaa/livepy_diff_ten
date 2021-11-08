@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.moves.itertools import zip_longest
 from ableton.v2.base import clamp, listens_group, liveobj_valid
-from ableton.v2.control_surface.control import control_list, SendValueControl
+from ableton.v2.control_surface.control import SendValueControl, control_list
 from novation.fixed_radio_button_group import FixedRadioButtonGroup
 import novation.mixer as MixerComponentBase
 from novation.util import get_midi_color_value_for_track

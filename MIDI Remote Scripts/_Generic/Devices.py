@@ -1,9 +1,5 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import str
-from builtins import map
-from builtins import filter
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import filter, map, range, str
 from past.utils import old_div
 from functools import partial
 from _Framework.Util import group

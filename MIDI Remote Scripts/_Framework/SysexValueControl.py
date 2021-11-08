@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from .InputControlElement import InputControlElement, MIDI_SYSEX_TYPE
+from .InputControlElement import MIDI_SYSEX_TYPE, InputControlElement
 
 class SysexValueControl(InputControlElement):
 

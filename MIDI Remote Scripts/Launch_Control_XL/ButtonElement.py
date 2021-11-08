@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from _Framework.ButtonElement import ON_VALUE, OFF_VALUE, ButtonElement as ButtonElementBase
+from _Framework.ButtonElement import OFF_VALUE, ON_VALUE
+import _Framework.ButtonElement as ButtonElementBase
 
 class ButtonElement(ButtonElementBase):
     _on_value = None

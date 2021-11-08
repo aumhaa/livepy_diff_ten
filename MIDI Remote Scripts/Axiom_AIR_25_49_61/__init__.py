@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from _Framework.Capabilities import CONTROLLER_ID_KEY, NOTES_CC, PORTS_KEY, SCRIPT, controller_id, inport, outport
 from .Axiom_AIR_25_49_61 import Axiom_AIR_25_49_61
-from _Framework.Capabilities import controller_id, inport, outport, CONTROLLER_ID_KEY, PORTS_KEY, NOTES_CC, SCRIPT
 
 def get_capabilities():
     return {CONTROLLER_ID_KEY: controller_id(vendor_id=1891,

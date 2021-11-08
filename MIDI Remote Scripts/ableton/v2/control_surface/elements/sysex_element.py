@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import old_hasattr
 from base.dependency import depends
-from ..input_control_element import InputControlElement, MIDI_SYSEX_TYPE
 from .. import midi
+from ..input_control_element import MIDI_SYSEX_TYPE, InputControlElement
 
 class SysexElement(InputControlElement):
 

@@ -9,13 +9,13 @@ from _Framework.InputControlElement import MIDI_CC_TYPE
 import _Framework.TransportComponent as TransportComponent
 import _APC.APC as APC
 from _APC.ControlElementUtils import make_button, make_pedal_button, make_slider
-import _APC.SessionComponent as SessionComponent
 import _APC.MixerComponent as MixerComponent
+import _APC.SessionComponent as SessionComponent
 from _APC.SkinDefault import make_biled_skin
+from .BackgroundComponent import BackgroundComponent
 from .ShiftableSelectorComponent import ShiftableSelectorComponent
 from .ShiftableZoomingComponent import ShiftableZoomingComponent
 from .SliderModesComponent import SliderModesComponent
-from .BackgroundComponent import BackgroundComponent
 SESSION_WIDTH = 8
 SESSION_HEIGHT = 5
 MIXER_SIZE = 8

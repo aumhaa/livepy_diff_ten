@@ -1,13 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import object
-import re
+from builtins import map, object
 from future.moves.itertools import zip_longest
-from ableton.v2.base import forward_property, const, nop, listens, listenable_property
+import re
+from ableton.v2.base import const, forward_property, listenable_property, listens, nop
 import ableton.v2.base.dependency as dependency
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.elements import DisplayDataSource
 from ableton.v2.control_surface.components import BackgroundComponent
+from ableton.v2.control_surface.elements import DisplayDataSource
 from .consts import DISPLAY_LENGTH, MessageBoxText
 FORMAT_SPECIFIER_WITH_MARKUP_PATTERN = re.compile('[%](len=([0-9]+),)?([^%]*?[diouxXeEfFgGcrs])')
 

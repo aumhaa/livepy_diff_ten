@@ -2,9 +2,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from past.utils import old_div
 from functools import partial
 import Live
-from ...base import in_range, clamp, listens, task
+from ...base import clamp, in_range, listens, task
 from ..component import Component
-from ..control import ToggleButtonControl, ButtonControl
+from ..control import ButtonControl, ToggleButtonControl
 from .toggle import ToggleComponent
 TEMPO_TOP = 200.0
 TEMPO_BOTTOM = 60.0

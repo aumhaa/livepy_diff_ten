@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-import Live
 from itertools import count
-from ...base import EventObject, in_range, product, listens, listens_group
+import Live
+from ...base import EventObject, in_range, listens, listens_group, product
 from ..component import Component
 from ..control import ButtonControl
 from .scene import SceneComponent

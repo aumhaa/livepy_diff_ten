@@ -1,22 +1,21 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import range
+from builtins import map, range
 from functools import partial
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
-from _Framework.ControlSurface import OptimizedControlSurface
 import _Framework.ComboElement as ComboElement
+from _Framework.ControlSurface import OptimizedControlSurface
 import _Framework.Layer as Layer
 from _Framework.ModesComponent import AddLayerMode, ModesComponent
-import _Framework.SessionComponent as SessionComponent
 from _Framework.Resource import SharedResource
-from _Framework.Util import nop
+import _Framework.SessionComponent as SessionComponent
 import _Framework.TransportComponent as TransportComponent
+from _Framework.Util import nop
 from _APC.APC import APC, MANUFACTURER_ID
 from _APC.ControlElementUtils import make_button, make_knob
 import _APC.DeviceComponent as DeviceComponent
-from _APC.SkinDefault import make_default_skin, make_biled_skin, make_stop_button_skin
-from .SendToggleComponent import SendToggleComponent
+from _APC.SkinDefault import make_biled_skin, make_default_skin, make_stop_button_skin
 from .MixerComponent import MixerComponent
+from .SendToggleComponent import SendToggleComponent
 
 class APC_Key_25(APC, OptimizedControlSurface):
     SESSION_WIDTH = 8

@@ -1,12 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
-import _Framework.ModeSelectorComponent as ModeSelectorComponent
+from builtins import range, str
 import _Framework.ButtonElement as ButtonElement
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
+import _Framework.ModeSelectorComponent as ModeSelectorComponent
 import _Framework.SessionComponent as SessionComponent
-from .SpecialMixerComponent import SpecialMixerComponent
 from .PreciseButtonSliderElement import *
+from .SpecialMixerComponent import SpecialMixerComponent
 LED_OFF = 4
 RED_FULL = 7
 RED_HALF = 6

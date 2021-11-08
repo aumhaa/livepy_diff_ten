@@ -5,17 +5,17 @@ from ableton.v2.base import find_if, forward_property, listenable_property, list
 from ableton.v2.control_surface.components import AccentComponent
 from ableton.v2.control_surface.elements import to_midi_value
 from ableton.v2.control_surface.mode import LayerMode
+from . import consts
 from .consts import MessageBoxText
 from .instrument_component import InstrumentComponent
 from .loop_selector_component import LoopSelectorComponent
-from .matrix_maps import PLAYHEAD_FEEDBACK_CHANNELS, NON_FEEDBACK_CHANNEL
+from .matrix_maps import NON_FEEDBACK_CHANNEL, PLAYHEAD_FEEDBACK_CHANNELS
 from .melodic_pattern import pitch_index_to_string
 from .messenger_mode_component import MessengerModesComponent
 from .note_editor_component import NoteEditorComponent
 from .note_editor_paginator import NoteEditorPaginator
 from .playhead_component import PlayheadComponent
 from .step_duplicator import StepDuplicatorComponent
-from . import consts
 NUM_NOTE_EDITORS = 8
 
 class MelodicComponent(MessengerModesComponent):

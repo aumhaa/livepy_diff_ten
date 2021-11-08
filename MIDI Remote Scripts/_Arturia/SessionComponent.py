@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import _Framework.SessionComponent as SessionComponentBase
 from _Framework.Control import EncoderControl
+import _Framework.SessionComponent as SessionComponentBase
 
 class SessionComponent(SessionComponentBase):
     scene_select_encoder = EncoderControl()

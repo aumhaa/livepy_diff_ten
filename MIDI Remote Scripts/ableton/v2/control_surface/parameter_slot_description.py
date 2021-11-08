@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ..base import find_if, listenable_property, listens_group, liveobj_valid, EventObject
+from ..base import EventObject, find_if, listenable_property, listens_group, liveobj_valid
 RESULTING_NAME_KEY = 'ResultingName'
 DISPLAY_NAME_KEY = 'DisplayName'
 CONDITION_NAME_KEY = 'ConditionName'

@@ -2,8 +2,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from itertools import cycle
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
-import _MPDMkIIBase.MPDMkIIBase as MPDMkIIBase
 from _MPDMkIIBase.ControlElementUtils import make_button, make_encoder, make_slider
+import _MPDMkIIBase.MPDMkIIBase as MPDMkIIBase
 PAD_CHANNEL = 1
 PAD_IDS = [
  [

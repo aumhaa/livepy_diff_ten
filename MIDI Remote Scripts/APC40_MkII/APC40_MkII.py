@@ -2,22 +2,22 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from functools import partial
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
+import _Framework.ClipCreator as ClipCreator
 from _Framework.ComboElement import ComboElement, DoublePressElement, MultiElement
 from _Framework.ControlSurface import OptimizedControlSurface
 import _Framework.Layer as Layer
-from _Framework.ModesComponent import ModesComponent, ImmediateBehaviour, DelayMode, AddLayerMode
+from _Framework.ModesComponent import AddLayerMode, DelayMode, ImmediateBehaviour, ModesComponent
 from _Framework.Resource import PrioritizedResource
 import _Framework.SessionRecordingComponent as SessionRecordingComponent
 import _Framework.SessionZoomingComponent as SessionZoomingComponent
-import _Framework.ClipCreator as ClipCreator
 from _Framework.Util import recursive_map
 import _APC.APC as APC
-import _APC.DeviceComponent as DeviceComponent
-import _APC.DeviceBankButtonElement as DeviceBankButtonElement
+from _APC.ControlElementUtils import make_button, make_encoder, make_pedal_button, make_ring_encoder, make_slider
 import _APC.DetailViewCntrlComponent as DetailViewCntrlComponent
+import _APC.DeviceBankButtonElement as DeviceBankButtonElement
+import _APC.DeviceComponent as DeviceComponent
 import _APC.SessionComponent as SessionComponent
-from _APC.ControlElementUtils import make_button, make_encoder, make_slider, make_ring_encoder, make_pedal_button
-from _APC.SkinDefault import make_rgb_skin, make_default_skin, make_stop_button_skin, make_crossfade_button_skin
+from _APC.SkinDefault import make_crossfade_button_skin, make_default_skin, make_rgb_skin, make_stop_button_skin
 from . import Colors
 from .BankToggleComponent import BankToggleComponent
 from .MixerComponent import MixerComponent

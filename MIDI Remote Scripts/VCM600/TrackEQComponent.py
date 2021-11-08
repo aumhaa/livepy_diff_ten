@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
+from _Generic.Devices import get_parameter_by_name
 import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 import _Framework.EncoderElement as EncoderElement
-from _Generic.Devices import get_parameter_by_name
 EQ_DEVICES = {'Eq8':{'Gains': ['%i Gain A' % (index + 1) for index in range(8)]}, 
  'FilterEQ3':{'Gains':[
    'GainLo', 'GainMid', 'GainHi'], 

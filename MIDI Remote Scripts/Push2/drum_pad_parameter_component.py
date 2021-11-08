@@ -1,12 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import map
-from builtins import range
+from builtins import map, range, str
 from ableton.v2.base import clamp, listenable_property, listens, liveobj_valid
 from ableton.v2.control_surface import Component, EnumWrappingParameter, InternalParameterBase, ParameterInfo, ParameterProvider
 from ableton.v2.control_surface.control import StepEncoderControl
-from .parameter_mapping_sensitivities import parameter_mapping_sensitivity, fine_grain_parameter_mapping_sensitivity
 from .device_view_component import DeviceViewConnector
+from .parameter_mapping_sensitivities import fine_grain_parameter_mapping_sensitivity, parameter_mapping_sensitivity
 NO_CHOKE_GROUP = 'None'
 MAX_CHOKE_GROUP = 16
 NUM_CHOKE_GROUPS = MAX_CHOKE_GROUP + 1

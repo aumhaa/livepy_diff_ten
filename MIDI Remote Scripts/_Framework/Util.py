@@ -1,15 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future import standard_library
 standard_library.install_aliases()
-from builtins import map
-from builtins import range
-from builtins import object
+from builtins import map, object, range
+from future.moves.itertools import zip_longest
 from future.utils import raise_
 from contextlib import contextmanager
-from functools import wraps, partial
-from future.moves.itertools import zip_longest
+from functools import partial, reduce, wraps
 from itertools import chain
-from functools import reduce
 from numbers import Number
 from ableton.v2.base import old_hasattr
 

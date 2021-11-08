@@ -1,16 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
+from builtins import object, range
 from past.builtins import basestring
-from builtins import object
-import ast
+import ast, json, types
 from collections import namedtuple
-import json, types, Live
-from ableton.v2.base import old_hasattr, PY2
-from _MxDCore.ControlSurfaceWrapper import is_real_control_surface, ControlSurfaceWrapper
+import Live
+import _Framework.ControlElement as ControlElement
 import _Framework.ControlSurface as ControlSurface
 import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
-import _Framework.ControlElement as ControlElement
 from _Framework.Util import is_iterable
+from ableton.v2.base import PY2, old_hasattr
+from _MxDCore.ControlSurfaceWrapper import ControlSurfaceWrapper, is_real_control_surface
 
 class MFLPropertyFormats(object):
     Default, JSON = (0, 1)
@@ -928,10 +927,10 @@ def get_root_prop(external_device, prop_key):
 
 
 def cs_base_classes():
-    import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
     import _Framework.ControlElement as ControlElement
-    import ableton.v2.control_surface as ControlElement2
+    import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
     import ableton.v2.control_surface as ControlSurfaceComponent2
+    import ableton.v2.control_surface as ControlElement2
     return (
      ControlSurfaceWrapper,
      ControlSurfaceComponent,

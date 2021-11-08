@@ -1,11 +1,9 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-from builtins import chr
-from builtins import range
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import chr, range
 from past.utils import old_div
-from .MackieControlComponent import *
-from _Generic.Devices import *
 from itertools import chain
+from _Generic.Devices import *
+from .MackieControlComponent import *
 flatten_target = lambda routing_target: routing_target.display_name
 
 def flatten_target_list(target_list):

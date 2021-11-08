@@ -1,8 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import chr
+from builtins import chr, str
 from future.moves.itertools import zip_longest
-from ableton.v2.base import liveobj_valid, listens, listens_group
+from ableton.v2.base import listens, listens_group, liveobj_valid
 import ableton.v2.control_surface.components as MixerComponentBase
 from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, control_list
 from .channel_strip import ChannelStripComponent

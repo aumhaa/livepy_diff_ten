@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import chr
-from builtins import str
-from builtins import range
+from builtins import chr, range, str
 from functools import partial
 import Live
 from _Framework import Task
@@ -10,19 +8,18 @@ import _Framework.ControlSurface as ControlSurface
 import _Framework.DeviceBankRegistry as DeviceBankRegistry
 import _Framework.DeviceComponent as DeviceComponent
 import _Framework.EncoderElement as EncoderElement
-from _Framework.InputControlElement import MIDI_NOTE_TYPE, MIDI_CC_TYPE
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
 import _Framework.Layer as Layer
-from _Framework.ModesComponent import ModesComponent, LayerMode
+from _Framework.ModesComponent import LayerMode, ModesComponent
 from _Framework.SubjectSlot import subject_slot
 from _Framework.Util import nop
 import _Framework.ViewControlComponent as ViewControlComponent
+from . import Colors, Sysex
 from .ButtonSysexControl import ButtonSysexControl
 from .ConfigurableButtonElement import ConfigurableButtonElement
 from .DeviceNavigationComponent import DeviceNavigationComponent
 from .SpecialMixerComponent import SpecialMixerComponent
 from .SpecialSessionComponent import SpecialSessionComponent
-from . import Colors
-from . import Sysex
 
 def make_launch_control_button(identifier, name, channel=0, is_pad=False):
     button = ConfigurableButtonElement(True, MIDI_NOTE_TYPE if is_pad else MIDI_CC_TYPE, channel, identifier)

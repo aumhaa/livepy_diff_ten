@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from .browser_model import filter_type_for_browser, EmptyBrowserModel, QueryingBrowserModel
-from .browser_query import TagBrowserQuery, PathBrowserQuery, PlacesBrowserQuery, SourceBrowserQuery, ColorTagsBrowserQuery
+from .browser_model import EmptyBrowserModel, QueryingBrowserModel, filter_type_for_browser
+from .browser_query import ColorTagsBrowserQuery, PathBrowserQuery, PlacesBrowserQuery, SourceBrowserQuery, TagBrowserQuery
 FilterType = Live.Browser.FilterType
 PLACES_LABEL = 'Places'
 

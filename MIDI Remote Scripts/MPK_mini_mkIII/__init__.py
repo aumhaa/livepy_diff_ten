@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import _Generic.GenericScript as GenericScript
 import Live
+import _Generic.GenericScript as GenericScript
 from .config import *
 
 def create_instance(c_instance):

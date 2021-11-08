@@ -1,8 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
-from .RemoteSLComponent import RemoteSLComponent
+from builtins import range, str
 from .consts import *
+from .RemoteSLComponent import RemoteSLComponent
 
 class DisplayController(RemoteSLComponent):
 

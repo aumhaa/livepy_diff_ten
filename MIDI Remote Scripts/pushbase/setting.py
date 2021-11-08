@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from math import fabs
-from ableton.v2.base import sign, clamp, EventObject, Event
+from ableton.v2.base import Event, EventObject, clamp, sign
 
 class Setting(EventObject):
     __events__ = (

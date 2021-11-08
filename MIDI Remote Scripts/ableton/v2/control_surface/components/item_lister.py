@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import zip
-from ...base import forward_property, listenable_property, listens, EventObject
+from builtins import map, zip
+from ...base import EventObject, forward_property, listenable_property, listens
 from .. import Component
-from ..control import control_list, ButtonControl
+from ..control import ButtonControl, control_list
 
 class SimpleItemSlot(EventObject):
 

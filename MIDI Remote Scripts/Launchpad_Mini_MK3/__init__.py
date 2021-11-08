@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from .launchpad_mini_mk3 import Launchpad_Mini_MK3
 from ableton.v2.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC, PORTS_KEY, REMOTE, SCRIPT, SYNC, controller_id, inport, outport
+from .launchpad_mini_mk3 import Launchpad_Mini_MK3
 
 def get_capabilities():
     return {CONTROLLER_ID_KEY: controller_id(vendor_id=4661,

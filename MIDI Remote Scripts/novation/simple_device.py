@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.moves.itertools import zip_longest
 from _Generic.Devices import best_of_parameter_bank, parameter_banks
-from ableton.v2.base import clamp, depends, EventObject, listens, liveobj_valid, nop
+from ableton.v2.base import EventObject, clamp, depends, listens, liveobj_valid, nop
 from ableton.v2.control_surface import Component
 from ableton.v2.control_surface.control import ToggleButtonControl
 from .fixed_radio_button_group import FixedRadioButtonGroup

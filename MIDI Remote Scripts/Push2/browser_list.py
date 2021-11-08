@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
-import Live
 from itertools import islice
-from ableton.v2.base import EventObject, listenable_property, clamp, nop
+import Live
+from ableton.v2.base import EventObject, clamp, listenable_property, nop
 from model.uniqueid import UniqueIdMixin
 
 class BrowserList(EventObject, UniqueIdMixin):

@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import _Framework.MidiMap as MidiMap
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
-from _Framework.Resource import PrioritizedResource
 from _Framework.Dependency import depends
+import _Framework.MidiMap as MidiMap
+from _Framework.Resource import PrioritizedResource
 from .ConfigurableButtonElement import ConfigurableButtonElement
+from .consts import USER_MODE_CHANNELS
 from .MultiButtonElement import MultiButtonElement
 from .SliderElement import SliderElement
-from .consts import USER_MODE_CHANNELS
 USER_LAYOUT_START_CHANNEL = 5
 NUM_USER_LAYOUT_CHANNELS = 3
 

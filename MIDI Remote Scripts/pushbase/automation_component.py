@@ -1,9 +1,8 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import map
 from past.utils import old_div
 import Live
-from ableton.v2.base import clamp, task, liveobj_valid
+from ableton.v2.base import clamp, liveobj_valid, task
 from ableton.v2.control_surface.control import EncoderControl, control_list
 from .device_parameter_component import DeviceParameterComponent
 from .setting import EnumerableSetting

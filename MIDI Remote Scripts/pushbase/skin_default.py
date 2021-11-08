@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
 from ableton.v2.control_surface import Skin
-from .colors import Basic, Rgb, Pulse, Blink, BiLed
+from .colors import Basic, BiLed, Blink, Pulse, Rgb
 
 class Colors(object):
 

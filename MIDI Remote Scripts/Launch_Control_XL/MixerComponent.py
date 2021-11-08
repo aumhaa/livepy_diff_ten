@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from future.moves.itertools import zip_longest
-from _Framework.Control import control_list, ButtonControl
 import _Framework.ChannelStripComponent as ChannelStripComponentBase
+from _Framework.Control import ButtonControl, control_list
 import _Framework.MixerComponent as MixerComponentBase
 
 class ChannelStripComponent(ChannelStripComponentBase):

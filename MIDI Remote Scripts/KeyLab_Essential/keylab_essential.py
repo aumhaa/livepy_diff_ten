@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
 from ableton.v2.base import const, inject, listens
-from ableton.v2.control_surface import ControlSurface, Layer, MIDI_CC_TYPE, MIDI_PB_TYPE
+from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_PB_TYPE, ControlSurface, Layer
 from ableton.v2.control_surface.components import MixerComponent, SessionNavigationComponent, SessionRingComponent
 from ableton.v2.control_surface.elements import ButtonMatrixElement, EncoderElement, SliderElement, SysexElement
 from ableton.v2.control_surface.mode import AddLayerMode, ModesComponent
@@ -11,9 +11,9 @@ from .arrangement import ArrangementComponent
 from .channel_strip import ChannelStripComponent
 from .control_element_utils import create_button, create_pad_led, create_ringed_encoder
 from .hardware_settings import HardwareSettingsComponent
+from .session import SessionComponent
 from .skin_default import default_skin
 from .transport import TransportComponent
-from .session import SessionComponent
 from .undo import UndoComponent
 from .view_control import ViewControlComponent
 

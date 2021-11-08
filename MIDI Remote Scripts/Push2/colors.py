@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object
 from past.utils import old_div
-from colorsys import rgb_to_hsv, hsv_to_rgb
+from colorsys import hsv_to_rgb, rgb_to_hsv
 import MidiRemoteScript
 from ableton.v2.base import depends, in_range, listens, liveobj_valid, nop, old_round
 from ableton.v2.control_surface.elements.color import DynamicColorBase, DynamicColorFactory

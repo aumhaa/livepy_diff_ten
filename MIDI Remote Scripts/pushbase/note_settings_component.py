@@ -1,20 +1,15 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
-import Live
-from builtins import filter
-from builtins import str
-from builtins import map
-from builtins import range
-from builtins import round
+from __future__ import absolute_import, division, print_function, unicode_literals
+from builtins import filter, map, range, round, str
 from past.utils import old_div
 import math
 from functools import partial
 from itertools import chain
+import Live
 from ableton.v2.base import clamp, find_if, forward_property, listenable_property, listens, listens_group, liveobj_valid, task
-from ableton.v2.control_surface import defaults, Component
-from ableton.v2.control_surface.control import ButtonControl, ControlManager, control_list, EncoderControl, StepEncoderControl
+from ableton.v2.control_surface import Component, defaults
+from ableton.v2.control_surface.control import ButtonControl, ControlManager, EncoderControl, StepEncoderControl, control_list
 from ableton.v2.control_surface.elements import DisplayDataSource
-from ableton.v2.control_surface.mode import ModesComponent, Mode, AddLayerMode
+from ableton.v2.control_surface.mode import AddLayerMode, Mode, ModesComponent
 from .consts import CHAR_ELLIPSIS, GRAPH_VOL
 
 class NoteSettingBase(ControlManager):

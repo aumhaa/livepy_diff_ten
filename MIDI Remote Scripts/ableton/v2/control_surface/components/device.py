@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ...base import depends, listens, liveobj_valid, liveobj_changed
+from ...base import depends, listens, liveobj_changed, liveobj_valid
 from ...control_surface import Component, ParameterProvider, create_device_bank
 from control_surface.simpler_slice_nudging import SimplerSliceNudging
 

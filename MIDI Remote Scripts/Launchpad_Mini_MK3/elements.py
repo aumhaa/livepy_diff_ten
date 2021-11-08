@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import depends
 from ableton.v2.control_surface.elements import ColorSysexElement
 from novation import sysex
-from novation.launchpad_elements import create_button, LaunchpadElements
+from novation.launchpad_elements import LaunchpadElements, create_button
 from . import sysex_ids as ids
 
 class Elements(LaunchpadElements):

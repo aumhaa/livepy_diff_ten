@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import _Framework.MixerComponent as MixerComponentBase
 from _Framework.Control import ButtonControl
+import _Framework.MixerComponent as MixerComponentBase
 
 class MixerComponent(MixerComponentBase):
     bank_up_button = ButtonControl()

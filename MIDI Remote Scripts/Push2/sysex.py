@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import chunks
 from ableton.v2.control_surface import midi
 from pushbase.sysex import LIVE_MODE, USER_MODE
-from pushbase.touch_strip_element import TouchStripStates, TouchStripModes
+from pushbase.touch_strip_element import TouchStripModes, TouchStripStates
 PAD_VELOCITY_CURVE_CHUNK_SIZE = 16
 MODE_SWITCH_MESSAGE_ID = 10
 

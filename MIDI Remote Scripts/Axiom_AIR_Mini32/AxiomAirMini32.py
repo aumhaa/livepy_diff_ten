@@ -1,19 +1,19 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-import _Framework.ControlSurface as ControlSurface
-from _Framework.InputControlElement import MIDI_CC_TYPE
 import _Framework.ButtonElement as ButtonElement
-import _Framework.EncoderElement as EncoderElement
-import _Framework.TransportComponent as TransportComponent
-import _Framework.SessionComponent as SessionComponent
-import _Framework.MixerComponent as MixerComponent
 import _Framework.ChannelStripComponent as ChannelStripComponent
+import _Framework.ControlSurface as ControlSurface
+import _Framework.EncoderElement as EncoderElement
+from _Framework.InputControlElement import MIDI_CC_TYPE
+import _Framework.MixerComponent as MixerComponent
 import _Framework.ModeSelectorComponent as ModeSelectorComponent
+import _Framework.SessionComponent as SessionComponent
+import _Framework.TransportComponent as TransportComponent
 import Axiom_DirectLink.BestBankDeviceComponent as BestBankDeviceComponent
+from .DeviceNavComponent import DeviceNavComponent
 from .EncoderMixerModeSelector import EncoderMixerModeSelector
 from .MixerOrDeviceModeSelector import MixerOrDeviceModeSelector
-from .DeviceNavComponent import DeviceNavComponent
 SYSEX_START = (240, 0, 1, 5, 32, 127)
 ENGAGE_HYPERCONTROL = (32, 60, 247)
 DISABLE_HYPERCONTROL = (32, 0, 247)

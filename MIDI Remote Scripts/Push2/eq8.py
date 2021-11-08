@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import re
-from ableton.v2.base import EventObject, liveobj_valid, listens
+from ableton.v2.base import EventObject, listens, liveobj_valid
 from ableton.v2.control_surface import BoolWrappingParameter, EnumWrappingParameter, LiveObjectDecorator, get_parameter_by_name
 from .device_component import DeviceComponentWithTrackColorViewData
 from .device_decoration import DeviceSwitchOption

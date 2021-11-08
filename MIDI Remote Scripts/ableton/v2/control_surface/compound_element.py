@@ -1,10 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import filter
-from collections import OrderedDict
+from builtins import filter, map
 from future.utils import iteritems
+from collections import OrderedDict
+from ..base import BooleanContext, first, listens_group, second
 from .control_element import ControlElementClient, NotifyingControlElement
-from ..base import BooleanContext, first, second, listens_group
 
 class NestedElementClient(ControlElementClient):
 

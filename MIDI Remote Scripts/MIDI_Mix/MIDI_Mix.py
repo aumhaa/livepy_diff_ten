@@ -1,16 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
-from builtins import object
+from builtins import object, range
 from itertools import chain
-from _Framework.Util import const
-from _Framework.Dependency import inject
-from _Framework.ControlSurface import OptimizedControlSurface
-import _Framework.Layer as Layer
 from _Framework.ButtonElement import Color
-import _Framework.Skin as Skin
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
+from _Framework.ControlSurface import OptimizedControlSurface
+from _Framework.Dependency import inject
+import _Framework.Layer as Layer
+import _Framework.Skin as Skin
+from _Framework.Util import const
 import _APC.APC as APC
-from .ControlElementUtils import make_button, make_slider, make_encoder, make_button_row
+from .ControlElementUtils import make_button, make_button_row, make_encoder, make_slider
 from .MixerComponent import MixerComponent
 NUM_TRACKS = 8
 SEND_IDS = ((16, 20, 24, 28, 46, 50, 54, 58), (17, 21, 25, 29, 47, 51, 55, 59))

@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import _Framework.ControlSurface as ControlSurface
-import _Framework.Layer as Layer
 import _Framework.DrumRackComponent as DrumRackComponent
-import _Framework.TransportComponent as TransportComponent
-import _Framework.MixerComponent as MixerComponent
+from _Framework.InputControlElement import MIDI_CC_TYPE, MIDI_NOTE_TYPE
+import _Framework.Layer as Layer
 import _Framework.MidiMap as MidiMapBase
 from _Framework.MidiMap import make_button, make_encoder, make_slider
-from _Framework.InputControlElement import MIDI_NOTE_TYPE, MIDI_CC_TYPE
+import _Framework.MixerComponent as MixerComponent
+import _Framework.TransportComponent as TransportComponent
 
 class MidiMap(MidiMapBase):
 

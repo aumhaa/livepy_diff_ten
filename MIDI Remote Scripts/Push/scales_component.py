@@ -1,13 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import zip
-from builtins import map
+from builtins import map, str, zip
 from functools import partial
 from ableton.v2.base import EventObject, forward_property, listens, listens_group, recursive_map
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.mode import ModesComponent
 from ableton.v2.control_surface.control import ButtonControl
 from ableton.v2.control_surface.elements import DisplayDataSource, adjust_string_crop
+from ableton.v2.control_surface.mode import ModesComponent
 from pushbase import consts
 from pushbase.melodic_pattern import ROOT_NOTES, SCALES
 from pushbase.scrollable_list import ListComponent

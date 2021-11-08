@@ -3,7 +3,7 @@ from ableton.v2.base import liveobj_valid
 from ableton.v2.control_surface import ParameterInfo
 import ableton.v2.control_surface.components as DeviceComponentBase
 from ableton.v2.control_surface.control import ButtonControl
-from .parameter_mapping_sensitivities import parameter_mapping_sensitivity, fine_grain_parameter_mapping_sensitivity
+from .parameter_mapping_sensitivities import fine_grain_parameter_mapping_sensitivity, parameter_mapping_sensitivity
 
 def is_wavetable(device):
     return liveobj_valid(device) and device.class_name == 'InstrumentVector'

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from _Framework.Control import control_list, ButtonControl
+from _Framework.Control import ButtonControl, control_list
 import _Framework.DeviceComponent as DeviceComponentBase
 from _Framework.ModesComponent import EnablingModesComponent, tomode
 

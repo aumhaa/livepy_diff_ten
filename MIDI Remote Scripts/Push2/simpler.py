@@ -1,14 +1,15 @@
-from __future__ import absolute_import, print_function, unicode_literals
-from __future__ import division
+from __future__ import absolute_import, division, print_function, unicode_literals
 from builtins import range
 from past.utils import old_div
 from functools import partial
 from ableton.v2.base import depends, find_if, listenable_property, listens, liveobj_valid
-from ableton.v2.control_surface import EnumWrappingParameter, NotifyingList, SimplerDeviceDecorator as SimplerDeviceDecoratorBase, get_parameter_by_name
+from ableton.v2.control_surface import EnumWrappingParameter, NotifyingList
+import ableton.v2.control_surface as SimplerDeviceDecoratorBase
+from ableton.v2.control_surface import get_parameter_by_name
 from pushbase.message_box_component import Messenger
 from .device_component import DeviceComponentWithTrackColorViewData, extend_with_envelope_features_for_parameter, make_vector
 from .device_decoration import DeviceSwitchOption, SimplerPositions, WaveformNavigationParameter
-from .device_options import DeviceTriggerOption, DeviceOnOffOption
+from .device_options import DeviceOnOffOption, DeviceTriggerOption
 from .real_time_channel import RealTimeDataComponent
 from .visualisation_settings import VisualisationGuides
 RESET_SLICING_NOTIFICATION = 'Slicing has been reset'

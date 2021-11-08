@@ -1,12 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
-from contextlib import contextmanager
 from future.utils import string_types
-from ...base import const, depends, find_if, is_iterable, lazy_attribute, nop, EventObject, ProxyBase, PY3, listens, task
+from contextlib import contextmanager
+from ...base import PY3, EventObject, ProxyBase, const, depends, find_if, is_iterable, lazy_attribute, listens, nop, task
 from .. import defaults
 from ..compound_element import CompoundElement
-from ..input_control_element import ParameterSlot
 from ..control_element import NotifyingControlElement, get_element
+from ..input_control_element import ParameterSlot
 from ..resource import DEFAULT_PRIORITY
 from .button import ButtonElementMixin
 

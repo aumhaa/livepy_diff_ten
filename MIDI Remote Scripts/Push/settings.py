@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import str
-from builtins import range
+from builtins import range, str
 from past.utils import old_div
 from collections import OrderedDict
-from pushbase.setting import OnOffSetting, EnumerableSetting
+from pushbase.setting import EnumerableSetting, OnOffSetting
 from .pad_sensitivity import PadParameters
 MIN_OFF_THRESHOLD = 10
 MAX_OFF_THRESHOLD = 370

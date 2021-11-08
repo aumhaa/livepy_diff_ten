@@ -1,15 +1,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-from _Framework.Util import find_if, in_range
-from _Framework.Dependency import depends
-from _Framework.SubjectSlot import subject_slot, subject_slot_group
-import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
+import _Framework.ClipSlotComponent as ClipSlotComponent
 from _Framework.Control import ButtonControl
+import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
+from _Framework.Dependency import depends
+import _Framework.SceneComponent as SceneComponent
 import _Framework.SessionComponent as SessionComponent
 import _Framework.SessionZoomingComponent as SessionZoomingComponent
-import _Framework.SceneComponent as SceneComponent
-import _Framework.ClipSlotComponent as ClipSlotComponent
+from _Framework.SubjectSlot import subject_slot, subject_slot_group
+from _Framework.Util import find_if, in_range
 from .ClipActionsComponent import double_clip, duplicate_clip
 
 class SpecialClipSlotComponent(ClipSlotComponent):

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from .ButtonMatrixElement import ButtonMatrixElement
 from .ButtonElement import ButtonElement
+from .ButtonMatrixElement import ButtonMatrixElement
 from .EncoderElement import EncoderElement
 from .SliderElement import SliderElement
 

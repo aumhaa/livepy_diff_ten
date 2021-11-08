@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
+import _Framework.ButtonElement as ButtonElement
 import _Framework.MixerComponent as MixerComponent
 from .DefChannelStripComponent import DefChannelStripComponent
-import _Framework.ButtonElement as ButtonElement
 
 class SpecialMixerComponent(MixerComponent):
 

@@ -1,14 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
-from builtins import filter
-from builtins import range
+from builtins import filter, map, range
 from functools import partial
 import Live
 from ableton.v2.base import EventObject, MultiSlot, const, depends, find_if, listenable_property, listens, listens_group, liveobj_valid, nop, old_hasattr, task
 from ableton.v2.base.util import index_if
 from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.mode import ModesComponent, SetAttributeMode
 from ableton.v2.control_surface.control import ListIndexEncoderControl, ListValueEncoderControl, control_list
+from ableton.v2.control_surface.mode import ModesComponent, SetAttributeMode
 from pushbase.song_utils import is_return_track
 from .mixable_utilities import is_chain
 from .real_time_channel import RealTimeDataComponent

@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from ...base import clamp, listens, EventObject
+from ...base import EventObject, clamp, listens
 from ..component import Component
-from .scroll import ScrollComponent, Scrollable
+from .scroll import Scrollable, ScrollComponent
 
 class Slideable(EventObject):
     __events__ = ('page_offset', 'page_length', 'position', 'position_count', 'contents')

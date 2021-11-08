@@ -1,9 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+import Live
 from .CompoundComponent import CompoundComponent
 from .SubjectSlot import subject_slot
 from .ToggleComponent import ToggleComponent
 from .Util import find_if
-import Live
 
 def track_fired_slot(track):
     index = track.fired_slot_index

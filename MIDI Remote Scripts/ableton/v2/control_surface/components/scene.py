@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import Live
 from builtins import zip
-from ...base import listens, liveobj_valid, liveobj_changed
+import Live
+from ...base import listens, liveobj_changed, liveobj_valid
 from ..component import Component
 from ..control import ButtonControl
-from .clip_slot import ClipSlotComponent, is_button_pressed, find_nearest_color
+from .clip_slot import ClipSlotComponent, find_nearest_color, is_button_pressed
 
 class SceneComponent(Component):
     clip_slot_component_type = ClipSlotComponent

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from future.utils import iteritems, string_types
-import logging, traceback, re
-from ..base import const, depends, Disconnectable, lazy_attribute, nop, second, EventObject, Event, task
+import logging, re, traceback
+from ..base import Disconnectable, Event, EventObject, const, depends, lazy_attribute, nop, second, task
 from .resource import StackingResource
 logger = logging.getLogger(__name__)
 

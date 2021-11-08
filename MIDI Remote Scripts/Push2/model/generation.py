@@ -1,13 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from hashlib import md5
-from contextlib import contextmanager
-from collections import namedtuple
-from operator import attrgetter
-from functools import partial
 from future.utils import iteritems
+from collections import namedtuple
+from contextlib import contextmanager
+from functools import partial
+from hashlib import md5
+from operator import attrgetter
 from ableton.v2.base import Disconnectable, EventObject, Slot, has_event
+from .declaration import ModelVisitor, UndeclaredReferenceClass, ViewModelCantContainListModels, ViewModelsCantContainRefs
 from .repr import ModelAdapter
-from .declaration import ViewModelsCantContainRefs, ViewModelCantContainListModels, UndeclaredReferenceClass, ModelVisitor
 
 class AdapterAwareSlot(Slot):
 

@@ -9,14 +9,13 @@ from ableton.v2.control_surface.components import BackgroundComponent, RightAlig
 import ableton.v2.control_surface.default_bank_definitions as DEFAULT_BANK_DEFINITIONS
 from ableton.v2.control_surface.elements import MultiElement, SysexElement
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, ModesComponent, MomentaryBehaviour
-from .sysex import SYSEX_MSG_HEADER, SYSEX_END_BYTE, MPC_X_PRODUCT_ID, MPC_LIVE_PRODUCT_ID, FORCE_PRODUCT_ID, SUPPORTED_PRODUCT_IDS, BROADCAST_ID, PING_MSG_TYPE, PONG_MSG_TYPE
 from .background import LightingBackgroundComponent
 from .channel_strip import ChannelStripComponent
 from .clip_actions import ClipActionsComponent
 from .device import DeviceComponent
 from .device_navigation import ScrollingDeviceNavigationComponent
 from .device_parameters import DeviceParameterComponent
-from .elements import ForceElements, MPCLiveElements, MPCXElements, NUM_SCENE_CONTROLS, NUM_TRACK_CONTROLS
+from .elements import NUM_SCENE_CONTROLS, NUM_TRACK_CONTROLS, ForceElements, MPCLiveElements, MPCXElements
 from .mixer import MixerComponent
 from .mode import ExtendComboElementMode
 from .ping_pong import PingPongComponent
@@ -25,6 +24,7 @@ from .session import SessionComponent
 from .session_navigation import SessionNavigationComponent
 from .session_recording import SessionRecordingComponent
 from .skin import ForceColors, MPCColors
+from .sysex import BROADCAST_ID, FORCE_PRODUCT_ID, MPC_LIVE_PRODUCT_ID, MPC_X_PRODUCT_ID, PING_MSG_TYPE, PONG_MSG_TYPE, SUPPORTED_PRODUCT_IDS, SYSEX_END_BYTE, SYSEX_MSG_HEADER
 from .sysex_element import IdentifyingSysexElement
 from .transport import ForceTransportComponent, MPCTransportComponent
 

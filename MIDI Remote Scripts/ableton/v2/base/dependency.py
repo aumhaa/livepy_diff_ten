@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from functools import wraps
 from future.utils import iteritems
+from functools import wraps
 from .util import union
 __all__ = ('inject', 'depends', 'dependency')
 
