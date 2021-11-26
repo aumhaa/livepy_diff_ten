@@ -559,6 +559,6 @@ class SelectedNotesInstrumentComponent(InstrumentComponent):
 
     @contextmanager
     def _updating_selected_notes_model(self):
-        yield
+        (yield)
         self.song.view.selected_track.set_data('push-instrument-selected-notes', self.selected_notes_provider.selected_notes)
         self._update_led_feedback()

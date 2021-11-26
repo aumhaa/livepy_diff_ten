@@ -69,7 +69,7 @@ class ButtonMatrixElement(CompoundElement):
     def __iter__(self):
         for j, i in product(range(self.height()), range(self.width())):
             button = self.get_button(j, i)
-            yield button
+            (yield button)
 
     def __getitem__(self, index):
         if isinstance(index, slice):
@@ -89,7 +89,7 @@ class ButtonMatrixElement(CompoundElement):
     def iterbuttons(self):
         for j, i in product(range(self.height()), range(self.width())):
             button = self.get_button(j, i)
-            yield (button, (i, j))
+            (yield (button, (i, j)))
 
     def on_nested_control_element_value(self, value, sender):
         x, y = self._button_coordinates[sender]

@@ -284,7 +284,7 @@ ClassInfo = namedtuple('ClassInfo', ['class_', 'd', 'default_data', 'wrappers', 
 @contextmanager
 def pushpop(collection, item):
     collection.append(item)
-    yield item
+    (yield item)
     collection.pop()
 
 
@@ -303,7 +303,7 @@ class BindingModelVisitor(ModelVisitor):
     @contextmanager
     def __call__(self, class_info):
         self._class_stack.append(class_info)
-        yield class_info
+        (yield class_info)
         self._class_stack.pop()
 
     def visit_binding_class(self, class_):
@@ -396,7 +396,7 @@ class ViewModelVisitor(ModelVisitor):
     @contextmanager
     def __call__(self, class_info):
         self._class_stack.append(class_info)
-        yield class_info
+        (yield class_info)
         self._class_stack.pop()
 
     def visit_viewmodel_class(self, class_):

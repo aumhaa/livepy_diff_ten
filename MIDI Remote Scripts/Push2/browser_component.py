@@ -544,7 +544,7 @@ class BrowserComponent(Component, Messenger):
             self._selection.selected_object = device_to_select
         selected_track_view = self.song.view.selected_track.view
         selected_track_view.device_insert_mode = DeviceInsertMode.selected_right
-        yield
+        (yield)
         selected_track_view.device_insert_mode = DeviceInsertMode.default
 
     def _prehear_selected_item(self):

@@ -196,7 +196,7 @@ class LoopSelectorComponent(Component, Messenger):
         @contextmanager
         def save_page_color(page_colors, page):
             old_page_value = page_colors[page]
-            yield
+            (yield)
             page_colors[page] = old_page_value
 
         @contextmanager
@@ -204,7 +204,7 @@ class LoopSelectorComponent(Component, Messenger):
             if clip_is_new_recording(self._sequencer_clip):
                 old_tail_values = page_colors[page + 1:]
                 page_colors[page + 1:] = ['LoopSelector.OutsideLoop'] * len(old_tail_values)
-            yield
+            (yield)
             if clip_is_new_recording(self._sequencer_clip):
                 page_colors[page + 1:] = old_tail_values
 

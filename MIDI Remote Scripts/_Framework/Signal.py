@@ -69,7 +69,7 @@ class Signal(object):
 
 def _slot_notification_generator(slots, args, kws):
     for slot in slots:
-        yield slot(*args, **kws)
+        (yield slot(*args, **kws))
 
 
 def short_circuit_combiner(slot_results):

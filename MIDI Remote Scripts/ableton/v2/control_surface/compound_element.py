@@ -191,7 +191,7 @@ class CompoundElement(NotifyingControlElement, ControlElementClient):
 
     def __iter__(self):
         for element, owned in iteritems(self._nested_control_elements):
-            yield element if owned else None
+            (yield element if owned else None)
 
     def __getitem__(self, index_or_slice):
         if isinstance(index_or_slice, slice):

@@ -222,8 +222,8 @@ def union(a, b):
 def product(iter_a, iter_b):
     for a in iter_a:
         for b in iter_b:
-            yield (
-             a, b)
+            (yield (
+             a, b))
 
 
 def next(iter):
@@ -249,7 +249,7 @@ def recursive_map(fn, element, sequence_type=None):
 def chain_from_iterable(iterables):
     for it in iterables:
         for element in it:
-            yield element
+            (yield element)
 
 
 def is_matrix(iterable):
@@ -446,7 +446,7 @@ class overlaymap(object):
 
     def iteritems(self):
         for key in list(self.keys()):
-            yield (key, self[key])
+            (yield (key, self[key]))
 
 
 def trace_value(value, msg='Value: '):

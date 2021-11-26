@@ -173,7 +173,7 @@ class DoublePressContext(Subject):
     @contextmanager
     def breaking_double_press(self):
         self._broke_double_press = False
-        yield
+        (yield)
         if not self._broke_double_press:
             self.break_double_press()
 

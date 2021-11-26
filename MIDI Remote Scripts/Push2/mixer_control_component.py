@@ -249,7 +249,7 @@ class MixerControlComponent(ModesComponent):
 
     @contextmanager
     def _updating_send_offset_mode_selection(self):
-        yield
+        (yield)
         self._update_mixer_sections()
         self._update_buttons(self.selected_mode)
         self._update_controls(self._parameter_getter, self._selected_view)

@@ -103,7 +103,7 @@ class PushBase(ControlSurface):
                 with self._element_injector:
                     song_view = self.song.view
                     old_selected_track = song_view.selected_track
-                    yield
+                    (yield)
                     if song_view.selected_track != old_selected_track:
                         self._track_selection_changed_by_action()
 

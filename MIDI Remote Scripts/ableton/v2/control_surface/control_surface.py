@@ -250,7 +250,7 @@ class SimpleControlSurface(EventObject):
     def suppressing_rebuild_requests(self):
         try:
             self._set_suppress_rebuild_requests(True)
-            yield
+            (yield)
         finally:
             self._set_suppress_rebuild_requests(False)
 
@@ -334,16 +334,16 @@ class SimpleControlSurface(EventObject):
         if not self._in_component_guard:
             with self._in_component_guard():
                 with self._component_guard():
-                    yield
+                    (yield)
         else:
-            yield
+            (yield)
 
     @contextmanager
     def _component_guard(self):
         with self._control_surface_injector:
             with self.suppressing_rebuild_requests():
                 with self.accumulating_midi_messages():
-                    yield
+                    (yield)
                     self._ownership_handler.commit_ownership_changes()
 
     @profile
@@ -356,7 +356,7 @@ class SimpleControlSurface(EventObject):
     def accumulating_midi_messages(self):
         with self._accumulate_midi_messages():
             try:
-                yield
+                (yield)
             finally:
                 self._flush_midi_messages()
 
@@ -531,4 +531,4 @@ class ControlSurface(SimpleControlSurface):
     def _component_guard(self):
         with super(ControlSurface, self)._component_guard():
             with self._device_support_injector:
-                yield
+                (yield)

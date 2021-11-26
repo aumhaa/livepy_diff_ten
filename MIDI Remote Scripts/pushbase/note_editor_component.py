@@ -651,7 +651,7 @@ class NoteEditorComponent(Component):
     def _full_velocity_context(self, desired_full_velocity_state):
         saved_velocity = self.full_velocity
         self.full_velocity = desired_full_velocity_state
-        yield
+        (yield)
         self.full_velocity = saved_velocity
 
     def set_full_velocity(self):
