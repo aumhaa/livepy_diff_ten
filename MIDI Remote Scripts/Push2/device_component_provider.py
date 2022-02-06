@@ -13,6 +13,7 @@ from .eq8 import Eq8DeviceComponent
 from .hybrid_reverb import HybridReverbDeviceComponent
 from .operator import OperatorDeviceComponent
 from .real_time_channel import RealTimeDataComponent
+from .shifter import ShifterDeviceComponent
 from .simpler import SimplerDeviceComponent
 from .wavetable import WavetableDeviceComponent
 DEVICE_COMPONENT_MODES = {'Generic':GenericDeviceComponent, 
@@ -27,7 +28,8 @@ DEVICE_COMPONENT_MODES = {'Generic':GenericDeviceComponent,
  'AutoFilter':AutoFilterDeviceComponent, 
  'ChannelEq':ChannelEqDeviceComponent, 
  'Delay':DelayDeviceComponent, 
- 'Hybrid':HybridReverbDeviceComponent}
+ 'Hybrid':HybridReverbDeviceComponent, 
+ 'Shifter':ShifterDeviceComponent}
 
 class DeviceComponentProvider(ModesComponent):
     __events__ = ('device', )

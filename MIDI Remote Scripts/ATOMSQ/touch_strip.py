@@ -2,23 +2,23 @@ from __future__ import absolute_import, print_function, unicode_literals
 import math
 from functools import partial
 from itertools import chain, repeat
-from ableton.v2.base import depends, listens
-from ableton.v2.control_surface.elements import TouchEncoderElement
+from ableton.v3.base import listens
+from ableton.v3.control_surface.elements import EncoderElement
 
-class TouchStripElement(TouchEncoderElement):
+class TouchStripElement(EncoderElement):
 
     def __init__(self, leds=None, *a, **k):
         self.map_value_to_led_states = partial(map_value_to_led_states, 127, 0, len(leds))
-        (super(TouchStripElement, self).__init__)(*a, **k)
+        (super().__init__)(0, *a, **k)
         self._leds = leds
 
     def connect_to(self, parameter):
-        super(TouchStripElement, self).connect_to(parameter)
+        super().connect_to(parameter)
         self._update_feedback_leds(force=True)
         self._TouchStripElement__on_parameter_value.subject = self.mapped_parameter()
 
     def release_parameter(self):
-        super(TouchStripElement, self).release_parameter()
+        super().release_parameter()
         self._TouchStripElement__on_parameter_value.subject = None
 
     @listens('value')

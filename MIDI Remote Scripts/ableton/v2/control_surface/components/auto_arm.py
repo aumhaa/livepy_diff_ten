@@ -40,7 +40,7 @@ class AutoArmComponent(AutoArmBase):
         song = self.song
         exclusive_arm = song.exclusive_arm
         selected_track = song.view.selected_track
-        return self.is_enabled() and self.can_auto_arm_track(selected_track) and not selected_track.arm and any(filter(lambda track: exclusive_arm or self.can_auto_arm_track(track) and track.can_be_armed and track.arm, song.tracks))
+        return self.can_auto_arm_track(selected_track) and not selected_track.arm and any(filter(lambda track: exclusive_arm or self.can_auto_arm_track(track) and track.can_be_armed and track.arm, song.tracks))
 
     def track_can_be_armed(self, track):
         return track.can_be_armed and track.has_midi_input

@@ -5,7 +5,7 @@ import sys, types
 from itertools import chain
 from ableton.v2.base import old_hasattr
 from .ControlSurfaceWrapper import is_real_control_surface
-from .LomTypes import ENUM_TYPES, EXTRA_CS_FUNCTIONS, LIVE_APP, PROPERTY_TYPES, ROOT_KEYS, TUPLE_TYPES, LomAttributeError, LomObjectError, MFLPropertyFormats, cs_base_classes, get_exposed_property_info, get_exposed_property_names_for_type, get_root_prop, is_class, is_cplusplus_lom_object, is_lom_object, is_object_iterable
+from .LomTypes import ENUM_TYPES, EXTRA_CS_FUNCTIONS, LIVE_APP, PROPERTY_TYPES, ROOT_KEYS, TUPLE_TYPES, LomAttributeError, LomObjectError, MFLPropertyFormats, cs_base_classes, get_control_surfaces, get_exposed_property_info, get_exposed_property_names_for_type, get_root_prop, is_class, is_cplusplus_lom_object, is_lom_object, is_object_iterable
 from .MxDUtils import TupleWrapper
 
 def create_lom_doc_string(lom_object):
@@ -158,12 +158,22 @@ class LomIntrospection(object):
                 pass
 
 
+class TopLevelControlSurfaceListParent:
+
+    @property
+    def control_surfaces(self):
+        return get_control_surfaces()
+
+
+_control_surface_list_parent = TopLevelControlSurfaceListParent()
+
 def is_control_surfaces_list(path_component):
     return path_component in ('cs', 'control_surfaces')
 
 
 def wrap_control_surfaces_list(parent, cs_wrapper_registry):
-    return TupleWrapper.get_tuple_wrapper(parent,
+    global _control_surface_list_parent
+    return TupleWrapper.get_tuple_wrapper((parent if parent is not None else _control_surface_list_parent),
       'control_surfaces',
       element_filter=is_real_control_surface,
       element_transform=(cs_wrapper_registry.wrap))

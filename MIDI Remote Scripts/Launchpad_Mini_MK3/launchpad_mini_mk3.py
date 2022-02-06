@@ -66,14 +66,13 @@ class Launchpad_Mini_MK3(NovationBase):
           layer=Layer(cycle_mode_button='session_mode_button',
           mode_button_color_control='session_button_color_element'))
         self._session_modes.add_mode('launch', None)
-        (
-         self._session_modes.add_mode('overview', (
-          self._session_overview,
-          AddLayerMode(self._session_navigation, Layer(page_up_button='up_button',
-            page_down_button='down_button',
-            page_left_button='left_button',
-            page_right_button='right_button')),
-          AddLayerMode(self._background, Layer(scene_launch_buttons='scene_launch_buttons')))),)
+        self._session_modes.add_mode('overview', (
+         self._session_overview,
+         AddLayerMode(self._session_navigation, Layer(page_up_button='up_button',
+           page_down_button='down_button',
+           page_left_button='left_button',
+           page_right_button='right_button')),
+         AddLayerMode(self._background, Layer(scene_launch_buttons='scene_launch_buttons'))))
         self._session_modes.selected_mode = 'launch'
         self._session_modes.set_enabled(True)
         self._Launchpad_Mini_MK3__on_session_mode_changed.subject = self._session_modes

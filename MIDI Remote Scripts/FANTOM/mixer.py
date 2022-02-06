@@ -1,21 +1,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import listens_group, liveobj_valid
-import ableton.v2.control_surface.components as MixerComponentBase
-from ableton.v2.control_surface.components import SimpleTrackAssigner
-from ableton.v2.control_surface.control import InputControl
+from ableton.v3.base import listens_group, liveobj_valid
+import ableton.v3.control_surface.components as MixerComponentBase
+from ableton.v3.control_surface.controls import InputControl
 from .control import DisplayControl
 
 class MixerComponent(MixerComponentBase):
     track_select_control = InputControl()
     track_info_display = DisplayControl()
 
-    def __init__(self, *a, **k):
-        (super(MixerComponent, self).__init__)(a, auto_name=True, track_assigner=SimpleTrackAssigner(), **k)
+    def set_track_select_control(self, control):
+        self.track_select_control.set_control_element(control)
 
-    def set_send_controls(self, controls):
-        for index, strip in enumerate(self._channel_strips):
-            send_controls = [controls.get_button(i, index) for i in range(2)] if controls else [None]
-            strip.set_send_controls(send_controls)
+    def set_track_info_display(self, control):
+        self.track_info_display.set_control_element(control)
 
     @track_select_control.value
     def track_select_control(self, value, _):
@@ -29,7 +26,7 @@ class MixerComponent(MixerComponentBase):
                     self.song.view.selected_track = track
 
     def _reassign_tracks(self):
-        super(MixerComponent, self)._reassign_tracks()
+        super()._reassign_tracks()
         tracks = self._track_assigner.tracks(self._provider)
         self._MixerComponent__on_track_name_changed.replace_subjects(tracks)
         self._MixerComponent__on_track_color_index_changed.replace_subjects(tracks)

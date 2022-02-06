@@ -47,7 +47,7 @@ class MxDControlSurfaceAPI(object):
                 pass
 
         def report_error(self, message):
-            self.mxdcore._raise(self.device_id, self.object_id, message)
+            self.mxdcore._print_error(self.device_id, self.object_id, message)
 
         def is_expected_reply(self, message):
             return midi_bytes_are_sysex(message)
@@ -67,7 +67,7 @@ class MxDControlSurfaceAPI(object):
         if midi_bytes_are_sysex(midi_message):
             lom_object.mxd_midi_scheduler.send_receive(owner, midi_message, timeout)
         else:
-            self._mxdcore._raise(device_id, object_id, 'non-sysex passed to send_receive_sysex')
+            self._mxdcore._print_error(device_id, object_id, 'non-sysex passed to send_receive_sysex')
 
     def object_grab_midi(self, device_id, object_id, lom_object, parameters):
         check_has_mxd_midi_scheduler(lom_object, 'grab_midi')

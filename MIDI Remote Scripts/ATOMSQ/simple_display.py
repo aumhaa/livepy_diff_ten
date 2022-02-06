@@ -1,18 +1,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import task
-from ableton.v2.control_surface import NotifyingControlElement
-from ableton.v2.control_surface.elements import adjust_string
+from ableton.v3.base import task
+from ableton.v3.control_surface import NotifyingControlElement
+from ableton.v3.control_surface.elements import adjust_string
 QUESTION_MARK = 63
 MAX_CENTER_DISPLAY_LENGTH = 18
 
 def as_ascii(message):
     result = []
     for char in message:
-        ascii = ord(char)
-        if ascii > 127:
-            ascii = QUESTION_MARK
+        ascii_char = ord(char)
+        if ascii_char > 127:
+            ascii_char = QUESTION_MARK
         else:
-            result.append(ascii)
+            result.append(ascii_char)
 
     return tuple(result)
 
@@ -20,7 +20,7 @@ def as_ascii(message):
 class SimpleDisplayElement(NotifyingControlElement):
 
     def __init__(self, header, tail, *a, **k):
-        (super(SimpleDisplayElement, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._message_header = header
         self._message_tail = tail
         self._message_to_send = None
@@ -45,10 +45,10 @@ class SimpleDisplayElement(NotifyingControlElement):
     def reset(self):
         self.display_message(' ')
 
-    def send_midi(self, midi_bytes):
-        if midi_bytes != self._last_sent_message:
-            NotifyingControlElement.send_midi(self, midi_bytes)
-            self._last_sent_message = midi_bytes
+    def send_midi(self, message):
+        if message != self._last_sent_message:
+            NotifyingControlElement.send_midi(self, message)
+            self._last_sent_message = message
 
     def _request_send_message(self):
         self._send_message_task.restart()

@@ -102,9 +102,6 @@ class HybridReverbDeviceDecorator(LiveObjectDecorator, EventObject):
           index_property_host=(self._main_section_provider),
           values_property='available_values',
           index_property='index')
-        self.routing_switch = DeviceSwitchOption(name='Routing Switch',
-          parameter=(self.routing_live_parameter),
-          labels=(self.routing_option_labels))
         self.feedback_ms_sync_switch = DeviceSwitchOption(name='Ms Sync Switch',
           parameter=(self.pre_delay_sync_live_parameter),
           labels=(self.pre_delay_sync_labels))
@@ -222,7 +219,6 @@ class HybridReverbDeviceDecorator(LiveObjectDecorator, EventObject):
          self.feedback_ms_sync_switch,
          self.eq_low_type_switch,
          self.eq_high_type_switch,
-         self.routing_switch,
          self.eq_on_option,
          self.ir_post_processing_option,
          self.freeze_option,
@@ -288,9 +284,9 @@ class HybridReverbDeviceDecorator(LiveObjectDecorator, EventObject):
 
 class HybridReverbDeviceComponent(DeviceComponentWithTrackColorViewData):
     FILTER_VISUALISATION_CONFIGURATION_IN_EQ = {4: ButtonRange(0, 7)}
-    FILTER_VISUALISATION_CONFIGURATION_IN_MAIN = {0: ButtonRange(2, 6)}
+    FILTER_VISUALISATION_CONFIGURATION_IN_MAIN = {0: ButtonRange(1, 5)}
     IR_VISUALISATION_CONFIGURATION_IN_IR = {1: ButtonRange(0, 4)}
-    IR_VISUALISATION_CONFIGURATION_IN_MAIN = {0: ButtonRange(2, 6)}
+    IR_VISUALISATION_CONFIGURATION_IN_MAIN = {0: ButtonRange(1, 5)}
     LOW_BAND_PARAMETERS_NAME = re.compile('Low')
     PEAK_2_PARAMETERS_NAME = re.compile('2')
     PEAK_3_PARAMETERS_NAME = re.compile('3')

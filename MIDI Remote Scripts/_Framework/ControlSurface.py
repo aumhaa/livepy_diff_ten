@@ -51,11 +51,10 @@ class ControlSurface(Subject, SlotManager):
     received_midi = ()
     __subject_events__ = ('received_midi', 'disconnect')
 
-    def __init__(self, c_instance=None, publish_self=True, *a, **k):
+    def __init__(self, c_instance=None, *a, **k):
         (super(ControlSurface, self).__init__)(*a, **k)
         self.canonical_parent = None
-        if publish_self:
-            publish_control_surface(self)
+        publish_control_surface(self)
         self._c_instance = c_instance
         self.log_message('Initializing...')
         self._pad_translations = None

@@ -31,8 +31,6 @@ class TupleWrapper(object):
     def get_list(self):
         result = ()
         parent = self._parent
-        if parent == None:
-            parent = __builtins__
         if isinstance(parent, dict):
             if self._attribute in list(parent.keys()):
                 result = parent[self._attribute]

@@ -41,8 +41,8 @@ IMAGE_ID_TO_FILENAME = {'amp_bass':('amp_bass.svg', ''),
  'delay_16th_6':('delay_16th_6.svg', ''), 
  'delay_16th_8':('delay_16th_8.svg', ''), 
  'delay_16th_16':('delay_16th_16.svg', ''), 
- 'delay_pingping_on':('delay_pingping_on.svg', ''), 
- 'delay_pingping_off':('delay_pingping_off.svg', ''), 
+ 'delay_pingpong_on':('delay_pingpong_on.svg', ''), 
+ 'delay_pingpong_off':('delay_pingpong_off.svg', ''), 
  'device_pad':('device_pad.svg', ''), 
  'device_rack_drum':('device_rack_drum.svg', ''), 
  'device_rack_effect':('device_rack_effect.svg', ''), 
@@ -270,8 +270,8 @@ COLLISION_L_F_O = ('wave_sine', 'wave_square', 'wave_triangle', 'wave_saw_up', '
                    'wave_sh_mono', 'wave_noise_white')
 IMPULSE_FILTERS = ('filter_low_12', 'filter_low_24', 'filter_band_12', 'filter_band_24',
                    'filter_high_12', 'filter_high_24', 'filter_notch_12')
-SAMPLER_OSCILLATORS = ('wave_sine', 'wave_square', 'wave_triangle', 'wave_saw_up',
-                       'wave_saw_down', 'wave_sh_mono')
+SAMPLER_OSCILLATORS = ('wave_sine', 'wave_square', 'wave_triangle', 'wave_saw_down',
+                       'wave_saw_up', 'wave_sh_mono')
 LFO_WAVEFORMS = ('wave_sine', 'wave_square', 'wave_triangle', 'wave_saw_up', 'wave_saw_down',
                  'wave_sh_stereo', 'wave_sh_mono')
 STEREO_MODE = ('lfo_phase', 'lfo_spin')
@@ -491,7 +491,7 @@ DEVICE_PARAMETER_IMAGES = {'UltraAnalog':{'OSC1 On/Off':ACTIVATE,
   'Link Switch':('utility_stereo', 'utility_left'), 
   'L Sync Enum':SYNC, 
   'R Sync Enum':SYNC, 
-  'Ping Pong':ACTIVATE}, 
+  'Ping Pong':('delay_pingpong_off', 'delay_pingpong_on')}, 
  'DrumBuss':{'Drive Type': ('drumbuss_soft', 'drumbuss_medium', 'drumbuss_hard')}, 
  'Tube':{'Tube Type': ('tube_a', 'tube_b', 'tube_c')}, 
  'Echo':{'L Sync Mode':('echo_note', 'echo_triplet', 'echo_dotted', 'echo_16th'), 

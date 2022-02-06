@@ -116,12 +116,12 @@ class SessionRingComponent(Component):
 
     def _update_track_list(self):
         current_track_list = self._tracks_to_use()
-        new_offset = min(self.track_offset, len(current_track_list) - 1)
-        if new_offset != self.track_offset:
-            self.track_offset = new_offset
         if self._cached_track_list != current_track_list:
             self._cached_track_list = current_track_list
             self.notify_tracks()
+        new_offset = min(self.track_offset, len(current_track_list) - 1)
+        if new_offset != self.track_offset:
+            self.track_offset = new_offset
 
     @listens('scenes')
     def __on_scene_list_changed(self):

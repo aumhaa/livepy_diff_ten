@@ -2,7 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from builtins import range
 from future import standard_library
 from past.utils import old_div
-import os
+import logging, os
 from ast import parse
 from functools import partial
 from ableton.v2.base import PY3
@@ -14,6 +14,7 @@ import Live
 from _Generic.GenericScript import TRANSPORT_BUTTON_SPECIFICATIONS, GenericScript
 from .DeviceComponent import DeviceComponent
 standard_library.install_aliases()
+logger = logging.getLogger(__name__)
 HIDE_SCRIPT = True
 
 def get_name_for_script(script_path):
@@ -55,10 +56,18 @@ def parse_map_mode(config_parser, section_name, option_name):
 def parse_int(config_parser, integer_range, section_name, option_name):
     integer = -1
     if config_parser.has_option(section_name, option_name):
-        option_value = config_parser.getint(section_name, option_name)
-        if option_value in range(integer_range):
-            integer = option_value
-    return integer
+        try:
+            option_value = config_parser.getint(section_name, option_name)
+            if option_value in range(integer_range):
+                integer = option_value
+        except ValueError as e:
+            try:
+                logger.error('Error while parsing integer value %s', str(e))
+            finally:
+                e = None
+                del e
+
+        return integer
 
 
 open_file = open

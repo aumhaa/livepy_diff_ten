@@ -1115,22 +1115,22 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
   (
    BANK_MAIN_KEY,
    {BANK_PARAMETERS_KEY: (
-                          use('Send Gain').with_name('Send'),
                           'Section',
-                          use('IR').if_parameter('Section').has_value('Convolution').else_use('Algo Type').with_name('Type').if_parameter('Section').has_value('Algo').else_use('EQ On').if_parameter('Section').has_value('EQ').else_use('P.Dly Time').with_name('Predelay').if_parameter('P.Dly Sync').has_value('Off').else_use('P.Dly 16th').with_name('Predelay').if_parameter('P.Dly Sync').has_value('On').else_use(''),
-                          use('Ir Attack Time').with_name('Attack').if_parameter('Section').has_value('Convolution').else_use('Decay').if_parameter('Section').has_value('Algo').else_use('EQ Low Freq').with_name('Low Freq').if_parameter('Section').has_value('EQ').else_use('P.Dly Fb Time').with_name('Feedback').if_parameter('P.Dly Sync').has_value('Off').else_use('P.Dly Fb 16th').with_name('Feedback').if_parameter('P.Dly Sync').has_value('On').else_use(''),
-                          use('Ir Decay Time').with_name('Decay').if_parameter('Section').has_value('Convolution').else_use('Size').if_parameter('Section').has_value('Algo').else_use('EQ Low Gain').with_name('Low Gain').if_parameter('EQ Low Type').has_value('Shelf').and_parameter('Section').has_value('EQ').else_use('EQ Low Slope').with_name('Low Slope').if_parameter('EQ Low Type').has_value('Cut').and_parameter('Section').has_value('EQ').else_use('Routing Eq Off').with_name('Routing').if_parameter('EQ On').has_value('Off').and_parameter('Section').has_value('Mix').else_use('Routing Eq On PreAlgo Off').with_name('Routing').if_parameter('EQ Pre Algo').has_value('Off').and_parameter('Section').has_value('Mix').else_use('Routing Eq On PreAlgo On').with_name('Routing').if_parameter('EQ Pre Algo').has_value('On').and_parameter('Section').has_value('Mix').else_use(''),
-                          use('Ir Size Factor').with_name('Size').if_parameter('Section').has_value('Convolution').else_use('Pr Low Mult').with_name('Low Mult').if_parameter('Algo Type').has_value('Prism').and_parameter('Section').has_value('Algo').else_use('Damping').if_parameter('Section').has_value('Algo').else_use('EQ High Freq').with_name('High Freq').if_parameter('Section').has_value('EQ').else_use('Blend').if_parameter('Section').has_value('Mix').else_use(''),
+                          use('IR').if_parameter('Section').has_value('Convolution').else_use('Algo Type').with_name('Type').if_parameter('Section').has_value('Algo').else_use('EQ On').if_parameter('Section').has_value('EQ').else_use('Send Gain').with_name('Send').if_parameter('Section').has_value('Mix').else_use(''),
+                          use('Ir Attack Time').with_name('Attack').if_parameter('Section').has_value('Convolution').else_use('Decay').if_parameter('Section').has_value('Algo').else_use('EQ Low Freq').with_name('Low Freq').if_parameter('Section').has_value('EQ').else_use('Blend').if_parameter('Section').has_value('Mix').else_use(''),
+                          use('Ir Decay Time').with_name('Decay').if_parameter('Section').has_value('Convolution').else_use('Size').if_parameter('Section').has_value('Algo').else_use('EQ Low Gain').with_name('Low Gain').if_parameter('EQ Low Type').has_value('Shelf').and_parameter('Section').has_value('EQ').else_use('EQ Low Slope').with_name('Low Slope').if_parameter('EQ Low Type').has_value('Cut').and_parameter('Section').has_value('EQ').else_use('P.Dly Time').with_name('Predelay').if_parameter('P.Dly Sync').has_value('Off').else_use('P.Dly 16th').with_name('Predelay').if_parameter('P.Dly Sync').has_value('On').else_use(''),
+                          use('Ir Size Factor').with_name('Size').if_parameter('Section').has_value('Convolution').else_use('Pr Low Mult').with_name('Low Mult').if_parameter('Algo Type').has_value('Prism').and_parameter('Section').has_value('Algo').else_use('Damping').if_parameter('Section').has_value('Algo').else_use('EQ High Freq').with_name('High Freq').if_parameter('Section').has_value('EQ').else_use('P.Dly Fb Time').with_name('Feedback').if_parameter('P.Dly Sync').has_value('Off').else_use('P.Dly Fb 16th').with_name('Feedback').if_parameter('P.Dly Sync').has_value('On').else_use(''),
                           use('').if_parameter('Section').has_value('Convolution').else_use('EQ High Gain').with_name('High Gain').if_parameter('EQ High Type').has_value('Shelf').and_parameter('Section').has_value('EQ').else_use('EQ High Slope').with_name('High Slope').if_parameter('EQ High Type').has_value('Cut').and_parameter('Section').has_value('EQ').else_use('Width').if_parameter('Section').has_value('Mix').else_use('Sh Shimmer').with_name('Shimmer').if_parameter('Algo Type').has_value('Shimmer').else_use('DH BassMult').with_name('Bass Mult').if_parameter('Algo Type').has_value('Dark Hall').else_use('Ti Rate').with_name('Rate').if_parameter('Algo Type').has_value('Tides').else_use('Pr High Mult').with_name('High Mult').if_parameter('Algo Type').has_value('Prism').else_use('Qz Low Damp').with_name('Low Damping').if_parameter('Algo Type').has_value('Quartz').else_use(''),
+                          use('Routing Eq Off').with_name('Routing').if_parameter('EQ On').has_value('Off').else_use('Routing Eq On PreAlgo Off').with_name('Routing').if_parameter('EQ Pre Algo').has_value('Off').else_use('Routing Eq On PreAlgo On').with_name('Routing').if_parameter('EQ Pre Algo').has_value('On').else_use(''),
                           'Dry/Wet'), 
     
     OPTIONS_KEY: (
-                  use('Routing Switch').if_parameter('Section').has_value('Convolution').else_use('Routing Switch').if_parameter('Section').has_value('Algo').else_use(''),
-                  use('Ms Sync Switch').if_parameter('Section').has_value('Mix').else_use('Pre Algo').if_parameter('Section').has_value('EQ').else_use(''),
-                  use('Low Type Switch').if_parameter('Section').has_value('EQ').else_use(''),
                   '',
+                  use('Shape').if_parameter('Section').has_value('Convolution').else_use('Low Type Switch').if_parameter('Section').has_value('EQ').else_use(''),
+                  use('Ms Sync Switch').if_parameter('Section').has_value('Mix').else_use(''),
                   use('High Type Switch').if_parameter('Section').has_value('EQ').else_use(''),
                   '',
+                  'Pre Algo',
                   '')}),
   (
    'Convolution',
@@ -1141,36 +1141,36 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
                           use('Ir Decay Time').with_name('Decay'),
                           use('Ir Size Factor').with_name('Size'),
                           'Blend',
-                          'Width',
+                          use('Routing Eq Off').with_name('Routing').if_parameter('EQ On').has_value('Off').else_use('Routing Eq On PreAlgo Off').with_name('Routing').if_parameter('EQ Pre Algo').has_value('Off').else_use('Routing Eq On PreAlgo On').with_name('Routing').if_parameter('EQ Pre Algo').has_value('On').else_use(''),
                           'Dry/Wet'), 
     
-    OPTIONS_KEY: ('Routing Switch', 'Shape', '', '', '', '', '')}),
+    OPTIONS_KEY: ('', 'Shape', '', '', '', 'Pre Algo', '')}),
   (
-   'Algorithm 1',
-   {BANK_PARAMETERS_KEY: (
-                          use('Algo Type').with_name('Type'),
-                          'Decay',
-                          'Size',
-                          use('Pr Low Mult').with_name('Low Mult').if_parameter('Algo Type').has_value('Prism').else_use('Damping'),
-                          use('DH Shape').with_name('Shape').if_parameter('Algo Type').has_value('Dark Hall').else_use('Diffusion').if_parameter('Algo Type').has_value('Shimmer').else_use('Ti Tide').with_name('Tide').if_parameter('Algo Type').has_value('Tides').else_use('Qz Low Damp').with_name('Low Damping').if_parameter('Algo Type').has_value('Quartz').else_use('Pr High Mult').with_name('High Mult').if_parameter('Algo Type').has_value('Prism').else_use(''),
-                          use('DH BassMult').with_name('Bass Mult').if_parameter('Algo Type').has_value('Dark Hall').else_use('Sh Shimmer').with_name('Shimmer').if_parameter('Algo Type').has_value('Shimmer').else_use('Ti Rate').with_name('Rate').if_parameter('Algo Type').has_value('Tides').else_use('Qz Distance').with_name('Distance').if_parameter('Algo Type').has_value('Quartz').else_use('Pr X Over').with_name('X Over').if_parameter('Algo Type').has_value('Prism').else_use(''),
-                          use('DH Bass X').with_name('Bass X').if_parameter('Algo Type').has_value('Dark Hall').else_use('Sh Pitch Shift').with_name('Pitch').if_parameter('Algo Type').has_value('Shimmer').else_use('Ti Phase').with_name('Phase').if_parameter('Algo Type').has_value('Tides').else_use('Diffusion').if_parameter('Algo Type').has_value('Quartz').else_use(''),
-                          'Dry/Wet'), 
-    
-    OPTIONS_KEY: ('Routing Switch', '', '', '', '', 'Freeze In', 'Freeze')}),
-  (
-   'Algorithm 2',
+   'Algorithm Pg 1',
    {BANK_PARAMETERS_KEY: (
                           use('Algo Type').with_name('Type'),
                           use('Algo Delay').with_name('Delay'),
-                          use('Ti Waveform').with_name('Wave').if_parameter('Algo Type').has_value('Tides').else_use('').if_parameter('Algo Type').has_value('Prism').else_use('Modulation').with_name('Mod'),
-                          'Blend',
-                          '',
-                          '',
-                          '',
+                          'Decay',
+                          'Size',
+                          use('DH Shape').with_name('Shape').if_parameter('Algo Type').has_value('Dark Hall').else_use('Qz Distance').with_name('Distance').if_parameter('Algo Type').has_value('Quartz').else_use('Sh Shimmer').with_name('Shimmer').if_parameter('Algo Type').has_value('Shimmer').else_use('Ti Tide').with_name('Tide').if_parameter('Algo Type').has_value('Tides').else_use('Pr Low Mult').with_name('Low Mult').if_parameter('Algo Type').has_value('Prism').else_use(''),
+                          use('DH BassMult').with_name('Bass Mult').if_parameter('Algo Type').has_value('Dark Hall').else_use('Diffusion').if_parameter('Algo Type').has_value('Quartz').else_use('Diffusion').if_parameter('Algo Type').has_value('Shimmer').else_use('Ti Rate').with_name('Rate').if_parameter('Algo Type').has_value('Tides').else_use('Pr High Mult').with_name('High Mult').if_parameter('Algo Type').has_value('Prism').else_use(''),
+                          use('Ti Waveform').with_name('Wave').if_parameter('Algo Type').has_value('Tides').else_use('Pr X Over').with_name('X Over').if_parameter('Algo Type').has_value('Prism').else_use('Modulation').with_name('Mod'),
                           'Dry/Wet'), 
     
-    OPTIONS_KEY: ('Routing Switch', '', '', '', '', 'Freeze In', 'Freeze')}),
+    OPTIONS_KEY: ('Freeze In', 'Freeze', '', '', '', '', '')}),
+  (
+   'Algorithm Pg 2',
+   {BANK_PARAMETERS_KEY: (
+                          use('Algo Type').with_name('Type'),
+                          use('').if_parameter('Algo Type').has_value('Prism').else_use('Damping'),
+                          use('DH Bass X').with_name('Bass X').if_parameter('Algo Type').has_value('Dark Hall').else_use('Qz Low Damp').with_name('Low Damping').if_parameter('Algo Type').has_value('Quartz').else_use('Sh Pitch Shift').with_name('Pitch').if_parameter('Algo Type').has_value('Shimmer').else_use('Ti Phase').with_name('Phase').if_parameter('Algo Type').has_value('Tides').else_use(''),
+                          '',
+                          use('Send Gain').with_name('Send'),
+                          'Blend',
+                          use('Routing Eq Off').with_name('Routing').if_parameter('EQ On').has_value('Off').else_use('Routing Eq On PreAlgo Off').with_name('Routing').if_parameter('EQ Pre Algo').has_value('Off').else_use('Routing Eq On PreAlgo On').with_name('Routing').if_parameter('EQ Pre Algo').has_value('On').else_use(''),
+                          'Dry/Wet'), 
+    
+    OPTIONS_KEY: ('Freeze In', 'Freeze', '', '', '', 'Pre Algo', '')}),
   (
    'EQ',
    {BANK_PARAMETERS_KEY: (
@@ -1198,12 +1198,12 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
                           use('P.Dly Time').with_name('Predelay').if_parameter('P.Dly Sync').has_value('Off').else_use('P.Dly 16th').with_name('Predelay'),
                           use('P.Dly Fb Time').with_name('Feedback').if_parameter('P.Dly Sync').has_value('Off').else_use('P.Dly Fb 16th').with_name('Feedback'),
                           use('Vintage Copy').with_name('Vintage'),
-                          use('Routing Eq Off').with_name('Routing').if_parameter('EQ On').has_value('Off').else_use('Routing Eq On PreAlgo Off').with_name('Routing').if_parameter('EQ Pre Algo').has_value('Off').else_use('Routing Eq On PreAlgo On').with_name('Routing').if_parameter('EQ Pre Algo').has_value('On').else_use(''),
-                          'Blend',
                           use('Width').with_name('Stereo'),
+                          'Blend',
+                          use('Routing Eq Off').with_name('Routing').if_parameter('EQ On').has_value('Off').else_use('Routing Eq On PreAlgo Off').with_name('Routing').if_parameter('EQ Pre Algo').has_value('Off').else_use('Routing Eq On PreAlgo On').with_name('Routing').if_parameter('EQ Pre Algo').has_value('On').else_use(''),
                           'Dry/Wet'), 
     
-    OPTIONS_KEY: ('Ms Sync Switch', 'EQ', 'Bass Mono', '', '', 'Freeze In', 'Freeze')}))), 
+    OPTIONS_KEY: ('Ms Sync Switch', 'EQ', 'Bass Mono', 'Freeze In', 'Freeze', 'Pre Algo', '')}))), 
  'InstrumentVector':IndexedDict((
   (
    BANK_MAIN_KEY,
@@ -1502,14 +1502,14 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
    {BANK_PARAMETERS_KEY: ('LFO Extend On', 'Polarity', 'Link On', '', '', '', '', '')}))), 
  'Chorus2':IndexedDict((
   (
-   'Bank 1',
+   'Main',
    {BANK_PARAMETERS_KEY: (
                           'Mode',
                           'Rate',
                           'Amount',
                           use('Offset').if_parameter('Mode').has_value('Vibrato').else_use('Width'),
                           use('Shaping').if_parameter('Mode').has_value('Vibrato').else_use(''),
-                          'HPF Freq',
+                          use('HPF Freq').with_name('HP Freq'),
                           use('').if_parameter('Mode').has_value('Vibrato').else_use('Feedback'),
                           'Dry/Wet'), 
     
@@ -1518,11 +1518,11 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
                   '',
                   '',
                   '',
-                  'HPF',
+                  'High Pass',
                   use('').if_parameter('Mode').has_value('Vibrato').else_use('FB Inv'),
                   '')}),
   (
-   'Bank 2',
+   'Mix',
    {BANK_PARAMETERS_KEY: ('Gain', 'Warmth', '', '', '', '', '', 'Dry/Wet')}))), 
  'Compressor2':IndexedDict((
   (
@@ -2265,6 +2265,87 @@ BANK_DEFINITIONS = {'AudioEffectGroupDevice':RACK_BANKS,
   (
    'Output',
    {BANK_PARAMETERS_KEY: ('', '', '', '', '', 'Soft Clip', 'Output', 'Dry/Wet')}))), 
+ 'Shifter':IndexedDict((
+  (
+   BANK_MAIN_KEY,
+   {BANK_PARAMETERS_KEY: (
+                          'Mode',
+                          use('Pitch Coarse').with_name('Coarse').if_parameter('Mode').has_value('Pitch').else_use('FShift Coarse').with_name('Coarse').if_parameter('Mode').has_value('Freq').else_use('RM Coarse').with_name('Coarse'),
+                          use('Pitch Fine').with_name('Spread').if_parameter('Mode').has_value('Pitch').and_parameter('Wide').has_value('On').else_use('Pitch Fine').with_name('Fine').if_parameter('Mode').has_value('Pitch').else_use('Mod Fine').with_name('Spread').if_parameter('Wide').has_value('On').else_use('Mod Fine').with_name('Fine'),
+                          use('Delay S. Time').if_parameter('Delay Sync').has_value('On').else_use('Delay Time'),
+                          use('Delay Feedback').with_name('Dly Feedback'),
+                          'Tone',
+                          use('RM Drive Gain').with_name('Drive Gain').if_parameter('Mode').has_value('Ring').else_use('Pitch Window').if_parameter('Mode').has_value('Pitch'),
+                          'Dry/Wet'), 
+    
+    OPTIONS_KEY: (
+                  '',
+                  'Wide',
+                  'Delay',
+                  'Delay Sync',
+                  '',
+                  use('RM Drive').if_parameter('Mode').has_value('Ring'),
+                  '')}),
+  (
+   'LFO / S&H',
+   {BANK_PARAMETERS_KEY: (
+                          use('Lfo Waveform').with_name('Waveform'),
+                          use('Lfo Amount St').with_name('Amount').if_parameter('Mode').has_value('Pitch').else_use('Lfo Amount Hz').with_name('Amount'),
+                          use('Lfo S. Rate').with_name('S. Rate').if_parameter('Lfo Sync').has_value('On').else_use('Lfo Rate Hz').with_name('Rate'),
+                          use('Lfo Width').with_name('S&H Width').if_parameter('Lfo Waveform').has_value('Random S&H').else_use('Lfo Phase').with_name('Phase').if_parameter('Lfo Waveform').has_value('Random').or_parameter('Lfo Spin').has_value('Off').or_parameter('Lfo Sync').has_value('On').else_use('Lfo Spin Amount').with_name('Spin'),
+                          use('Lfo Duty Cycle').with_name('Duty Cycle'),
+                          use('Lfo Offset').with_name('Offset').if_parameter('Lfo Sync').has_value('On'),
+                          '',
+                          'Dry/Wet'), 
+    
+    OPTIONS_KEY: (
+                  '',
+                  'Lfo Sync',
+                  use('').if_parameter('Lfo Waveform').has_value('Random S&H').or_parameter('Lfo Waveform').has_value('Random').or_parameter('Lfo Sync').has_value('On').else_use('Lfo Spin'),
+                  '',
+                  '',
+                  '',
+                  '')}),
+  (
+   'Env Follow',
+   {BANK_PARAMETERS_KEY: (
+                          use('Env Amount St').with_name('Amount').if_parameter('Mode').has_value('Pitch').else_use('Env Amount Hz').with_name('Amount'),
+                          use('Env Attack').with_name('Attack'),
+                          use('Env Release').with_name('Release'),
+                          '',
+                          '',
+                          '',
+                          use('RM Drive Gain').with_name('Drive Gain').if_parameter('Mode').has_value('Ring'),
+                          'Dry/Wet'), 
+    
+    OPTIONS_KEY: (
+                  'Env. Follow',
+                  '',
+                  '',
+                  '',
+                  '',
+                  use('RM Drive').if_parameter('Mode').has_value('Ring'),
+                  '')}),
+  (
+   'Sidechain',
+   {BANK_PARAMETERS_KEY: (
+                          'Pitch Mode',
+                          use('MidiPitch Glide').with_name('Glide'),
+                          use('Pitch Bend Range').with_name('PBend Amount'),
+                          '',
+                          '',
+                          '',
+                          use('RM Drive Gain').with_name('Drive Gain').if_parameter('Mode').has_value('Ring'),
+                          'Dry/Wet'), 
+    
+    OPTIONS_KEY: (
+                  '',
+                  '',
+                  '',
+                  '',
+                  '',
+                  use('RM Drive').if_parameter('Mode').has_value('Ring'),
+                  '')}))), 
  'Spectral':IndexedDict((
   (
    BANK_MAIN_KEY,
@@ -2401,6 +2482,7 @@ PARAMETERS_BLACKLIST_FOR_CPP_SANITY_CHECK = {'OriginalSimpler':('Start', 'End', 
  'Hybrid':('Band', 'Section', 'Shape', 'IR', 'IR Category', 'Ir Attack Time', 'Ir Decay Time',
  'Ir Size Factor', 'Vintage Copy', 'Routing Eq Off', 'Routing Eq On PreAlgo Off',
  'Routing Eq On PreAlgo On'), 
+ 'Shifter':('Pitch Bend Range', 'Pitch Mode'), 
  'Transmute':('Frequency Dial Mode', 'Midi Gate', 'Mod Mode', 'Mono Poly', 'Pitch Mode', 'Pitch Bend Range',
  'Polyphony'), 
  'Echo':('Channel Toggle', ), 

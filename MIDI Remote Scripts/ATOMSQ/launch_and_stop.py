@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import listens, liveobj_valid
-from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.components import ClipSlotComponent
-from ableton.v2.control_surface.control import ButtonControl, ToggleButtonControl
+from ableton.v3.base import listens, liveobj_valid
+from ableton.v3.control_surface import Component
+from ableton.v3.control_surface.components import ClipSlotComponent
+from ableton.v3.control_surface.controls import ButtonControl
 
 class LaunchAndStopComponent(Component):
     scene_launch_button = ButtonControl(color='DefaultButton.Off',
@@ -10,7 +10,7 @@ class LaunchAndStopComponent(Component):
     track_stop_button = ButtonControl()
 
     def __init__(self, *a, **k):
-        (super(LaunchAndStopComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._clip_slot = ClipSlotComponent()
         self.register_slot(self.song.view, self._LaunchAndStopComponent__on_track_or_scene_changed, 'selected_track')
         self.register_slot(self.song.view, self._LaunchAndStopComponent__on_track_or_scene_changed, 'selected_scene')

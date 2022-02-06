@@ -13,6 +13,7 @@ class SoftwareController(MackieControlComponent):
         av.add_is_view_visible_listener('Browser', self._SoftwareController__update_browser_button_led)
         av.add_is_view_visible_listener('Detail', self._SoftwareController__update_detail_button_led)
         self.song().view.add_draw_mode_listener(self._SoftwareController__update_draw_mode_button_led)
+        self.song().view.add_follow_song_listener(self._SoftwareController__update_follow_song_button_led)
         self.song().add_back_to_arranger_listener(self._SoftwareController__update_back_to_arranger_button_led)
 
     def destroy(self):
@@ -22,6 +23,7 @@ class SoftwareController(MackieControlComponent):
         av.remove_is_view_visible_listener('Browser', self._SoftwareController__update_browser_button_led)
         av.remove_is_view_visible_listener('Detail', self._SoftwareController__update_detail_button_led)
         self.song().view.remove_draw_mode_listener(self._SoftwareController__update_draw_mode_button_led)
+        self.song().view.remove_follow_song_listener(self._SoftwareController__update_follow_song_button_led)
         self.song().remove_back_to_arranger_listener(self._SoftwareController__update_back_to_arranger_button_led)
         for note in software_controls_switch_ids:
             self.send_midi((NOTE_ON_STATUS, note, BUTTON_STATE_OFF))
@@ -83,6 +85,7 @@ class SoftwareController(MackieControlComponent):
         self._SoftwareController__update_detail_sub_view_button_led()
         self._SoftwareController__update_browser_button_led()
         self._SoftwareController__update_detail_button_led()
+        self._SoftwareController__update_follow_song_button_led()
         self._SoftwareController__update_undo_button_led()
         self._SoftwareController__update_redo_button_led()
         self._SoftwareController__update_draw_mode_button_led()
@@ -168,6 +171,12 @@ class SoftwareController(MackieControlComponent):
             self.send_midi((NOTE_ON_STATUS, SID_AUTOMATION_TOUCH, BUTTON_STATE_ON))
         else:
             self.send_midi((NOTE_ON_STATUS, SID_AUTOMATION_TOUCH, BUTTON_STATE_OFF))
+
+    def __update_follow_song_button_led(self):
+        if self.song().view.follow_song:
+            self.send_midi((NOTE_ON_STATUS, SID_FUNC_MIXER, BUTTON_STATE_ON))
+        else:
+            self.send_midi((NOTE_ON_STATUS, SID_FUNC_MIXER, BUTTON_STATE_OFF))
 
     def __update_undo_button_led(self):
         if self.song().can_undo:

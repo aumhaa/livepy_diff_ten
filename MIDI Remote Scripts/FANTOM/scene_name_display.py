@@ -4,10 +4,10 @@ from .sysex import NAME_LENGTH, NAME_TERMINATOR
 
 class SceneNameDisplayElement(SimpleDisplayElement):
 
-    def display_data(self, scene_list):
+    def display_data(self, data):
         data_to_send = [
-         len(scene_list)]
-        for scene in scene_list:
+         len(data)]
+        for scene in data:
             data_to_send.extend(as_ascii(adjust_string(scene.name, NAME_LENGTH).strip()))
             data_to_send.append(NAME_TERMINATOR)
 

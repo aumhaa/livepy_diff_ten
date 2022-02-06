@@ -40,11 +40,10 @@ class SimpleControlSurface(EventObject):
     __events__ = ('received_midi', 'disconnect')
     preferences_key = None
 
-    def __init__(self, c_instance=None, publish_self=True, *a, **k):
+    def __init__(self, c_instance=None, *a, **k):
         (super(SimpleControlSurface, self).__init__)(*a, **k)
         self.canonical_parent = None
-        if publish_self:
-            publish_control_surface(self)
+        publish_control_surface(self)
         self._c_instance = c_instance
         self._pad_translations = None
         self._components = []

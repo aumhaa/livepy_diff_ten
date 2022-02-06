@@ -1,9 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import listens_group, liveobj_valid
-import ableton.v2.control_surface.components as ClipSlotComponentBase
-import ableton.v2.control_surface.components as SceneComponentBase
-import ableton.v2.control_surface.components as SessionComponentBase
-from ableton.v2.control_surface.control import ButtonControl, InputControl
+from ableton.v3.base import listens_group, liveobj_valid
+import ableton.v3.control_surface.components as ClipSlotComponentBase
+import ableton.v3.control_surface.components as SessionComponentBase
+from ableton.v3.control_surface.controls import ButtonControl, InputControl
 from .control import DisplayControl
 
 class ClipSlotComponent(ClipSlotComponentBase):
@@ -24,33 +23,27 @@ class ClipSlotComponent(ClipSlotComponentBase):
             return 'Session.SlotLacksStop'
         if self._track_is_armed(track):
             if self._clip_slot.has_stop_button:
-                return 'Session.RecordButton'
+                return 'Session.ClipRecordButton'
         return 'Session.ClipEmpty'
 
 
-class SceneComponent(SceneComponentBase):
-    clip_slot_component_type = ClipSlotComponent
-
-    @property
-    def scene(self):
-        return self._scene
-
-
 class SessionComponent(SessionComponentBase):
-    scene_component_type = SceneComponent
     track_select_control = InputControl()
     scene_name_display = DisplayControl()
     stop_all_clips_button = ButtonControl(color='DefaultButton.Off',
       pressed_color='DefaultButton.On')
+
+    def __init__(self, *a, **k):
+        (super().__init__)(a, clip_slot_component_type=ClipSlotComponent, **k)
 
     def set_stop_all_clips_button(self, button):
         self.stop_all_clips_button.set_control_element(button)
 
     @track_select_control.value
     def track_select_control(self, value, _):
-        if value and value <= len(self._stop_track_clip_buttons):
+        if value and value <= self.stop_track_clip_buttons.control_count:
             index = value - 1
-            button = self._stop_track_clip_buttons[index]
+            button = self.stop_track_clip_buttons[index]._control_element
             if button:
                 button.clear_send_cache()
                 self._update_stop_clips_led(index)
@@ -62,12 +55,12 @@ class SessionComponent(SessionComponentBase):
         self.song.stop_all_clips()
 
     def _reassign_scenes(self):
-        super(SessionComponent, self)._reassign_scenes()
+        super()._reassign_scenes()
         self._SessionComponent__on_scene_name_changed.replace_subjects((s.scene for s in self._scenes))
         self._update_scene_name_display()
 
     def _update_scene_name_display(self):
-        self.scene_name_display.data = [s.scene for s in self._scenes if liveobj_valid(s._scene)]
+        self.scene_name_display.data = [s.scene for s in self._scenes if liveobj_valid(s.scene)]
 
     @listens_group('name')
     def __on_scene_name_changed(self, _):

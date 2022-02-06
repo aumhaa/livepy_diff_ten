@@ -1,46 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface import Skin
-from .colors import Mono, Rgb
+from ableton.v3.control_surface import BasicColors, Skin, default_skin, merge_skins
+from .colors import Rgb
 
 class Colors:
-
-    class DefaultButton:
-        On = Mono.ON
-        Off = Mono.OFF
-        Disabled = Mono.OFF
-
-    class Transport:
-        PlayOn = Mono.ON
-        PlayOff = Mono.OFF
-
-    class Recording:
-        On = Mono.ON
-        Transition = Mono.ON
-        Off = Mono.OFF
-
-    class Mixer:
-        ArmOn = Mono.ON
-        ArmOff = Mono.OFF
-        SoloOn = Mono.ON
-        SoloOff = Mono.OFF
-        MuteOn = Mono.ON
-        MuteOff = Mono.OFF
-
-    class Device:
-        Navigation = Mono.OFF
-        NavigationPressed = Mono.ON
-
-    class Session:
-        ClipEmpty = Mono.OFF
-        ClipTriggeredPlay = Mono.ON
-        ClipTriggeredRecord = Mono.ON
-        ClipStopped = Mono.ON
-        ClipStarted = Mono.ON
-        ClipRecording = Mono.ON
-        RecordButton = Mono.OFF
-
-
-class RgbColors:
 
     class DefaultButton:
         On = Rgb.ON
@@ -50,31 +12,37 @@ class RgbColors:
     class Transport:
         PlayOn = Rgb.GREEN
         PlayOff = Rgb.GREEN_DIM
+        LoopOn = Rgb.GREEN
+        LoopOff = Rgb.GREEN_DIM
+
+    class Mixer:
+        Selected = Rgb.ON
+        NotSelected = Rgb.OFF
 
     class Session:
         ClipEmpty = Rgb.OFF
         ClipTriggeredPlay = Rgb.GREEN_BLINK
         ClipTriggeredRecord = Rgb.RED_BLINK
+        ClipStopped = BasicColors.ON
         ClipStarted = Rgb.GREEN_PULSE
         ClipRecording = Rgb.RED_PULSE
-        RecordButton = Rgb.RED_HALF
+        ClipRecordButton = Rgb.RED_HALF
         Scene = Rgb.GREEN_HALF
-        NoScene = Rgb.OFF
+        SceneEmpty = Rgb.OFF
         SceneTriggered = Rgb.GREEN_BLINK
         StopClipTriggered = Rgb.RED_BLINK
         StopClip = Rgb.RED
         StopClipDisabled = Rgb.RED_HALF
 
-    class View:
+    class ViewToggle:
         DetailOn = Rgb.YELLOW
         DetailOff = Rgb.YELLOW_HALF
-        MainOn = Rgb.BLUE
-        MainOff = Rgb.BLUE_HALF
+        SessionOn = Rgb.BLUE
+        SessionOff = Rgb.BLUE_HALF
         ClipOn = Rgb.PURPLE
         ClipOff = Rgb.PURPLE_HALF
         BrowserOn = Rgb.GREEN
         BrowserOff = Rgb.GREEN_HALF
 
 
-skin = Skin(Colors)
-rgb_skin = Skin(RgbColors)
+skin = merge_skins(default_skin, Skin(Colors))

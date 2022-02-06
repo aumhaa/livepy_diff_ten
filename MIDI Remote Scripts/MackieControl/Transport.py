@@ -335,9 +335,6 @@ class Transport(MackieControlComponent):
         else:
             self.song().start_playing()
 
-    def __toggle_follow(self):
-        self.song().follow_song = not self.song().follow_song
-
     def __toggle_loop(self):
         self.song().loop = not self.song().loop
 
@@ -370,8 +367,9 @@ class Transport(MackieControlComponent):
         self.song().current_song_time = self.song().last_event_time
 
     def __on_session_is_visible_changed(self):
-        if not self.session_is_visible():
-            self._Transport__update_zoom_button_led()
+        self._Transport__last_focussed_clip_play_state = CLIP_STATE_INVALID
+        self._Transport__update_zoom_button_led()
+        self._Transport__update_scrub_button_led()
 
     def __update_zoom_led_in_session(self):
         if self.session_is_visible():
@@ -407,13 +405,15 @@ class Transport(MackieControlComponent):
             self.send_midi((NOTE_ON_STATUS, SID_TRANSPORT_REWIND, BUTTON_STATE_OFF))
 
     def __update_zoom_button_led(self):
-        if self._Transport__zoom_button_down:
+        if self.session_is_visible():
+            self._Transport__update_zoom_led_in_session()
+        elif self._Transport__zoom_button_down:
             self.send_midi((NOTE_ON_STATUS, SID_JOG_ZOOM, BUTTON_STATE_ON))
         else:
             self.send_midi((NOTE_ON_STATUS, SID_JOG_ZOOM, BUTTON_STATE_OFF))
 
     def __update_scrub_button_led(self):
-        if self._Transport__scrub_button_down:
+        if self._Transport__scrub_button_down and not self.session_is_visible():
             self.send_midi((NOTE_ON_STATUS, SID_JOG_SCRUB, BUTTON_STATE_ON))
         else:
             self.send_midi((NOTE_ON_STATUS, SID_JOG_SCRUB, BUTTON_STATE_OFF))
@@ -431,12 +431,6 @@ class Transport(MackieControlComponent):
             self.send_midi((NOTE_ON_STATUS, SID_TRANSPORT_RECORD, BUTTON_STATE_ON))
         else:
             self.send_midi((NOTE_ON_STATUS, SID_TRANSPORT_RECORD, BUTTON_STATE_OFF))
-
-    def __update_follow_song_button_led(self):
-        if self.song().follow_song:
-            self.send_midi((NOTE_ON_STATUS, SID_MARKER_FROM_PREV, BUTTON_STATE_ON))
-        else:
-            self.send_midi((NOTE_ON_STATUS, SID_MARKER_FROM_PREV, BUTTON_STATE_OFF))
 
     def __update_prev_cue_button_led(self):
         if self.song().can_jump_to_prev_cue:

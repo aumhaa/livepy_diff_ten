@@ -11,7 +11,7 @@ class Chorus2DeviceDecorator(LiveObjectDecorator, EventObject):
         (super(Chorus2DeviceDecorator, self).__init__)(*a, **k)
         self.fb_inv_option = DeviceOnOffOption(name='FB Inv',
           property_host=(get_parameter_by_name(self, 'FB Inv')))
-        self.hpf_enabled_option = DeviceOnOffOption(name='HPF',
+        self.hpf_enabled_option = DeviceOnOffOption(name='High Pass',
           property_host=(get_parameter_by_name(self, 'HPF Enabled')))
         self.register_disconnectables(self.options)
 
@@ -73,12 +73,6 @@ class Chorus2DeviceComponent(DeviceComponentWithTrackColorViewData):
         lfo_left, lfo_right = self._calculate_view_size(self.LFO_VISUALISATION_CONFIGURATION_IN_BANKS)
         return {'LfoLeft':lfo_left, 
          'LfoRight':lfo_right}
-
-    def _basic_visualisation_view_data(self):
-        view_data = super()._basic_visualisation_view_data()
-        view_data.update(self._configuration_view_data)
-        view_data.update(self._adjustment_view_data)
-        return view_data
 
     def _initial_visualisation_view_data(self):
         view_data = super(Chorus2DeviceComponent, self)._initial_visualisation_view_data()

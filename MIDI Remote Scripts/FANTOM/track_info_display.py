@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.base import depends
+from ableton.v3.base import depends
 from .simple_display import SimpleDisplayElement, adjust_string, as_ascii
 from .sysex import NAME_LENGTH, NAME_TERMINATOR
 INFO_LENGTH = 3
@@ -16,12 +16,12 @@ class TrackInfoDisplayElement(SimpleDisplayElement):
     @depends(song=None)
     def __init__(self, *a, **k):
         self.song = k.pop('song')
-        (super(TrackInfoDisplayElement, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
 
-    def display_data(self, track_list):
+    def display_data(self, data):
         num_sends = len(self.song.return_tracks)
-        data_to_send = [len(track_list)]
-        for track in track_list:
+        data_to_send = [len(data)]
+        for track in data:
             data_to_send.append(self._calculate_track_status_byte(track, num_sends))
             data_to_send.append(int(track.color_index) if track.color_index else 0)
             data_to_send.extend(as_ascii(adjust_string(track.name, NAME_LENGTH).strip()))

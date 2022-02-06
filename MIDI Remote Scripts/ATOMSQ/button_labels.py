@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface import Component
-from ableton.v2.control_surface.control import control_list
+from ableton.v3.control_surface import Component
+from ableton.v3.control_surface.controls import control_list
 from .control import DisplayControl
 BUTTON_LABELS_MAP = {'song':('Solo', 'Mute', 'Arm', 'Clip', 'Scene', 'Stop'), 
  'instrument':('-', '-', '-', '-', '-', '-'), 

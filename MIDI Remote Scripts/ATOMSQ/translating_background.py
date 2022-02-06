@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.components import BackgroundComponent
-from ableton.v2.control_surface.control import RadioButtonGroup
+from ableton.v3.control_surface.components import BackgroundComponent
+from ableton.v3.control_surface.controls import RadioButtonGroup
 from .midi import USER_MODE_START_CHANNEL
 
 class TranslatingBackgroundComponent(BackgroundComponent):
@@ -8,7 +8,7 @@ class TranslatingBackgroundComponent(BackgroundComponent):
       channel=USER_MODE_START_CHANNEL)
 
     def __init__(self, *a, **k):
-        (super(TranslatingBackgroundComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self.channel_selection_buttons.checked_index = 0
 
     def set_channel_selection_buttons(self, buttons):
@@ -25,7 +25,7 @@ class TranslatingBackgroundComponent(BackgroundComponent):
                 c.use_default_message()
 
             prior_control_group.reset()
-        super(TranslatingBackgroundComponent, self)._clear_control(name, control)
+        super()._clear_control(name, control)
         self._set_channel_of_all_controls(self.channel_selection_buttons.checked_index)
 
     def _set_channel_of_all_controls(self, channel_offset):

@@ -9,7 +9,7 @@ import _Framework.ControlSurface as ControlSurface
 import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
 from _Framework.Util import is_iterable
 from ableton.v2.base import PY2, old_hasattr
-from _MxDCore.ControlSurfaceWrapper import ControlSurfaceWrapper, is_real_control_surface
+from _MxDCore.ControlSurfaceWrapper import ControlProxy, ControlSurfaceWrapper, is_real_control_surface
 
 class MFLPropertyFormats(object):
     Default, JSON = (0, 1)
@@ -191,6 +191,8 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                                 MFLProperty('get_minor_version'),
                                 MFLProperty('open_dialog_count'),
                                 MFLProperty('press_current_dialog_button'),
+                                MFLProperty('average_process_usage'),
+                                MFLProperty('peak_process_usage'),
                                 MFLProperty('view')), 
  
  Live.Application.Application.View: (
@@ -234,6 +236,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                   MFLProperty('fire'),
                   MFLProperty('gain'),
                   MFLProperty('gain_display_string'),
+                  MFLProperty('get_all_notes_extended'),
                   MFLProperty('get_notes'),
                   MFLProperty('get_notes_by_id', min_epii_version=(4, 3)),
                   MFLProperty('get_notes_extended', min_epii_version=(4, 3)),
@@ -276,6 +279,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                   MFLProperty('sample_rate'),
                   MFLProperty('scrub'),
                   MFLProperty('select_all_notes'),
+                  MFLProperty('select_notes_by_id'),
                   MFLProperty('set_fire_button_state'),
                   MFLProperty('set_notes'),
                   MFLProperty('signature_denominator'),
@@ -576,6 +580,8 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                   MFLProperty('get_current_smpte_song_time'),
                   MFLProperty('groove_amount'),
                   MFLProperty('groove_pool'),
+                  MFLProperty('is_ableton_link_enabled'),
+                  MFLProperty('is_ableton_link_start_stop_sync_enabled'),
                   MFLProperty('is_counting_in'),
                   MFLProperty('is_cue_point_selected'),
                   MFLProperty('is_playing'),
@@ -731,6 +737,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                       min_epii_version=(4, 3)),
                     MFLProperty('output_routings'),
                     MFLProperty('output_sub_routings'),
+                    MFLProperty('performance_impact'),
                     MFLProperty('playing_slot_index'),
                     MFLProperty('solo'),
                     MFLProperty('stop_all_clips'),
@@ -907,14 +914,7 @@ def is_class(class_object):
 
 
 def get_control_surfaces():
-    result = []
-    cs_list_key = 'control_surfaces'
-    if isinstance(__builtins__, dict):
-        if cs_list_key in list(__builtins__.keys()):
-            result = __builtins__[cs_list_key]
-    elif old_hasattr(__builtins__, cs_list_key):
-        result = getattr(__builtins__, cs_list_key)
-    return tuple(result)
+    return tuple(filter(lambda c: c is not None, Live.Application.get_application().control_surfaces))
 
 
 def get_root_prop(external_device, prop_key):
@@ -932,6 +932,7 @@ def cs_base_classes():
     import ableton.v2.control_surface as ControlSurfaceComponent2
     import ableton.v2.control_surface as ControlElement2
     return (
+     ControlProxy,
      ControlSurfaceWrapper,
      ControlSurfaceComponent,
      ControlElement,
@@ -955,13 +956,18 @@ def is_object_iterable(obj):
     return not isinstance(obj, basestring) and is_iterable(obj) and not isinstance(obj, cs_base_classes())
 
 
-def verify_object_property(lom_object, property_name, epii_version):
+def is_listenable_event(lom_object, event_name):
+    return old_hasattr(lom_object, '{}_has_listener'.format(event_name))
+
+
+def verify_object_property(lom_object, property_name, epii_version, include_purely_listenable=False):
     raise_error = False
-    if isinstance(lom_object, cs_base_classes()):
-        if not old_hasattr(lom_object, property_name):
+    if not (include_purely_listenable and is_listenable_event(lom_object, property_name)):
+        if isinstance(lom_object, cs_base_classes()):
+            if not old_hasattr(lom_object, property_name):
+                raise_error = True
+        elif not is_property_exposed_for_type(property_name, type(lom_object), epii_version):
             raise_error = True
-    elif not is_property_exposed_for_type(property_name, type(lom_object), epii_version):
-        raise_error = True
-    if raise_error:
-        raise LomAttributeError("'%s' object has no attribute '%s'" % (
-         lom_object.__class__.__name__, property_name))
+        if raise_error:
+            raise LomAttributeError("'%s' object has no attribute '%s'" % (
+             lom_object.__class__.__name__, property_name))

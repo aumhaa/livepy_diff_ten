@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from builtins import filter
 from functools import partial
 from ableton.v2.base import mixin, nop
 from ableton.v2.control_surface.components import AutoArmComponent
@@ -64,6 +65,13 @@ class RestoringAutoArmComponent(AutoArmComponent, Messenger):
         if self._auto_arm_restore_behaviour:
             self._auto_arm_restore_behaviour.update()
         self._update_notification()
+
+    @property
+    def needs_restore_auto_arm(self):
+        song = self.song
+        exclusive_arm = song.exclusive_arm
+        selected_track = song.view.selected_track
+        return self.is_enabled() and self.can_auto_arm_track(selected_track) and not selected_track.arm and any(filter(lambda track: exclusive_arm or self.can_auto_arm_track(track) and track.can_be_armed and track.arm, song.tracks))
 
     def can_auto_arm(self):
         return self.is_enabled() and not self.needs_restore_auto_arm
