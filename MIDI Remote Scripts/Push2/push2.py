@@ -283,7 +283,7 @@ class Push2(IdentifiableControlSurface, PushBase):
     def _component_guard(self):
         with super(Push2, self)._component_guard():
             with inject(real_time_mapper=(const(self._c_instance.real_time_mapper))).everywhere():
-                (yield)
+                yield
                 self._commit_real_time_data_changes()
                 self._model.commit_changes()
 

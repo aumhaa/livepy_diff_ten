@@ -4,8 +4,10 @@ from .fantom import FANTOM
 
 def get_capabilities():
     return {CONTROLLER_ID_KEY: controller_id(vendor_id=1410,
-                          product_ids=[544],
-                          model_name=['FANTOM-6 7 8']), 
+                          product_ids=[
+                         544, 643],
+                          model_name=[
+                         'FANTOM-6 7 8', 'FANTOM-06 07 08']), 
      
      PORTS_KEY: [
                  inport(props=[NOTES_CC]),

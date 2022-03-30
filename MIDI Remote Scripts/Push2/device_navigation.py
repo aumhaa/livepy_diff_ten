@@ -217,7 +217,7 @@ class MoveDeviceComponent(Component):
     @contextmanager
     def _disabled_encoders(self):
         self._disable_all_encoders()
-        (yield)
+        yield
         self._tasks.add(task.sequence(task.wait(self.MOVE_DELAY), task.run(self._enable_all_encoders)))
 
     def _disable_all_encoders(self):

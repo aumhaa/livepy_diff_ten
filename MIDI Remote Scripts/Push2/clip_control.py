@@ -810,7 +810,7 @@ class MidiClipControllerComponent(Component):
     def changing_track(self):
         self.mute_components_during_track_change(True)
         self._real_time_data_attached = False
-        (yield)
+        yield
         self.mute_components_during_track_change(False)
 
     def _update_minimum_pitch(self):

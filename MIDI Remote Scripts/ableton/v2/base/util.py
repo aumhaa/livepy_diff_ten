@@ -64,7 +64,7 @@ def slice_size(slice, width):
 
 def chunks(l, chunk_size):
     for i in range(0, len(l), chunk_size):
-        (yield l[i:i + chunk_size])
+        yield l[i:i + chunk_size]
 
 
 def maybe(fn):
@@ -235,8 +235,8 @@ def union(a, b):
 def product(iter_a, iter_b):
     for a in iter_a:
         for b in iter_b:
-            (yield (
-             a, b))
+            yield (
+             a, b)
 
 
 def next(iter):
@@ -310,7 +310,7 @@ def aggregate_contexts(handlers):
     err = None
     exc_info = (None, None, None)
     try:
-        (yield)
+        yield
     except BaseException as e:
         try:
             exc_info = sys.exc_info()
@@ -377,9 +377,9 @@ class OutermostOnlyContext(object):
         self._entered_count += 1
         if self._entered_count == 1:
             with context as result:
-                (yield result)
+                yield result
         else:
-            (yield)
+            yield
         self._entered_count -= 1
 
 
@@ -506,7 +506,7 @@ class overlaymap(object):
 
     def iteritems(self):
         for key in self.keys():
-            (yield (key, self[key]))
+            yield (key, self[key])
 
 
 def trace_value(value, msg='Value: '):

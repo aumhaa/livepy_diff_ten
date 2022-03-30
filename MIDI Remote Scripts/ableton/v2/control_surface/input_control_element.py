@@ -84,7 +84,7 @@ class InputSignal(Signal):
             control = self._input_control
             old_count = self.count
             old_wants_forwarding = control.script_wants_forwarding()
-            (yield)
+            yield
         finally:
             diff_count = self.count - old_count
             control._input_signal_listener_count += diff_count

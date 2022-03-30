@@ -148,7 +148,7 @@ class DeviceNavigationComponent(Component):
     def _deactivated_option_listener(self):
         old_subject = self._on_state_changed_in_controller.subject
         self._on_state_changed_in_controller.subject = None
-        (yield)
+        yield
         self._on_state_changed_in_controller.subject = old_subject
 
     @listens('state')

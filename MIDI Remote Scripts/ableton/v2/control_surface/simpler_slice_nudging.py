@@ -25,7 +25,7 @@ class SimplerSliceNudging(EventObject):
     def _updating_nudge_parameter(self):
         if self._nudge_parameter:
             self._nudge_parameter.set_display_value_conversion(None)
-        (yield)
+        yield
         if self._nudge_parameter:
             self._nudge_parameter.set_display_value_conversion(self._display_value_conversion)
         self._SimplerSliceNudging__on_nudge_delta.subject = self._nudge_parameter

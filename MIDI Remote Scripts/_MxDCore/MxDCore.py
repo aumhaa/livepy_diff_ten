@@ -621,7 +621,7 @@ class MxDCore(object):
         for component in path_components[1:]:
             if cur_object == None:
                 return
-            (yield (cur_object, component))
+            yield (cur_object, component)
             if component.isdigit():
                 index = int(component)
                 if index >= 0 and index < len(cur_object):

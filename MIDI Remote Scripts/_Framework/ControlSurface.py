@@ -306,7 +306,7 @@ class ControlSurface(Subject, SlotManager):
     def suppressing_rebuild_requests(self):
         try:
             self._set_suppress_rebuild_requests(True)
-            (yield)
+            yield
         finally:
             self._set_suppress_rebuild_requests(False)
 
@@ -395,9 +395,9 @@ class ControlSurface(Subject, SlotManager):
         if not self._in_component_guard:
             with self._in_component_guard():
                 with self._component_guard():
-                    (yield)
+                    yield
         else:
-            (yield)
+            yield
 
     @property
     def in_component_guard(self):
@@ -408,7 +408,7 @@ class ControlSurface(Subject, SlotManager):
         with self._control_surface_injector:
             with self.suppressing_rebuild_requests():
                 with self.accumulating_midi_messages():
-                    (yield)
+                    yield
 
     @profile
     def call_listeners(self, listeners):
@@ -420,7 +420,7 @@ class ControlSurface(Subject, SlotManager):
     def accumulating_midi_messages(self):
         with self._accumulate_midi_messages():
             try:
-                (yield)
+                yield
             finally:
                 self._flush_midi_messages()
 
@@ -555,7 +555,7 @@ class OptimizedControlSurface(ControlSurface):
     def _component_guard(self):
         with super(OptimizedControlSurface, self)._component_guard():
             with self._ownership_handler_injector:
-                (yield)
+                yield
                 self._optimized_ownership_handler.commit_ownership_changes()
 
     def _register_control(self, control):
