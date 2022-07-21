@@ -57,8 +57,9 @@ class ViewControlComponent(Component):
     __events__ = ('track_selection_scrolled', 'scene_selection_scrolled')
 
     @depends(session_ring=None)
-    def __init__(self, name='View_Control', session_ring=None, track_scroller_type=NotifyingTrackScroller, track_pager_type=NotifyingTrackPager, scene_scroller_type=NotifyingSceneScroller, scene_pager_type=NotifyingScenePager, *a, **k):
+    def __init__(self, name='View_Control', session_ring=None, track_scroller_type=NotifyingTrackScroller, track_pager_type=NotifyingTrackPager, scene_scroller_type=NotifyingSceneScroller, scene_pager_type=NotifyingScenePager, is_private=True, *a, **k):
         (super().__init__)(a, name=name, **k)
+        self.is_private = is_private
         self._session_ring = session_ring
         self._scroll_tracks = ScrollComponent((self._create_scroller(track_scroller_type, 'track')),
           parent=self)

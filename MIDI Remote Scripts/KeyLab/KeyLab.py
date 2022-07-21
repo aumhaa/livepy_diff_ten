@@ -1,8 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
-from functools import partial
 import Live
-from _Framework import Task
 import _Framework.ButtonElement as ButtonElement
 import _Framework.ButtonMatrixElement as ButtonMatrixElement
 import _Framework.ClipCreator as ClipCreator
@@ -28,7 +26,7 @@ PAD_HARDWARE_IDS = list(range(112, 128))
 ENCODER_MSG_IDS = (74, 71, 76, 77, 18, 19, 16, 17, 93, 91)
 SLIDER_MSG_IDS = (73, 75, 79, 72, 80, 81, 82, 83, 85)
 PAD_MSG_IDS = list(range(36, 52))
-MESSAGE_DELAY = 0.001
+MESSAGE_DELAY = 0.1
 BUTTON_HARDWARE_AND_MESSAGE_IDS = {'session_record_button':(91, 5), 
  'stop_all_clips_button':(92, 4), 
  'stop_button':(89, 102), 
@@ -40,7 +38,7 @@ BUTTON_HARDWARE_AND_MESSAGE_IDS = {'session_record_button':(91, 5),
  'scene_up_button':(25, 29), 
  'scene_down_button':(26, 30), 
  'scene_launch_button':(27, 31)}
-ENCODER_CHANNEL = 1
+ENCODER_CHANNEL = 0
 PAD_CHANNEL = 9
 
 def get_button_identifier_by_name(identifier):
@@ -200,7 +198,7 @@ class KeyLab(ArturiaControlSurface):
         self._collect_setup_message(MODE_PROPERTY, hardware_id, PAD_NOTE_MODE)
 
     def _setup_hardware(self):
-        for msg in self._messages_to_send:
-            self._tasks.add(Task.sequence(partial(self._send_midi, msg), Task.wait(MESSAGE_DELAY)))
+        for i, msg in enumerate(self._messages_to_send):
+            self.schedule_message(MESSAGE_DELAY * i + 1, self._send_midi, msg)
 
         self._messages_to_send = []

@@ -13,6 +13,9 @@ class SysexElement(InputControlElement):
         self._default_value = default_value
         self._optimized = optimized
 
+    def message_map_mode(self):
+        raise AssertionError("SysexElement doesn't support mapping.")
+
     def send_value(self, *arguments):
         message = (self._send_message_generator)(*arguments)
         self._do_send_value(message)

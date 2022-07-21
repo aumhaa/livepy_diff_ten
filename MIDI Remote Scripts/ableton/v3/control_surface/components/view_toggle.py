@@ -13,8 +13,9 @@ class ViewToggleComponent(Component):
     browser_view_toggle_button = ToggleButtonControl(untoggled_color='ViewToggle.BrowserOff',
       toggled_color='ViewToggle.BrowserOn')
 
-    def __init__(self, name='View_Toggle', *a, **k):
+    def __init__(self, name='View_Toggle', is_private=True, *a, **k):
         (super().__init__)(a, name=name, **k)
+        self.is_private = is_private
         for view_name in ('Session', 'Detail', 'Detail/Clip', 'Browser'):
             self.register_slot(MultiSlot(subject=(self.application.view),
               listener=(self._ViewToggleComponent__update_view_toggle_buttons),

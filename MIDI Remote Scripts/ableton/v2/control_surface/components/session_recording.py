@@ -255,7 +255,7 @@ class SessionRecordingComponent(Component):
             return True
 
     def _has_clip(self, scene_or_track):
-        return find_if(lambda x: liveobj_valid(x.clip), scene_or_track.clip_slots) != None
+        return find_if(lambda x: liveobj_valid(x.clip), scene_or_track.clip_slots) is not None
 
     def _create_silent_scene(self, scene_index):
         song = self.song

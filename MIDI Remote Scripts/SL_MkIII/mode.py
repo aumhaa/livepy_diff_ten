@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from future.moves.itertools import zip_longest
 from ableton.v2.base import clamp, listens
 from ableton.v2.control_surface.control import ButtonControl, ColorSysexControl, control_list
-from ableton.v2.control_surface.mode import ModesComponent, make_mode_button_control, to_camel_case_name
+from ableton.v2.control_surface.mode import ModesComponent, to_camel_case_name
 from .control import BinaryControl, TextDisplayControl
 MAX_MODE_NUMBER = 8
 
@@ -11,7 +11,7 @@ class NavigatableModesComponent(ModesComponent):
     next_mode_button = ButtonControl()
 
     def __init__(self, *a, **k):
-        (super(NavigatableModesComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._NavigatableModesComponent__on_selected_mode_changed.subject = self
 
     @prev_mode_button.pressed
@@ -49,7 +49,7 @@ class DisplayingNavigatableModesComponent(NavigatableModesComponent):
     color_field_2 = ColorSysexControl()
 
     def _update_selected_mode(self):
-        super(DisplayingNavigatableModesComponent, self)._update_selected_mode()
+        super()._update_selected_mode()
         self._update_mode_displays()
 
     def _update_mode_displays(self):
@@ -67,11 +67,11 @@ class DisplayingSkinableModesComponent(ModesComponent):
     selected_mode_color_field = ColorSysexControl()
 
     def __init__(self, *a, **k):
-        (super(DisplayingSkinableModesComponent, self).__init__)(a, enable_skinning=True, **k)
+        (super().__init__)(a, enable_skinning=True, **k)
         self._DisplayingSkinableModesComponent__on_selected_mode_changed.subject = self
 
     def add_mode_button_control(self, mode_name, behaviour):
-        super(DisplayingSkinableModesComponent, self).add_mode_button_control(mode_name, behaviour)
+        super().add_mode_button_control(mode_name, behaviour)
         self.mode_display[len(self._mode_list) - 1] = to_camel_case_name(mode_name,
           separator=' ')
         self.mode_color_fields[(len(self._mode_list) - 1)].color = 'Mode.' + to_camel_case_name(mode_name) + '.On'

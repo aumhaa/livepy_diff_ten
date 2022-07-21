@@ -2,9 +2,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import filter, map, round
 from future.utils import iteritems
 import Live
-AutomationState = Live.DeviceParameter.AutomationState
 from ..base import CompoundDisconnectable, EventObject, Proxy, clamp, find_if, listenable_property, listens, liveobj_valid, old_hasattr
 from .internal_parameter import InternalParameter
+AutomationState = Live.DeviceParameter.AutomationState
 
 def get_parameter_by_name(decorator, name):
     return find_if(lambda p: p.name == name, decorator._live_object.parameters)
@@ -71,7 +71,7 @@ class LiveObjectDecorator(CompoundDisconnectable, Proxy):
         return not self == other
 
     def __nonzero__(self):
-        return self._live_object != None
+        return liveobj_valid(self._live_object)
 
     def __bool__(self):
         return self.__nonzero__()

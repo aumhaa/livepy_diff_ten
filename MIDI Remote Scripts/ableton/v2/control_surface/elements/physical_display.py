@@ -181,6 +181,8 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
      ' ':32, 
      '!':33, 
      '"':34, 
+     '#':35, 
+     '♯':35, 
      '.':46, 
      ',':44, 
      ':':58, 
@@ -283,7 +285,7 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
     def reset(self):
         super(PhysicalDisplayElement, self).reset()
         if not self._block_messages:
-            if self._message_clear_all != None:
+            if self._message_clear_all is not None:
                 self._message_to_send = self._message_clear_all
             else:
                 self._message_to_send = tuple(chain(self._message_header, self._translate_string(' ' * int(self._width)), self._message_tail))

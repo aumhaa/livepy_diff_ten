@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v3.base import listens
-from ableton.v3.control_surface import ControlSurface, ControlSurfaceSpecification, Layer, SessionRingSelectionLinking
-from ableton.v3.control_surface.components import MixerComponent, SessionComponent, SessionNavigationComponent, SimpleDeviceNavigationComponent, UndoRedoComponent, ViewControlComponent, ViewToggleComponent
+from ableton.v3.control_surface import ControlSurface, ControlSurfaceSpecification, Layer
+from ableton.v3.control_surface.components import MixerComponent, SessionComponent, SessionNavigationComponent, SimpleDeviceNavigationComponent, TranslatingBackgroundComponent, UndoRedoComponent, ViewControlComponent, ViewToggleComponent
 from ableton.v3.control_surface.mode import AddLayerMode, ModesComponent
 from . import midi
 from .button_labels import ButtonLabelsComponent
@@ -12,7 +12,6 @@ from .elements import SESSION_HEIGHT, SESSION_WIDTH, Elements
 from .launch_and_stop import LaunchAndStopComponent
 from .simple_device import SimpleDeviceParameterComponent
 from .skin import skin
-from .translating_background import TranslatingBackgroundComponent
 from .transport import TransportComponent
 
 class Specification(ControlSurfaceSpecification):
@@ -20,6 +19,7 @@ class Specification(ControlSurfaceSpecification):
     control_surface_skin = skin
     num_tracks = SESSION_WIDTH
     num_scenes = SESSION_HEIGHT
+    link_session_ring_to_track_selection = True
     identity_response_id_bytes = midi.PRODUCT_ID_BYTES
 
 
@@ -87,8 +87,8 @@ class ATOMSQ(ControlSurface):
         self._device_parameters.set_enabled(True)
 
     def _create_translating_background(self):
-        self._translating_background = TranslatingBackgroundComponent(name='Translating_Background',
-          is_enabled=False,
+        self._translating_background = TranslatingBackgroundComponent(is_enabled=False,
+          translation_channel=(midi.USER_MODE_START_CHANNEL),
           layer=Layer(encoders='encoders', channel_selection_buttons='display_buttons'))
 
     def _create_device_navigation(self):
@@ -106,7 +106,8 @@ class ATOMSQ(ControlSurface):
     def _create_session(self):
         self._session = SessionComponent(is_enabled=False,
           color_for_obj_function=(lambda obj: LIVE_COLOR_INDEX_TO_RGB.get(obj.color_index, 0)),
-          layer=Layer(clip_launch_buttons='upper_pads'))
+          layer=Layer(clip_launch_buttons='upper_pads',
+          scene_0_launch_button='plus_button'))
         self._session_navigation = SessionNavigationComponent(is_enabled=False,
           layer=Layer(up_button='up_button_with_shift',
           down_button='down_button_with_shift'))
@@ -115,7 +116,7 @@ class ATOMSQ(ControlSurface):
     def _create_mixer(self):
         self._mixer = MixerComponent(is_enabled=False,
           channel_strip_component_type=ChannelStripComponent,
-          layer=Layer(selected_track_track_name_display='track_name_display'))
+          layer=Layer(target_track_track_name_display='track_name_display'))
         self._mixer.set_enabled(True)
 
     def _create_view_control(self):
@@ -125,7 +126,6 @@ class ATOMSQ(ControlSurface):
           next_scene_button='down_button',
           prev_scene_button='up_button'))
         self._view_control.set_enabled(True)
-        self._session_ring_selection_linking = self.register_disconnectable(SessionRingSelectionLinking(selection_changed_notifier=(self._view_control)))
 
     def _create_button_labels(self):
         self._button_labels = ButtonLabelsComponent(is_enabled=False,
@@ -161,13 +161,12 @@ class ATOMSQ(ControlSurface):
          self._launch_and_stop,
          self._session,
          self._lower_pad_modes,
-         AddLayerMode(self._session.scene(0), Layer(launch_button='plus_button')),
-         AddLayerMode(self._mixer, Layer(selected_track_volume_control='encoders_raw[0]',
-           selected_track_pan_control='encoders_raw[1]',
-           selected_track_send_controls='encoders_2_thru_7',
-           selected_track_solo_button='display_buttons_raw[0]',
-           selected_track_mute_button='display_buttons_raw[1]',
-           selected_track_arm_button='display_buttons_raw[2]',
+         AddLayerMode(self._mixer, Layer(target_track_volume_control='encoders_raw[0]',
+           target_track_pan_control='encoders_raw[1]',
+           target_track_send_controls='encoders_2_thru_7',
+           target_track_solo_button='display_buttons_raw[0]',
+           target_track_mute_button='display_buttons_raw[1]',
+           target_track_arm_button='display_buttons_raw[2]',
            crossfader_control='touch_strip'))))
         self._main_modes.add_mode('instrument', (
          enable_lower_fw_functions,

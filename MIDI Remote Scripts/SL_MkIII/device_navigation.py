@@ -1,9 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
-from builtins import range
 from past.utils import old_div
 from itertools import zip_longest
 from ableton.v2.base import listens, listens_group
-from ableton.v2.control_surface import Layer
 from ableton.v2.control_surface.components import DeviceNavigationComponent
 from ableton.v2.control_surface.control import ColorSysexControl, control_list
 from .control import BinaryControl, TextDisplayControl
@@ -21,7 +19,7 @@ class DisplayingDeviceNavigationComponent(DeviceNavigationComponent):
     device_selection_fields = control_list(BinaryControl, NUM_VISIBLE_ITEMS)
 
     def __init__(self, banking_info=None, device_bank_registry=None, *a, **k):
-        (super(DisplayingDeviceNavigationComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self.select_buttons.control_count = NUM_VISIBLE_ITEMS
         self._banking_info = banking_info
         self._device_bank_registry = device_bank_registry
@@ -53,11 +51,11 @@ class DisplayingDeviceNavigationComponent(DeviceNavigationComponent):
         self._DisplayingDeviceNavigationComponent__on_selected_item_name_changed.subject = self._item_provider.selected_item
 
     @listens_group('name')
-    def __on_item_names_changed(self, something):
+    def __on_item_names_changed(self, _):
         self._update_device_names()
 
     @listens('device_bank')
-    def __on_device_bank_changed(self, *a):
+    def __on_device_bank_changed(self, *_):
         self._update_device_bank_names()
         self._update_selected_device_bank_name_display()
 

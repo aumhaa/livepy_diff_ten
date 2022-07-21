@@ -12,7 +12,7 @@ def get_capabilities():
                  inport(props=[NOTES_CC, SCRIPT, REMOTE]),
                  inport(props=[NOTES_CC, REMOTE]),
                  outport(props=[]),
-                 outport(props=[SCRIPT]),
+                 outport(props=[NOTES_CC, SCRIPT]),
                  outport(props=[]),
                  outport(props=[])]}
 

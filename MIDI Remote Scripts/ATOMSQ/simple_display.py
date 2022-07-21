@@ -1,21 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v3.base import task
+from ableton.v3.base import as_ascii, task
 from ableton.v3.control_surface import NotifyingControlElement
 from ableton.v3.control_surface.elements import adjust_string
-QUESTION_MARK = 63
 MAX_CENTER_DISPLAY_LENGTH = 18
-
-def as_ascii(message):
-    result = []
-    for char in message:
-        ascii_char = ord(char)
-        if ascii_char > 127:
-            ascii_char = QUESTION_MARK
-        else:
-            result.append(ascii_char)
-
-    return tuple(result)
-
 
 class SimpleDisplayElement(NotifyingControlElement):
 
@@ -31,7 +18,7 @@ class SimpleDisplayElement(NotifyingControlElement):
     def display_message(self, message):
         if message:
             is_reset_message = message == ' '
-            self._message_to_send = self._message_header + as_ascii(' ' if is_reset_message else adjust_string(message, MAX_CENTER_DISPLAY_LENGTH).strip()) + self._message_tail
+            self._message_to_send = self._message_header + tuple(as_ascii(' ' if is_reset_message else adjust_string(message, MAX_CENTER_DISPLAY_LENGTH).strip())) + self._message_tail
             self._request_send_message()
 
     def update(self):

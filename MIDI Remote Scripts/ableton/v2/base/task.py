@@ -61,7 +61,7 @@ class Task(object):
         self.do_restart()
         self._state = RUNNING
         if self._task_manager:
-            if self._task_manager.find(self) == None:
+            if self._task_manager.find(self) is None:
                 manager = self._task_manager
                 self._task_manager = None
                 manager.add(self)

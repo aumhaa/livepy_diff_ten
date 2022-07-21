@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from past.utils import old_div
-from ...base import EventObject
+from ...base import EventObject, liveobj_valid
 from ..input_control_element import MIDI_INVALID_TYPE, InputControlElement
 from .button import ButtonElement
 from .slider import SliderElement
@@ -37,7 +37,7 @@ class ButtonSliderElement(SliderElement):
     def connect_to(self, parameter):
         InputControlElement.connect_to(self, parameter)
         self._parameter_value_slot.subject = parameter
-        if self._parameter_to_map_to != None:
+        if liveobj_valid(self._parameter_to_map_to):
             self._on_parameter_changed()
 
     def release_parameter(self):
@@ -65,7 +65,7 @@ class ButtonSliderElement(SliderElement):
         if not (value != 0 or sender.is_momentary()):
             index_of_sender = list(self._buttons).index(sender)
             midi_value = int(old_div(127 * index_of_sender, len(self._buttons) - 1))
-            if self._parameter_to_map_to != None:
+            if liveobj_valid(self._parameter_to_map_to):
                 if self._parameter_to_map_to.is_enabled:
                     param_range = self._parameter_to_map_to.max - self._parameter_to_map_to.min
                     param_value = old_div(param_range * index_of_sender, len(self._buttons) - 1) + self._parameter_to_map_to.min

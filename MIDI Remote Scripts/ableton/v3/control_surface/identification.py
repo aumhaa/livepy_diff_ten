@@ -105,8 +105,9 @@ class IdentificationComponent(Component):
     received_response_bytes = listenable_property.managed(None)
 
     @depends(send_midi=None)
-    def __init__(self, name='Identification', identity_request=midi.SYSEX_IDENTITY_REQUEST_MESSAGE, identity_request_delay=0.0, identity_response_id_bytes=None, custom_identity_response=None, send_midi=None, *a, **k):
+    def __init__(self, name='Identification', identity_request=midi.SYSEX_IDENTITY_REQUEST_MESSAGE, identity_request_delay=0.0, identity_response_id_bytes=None, custom_identity_response=None, send_midi=None, is_private=True, *a, **k):
         (super().__init__)(a, name=name, **k)
+        self.is_private = is_private
         self._send_midi = send_midi
         self._identity_request = identity_request
         self._responder = create_responder(identity_response_id_bytes, custom_identity_response)

@@ -49,6 +49,10 @@ class StepAutomationParameter(InternalParameterBase):
         return self._parameter.value_items
 
     @property
+    def short_value_items(self):
+        return self.value_items
+
+    @property
     def automation_state(self):
         return self._parameter.automation_state
 

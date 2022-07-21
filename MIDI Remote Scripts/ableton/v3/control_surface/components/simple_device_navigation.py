@@ -6,8 +6,9 @@ NavDirection = Live.Application.Application.View.NavDirection
 
 class SimpleDeviceNavigationComponent(ScrollComponent, Scrollable):
 
-    def __init__(self, name='Device_Navigation', *a, **k):
+    def __init__(self, name='Device_Navigation', is_private=True, *a, **k):
         (super().__init__)(a, name=name, **k)
+        self.is_private = is_private
         add_scroll_encoder(self)
         skin_scroll_buttons(self, 'Device.Navigation', 'Device.NavigationPressed')
 

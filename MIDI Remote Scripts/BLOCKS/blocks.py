@@ -33,6 +33,7 @@ def is_playable(track):
 
 
 class Blocks(ControlSurface):
+    handle_undo_steps = True
 
     def __init__(self, *a, **k):
         (super(Blocks, self).__init__)(*a, **k)

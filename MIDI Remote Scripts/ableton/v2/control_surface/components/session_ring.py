@@ -33,7 +33,7 @@ class SessionRingComponent(Component):
         (super(SessionRingComponent, self).__init__)(*a, **k)
         self._session_ring = SessionRingModel(num_tracks,
           num_scenes, set_session_highlight=set_session_highlight)
-        if tracks_to_use != None:
+        if tracks_to_use is not None:
             self._tracks_to_use = tracks_to_use
         else:
             self._tracks_to_use = lambda: self.song.visible_tracks

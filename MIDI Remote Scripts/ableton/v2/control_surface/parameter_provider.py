@@ -16,12 +16,12 @@ class ParameterInfo(NamedTuple):
     fine_grain_encoder_sensitivity = None
 
     def __init__(self, name=None, *a, **k):
-        (super(ParameterInfo, self).__init__)(a, _overriden_name=name, **k)
+        (super(ParameterInfo, self).__init__)(a, _overridden_name=name, **k)
 
     @property
     def name(self):
         actual_name = self.parameter.name if liveobj_valid(self.parameter) else ''
-        return self._overriden_name or actual_name
+        return self._overridden_name or actual_name
 
     def __eq__(self, other_info):
         if not isinstance(other_info, ParameterInfo):

@@ -35,8 +35,9 @@ class ChannelStripComponent(Component):
     send_controls = control_list(MappedControl, control_count=MAX_NUM_SENDS)
     indexed_send_controls = control_list(MappedControl, control_count=MAX_NUM_SENDS)
 
-    def __init__(self, *a, **k):
+    def __init__(self, is_private=True, *a, **k):
         (super().__init__)(*a, **k)
+        self.is_private = is_private
         ChannelStripComponent._active_instances.append(self)
         self._shift_button = None
         self._track = None

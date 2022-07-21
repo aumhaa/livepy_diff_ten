@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map
 from future.utils import string_types
 from contextlib import contextmanager
-from ...base import PY3, EventObject, ProxyBase, const, depends, find_if, is_iterable, lazy_attribute, listens, nop, task
+from ...base import PY3, EventObject, ProxyBase, const, depends, find_if, is_iterable, lazy_attribute, listens, liveobj_valid, nop, task
 from .. import defaults
 from ..compound_element import CompoundElement
 from ..control_element import NotifyingControlElement, get_element
@@ -64,12 +64,12 @@ class WrapperElement(CompoundElement, ProxyBase):
             self.notify_value(value)
 
     def connect_to(self, parameter):
-        if self._parameter_slot.parameter == None:
+        if not liveobj_valid(self._parameter_slot.parameter):
             self.request_listen_nested_control_elements()
         self._parameter_slot.parameter = parameter
 
     def release_parameter(self):
-        if self._parameter_slot.parameter != None:
+        if liveobj_valid(self._parameter_slot.parameter):
             self.unrequest_listen_nested_control_elements()
         self._parameter_slot.parameter = None
 
@@ -258,10 +258,10 @@ class MultiElement(CompoundElement, ButtonElementMixin):
             self.notify_value(value)
 
     def is_pressed(self):
-        return find_if(lambda c: getattr(c, 'is_pressed', const(False))(), self.owned_control_elements()) != None
+        return find_if(lambda c: getattr(c, 'is_pressed', const(False))(), self.owned_control_elements()) is not None
 
     def is_momentary(self):
-        return find_if(lambda c: getattr(c, 'is_momentary', const(False))(), self.nested_control_elements()) != None
+        return find_if(lambda c: getattr(c, 'is_momentary', const(False))(), self.nested_control_elements()) is not None
 
     def on_nested_control_element_received(self, control):
         pass
@@ -287,5 +287,5 @@ class ToggleElement(WrapperElement):
         if self.has_control_element(self._wrapped_control):
             self.unregister_control_element(self._wrapped_control)
         self._wrapped_control = self._on_control if self._toggled else self._off_control
-        if self._wrapped_control != None:
+        if self._wrapped_control is not None:
             self.register_control_element(self._wrapped_control)

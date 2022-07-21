@@ -1,20 +1,23 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v3.base import listens, liveobj_valid
+from ableton.v3.base import depends, listens, liveobj_valid
 from ableton.v3.control_surface import Component
 from ableton.v3.control_surface.components import ClipSlotComponent
 from ableton.v3.control_surface.controls import ButtonControl
 
 class LaunchAndStopComponent(Component):
+    is_private = True
     scene_launch_button = ButtonControl(color='DefaultButton.Off',
       pressed_color='DefaultButton.On')
     track_stop_button = ButtonControl()
 
-    def __init__(self, *a, **k):
+    @depends(target_track=None)
+    def __init__(self, target_track=None, *a, **k):
         (super().__init__)(*a, **k)
+        self._target_track = target_track
         self._clip_slot = ClipSlotComponent()
-        self.register_slot(self.song.view, self._LaunchAndStopComponent__on_track_or_scene_changed, 'selected_track')
+        self.register_slot(self._target_track, self._LaunchAndStopComponent__on_track_or_scene_changed, 'target_track')
         self.register_slot(self.song.view, self._LaunchAndStopComponent__on_track_or_scene_changed, 'selected_scene')
-        self._LaunchAndStopComponent__on_playing_status_changed.subject = self.song.view
+        self._LaunchAndStopComponent__on_playing_status_changed.subject = self._target_track
         self._LaunchAndStopComponent__on_track_or_scene_changed()
         self._LaunchAndStopComponent__on_playing_status_changed()
 
@@ -33,7 +36,7 @@ class LaunchAndStopComponent(Component):
         slot = self.song.view.highlighted_clip_slot
         self._clip_slot.set_clip_slot(slot if liveobj_valid(slot) else None)
 
-    @listens('selected_track.playing_slot_index')
+    @listens('target_track.playing_slot_index')
     def __on_playing_status_changed(self):
-        track = self.song.view.selected_track
+        track = self._target_track.target_track
         self.track_stop_button.enabled = track in self.song.tracks and track.playing_slot_index >= 0

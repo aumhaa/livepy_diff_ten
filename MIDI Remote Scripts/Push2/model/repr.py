@@ -158,7 +158,7 @@ class DeviceParameterAdapter(ModelAdapter):
     @listenable_property
     def valueItems(self):
         if self._adaptee.is_quantized:
-            return self._adaptee.value_items
+            return self._adaptee.short_value_items
         return []
 
     def _get_image_filenames(self, small_images=False):

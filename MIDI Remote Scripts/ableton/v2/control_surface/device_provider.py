@@ -64,7 +64,7 @@ class DeviceProvider(EventObject):
         device_to_select = None
         if isinstance(track_or_chain, Live.Track.Track):
             device_to_select = track_or_chain.view.selected_device
-        if device_to_select == None:
+        if not liveobj_valid(device_to_select):
             if len(track_or_chain.devices) > 0:
                 device_to_select = track_or_chain.devices[0]
         if liveobj_valid(device_to_select):

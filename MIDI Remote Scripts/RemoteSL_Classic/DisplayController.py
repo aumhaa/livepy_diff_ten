@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range, str
+from ableton.v3.base import as_ascii
 from .consts import *
 from .RemoteSLComponent import RemoteSLComponent
 
@@ -89,7 +90,7 @@ class DisplayController(RemoteSLComponent):
         sysex_pos = (
          final_offset, row_id)
         sysex_text_command = (4, )
-        sysex_text = tuple([ord(c) for c in final_message])
+        sysex_text = tuple(as_ascii(final_message))
         sysex_close_up = (247, )
         full_sysex = sysex_header + sysex_pos + sysex_text_command + sysex_text + sysex_close_up
         if self._DisplayController__last_send_row_id_messages[row_id] != full_sysex:
@@ -112,12 +113,4 @@ class DisplayController(RemoteSLComponent):
 
         else:
             display_string = display_string.center(NUM_CHARS_PER_DISPLAY_STRIP - 1)
-        ret = ''
-        for i in range(NUM_CHARS_PER_DISPLAY_STRIP - 1):
-            if not ord(display_string[i]) > 127 or ord(display_string[i]) < 0:
-                ret += ' '
-            else:
-                ret += display_string[i]
-
-        ret += ' '
-        return ret
+        return display_string[:NUM_CHARS_PER_DISPLAY_STRIP - 1] + ' '

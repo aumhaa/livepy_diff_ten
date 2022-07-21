@@ -62,10 +62,10 @@ class TouchStripEncoderConnection(Component, TouchEncoderObserver):
                 self._set_touched_encoder(encoder if self._can_use_touch_encoder(encoder) else None)
 
     def _can_use_touch_encoder(self, encoder):
-        is_useable = encoder.is_pressed() and encoder.mapped_parameter() != None
+        is_usable = encoder.is_pressed() and encoder.mapped_parameter() != None
         can_be_initial_encoder = self._encoder == None and not self._touch_button.is_pressed()
         should_trigger_update = self._encoder == encoder
-        return is_useable and (can_be_initial_encoder or should_trigger_update)
+        return is_usable and (can_be_initial_encoder or should_trigger_update)
 
     def _set_touched_encoder(self, encoder):
         self._encoder = encoder

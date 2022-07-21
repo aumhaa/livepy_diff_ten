@@ -14,15 +14,15 @@ class LogicalDisplaySegment(object):
     def disconnect(self):
         self._update_callback = None
         self._position_identifier = None
-        if self._data_source != None:
+        if self._data_source is not None:
             self._data_source.set_update_callback(None)
             self._data_source = None
 
     def set_data_source(self, data_source):
-        if self._data_source != None:
+        if self._data_source is not None:
             self._data_source.set_update_callback(None)
         self._data_source = data_source
-        if self._data_source != None:
+        if self._data_source is not None:
             self._data_source.set_update_callback(self.update)
         self._display_string = self._get_display_string()
 
@@ -41,7 +41,7 @@ class LogicalDisplaySegment(object):
             self._update_callback()
 
     def _get_display_string(self):
-        if self._data_source != None:
+        if self._data_source is not None:
             separator = self._data_source.separator + self.separator
             width = self._width - len(separator)
             return self._data_source.adjust_string(width) + separator

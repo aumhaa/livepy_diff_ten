@@ -3,10 +3,11 @@ from abc import abstractmethod
 from types import SimpleNamespace
 from ableton.v2.control_surface import SimpleControlSurface
 from ..base import const, find_if, inject, is_song_recording, lazy_attribute, listens, liveobj_valid, nop, track_can_record
-from . import DEFAULT_PRIORITY, BasicColors, DeviceBankRegistry, DeviceProvider, Layer, PercussionInstrumentFinder, midi
-from .components import BackgroundComponent, DrumGroupComponent, SessionComponent, SessionRingComponent, TargetTrackComponent
+from . import DEFAULT_PRIORITY, BasicColors, CompoundElement, DeviceBankRegistry, DeviceProvider, Layer, NotifyingControlElement, PercussionInstrumentFinder, midi
+from .components import BackgroundComponent, DrumGroupComponent, SessionComponent, SessionRingComponent, TargetTrackComponent, ViewControlComponent
 from .default_skin import default_skin
 from .identification import IdentificationComponent
+from .session_ring_selection_linking import SessionRingSelectionLinking
 LOW_PRIORITY = DEFAULT_PRIORITY - 1
 HIGH_PRIORITY = DEFAULT_PRIORITY + 1
 M4L_PRIORITY = HIGH_PRIORITY + 1
@@ -17,6 +18,8 @@ class ControlSurfaceSpecification(SimpleNamespace):
     num_tracks = 8
     num_scenes = 1
     include_returns = False
+    link_session_ring_to_track_selection = False
+    link_session_ring_to_scene_selection = False
     session_ring_component_type = SessionRingComponent
     target_track_component_type = TargetTrackComponent
     feedback_channels = None
@@ -42,6 +45,7 @@ class ControlSurface(SimpleControlSurface):
         self._device_provider = None
         self._device_bank_registry = None
         self._drum_group_finder = None
+        self._session_ring_selection_linking = None
         self._can_update_controlled_track = False
         with inject(skin=(const(specification.control_surface_skin))).everywhere():
             with self._control_surface_injector:
@@ -64,6 +68,7 @@ class ControlSurface(SimpleControlSurface):
         self._device_provider = None
         self._device_bank_registry = None
         self._drum_group_finder = None
+        self._session_ring_selection_linking = None
 
     @abstractmethod
     def _create_control_surface(self):
@@ -80,6 +85,10 @@ class ControlSurface(SimpleControlSurface):
     @property
     def drum_group_finder(self):
         return self._drum_group_finder
+
+    @property
+    def session_ring_selection_linking(self):
+        return self._session_ring_selection_linking
 
     def port_settings_changed(self):
         if self._identification:
@@ -137,7 +146,7 @@ class ControlSurface(SimpleControlSurface):
         return specification.elements_type()
 
     def _create_background(self, priority):
-        layer_dict = {c.name:c for c in self.controls}
+        layer_dict = {c.name:c for c in self.controls if isinstance(c, NotifyingControlElement) if not isinstance(c, CompoundElement) if not isinstance(c, CompoundElement)}
         layer_dict['priority'] = priority
         background = BackgroundComponent(is_enabled=False, layer=Layer(**layer_dict))
         background.set_enabled(True)
@@ -191,6 +200,13 @@ class ControlSurface(SimpleControlSurface):
             self._drum_group_finder = self.register_disconnectable(PercussionInstrumentFinder(device_parent=(self._target_track.target_track),
               is_enabled=False))
             self._ControlSurface__on_drum_group_changed.subject = self._drum_group_finder
+        if isinstance(component, ViewControlComponent):
+            link_to_tracks = self._specification.link_session_ring_to_track_selection
+            link_to_scenes = self._specification.link_session_ring_to_scene_selection
+            if link_to_tracks or (link_to_scenes):
+                self._session_ring_selection_linking = self.register_disconnectable(SessionRingSelectionLinking(selection_changed_notifier=component,
+                  link_to_track_selection=link_to_tracks,
+                  link_to_scene_selection=link_to_scenes))
 
     def _update_feedback_velocity(self):
         track = self._target_track.target_track

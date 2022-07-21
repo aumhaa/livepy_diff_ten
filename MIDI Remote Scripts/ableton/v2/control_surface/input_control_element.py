@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import contextlib, logging
-from ..base import Disconnectable, Event, Signal, const, depends, in_range, nop, task
+from ..base import Disconnectable, Event, Signal, const, depends, in_range, liveobj_valid, nop, task
 from . import midi
 from .control_element import NotifyingControlElement
 logger = logging.getLogger(__name__)
@@ -57,13 +57,13 @@ class ParameterSlot(Disconnectable):
             self.connect()
 
     def connect(self):
-        if self._control != None:
-            if self._parameter != None:
+        if self._control is not None:
+            if liveobj_valid(self._parameter):
                 self._control.connect_to(self._parameter)
 
     def soft_disconnect(self):
-        if self._control != None:
-            if self._parameter != None:
+        if self._control is not None:
+            if liveobj_valid(self._parameter):
                 self._control.release_parameter()
 
     def disconnect(self):
@@ -251,7 +251,7 @@ class InputControlElement(NotifyingControlElement):
         self._is_being_forwarded = False
         if self._msg_channel != self._original_channel or (self._msg_identifier != self._original_identifier):
             install_translation(self._msg_type, self._original_identifier, self._original_channel, self._msg_identifier, self._msg_channel)
-        if self._parameter_to_map_to != None:
+        if liveobj_valid(self._parameter_to_map_to):
             self._is_mapped = install_mapping(self, self._parameter_to_map_to, self._mapping_feedback_delay, self._mapping_feedback_values())
         if self.script_wants_forwarding():
             self._is_being_forwarded = install_forwarding(self, self.script_forwarding)
@@ -279,14 +279,14 @@ class InputControlElement(NotifyingControlElement):
 
     def connect_to(self, parameter):
         if self._parameter_to_map_to != parameter:
-            if parameter == None:
+            if not liveobj_valid(parameter):
                 self.release_parameter()
             else:
                 self._parameter_to_map_to = parameter
                 self._request_rebuild()
 
     def release_parameter(self):
-        if self._parameter_to_map_to != None:
+        if liveobj_valid(self._parameter_to_map_to):
             self.end_gesture()
             self._parameter_to_map_to = None
             self._request_rebuild()

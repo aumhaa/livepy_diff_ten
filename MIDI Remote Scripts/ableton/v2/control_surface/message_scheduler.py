@@ -13,7 +13,7 @@ class MessageScheduler(object):
 
     @property
     def is_idling(self):
-        return self._state == 'idle' and self._owner == None and len(self._request_queue) == 0
+        return self._state == 'idle' and self._owner is None and len(self._request_queue) == 0
 
     def __repr__(self):
         return 'MessageScheduler(state={}, owner={})'.format(self._state, self._owner)

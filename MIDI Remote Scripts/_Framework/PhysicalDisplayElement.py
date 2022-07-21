@@ -183,6 +183,8 @@ class PhysicalDisplayElement(DisplayElement, NotifyingControlElement):
      ' ':32, 
      '!':33, 
      '"':34, 
+     '#':35, 
+     '♯':35, 
      '.':46, 
      ',':44, 
      ':':58, 

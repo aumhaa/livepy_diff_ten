@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map, str
 from itertools import chain
 from ableton.v2.base import first
 import ableton.v2.control_surface.elements as PhysicalDisplayElementBase
@@ -14,7 +13,7 @@ class PhysicalDisplayElement(PhysicalDisplayElementBase):
 class ConfigurablePhysicalDisplayElement(PhysicalDisplayElement):
 
     def __init__(self, v_position=0, *a, **k):
-        (super(ConfigurablePhysicalDisplayElement, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._v_position = v_position
 
     def _build_display_message(self, display):

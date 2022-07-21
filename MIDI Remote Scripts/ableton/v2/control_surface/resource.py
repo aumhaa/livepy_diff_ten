@@ -67,7 +67,7 @@ class ExclusiveResource(Resource):
             self.on_lost = on_lost_callback
 
     def grab(self, client, *a, **k):
-        if self._owner == None:
+        if self._owner is None:
             (self.on_received)(client, *a, **k)
             self._owner = client
         return self._owner == client

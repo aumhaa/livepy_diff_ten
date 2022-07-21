@@ -18,3 +18,12 @@ def duplicate_clip_loop(clip):
             clip.duplicate_loop()
         except RuntimeError:
             pass
+
+
+def move_current_song_time(song, delta, truncate_to_beat=True):
+    new_time = max(0, song.current_song_time + delta)
+    if truncate_to_beat:
+        new_time = int(new_time)
+    song.current_song_time = new_time
+    if not song.is_playing:
+        song.start_time = new_time

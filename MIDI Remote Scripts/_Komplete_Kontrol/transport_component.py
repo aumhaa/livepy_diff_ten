@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from past.utils import old_div
-from ableton.v2.base import listens
+from ableton.v2.base import listens, move_current_song_time
 from ableton.v2.control_surface.components import ToggleComponent
 import ableton.v2.control_surface.components as TransportComponentBase
 from ableton.v2.control_surface.control import ButtonControl, EncoderControl
@@ -30,7 +30,7 @@ class TransportComponent(TransportComponentBase):
 
     @jump_encoder.value
     def jump_encoder(self, value, _):
-        self.song.jump_by(value * self._distance_to_move)
+        move_current_song_time(self.song, value * self._distance_to_move)
 
     @loop_start_encoder.value
     def loop_start_encoder(self, value, _):

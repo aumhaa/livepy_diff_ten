@@ -4,11 +4,12 @@ from ..base import EventObject, depends, index_if, listens
 class SessionRingSelectionLinking(EventObject):
 
     @depends(song=None, session_ring=None)
-    def __init__(self, song=None, session_ring=None, selection_changed_notifier=None, link_to_scene_selection=False, *a, **k):
+    def __init__(self, song=None, session_ring=None, selection_changed_notifier=None, link_to_track_selection=True, link_to_scene_selection=False, *a, **k):
         (super().__init__)(*a, **k)
         self.song = song
         self._session_ring = session_ring
-        self._SessionRingSelectionLinking__on_track_selection_scrolled.subject = selection_changed_notifier
+        if link_to_track_selection:
+            self._SessionRingSelectionLinking__on_track_selection_scrolled.subject = selection_changed_notifier
         if link_to_scene_selection:
             self._SessionRingSelectionLinking__on_scene_selection_scrolled.subject = selection_changed_notifier
 

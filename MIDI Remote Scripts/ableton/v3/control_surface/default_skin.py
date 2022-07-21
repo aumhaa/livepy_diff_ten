@@ -22,10 +22,13 @@ class DefaultSkin:
         StopOff = BasicColors.OFF
         ArrangementRecordingOn = BasicColors.ON
         ArrangementRecordingOff = BasicColors.OFF
+        SessionRecordingOn = BasicColors.ON
+        SessionRecordingTransition = BasicColors.ON
+        SessionRecordingOff = BasicColors.OFF
         OverdubOn = BasicColors.ON
         OverdubOff = BasicColors.OFF
-        CaptureOn = BasicColors.ON
-        CaptureOff = BasicColors.OFF
+        AutomationArmOn = BasicColors.ON
+        AutomationArmOff = BasicColors.OFF
         LoopOn = BasicColors.ON
         LoopOff = BasicColors.OFF
         MetronomeOn = BasicColors.ON
@@ -38,19 +41,12 @@ class DefaultSkin:
         Nudge = BasicColors.OFF
         SeekPressed = BasicColors.ON
         Seek = BasicColors.OFF
+        CanReEnableAutomation = BasicColors.ON
+        CanCaptureMidi = BasicColors.ON
         CanJumpToCue = BasicColors.ON
         CannotJumpToCue = BasicColors.OFF
         SetCuePressed = BasicColors.ON
         SetCue = BasicColors.OFF
-
-    class Recording:
-        On = BasicColors.ON
-        Transition = BasicColors.ON
-        Off = BasicColors.OFF
-
-    class Automation:
-        On = BasicColors.ON
-        Off = BasicColors.OFF
 
     class UndoRedo:
         UndoPressed = BasicColors.ON
@@ -148,6 +144,12 @@ class DefaultSkin:
         Solo = BasicColors.OFF
         ScrollPressed = BasicColors.ON
         Scroll = BasicColors.ON
+
+    class Translation:
+
+        class Channel:
+            Selected = BasicColors.ON
+            NotSelected = BasicColors.OFF
 
 
 default_skin = Skin(DefaultSkin)

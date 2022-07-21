@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v3.control_surface import ControlSurface, ControlSurfaceSpecification, Layer
-from ableton.v3.control_surface.components import DeviceComponent, DrumGroupComponent, SessionNavigationComponent, SessionRecordingComponent, UndoRedoComponent
+from ableton.v3.control_surface.components import DeviceComponent, DrumGroupComponent, SessionNavigationComponent, UndoRedoComponent
 from . import sysex
 from .colors import Rgb
 from .elements import NUM_SCENES, NUM_TRACKS, Elements
@@ -31,7 +31,6 @@ class FANTOM(ControlSurface):
 
     def _create_control_surface(self):
         self._create_transport()
-        self._create_session_recording()
         self._create_undo()
         self._create_device_parameters()
         self._create_session_navigation()
@@ -50,6 +49,9 @@ class FANTOM(ControlSurface):
           layer=Layer(play_button='play_button',
           stop_button='stop_button',
           arrangement_record_button='record_button',
+          session_record_button='session_record_button',
+          re_enable_automation_button='automation_re-enable_button',
+          automation_arm_button='automation_arm_button',
           metronome_button='metronome_button',
           arrangement_overdub_button='arrangement_overdub_button',
           tap_tempo_button='tap_tempo_button',
@@ -59,14 +61,6 @@ class FANTOM(ControlSurface):
           beat_time_display='beat_time_display',
           tempo_display='tempo_display'))
         self._transport.set_enabled(True)
-
-    def _create_session_recording(self):
-        self._session_recording = SessionRecordingComponent(name='Session_Recording',
-          is_enabled=False,
-          layer=Layer(record_button='session_record_button',
-          re_enable_automation_button='automation_re-enable_button',
-          automation_button='automation_arm_button'))
-        self._session_recording.set_enabled(True)
 
     def _create_undo(self):
         self._undo = UndoRedoComponent(is_enabled=False,

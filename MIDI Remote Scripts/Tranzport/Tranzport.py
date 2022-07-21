@@ -3,6 +3,7 @@ from builtins import object, range, str
 from past.utils import old_div
 from itertools import chain
 import Live
+from ableton.v2.base import move_current_song_time
 from .consts import *
 
 class Tranzport(object):
@@ -349,7 +350,7 @@ class Tranzport(object):
                             index = index + 1
                             self.song().view.selected_scene = self.song().scenes[index]
                     else:
-                        self.song().jump_by(value)
+                        move_current_song_time(self.song(), value)
                 elif self._Tranzport__selected_page == 1:
                     if self._Tranzport__current_track.mixer_device.volume.value <= self._Tranzport__current_track.mixer_device.volume.max - 0.01 * value:
                         self._Tranzport__current_track.mixer_device.volume.value = self._Tranzport__current_track.mixer_device.volume.value + 0.01 * value
@@ -392,7 +393,7 @@ class Tranzport(object):
                             index = index - 1
                         self.song().view.selected_scene = self.song().scenes[index]
                     else:
-                        self.song().jump_by(-1 * neg_value)
+                        move_current_song_time(self.song(), -1 * neg_value)
                 elif self._Tranzport__selected_page == 1:
                     if self._Tranzport__current_track.mixer_device.volume.value >= self._Tranzport__current_track.mixer_device.volume.min + 0.01 * neg_value:
                         self._Tranzport__current_track.mixer_device.volume.value = self._Tranzport__current_track.mixer_device.volume.value - 0.01 * neg_value
@@ -476,7 +477,7 @@ class Tranzport(object):
 
     def __show_selected_page--- This code section failed: ---
 
- L. 835         0  LOAD_FAST                'self'
+ L. 837         0  LOAD_FAST                'self'
                 2  LOAD_ATTR                _Tranzport__showing_page_list
                 4  POP_JUMP_IF_TRUE     94  'to 94'
                 6  LOAD_FAST                'self'
@@ -485,52 +486,52 @@ class Tranzport(object):
                12  COMPARE_OP               >
                14  POP_JUMP_IF_FALSE    94  'to 94'
 
- L. 836        16  LOAD_FAST                'self'
+ L. 838        16  LOAD_FAST                'self'
                18  LOAD_ATTR                _Tranzport__selected_page
                20  STORE_FAST               'index'
 
- L. 838        22  LOAD_FAST                'index'
+ L. 840        22  LOAD_FAST                'index'
                24  LOAD_CONST               0
                26  COMPARE_OP               ==
                28  POP_JUMP_IF_FALSE    40  'to 40'
 
- L. 839        30  LOAD_FAST                'self'
+ L. 841        30  LOAD_FAST                'self'
                32  LOAD_METHOD              _Tranzport__show_pos_and_tempo
                34  CALL_METHOD_0         0  '0 positional arguments'
                36  POP_TOP          
                38  JUMP_FORWARD        108  'to 108'
              40_0  COME_FROM            28  '28'
 
- L. 840        40  LOAD_FAST                'index'
+ L. 842        40  LOAD_FAST                'index'
                42  LOAD_CONST               1
                44  COMPARE_OP               ==
                46  POP_JUMP_IF_FALSE    58  'to 58'
 
- L. 841        48  LOAD_FAST                'self'
+ L. 843        48  LOAD_FAST                'self'
                50  LOAD_METHOD              _Tranzport__show_vol_and_pan
                52  CALL_METHOD_0         0  '0 positional arguments'
                54  POP_TOP          
                56  JUMP_FORWARD        108  'to 108'
              58_0  COME_FROM            46  '46'
 
- L. 842        58  LOAD_FAST                'index'
+ L. 844        58  LOAD_FAST                'index'
                60  LOAD_CONST               2
                62  COMPARE_OP               ==
                64  POP_JUMP_IF_FALSE    76  'to 76'
 
- L. 843        66  LOAD_FAST                'self'
+ L. 845        66  LOAD_FAST                'self'
                68  LOAD_METHOD              _Tranzport__show_loop_settings
                70  CALL_METHOD_0         0  '0 positional arguments'
                72  POP_TOP          
                74  JUMP_FORWARD        108  'to 108'
              76_0  COME_FROM            64  '64'
 
- L. 844        76  LOAD_FAST                'index'
+ L. 846        76  LOAD_FAST                'index'
                78  LOAD_CONST               3
                80  COMPARE_OP               ==
                82  POP_JUMP_IF_FALSE   108  'to 108'
 
- L. 845        84  LOAD_FAST                'self'
+ L. 847        84  LOAD_FAST                'self'
                86  LOAD_METHOD              _Tranzport__show_send_settings
                88  CALL_METHOD_0         0  '0 positional arguments'
                90  POP_TOP          
@@ -538,11 +539,11 @@ class Tranzport(object):
              94_0  COME_FROM            14  '14'
              94_1  COME_FROM             4  '4'
 
- L. 847        94  LOAD_FAST                'self'
+ L. 849        94  LOAD_FAST                'self'
                96  LOAD_ATTR                _Tranzport__showing_page_list
                98  POP_JUMP_IF_FALSE   108  'to 108'
 
- L. 848       100  LOAD_FAST                'self'
+ L. 850       100  LOAD_FAST                'self'
               102  LOAD_METHOD              _Tranzport__show_page_select
               104  CALL_METHOD_0         0  '0 positional arguments'
               106  POP_TOP          

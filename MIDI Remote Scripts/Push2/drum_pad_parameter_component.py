@@ -55,6 +55,10 @@ class ChokeParameter(InternalParameterBase):
     def display_value(self):
         return str(self.value)
 
+    @property
+    def short_value_items(self):
+        return self.value_items
+
 
 DEFAULT_OUT_NOTE = 60
 
@@ -70,6 +74,10 @@ class DrumPadTransposeParameter(EnumWrappingParameter):
     @property
     def value_items(self):
         return []
+
+    @property
+    def short_value_items(self):
+        return self.value_items
 
     @property
     def min(self):

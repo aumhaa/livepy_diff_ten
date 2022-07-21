@@ -299,6 +299,10 @@ class WarpSetting(WrappingParameter):
     def value_items(self):
         return list(map(lambda x: str(WARP_MODE_NAMES[x]), self._property_host.available_warp_modes))
 
+    @property
+    def short_value_items(self):
+        return self.value_items
+
     def _get_property_value(self):
         return self._property_host.available_warp_modes.index(getattr(self._property_host, self._source_property))
 

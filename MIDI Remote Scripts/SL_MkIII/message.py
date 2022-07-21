@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
 from ableton.v2.control_surface import Component
 from .control import TextDisplayControl
 NUM_MESSAGE_SEGMENTS = 2

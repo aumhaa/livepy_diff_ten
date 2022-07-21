@@ -11,6 +11,3 @@ class SysexElement(SysexElementBase):
         if self._use_first_byte_as_value:
             value = value[0]
         super().receive_value(value)
-
-    def message_map_mode(self):
-        raise AssertionError("SysexElement doesn't support mapping.")

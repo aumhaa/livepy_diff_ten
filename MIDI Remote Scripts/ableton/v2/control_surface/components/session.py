@@ -163,7 +163,7 @@ class SessionComponent(Component):
 
     @listens('selected_scene')
     def __on_selected_scene_changed(self):
-        if self._selected_scene != None:
+        if self._selected_scene is not None:
             self._selected_scene.set_scene(self.song.view.selected_scene)
 
     def _update_stop_all_clips_button(self):
@@ -179,7 +179,7 @@ class SessionComponent(Component):
             scene.set_scene(scenes[scene_index] if len(scenes) > scene_index else None)
             scene.set_track_offset(self._session_ring.track_offset)
 
-        if self._selected_scene != None:
+        if self._selected_scene is not None:
             self._selected_scene.set_track_offset(self._session_ring.track_offset)
 
     def _reassign_tracks(self):
@@ -196,14 +196,14 @@ class SessionComponent(Component):
 
     def _stop_all_value(self, value):
         if self.is_enabled():
-            if not (value is not 0 or self._stop_all_button.is_momentary()):
+            if not (value != 0 or self._stop_all_button.is_momentary()):
                 self.song.stop_all_clips()
             self._update_stop_all_clips_button()
 
     @listens_group('value')
     def __on_stop_track_value(self, value, button):
         if self.is_enabled():
-            if not (value is not 0 or button.is_momentary()):
+            if not (value != 0 or button.is_momentary()):
                 tracks = self._session_ring.tracks_to_use()
                 track_index = list(self._stop_track_clip_buttons).index(button) + self._session_ring.track_offset
                 if in_range(track_index, 0, len(tracks)):
@@ -234,10 +234,10 @@ class SessionComponent(Component):
         tracks_to_use = self._session_ring.tracks_to_use()
         track_index = index + self._session_ring.track_offset
         if self.is_enabled():
-            if self._stop_track_clip_buttons != None:
+            if self._stop_track_clip_buttons is not None:
                 if index < len(self._stop_track_clip_buttons):
                     button = self._stop_track_clip_buttons[index]
-                    if button != None:
+                    if button is not None:
                         value_to_send = None
                         if track_index < len(tracks_to_use):
                             if tracks_to_use[track_index].clip_slots:
@@ -248,7 +248,7 @@ class SessionComponent(Component):
                                     value_to_send = self._stop_clip_value
                                 else:
                                     value_to_send = self._stop_clip_disabled_value
-                        if value_to_send == None:
+                        if value_to_send is None:
                             button.set_light(False)
                         elif in_range(value_to_send, 0, 128):
                             button.send_value(value_to_send)

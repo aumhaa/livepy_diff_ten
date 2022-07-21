@@ -6,12 +6,12 @@ from ..control import ButtonControl
 from ..elements import DisplayDataSource
 
 def release_control(control):
-    if control != None:
+    if control is not None:
         control.release_parameter()
 
 
 def reset_button(button):
-    if button != None:
+    if button is not None:
         button.reset()
 
 
@@ -127,7 +127,7 @@ class ChannelStripComponent(Component):
              self._solo_button,
              self._arm_button,
              self._crossfade_toggle):
-                if button != None:
+                if button is not None:
                     button.set_light(False)
 
         self.select_button.enabled = True if self._track else False
@@ -210,7 +210,7 @@ class ChannelStripComponent(Component):
         self._update_select_button()
 
     def _update_select_button(self):
-        if liveobj_valid(self._track) or self.empty_color == None:
+        if liveobj_valid(self._track) or self.empty_color is None:
             if self.song.view.selected_track == self._track:
                 self.select_button.color = 'DefaultButton.On'
             else:
@@ -232,14 +232,14 @@ class ChannelStripComponent(Component):
         return self._track
 
     def _connect_parameters(self):
-        if self._pan_control != None:
+        if self._pan_control is not None:
             self._pan_control.connect_to(self._track.mixer_device.panning)
-        if self._volume_control != None:
+        if self._volume_control is not None:
             self._volume_control.connect_to(self._track.mixer_device.volume)
-        if self._send_controls != None:
+        if self._send_controls is not None:
             index = 0
             for send_control in self._send_controls:
-                if send_control != None:
+                if send_control is not None:
                     if index < len(self._track.mixer_device.sends):
                         send_control.connect_to(self._track.mixer_device.sends[index])
                     else:
@@ -513,7 +513,7 @@ Parse error at or near `COME_FROM_LOOP' instruction at offset 202_0
             self.update()
 
     def _on_mute_changed(self):
-        if not self.is_enabled() or self._mute_button != None and liveobj_valid(self._track) or self.empty_color == None:
+        if not self.is_enabled() or self._mute_button is not None and liveobj_valid(self._track) or self.empty_color is None:
             if self._track in chain(self.song.tracks, self.song.return_tracks) and self._track.mute != self._invert_mute_feedback:
                 self._mute_button.set_light('Mixer.MuteOff')
             else:
@@ -522,7 +522,7 @@ Parse error at or near `COME_FROM_LOOP' instruction at offset 202_0
             self._mute_button.set_light(self.empty_color)
 
     def _on_solo_changed(self):
-        if not self.is_enabled() or self._solo_button != None and liveobj_valid(self._track) or self.empty_color == None:
+        if not self.is_enabled() or self._solo_button is not None and liveobj_valid(self._track) or self.empty_color is None:
             if self._track in chain(self.song.tracks, self.song.return_tracks) and self._track.solo:
                 self._solo_button.set_light('Mixer.SoloOn')
             else:
@@ -531,7 +531,7 @@ Parse error at or near `COME_FROM_LOOP' instruction at offset 202_0
             self._solo_button.set_light(self.empty_color)
 
     def _on_arm_changed(self):
-        if not self.is_enabled() or self._arm_button != None and liveobj_valid(self._track) or self.empty_color == None:
+        if not self.is_enabled() or self._arm_button is not None and liveobj_valid(self._track) or self.empty_color is None:
             if self._track in self.song.tracks and self._track.can_be_armed and self._track.arm:
                 self._arm_button.set_light('Mixer.ArmOn')
             else:
@@ -545,7 +545,7 @@ Parse error at or near `COME_FROM_LOOP' instruction at offset 202_0
 
     def _on_cf_assign_changed(self):
         if self.is_enabled():
-            if self._crossfade_toggle != None:
+            if self._crossfade_toggle is not None:
                 if liveobj_valid(self._track) and self._track in chain(self.song.tracks, self.song.return_tracks) and self._track.mixer_device.crossfade_assign != 1:
                     self._crossfade_toggle.set_light(True)
                 else:

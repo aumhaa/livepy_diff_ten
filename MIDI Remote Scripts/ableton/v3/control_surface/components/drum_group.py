@@ -1,14 +1,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import ableton.v2.control_surface.components as DrumGroupComponentBase
 from ...base import add_scroll_encoder, depends, liveobj_valid, skin_scroll_buttons
-from . import PlayableComponent
+from .playable import PlayableComponent
 DEFAULT_TRANSLATION_CHANNEL = 15
 
 class DrumGroupComponent(DrumGroupComponentBase):
 
     @depends(full_velocity=None)
-    def __init__(self, name='Drum_Group', translation_channel=DEFAULT_TRANSLATION_CHANNEL, full_velocity=None, *a, **k):
+    def __init__(self, name='Drum_Group', translation_channel=DEFAULT_TRANSLATION_CHANNEL, full_velocity=None, is_private=True, *a, **k):
         (super().__init__)(a, name=name, translation_channel=translation_channel, **k)
+        self.is_private = is_private
+        self._accent_component.is_private = is_private
         self.mute_button.color = 'DrumGroup.Mute'
         self.mute_button.pressed_color = 'DrumGroup.MutePressed'
         self.solo_button.color = 'DrumGroup.Solo'

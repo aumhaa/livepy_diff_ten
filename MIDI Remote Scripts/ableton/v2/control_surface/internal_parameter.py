@@ -198,6 +198,10 @@ class WrappingParameter(InternalParameter, PropertyHostMixin):
     def value_items(self):
         return self._value_items
 
+    @property
+    def short_value_items(self):
+        return self.value_items
+
 
 class EnumWrappingParameter(InternalParameterBase, PropertyHostMixin):
     is_enabled = True
@@ -234,6 +238,10 @@ class EnumWrappingParameter(InternalParameterBase, PropertyHostMixin):
     @listenable_property
     def value_items(self):
         return self._get_values()
+
+    @property
+    def short_value_items(self):
+        return self.value_items
 
     @listenable_property
     def value(self):
@@ -374,3 +382,7 @@ class IntegerParameter(InternalParameter):
     @property
     def value_items(self):
         return list(range(self._min_value, self._max_value + 1))
+
+    @property
+    def short_value_items(self):
+        return self.value_items

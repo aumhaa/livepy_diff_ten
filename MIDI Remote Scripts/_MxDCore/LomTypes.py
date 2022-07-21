@@ -229,6 +229,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                   MFLProperty('crop'),
                   MFLProperty('deselect_all_notes'),
                   MFLProperty('duplicate_loop'),
+                  MFLProperty('duplicate_notes_by_id'),
                   MFLProperty('duplicate_region'),
                   MFLProperty('end_marker'),
                   MFLProperty('end_time'),
@@ -622,6 +623,7 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                   MFLProperty('signature_numerator'),
                   MFLProperty('song_length'),
                   MFLProperty('start_playing'),
+                  MFLProperty('start_time'),
                   MFLProperty('stop_all_clips'),
                   MFLProperty('stop_playing'),
                   MFLProperty('swing_amount'),
@@ -956,18 +958,13 @@ def is_object_iterable(obj):
     return not isinstance(obj, basestring) and is_iterable(obj) and not isinstance(obj, cs_base_classes())
 
 
-def is_listenable_event(lom_object, event_name):
-    return old_hasattr(lom_object, '{}_has_listener'.format(event_name))
-
-
-def verify_object_property(lom_object, property_name, epii_version, include_purely_listenable=False):
+def verify_object_property(lom_object, property_name, epii_version):
     raise_error = False
-    if not (include_purely_listenable and is_listenable_event(lom_object, property_name)):
-        if isinstance(lom_object, cs_base_classes()):
-            if not old_hasattr(lom_object, property_name):
-                raise_error = True
-        elif not is_property_exposed_for_type(property_name, type(lom_object), epii_version):
+    if isinstance(lom_object, cs_base_classes()):
+        if not old_hasattr(lom_object, property_name):
             raise_error = True
-        if raise_error:
-            raise LomAttributeError("'%s' object has no attribute '%s'" % (
-             lom_object.__class__.__name__, property_name))
+    elif not is_property_exposed_for_type(property_name, type(lom_object), epii_version):
+        raise_error = True
+    if raise_error:
+        raise LomAttributeError("'%s' object has no attribute '%s'" % (
+         lom_object.__class__.__name__, property_name))

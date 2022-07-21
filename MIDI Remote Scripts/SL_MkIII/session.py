@@ -5,7 +5,7 @@ import ableton.v2.control_surface.components as SessionComponentBase
 class SessionComponent(SessionComponentBase):
 
     def _update_stop_clips_led(self, index):
-        super(SessionComponent, self)._update_stop_clips_led(index)
+        super()._update_stop_clips_led(index)
         self._update_stop_all_clips_button()
 
     def _update_stop_all_clips_button(self):

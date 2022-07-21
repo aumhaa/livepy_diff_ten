@@ -22,8 +22,9 @@ class DeviceComponent(Component):
       device_bank_registry=None,
       toggle_lock=None,
       show_message=None)
-    def __init__(self, name='Device', device_provider=None, device_bank_registry=None, toggle_lock=None, show_message=None, force_use_parameter_banks=False, *a, **k):
+    def __init__(self, name='Device', device_provider=None, device_bank_registry=None, toggle_lock=None, show_message=None, force_use_parameter_banks=False, is_private=True, *a, **k):
         (super().__init__)(a, name=name, **k)
+        self.is_private = is_private
         self._device_bank_registry = device_bank_registry
         self._show_message = show_message
         self._toggle_lock = toggle_lock

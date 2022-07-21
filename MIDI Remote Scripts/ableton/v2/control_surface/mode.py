@@ -423,10 +423,10 @@ class ModesComponent(Component):
     def add_mode_button_control(self, mode_name, behaviour):
         colors = {}
         if self._enable_skinning:
-            mode_color_basebame = 'Mode.' + to_camel_case_name(mode_name)
-            colors = {'mode_selected_color':mode_color_basebame + '.On', 
-             'mode_unselected_color':mode_color_basebame + '.Off', 
-             'mode_group_active_color':mode_color_basebame + '.On'}
+            mode_color_basename = 'Mode.' + to_camel_case_name(mode_name)
+            colors = {'mode_selected_color':mode_color_basename + '.On', 
+             'mode_unselected_color':mode_color_basename + '.Off', 
+             'mode_group_active_color':mode_color_basename + '.On'}
         button_control = make_mode_button_control(self, mode_name, behaviour, **colors)
         self.add_control('%s_button' % mode_name, button_control)
         self._update_mode_buttons(self.selected_mode)

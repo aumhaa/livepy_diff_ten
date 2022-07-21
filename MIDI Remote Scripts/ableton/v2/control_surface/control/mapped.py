@@ -33,6 +33,7 @@ class MappedControl(InputControl):
         def _update_direct_connection(self):
             if self._control_element:
                 self._control_element.connect_to(self._direct_mapping)
+            self._value_slot.subject = None if liveobj_valid(self._direct_mapping) else self._control_element
 
         def _notifications_enabled(self):
             return super(MappedControl.State, self)._notifications_enabled() and self._direct_mapping is None

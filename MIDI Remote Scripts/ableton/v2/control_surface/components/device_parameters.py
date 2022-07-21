@@ -3,7 +3,7 @@ from builtins import map, range
 from future.moves.itertools import zip_longest
 from past.builtins import unicode
 from itertools import chain, repeat
-from ableton.v2.base import listens, listens_group
+from ableton.v2.base import listens, listens_group, liveobj_valid
 from ableton.v2.control_surface import Component, ParameterProvider
 from ableton.v2.control_surface.control import ControlList, MappedSensitivitySettingControl
 from ableton.v2.control_surface.elements import DisplayDataSource
@@ -136,7 +136,7 @@ class DisplayingDeviceParameterComponent(DeviceParameterComponent):
         return info and (info.name) or ''
 
     def parameter_to_string(self, parameter):
-        if parameter == None:
+        if not liveobj_valid(parameter):
             return ''
         return unicode(parameter)
 

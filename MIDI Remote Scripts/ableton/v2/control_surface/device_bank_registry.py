@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ..base import EventObject
+from ..base import EventObject, liveobj_valid
 
 class DeviceBankRegistry(EventObject):
     __events__ = ('device_bank', )
@@ -10,7 +10,7 @@ class DeviceBankRegistry(EventObject):
         self._device_bank_listeners = []
 
     def compact_registry(self):
-        newreg = dict(filter(lambda kv: kv[0] != None, self._device_bank_registry.items()))
+        newreg = dict(filter(lambda kv: liveobj_valid(kv[0]), self._device_bank_registry.items()))
         self._device_bank_registry = newreg
 
     def set_device_bank(self, device, bank):

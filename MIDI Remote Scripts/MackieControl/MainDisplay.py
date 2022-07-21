@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
+from ableton.v3.base import as_ascii
 from .MackieControlComponent import *
 
 class MainDisplay(MackieControlComponent):
@@ -30,11 +30,7 @@ class MainDisplay(MackieControlComponent):
             offset = NUM_CHARS_PER_DISPLAY_LINE + 2 + cursor_offset
         else:
             pass
-        message_string = [ord(c) for c in display_string]
-        for i in range(len(message_string)):
-            if message_string[i] >= 128:
-                message_string[i] = 0
-
+        message_string = as_ascii(display_string)
         if self._MainDisplay__last_send_messages[display_row] != message_string:
             self._MainDisplay__last_send_messages[display_row] = message_string
             if self.main_script().is_extension():

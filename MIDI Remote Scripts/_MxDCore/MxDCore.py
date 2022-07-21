@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map, object, range, str
 from future.utils import string_types
+from past.builtins import basestring
 import json, logging
 from functools import partial, reduce, wraps
 import Live.Base, _Framework
@@ -10,11 +11,19 @@ from .LomTypes import CONTROL_SURFACES, ENUM_TYPES, LIVE_APP, PROPERTY_TYPES, RO
 from .LomUtils import LomInformation, LomIntrospection, LomPathCalculator, LomPathResolver, is_control_surfaces_list, wrap_control_surfaces_list
 from .MxDControlSurfaceAPI import MxDControlSurfaceAPI
 from .MxDUtils import StringHandler, TupleWrapper
-from .NotesAPIUtils import midi_note_to_dict, verify_note_specification_requirements
+from .NotesAPIUtils import MIDI_NOTE_ATTRS, VALID_DUPLICATE_NOTES_BY_ID_PARAMETERS, midi_note_to_dict, verify_note_specification_requirements
 logger = logging.getLogger(__name__)
 
 def get_current_max_device(device_id):
     return MxDCore.instance.manager.get_max_device(device_id)
+
+
+def sanitize_list(passed_list, valid_elements):
+    passed_elements = set(passed_list)
+    sanitized = passed_elements.intersection(valid_elements)
+    invalid = passed_elements - sanitized
+    return (
+     sanitized, invalid)
 
 
 PATH_KEY = 'CURRENT_PATH'
@@ -32,13 +41,14 @@ NOTE_SET_KEY = 'NOTE_SET'
 CONTAINS_CS_ID_KEY = 'CONTAINS_CS_ID_KEY'
 LAST_SENT_ID_KEY = 'LAST_SENT_ID'
 INVALID_DICT_ENTRY_ERROR = 'Invalid entry in the dictionary'
+INVALID_ID_ERROR = 'Provide a list of valid note IDs or a dictionary with function parameters as keys'
 MALFORMATTED_DICTIONARY_ERROR = 'Malformatted dictionary argument'
 NOTES_API_MAIN_KEY_ERROR = "Expecting 'notes' as the main dictionary's key"
+NOTE_IDS_MISSING_ERROR = "Required key 'note_ids' is missing"
 NOTE_ID_MISSING_ERROR = "Required key 'note_id' is missing"
-PRIVATE_PROP_WARNING = 'Warning: Calling private property. This property might change or be removed in the future.'
-INVALID_NOTE_ID_ERROR = "Provided note ID doesn't exist in the clip"
 PARSE_ERROR = 'Error parsing parameters'
-WARP_MARKER_SPEC_INCOMPLETE_ERROR = 'Both beat time and sample time need to be specified.'
+PRIVATE_PROP_WARNING = 'Warning: Calling private property. This property might change or be removed in the future.'
+WARP_MARKER_SPEC_INCOMPLETE_ERROR = 'Both beat time and sample time need to be specified'
 
 def concatenate_strings(string_list, string_format='%s %s'):
     return str(reduce(lambda s1, s2: string_format % (s1, s2), string_list) if len(string_list) > 0 else '')
@@ -81,12 +91,13 @@ class MxDCore(object):
          'set_notes':self._object_set_notes_handler, 
          'get_selected_notes':self._object_selected_notes_handler, 
          'replace_selected_notes':self._object_replace_selected_notes_handler, 
-         'get_all_notes_extended':self._object_notes_extended_handler, 
+         'get_all_notes_extended':self._object_get_notes_extended_handler, 
          'get_notes_by_id':self._object_get_notes_by_id_handler, 
-         'get_notes_extended':self._object_notes_extended_handler, 
-         'get_selected_notes_extended':self._object_notes_extended_handler, 
+         'get_notes_extended':self._object_get_notes_extended_handler, 
+         'get_selected_notes_extended':self._object_get_notes_extended_handler, 
          'add_new_notes':self._object_add_new_notes_handler, 
          'apply_note_modifications':self._object_apply_note_modifications_handler, 
+         'duplicate_notes_by_id':self._object_duplicate_notes_by_id_handler, 
          'remove_notes_by_id':self._object_perform_operation_on_notes_by_id_handler, 
          'select_notes_by_id':self._object_perform_operation_on_notes_by_id_handler, 
          'notes':self._object_notes_handler, 
@@ -221,23 +232,6 @@ class MxDCore(object):
         return self.device_contexts[device_id][object_id][TYPE_KEY]
 
     def _set_current_property(self, device_id, object_id, property_name):
-        if property_name != 'id':
-            current_object = self._get_current_lom_object(device_id, object_id)
-            if current_object != None:
-                try:
-                    verify_object_property(current_object,
-                      property_name,
-                      (self.epii_version),
-                      include_purely_listenable=True)
-                except LomAttributeError as e:
-                    try:
-                        self._print_warning(device_id, object_id, str(e))
-                    finally:
-                        e = None
-                        del e
-
-            else:
-                self._print_warning(device_id, object_id, 'property %s: no valid object id' % str(property_name))
         if not self.manager.set_current_property(device_id, object_id, property_name):
             self.device_contexts[device_id][object_id][PROP_KEY] = property_name
             self._set_current_type(device_id, object_id, 'obs')
@@ -747,22 +741,45 @@ class MxDCore(object):
         notes = getattr(lom_object, 'get_notes')(parameters[1], parameters[2], parameters[3], parameters[4])
         self.manager.send_message(device_id, object_id, 'obj_call_result', self._create_notes_output(notes))
 
-    def _object_notes_extended_handler(self, device_id, object_id, lom_object, parameters):
-        function_name, function_parameters = parameters[0], parameters[1:]
-        verify_object_property(lom_object, function_name, self.epii_version)
-        midi_note_vector = (getattr(lom_object, function_name))(*function_parameters)
-        result = self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector))
-        self.manager.send_message(device_id, object_id, 'obj_call_result', result)
+    def _extract_dict_from_parameters(self, parameters):
+        result = None
+        if not len(parameters) > 0 or isinstance(parameters[0], string_types):
+            try:
+                result = json.loads(parameters[0])
+            except ValueError:
+                pass
+
+            return result
 
     def _object_get_notes_by_id_handler(self, device_id, object_id, lom_object, parameters):
         function_name, function_parameters = parameters[0], parameters[1:]
-        verify_object_property(lom_object, function_name, self.epii_version)
-        try:
-            midi_note_vector = getattr(lom_object, function_name)(function_parameters)
-        except ValueError:
-            raise RuntimeError(INVALID_NOTE_ID_ERROR)
+        dict_from_args = self._extract_dict_from_parameters(function_parameters)
+        self._do_get_notes_extended(device_id, object_id, lom_object, function_name, dict_from_args, function_parameters if (not dict_from_args) else ([]))
 
-        result = self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector))
+    def _object_get_notes_extended_handler(self, device_id, object_id, lom_object, parameters):
+        function_name, function_parameters = parameters[0], parameters[1:]
+        dict_from_args = self._extract_dict_from_parameters(function_parameters)
+        function_parameters = function_parameters if (not dict_from_args) else ([])
+        (self._do_get_notes_extended)(device_id, object_id, lom_object, function_name, dict_from_args, *function_parameters)
+
+    def _do_get_notes_extended(self, device_id, object_id, lom_object, function_name, param_dict, *function_parameters):
+        verify_object_property(lom_object, function_name, self.epii_version)
+        properties_to_return = None
+        if param_dict is not None:
+            properties_to_return = param_dict.pop('return', None)
+            if properties_to_return is not None:
+                properties_to_return = self._sanitize_midi_note_property_list(device_id, object_id, properties_to_return)
+        try:
+            func = getattr(lom_object, function_name)
+            midi_note_vector = func(**param_dict) if param_dict is not None else func(*function_parameters)
+        except ValueError as e:
+            try:
+                raise RuntimeError(str(e))
+            finally:
+                e = None
+                del e
+
+        result = self.str_representation_for_object(self._midi_note_vector_to_dict_output(midi_note_vector, properties_to_return))
         self.manager.send_message(device_id, object_id, 'obj_call_result', result)
 
     def _object_add_new_notes_handler(self, device_id, object_id, lom_object, parameters):
@@ -819,13 +836,55 @@ class MxDCore(object):
         result = getattr(lom_object, function_name)(midi_notes)
         self.manager.send_message(device_id, object_id, 'obj_call_result', self.str_representation_for_object(result))
 
+    def _object_duplicate_notes_by_id_handler(self, device_id, object_id, lom_object, parameters):
+        function_name, function_parameters = parameters[0], parameters[1:]
+        verify_object_property(lom_object, function_name, self.epii_version)
+        func = getattr(lom_object, function_name)
+        param_dict = self._extract_dict_from_parameters(function_parameters)
+        if param_dict is not None:
+            if 'note_ids' not in param_dict:
+                raise RuntimeError(NOTE_IDS_MISSING_ERROR)
+            sanitized, invalid = sanitize_list(param_dict.keys(), VALID_DUPLICATE_NOTES_BY_ID_PARAMETERS)
+            if invalid:
+                for key in invalid:
+                    param_dict.pop(key)
+
+                multiple = len(invalid) > 1
+                self._print_warning(device_id, object_id, 'Invalid key{} provided: {}. {} will be ignored.'.format('s' if multiple else '', ', '.join(invalid), 'They' if multiple else 'It'))
+            try:
+                result = func(**param_dict)
+            except ValueError as e:
+                try:
+                    raise RuntimeError(str(e))
+                finally:
+                    e = None
+                    del e
+
+        else:
+            try:
+                result = func(function_parameters)
+            except TypeError:
+                raise RuntimeError(INVALID_ID_ERROR)
+            except ValueError as e:
+                try:
+                    raise RuntimeError(str(e))
+                finally:
+                    e = None
+                    del e
+
+        self.manager.send_message(device_id, object_id, 'obj_call_result', self.str_representation_for_object(result))
+
     def _object_perform_operation_on_notes_by_id_handler(self, device_id, object_id, lom_object, parameters):
         function_name, function_parameters = parameters[0], parameters[1:]
         verify_object_property(lom_object, function_name, self.epii_version)
         try:
             result = getattr(lom_object, function_name)(function_parameters)
-        except ValueError:
-            raise RuntimeError(INVALID_NOTE_ID_ERROR)
+        except ValueError as e:
+            try:
+                raise RuntimeError(str(e))
+            finally:
+                e = None
+                del e
 
         self.manager.send_message(device_id, object_id, 'obj_call_result', self.str_representation_for_object(result))
 
@@ -902,8 +961,25 @@ class MxDCore(object):
          concatenate_strings((list(map(note_format, notes))), string_format='%s%s'))
         return result
 
-    def _midi_note_vector_to_dict_output(self, notes):
-        return data_dict_to_json('notes', [midi_note_to_dict(note) for note in notes])
+    def _midi_note_vector_to_dict_output(self, notes, properties_to_return):
+        return data_dict_to_json('notes', [midi_note_to_dict(note, properties_to_return) for note in notes])
+
+    def _sanitize_midi_note_property_list(self, device_id, object_id, property_list):
+        if not isinstance(property_list, list):
+            self._print_warning(device_id, object_id, 'Note properties must be provided as a list of symbols.')
+            return
+        sanitized = []
+        invalid = []
+        for prop in property_list:
+            if prop not in MIDI_NOTE_ATTRS:
+                invalid.append(prop)
+            else:
+                sanitized.append(prop)
+
+        if invalid:
+            multiple = len(invalid) > 1
+            self._print_warning(device_id, object_id, 'Invalid propert{} provided: {}. {} will be ignored.'.format('ies' if multiple else 'y', ', '.join(invalid), 'They' if multiple else 'It'))
+        return sanitized
 
     def _get_list_of_note_dictionaries(self, parameter):
         try:

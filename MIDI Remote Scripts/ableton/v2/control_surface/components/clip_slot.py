@@ -99,7 +99,7 @@ class ClipSlotComponent(Component):
         try:
             return self._clip_palette[color]
         except (KeyError, IndexError):
-            if self._clip_rgb_table != None:
+            if self._clip_rgb_table is not None:
                 return find_nearest_color(self._clip_rgb_table, color)
             else:
                 return self._stopped_value
@@ -116,13 +116,13 @@ class ClipSlotComponent(Component):
             if slot_or_clip.is_recording:
                 return self._recording_color
             return self._started_value
-        if slot_or_clip.color != None:
+        if slot_or_clip.color is not None:
             return self._color_value(slot_or_clip)
         if getattr(slot_or_clip, 'controls_other_clips', True):
             return self._stopped_value
         if self._track_is_armed(track):
             if self._clip_slot.has_stop_button:
-                if self._record_button_color != None:
+                if self._record_button_color is not None:
                     return self._record_button_color
         return self._empty_slot_color
 

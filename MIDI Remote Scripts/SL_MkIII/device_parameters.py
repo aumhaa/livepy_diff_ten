@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import range
 from future.moves.itertools import zip_longest
 from ableton.v2.control_surface import InternalParameterBase
 from ableton.v2.control_surface.components import DisplayingDeviceParameterComponent
@@ -18,21 +17,21 @@ class DeviceParameterComponent(DisplayingDeviceParameterComponent):
 
     def __init__(self, *a, **k):
         self._parameter_controls = None
-        (super(DeviceParameterComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
 
     def set_parameter_controls(self, encoders):
-        super(DeviceParameterComponent, self).set_parameter_controls(encoders)
+        super().set_parameter_controls(encoders)
         self._parameter_controls = encoders
 
     def _update_parameter_values(self):
-        super(DeviceParameterComponent, self)._update_parameter_values()
+        super()._update_parameter_values()
         for parameter, control in zip_longest(self.parameters, self._parameter_controls or []):
             if is_internal_parameter(parameter):
                 if control:
                     control.send_value(convert_parameter_value_to_midi_value(parameter))
 
     def _update_parameters(self):
-        super(DeviceParameterComponent, self)._update_parameters()
+        super()._update_parameters()
         self._update_color_fields()
 
     def _update_color_fields(self):

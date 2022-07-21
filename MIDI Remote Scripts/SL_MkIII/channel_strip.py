@@ -1,5 +1,4 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
-from builtins import str
 from past.utils import old_div
 import Live
 from ableton.v2.base import clamp, listens, liveobj_valid, old_round
@@ -9,7 +8,7 @@ from ableton.v2.control_surface.elements import DisplayDataSource, SysexRGBColor
 from .control import BinaryControl
 from .messenger import Messenger
 from .parameter_mapping_sensitivities import CONTINUOUS_MAPPING_SENSITIVITY
-from .util import color_for_track, convert_parameter_value_to_midi_value, normalized_parameter_value
+from .util import color_for_track, normalized_parameter_value
 
 def hex_to_channels(color_in_hex):
     return (
@@ -36,7 +35,7 @@ class ChannelStripComponent(ChannelStripComponentBase, Messenger):
     track_selection_field = BinaryControl()
 
     def __init__(self, *a, **k):
-        (super(ChannelStripComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._pan_value_display_data_source = DisplayDataSource()
         self._ChannelStripComponent__on_selected_track_changed.subject = self.song.view
 
@@ -45,26 +44,26 @@ class ChannelStripComponent(ChannelStripComponentBase, Messenger):
         return self._pan_value_display_data_source
 
     def set_track(self, track):
-        super(ChannelStripComponent, self).set_track(track)
+        super().set_track(track)
         self._update_pan_encoder_color_field()
         self._update_track_selection_field()
         self._update_listeners()
 
     def set_volume_control(self, control):
-        super(ChannelStripComponent, self).set_volume_control(control)
+        super().set_volume_control(control)
         self._ChannelStripComponent__on_volume_control_value_received.subject = control
 
     def set_pan_control(self, control):
-        if control != None:
+        if control is not None:
             control.mapping_sensitivity = CONTINUOUS_MAPPING_SENSITIVITY
-        super(ChannelStripComponent, self).set_pan_control(control)
+        super().set_pan_control(control)
 
     def set_send_controls(self, controls):
         for control in controls or []:
-            if control != None:
+            if control is not None:
                 control.mapping_sensitivity = CONTINUOUS_MAPPING_SENSITIVITY
 
-        super(ChannelStripComponent, self).set_send_controls(controls)
+        super().set_send_controls(controls)
 
     @monitoring_state_button.pressed
     def monitoring_state_button(self, _):

@@ -8,6 +8,7 @@ BUTTON_LABELS_MAP = {'song':('Solo', 'Mute', 'Arm', 'Clip', 'Scene', 'Stop'),
  'user':('User 1', 'User 2', 'User 3', 'User 4', 'User 5', 'User 6')}
 
 class ButtonLabelsComponent(Component):
+    is_private = True
     display_lines = control_list(DisplayControl, control_count=6)
 
     def show_button_labels_for_mode(self, mode_name):

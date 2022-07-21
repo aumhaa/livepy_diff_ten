@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import map
 SYSEX_START_BYTE = 240
 SYSEX_END_BYTE = 247
 NOVATION_MANUFACTURER_ID = (0, 32, 41)

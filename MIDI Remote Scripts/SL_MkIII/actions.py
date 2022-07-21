@@ -20,7 +20,7 @@ class ActionsComponent(Component):
       untoggled_color='Transport.MetronomeOff')
 
     def __init__(self, *a, **k):
-        (super(ActionsComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._ActionsComponent__on_can_capture_midi_changed.subject = self.song
         self._ActionsComponent__on_can_capture_midi_changed()
         self.actions_color_fields[METRONOME_DISPLAY_INDEX].color = 'Transport.MetronomeOn'

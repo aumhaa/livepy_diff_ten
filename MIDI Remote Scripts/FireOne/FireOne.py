@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import object, range, str
 import Live, MidiRemoteScript
+from ableton.v2.base import move_current_song_time
 NOTE_OFF_STATUS = 128
 NOTE_ON_STATUS = 144
 CC_STATUS = 176
@@ -183,7 +184,7 @@ class FireOne(object):
                 if not moved_forward:
                     value -= 64
                     value *= -1
-                self.song().jump_by(value)
+                move_current_song_time(self.song(), value)
         elif self.application().view.is_view_visible('Session'):
             tracks = self.song().visible_tracks
             index = list(tracks).index(self.song().view.selected_track)

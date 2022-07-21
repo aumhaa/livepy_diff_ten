@@ -203,9 +203,9 @@ class MixerComponent(Component):
         super(MixerComponent, self).update()
         master_track = self.song.master_track
         if self.is_enabled():
-            if self._prehear_volume_control != None:
+            if self._prehear_volume_control is not None:
                 self._prehear_volume_control.connect_to(master_track.mixer_device.cue_volume)
-            if self._crossfader_control != None:
+            if self._crossfader_control is not None:
                 self._crossfader_control.connect_to(master_track.mixer_device.crossfader)
         else:
             release_control(self._prehear_volume_control)

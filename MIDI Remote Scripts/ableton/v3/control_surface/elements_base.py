@@ -50,7 +50,7 @@ def create_name_for_modified_control(control=None, modifier=None):
     modifier_name = modifier.name
     if modifier_name.lower().endswith('button'):
         modifier_name = modifier_name[:-7]
-    preposition = 'With' if control.name[0].isupper() else 'with'
+    preposition = 'With' if any([c.isupper() for c in control.name]) else 'with'
     return '{}_{}_{}'.format(control.name, preposition, modifier_name)
 
 

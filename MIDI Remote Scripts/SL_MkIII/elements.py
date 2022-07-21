@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import object, range
 import Live
 from ableton.v2.base import depends, mixin
 from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, PrioritizedResource
@@ -85,10 +84,10 @@ class SpecialFeedbackChannelSliderElement(SliderElement):
     feedback_channel = IGNORED_FEEDBACK_CHANNEL
 
 
-class Elements(object):
+class Elements:
 
     def __init__(self, *a, **k):
-        (super(Elements, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self.display_up_button = create_button(81, 'Display_Up_Button')
         self.display_down_button = create_button(82, 'Display_Down_Button')
         self.up_button = create_button(85, 'Up_Button')
@@ -226,7 +225,7 @@ class Elements(object):
           name='Selection_Field_Line_2_With_Shift')
         encoders = [EncoderElement(MIDI_CC_TYPE, DEFAULT_CHANNEL, (21 + index), map_mode=(Live.MidiMap.MapMode.relative_smooth_two_compliment), name=('Encoder_{}'.format(index))) for index in range(8)]
         for encoder in encoders:
-            encoder.set_feedback_delay(1)
+            encoder.set_feedback_delay(-1)
 
         self.encoders = ButtonMatrixElement(rows=[encoders], name='Encoders')
         self.encoder_color_fields = ButtonMatrixElement(rows=[

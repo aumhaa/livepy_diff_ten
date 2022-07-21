@@ -11,7 +11,7 @@ class DeviceComponent(DeviceComponentBase):
     next_bank_button = ButtonControl(color='Device.On')
 
     def __init__(self, *a, **k):
-        (super(DeviceComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._DeviceComponent__on_bank_changed.subject = self._device_bank_registry
         self._update_bank_scroll_buttons()
 
@@ -24,7 +24,7 @@ class DeviceComponent(DeviceComponentBase):
         self._scroll_bank(1)
 
     def _set_device(self, device):
-        super(DeviceComponent, self)._set_device(device)
+        super()._set_device(device)
         self._update_bank_scroll_buttons()
 
     def _create_parameter_info(self, parameter, name):

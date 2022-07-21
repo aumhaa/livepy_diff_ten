@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from builtins import chr, str
 from future.moves.itertools import zip_longest
 from ableton.v2.base import listens, listens_group, liveobj_valid
 import ableton.v2.control_surface.components as MixerComponentBase
@@ -21,7 +20,7 @@ class MixerComponent(MixerComponentBase):
     selected_track_color_field = ColorSysexControl()
 
     def __init__(self, *a, **k):
-        (super(MixerComponent, self).__init__)(a, channel_strip_component_type=ChannelStripComponent, **k)
+        (super().__init__)(a, channel_strip_component_type=ChannelStripComponent, **k)
         self._MixerComponent__on_selected_track_changed.subject = self.song.view
         self._MixerComponent__on_selected_track_changed()
         self.pan_value_display.set_data_sources([strip.pan_value_display_data_source for strip in self._channel_strips])
@@ -39,7 +38,7 @@ class MixerComponent(MixerComponentBase):
         for index, track in enumerate(tracks):
             if liveobj_valid(track):
                 sends = track.mixer_device.sends
-                if send_index != None:
+                if send_index is not None:
                     if send_index < len(sends):
                         controlled_sends[index] = sends[send_index]
 
@@ -93,12 +92,12 @@ class MixerComponent(MixerComponentBase):
 
     def _update_send_navigation_buttons(self):
         send_index = self.send_index
-        self.send_up_button.enabled = send_index != None and send_index > 0
-        self.send_down_button.enabled = send_index != None and send_index < self.num_sends - 1
+        self.send_up_button.enabled = send_index is not None and send_index > 0
+        self.send_down_button.enabled = send_index is not None and send_index < self.num_sends - 1
 
     def _update_send_index_display(self):
         send_index = self.send_index
-        self.send_index_display[0] = 'Send ' + chr(send_index + 65) if send_index != None else ''
+        self.send_index_display[0] = 'Send ' + chr(send_index + 65) if send_index is not None else ''
 
     def _update_send_value_display(self):
         for index, send in enumerate(self.controlled_sends):
@@ -129,7 +128,7 @@ class MixerComponent(MixerComponentBase):
         self._update_send_value_display()
 
     def _reassign_tracks(self):
-        super(MixerComponent, self)._reassign_tracks()
+        super()._reassign_tracks()
         self._update_send_value_subjects()
         self._update_send_value_display()
         self._update_send_encoder_color_fields()

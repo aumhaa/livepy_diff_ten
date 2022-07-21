@@ -39,6 +39,7 @@ def get_control_surfaces():
 class SimpleControlSurface(EventObject):
     __events__ = ('received_midi', 'disconnect')
     preferences_key = None
+    handle_undo_steps = False
 
     def __init__(self, c_instance=None, *a, **k):
         (super(SimpleControlSurface, self).__init__)(*a, **k)
@@ -393,7 +394,7 @@ class SimpleControlSurface(EventObject):
     def _do_send_midi(self, midi_event_bytes):
         try:
             self._c_instance.send_midi(midi_event_bytes)
-        except:
+        except Exception:
             logger.error('Error while sending midi message %s', str(midi_event_bytes))
             traceback.print_exc()
             return False

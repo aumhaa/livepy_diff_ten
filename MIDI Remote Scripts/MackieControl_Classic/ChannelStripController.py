@@ -427,8 +427,6 @@ class ChannelStripController(MackieControlComponent):
         if self._ChannelStripController__can_switch_to_prev_page():
             if self._ChannelStripController__assignment_mode == CSM_PLUGINS:
                 self._ChannelStripController__plugin_mode_offsets[self._ChannelStripController__plugin_mode] -= len(self._ChannelStripController__channel_strips)
-                if self._ChannelStripController__plugin_mode == PCM_DEVICES:
-                    self._ChannelStripController__update_vpot_leds_in_plugins_device_choose_mode()
             elif self._ChannelStripController__assignment_mode == CSM_SENDS:
                 self._ChannelStripController__send_mode_offset -= len(self._ChannelStripController__channel_strips)
             self._ChannelStripController__reassign_channel_strip_parameters(for_display_only=False)
@@ -440,8 +438,6 @@ class ChannelStripController(MackieControlComponent):
         if self._ChannelStripController__can_switch_to_next_page():
             if self._ChannelStripController__assignment_mode == CSM_PLUGINS:
                 self._ChannelStripController__plugin_mode_offsets[self._ChannelStripController__plugin_mode] += len(self._ChannelStripController__channel_strips)
-                if self._ChannelStripController__plugin_mode == PCM_DEVICES:
-                    self._ChannelStripController__update_vpot_leds_in_plugins_device_choose_mode()
             elif self._ChannelStripController__assignment_mode == CSM_SENDS:
                 self._ChannelStripController__send_mode_offset += len(self._ChannelStripController__channel_strips)
             else:
@@ -517,6 +513,9 @@ class ChannelStripController(MackieControlComponent):
         self._ChannelStripController__main_display_controller.set_channel_offset(self._ChannelStripController__strip_offset())
         if len(display_parameters):
             self._ChannelStripController__main_display_controller.set_parameters(display_parameters)
+        if self._ChannelStripController__assignment_mode == CSM_PLUGINS:
+            if self._ChannelStripController__plugin_mode == PCM_DEVICES:
+                self._ChannelStripController__update_vpot_leds_in_plugins_device_choose_mode()
 
     def _need_to_update_meter(self, meter_state_changed):
         return meter_state_changed and self._ChannelStripController__assignment_mode == CSM_VOLPAN

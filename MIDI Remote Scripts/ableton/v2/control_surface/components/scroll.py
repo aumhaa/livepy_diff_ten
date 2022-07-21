@@ -33,7 +33,7 @@ class ScrollComponent(Component, Scrollable):
         (super(ScrollComponent, self).__init__)(*a, **k)
         self._scroll_task_up = self._make_scroll_task(self._do_scroll_up)
         self._scroll_task_down = self._make_scroll_task(self._do_scroll_down)
-        if scrollable != None:
+        if scrollable is not None:
             self.scrollable = scrollable
 
     def _make_scroll_task(self, scroll_step):

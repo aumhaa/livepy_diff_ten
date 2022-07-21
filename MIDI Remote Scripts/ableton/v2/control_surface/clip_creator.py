@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
+from ..base import liveobj_valid
 _Q = Live.Song.Quantization
 
 class ClipCreator(object):

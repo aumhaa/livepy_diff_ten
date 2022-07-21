@@ -68,7 +68,7 @@ class DisplayDataSource(object):
 
     def update(self):
         self._in_update = True
-        if self._update_callback != None:
+        if self._update_callback is not None:
             self._update_callback()
         self._in_update = False
 

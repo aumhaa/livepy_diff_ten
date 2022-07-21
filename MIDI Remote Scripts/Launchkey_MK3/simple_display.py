@@ -1,25 +1,13 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from functools import partial
 from ableton.v2.base import task
 from ableton.v2.control_surface import NotifyingControlElement
+from ableton.v3.base import as_ascii, get_default_ascii_translations
 NON_ASCII_ENCODING = 17
-UNICODE_DEGREE_SYMBOL = 176
 TRANSLATED_DEGREE_SYMBOL = 48
-QUESTION_MARK = 63
-
-def as_ascii(message):
-    result = []
-    for char in message:
-        ascii = ord(char)
-        if ascii > 127:
-            if ascii == UNICODE_DEGREE_SYMBOL:
-                result.append(NON_ASCII_ENCODING)
-                ascii = TRANSLATED_DEGREE_SYMBOL
-            else:
-                ascii = QUESTION_MARK
-        result.append(ascii)
-
-    return tuple(result)
-
+ascii_translations = get_default_ascii_translations()
+ascii_translations['°'] = (NON_ASCII_ENCODING, TRANSLATED_DEGREE_SYMBOL)
+as_ascii = partial(as_ascii, ascii_translations=ascii_translations)
 
 class SimpleDisplayElement(NotifyingControlElement):
 
@@ -34,7 +22,7 @@ class SimpleDisplayElement(NotifyingControlElement):
 
     def display_message(self, message):
         if message:
-            self._message_to_send = self._message_header + as_ascii(message) + self._message_tail
+            self._message_to_send = self._message_header + tuple(as_ascii(message)) + self._message_tail
             self._request_send_message()
 
     def update(self):

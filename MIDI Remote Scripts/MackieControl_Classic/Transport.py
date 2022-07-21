@@ -1,5 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 from past.utils import old_div
+from ableton.v2.base import move_current_song_time
 from .MackieControlComponent import *
 
 class Transport(MackieControlComponent):
@@ -221,15 +222,8 @@ class Transport(MackieControlComponent):
                 step *= 4.0
             if self.alt_is_pressed():
                 step /= 4.0
-            if self._Transport__scrub_button_down:
-                if backwards:
-                    self.song().scrub_by(-step)
-                else:
-                    self.song().scrub_by(step)
-            elif backwards:
-                self.song().jump_by(-step)
-            else:
-                self.song().jump_by(step)
+            move_current_song_time((self.song()),
+              (-step if backwards else step), truncate_to_beat=False)
 
     def handle_jog_wheel_switch_ids(self, switch_id, value):
         if switch_id == SID_JOG_CURSOR_UP:

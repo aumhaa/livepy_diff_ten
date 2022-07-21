@@ -57,7 +57,7 @@ class SessionOverviewComponent(Component):
             self._update_matrix_buttons()
 
     def _update_matrix_buttons(self):
-        if self._buttons != None:
+        if self._buttons is not None:
             tracks = self._session_ring.tracks_to_use()
             scenes = self.song.scenes
             slots_registry = [None for index in range(len(scenes))]

@@ -7,9 +7,10 @@ from ..controls import ButtonControl, control_list
 
 class ClipSlotComponent(ClipSlotComponentBase):
 
-    def __init__(self, color_for_obj_function=None, *a, **k):
+    def __init__(self, color_for_obj_function=None, is_private=True, *a, **k):
         self._color_for_obj_function = color_for_obj_function
         (super().__init__)(*a, **k)
+        self.is_private = is_private
         self._record_button_color = 'Session.ClipRecordButton'
 
     @property
@@ -25,12 +26,13 @@ class ClipSlotComponent(ClipSlotComponentBase):
 
 class SceneComponent(SceneComponentBase):
 
-    def __init__(self, clip_slot_component_type=None, color_for_obj_function=None, *a, **k):
+    def __init__(self, clip_slot_component_type=None, color_for_obj_function=None, is_private=True, *a, **k):
         self._color_for_obj_function = color_for_obj_function
         clip_slot_component_type = clip_slot_component_type or ClipSlotComponent
         self._create_clip_slot = lambda: clip_slot_component_type(parent=self,
           color_for_obj_function=color_for_obj_function)
         (super().__init__)(*a, **k)
+        self.is_private = is_private
         self._no_scene_color = 'Session.SceneEmpty'
 
     @property
@@ -50,13 +52,14 @@ class SessionComponent(SessionComponentBase):
     stop_track_clip_buttons = control_list(ButtonControl)
 
     @depends(session_ring=None)
-    def __init__(self, name='Session', session_ring=None, scene_component_type=None, clip_slot_component_type=None, color_for_obj_function=None, *a, **k):
+    def __init__(self, name='Session', session_ring=None, scene_component_type=None, clip_slot_component_type=None, color_for_obj_function=None, is_private=True, *a, **k):
         scene_component_type = scene_component_type or SceneComponent
         self._create_scene = lambda: scene_component_type(parent=self,
           session_ring=(self._session_ring),
           clip_slot_component_type=clip_slot_component_type,
           color_for_obj_function=color_for_obj_function)
         (super().__init__)(a, name=name, session_ring=session_ring, **k)
+        self.is_private = is_private
         self.stop_track_clip_buttons.control_count = session_ring.num_tracks
 
     def set_stop_all_clips_button(self, button):
@@ -65,6 +68,14 @@ class SessionComponent(SessionComponentBase):
     def set_stop_track_clip_buttons(self, buttons):
         self.stop_track_clip_buttons.set_control_element(buttons)
         self._update_stop_track_clip_buttons()
+
+    def __getattr__(self, name):
+        if name.startswith('set_selected_scene_launch_button'):
+            return self.selected_scene().set_launch_button
+        if name.startswith('set_scene_'):
+            if name.endswith('_launch_button'):
+                return self.scene(int(name.split('_')[(-3)])).set_launch_button
+        raise AttributeError
 
     @stop_all_clips_button.pressed
     def stop_all_clips_button(self, _):

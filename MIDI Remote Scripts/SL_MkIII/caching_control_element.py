@@ -7,8 +7,11 @@ class CachingControlElement(ControlElement):
 
     @depends(message_cache=None)
     def __init__(self, message_cache=None, *a, **k):
-        (super(CachingControlElement, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._message_cache = message_cache
 
-    def send_midi(self, midi_event_bytes, **k):
-        self._message_cache(midi_event_bytes[len(SET_PROPERTY_MSG_HEADER):-1])
+    def send_midi(self, message, **_):
+        self._message_cache(message[len(SET_PROPERTY_MSG_HEADER):-1])
+
+    def reset(self):
+        pass

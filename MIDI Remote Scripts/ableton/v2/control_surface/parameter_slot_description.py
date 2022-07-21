@@ -10,7 +10,7 @@ AND = 'and'
 OR = 'or'
 
 def find_parameter(name, host):
-    parameters = host.parameters if host != None else []
+    parameters = host.parameters if liveobj_valid(host) else []
     return find_if(lambda p: p.original_name == name, parameters)
 
 

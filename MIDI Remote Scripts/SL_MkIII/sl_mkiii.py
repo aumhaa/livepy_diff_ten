@@ -28,10 +28,11 @@ from .util import is_song_recording
 DRUM_FEEDBACK_CHANNEL = 4
 
 class SLMkIII(IdentifiableControlSurface):
+    handle_undo_steps = True
     _sysex_message_cache = MidiMessageCache()
 
     def __init__(self, *a, **k):
-        (super(SLMkIII, self).__init__)(a, product_id_bytes=sysex.NOVATION_MANUFACTURER_ID + sysex.DEVICE_FAMILY_CODE + sysex.DEVICE_FAMILY_MEMBER_CODE, **k)
+        (super().__init__)(a, product_id_bytes=sysex.NOVATION_MANUFACTURER_ID + sysex.DEVICE_FAMILY_CODE + sysex.DEVICE_FAMILY_MEMBER_CODE, **k)
         self._main_modes = NullModes()
         self._element_injector = inject(element_container=(const(None))).everywhere()
         self._message_injector = inject(message=(const(None))).everywhere()
@@ -69,26 +70,26 @@ class SLMkIII(IdentifiableControlSurface):
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])
         self._set_feedback_velocity()
 
-    def on_identified(self, midi_bytes):
+    def on_identified(self, response_bytes):
         self._switch_display_layout((sysex.KNOB_SCREEN_LAYOUT_BYTE), force=True)
         self._main_modes.selected_mode = 'device_control'
         self._auto_arm.set_enabled(True)
         self._session_ring.set_enabled(True)
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL])
-        super(SLMkIII, self).on_identified(midi_bytes)
+        super().on_identified(response_bytes)
 
     def disconnect(self):
         self._auto_arm.set_enabled(False)
-        super(SLMkIII, self).disconnect()
+        super().disconnect()
 
     def port_settings_changed(self):
         self._auto_arm.set_enabled(False)
         self._session_ring.set_enabled(False)
-        super(SLMkIII, self).port_settings_changed()
+        super().port_settings_changed()
 
     @contextmanager
     def _component_guard(self):
-        with super(SLMkIII, self)._component_guard():
+        with super()._component_guard():
             with self._element_injector:
                 with self._message_injector:
                     yield

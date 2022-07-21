@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.components import PlayableComponent, ScrollComponent
+from ableton.v3.control_surface.components import PlayableComponent, ScrollComponent
 from .note_pad import NotePadMixin
 MAX_START_NOTE = 108
 SHARP_INDICES = (1, 3, 4, 6, 10, 13, 15)
@@ -9,7 +9,7 @@ class KeyboardComponent(NotePadMixin, PlayableComponent, ScrollComponent):
     def __init__(self, translation_channel, *a, **k):
         self._translation_channel = translation_channel
         self._start_note = 60
-        (super(KeyboardComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
 
     def can_scroll_up(self):
         return self._start_note < MAX_START_NOTE

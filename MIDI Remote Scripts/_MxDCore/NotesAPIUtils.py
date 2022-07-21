@@ -1,16 +1,25 @@
 from __future__ import absolute_import, print_function, unicode_literals
+MIDI_NOTE_ATTRS = ('note_id', 'pitch', 'start_time', 'duration', 'velocity', 'mute',
+                   'probability', 'velocity_deviation', 'release_velocity')
 REQUIRED_MIDI_NOTE_ATTRS = ('pitch', 'start_time', 'duration')
+VALID_DUPLICATE_NOTES_BY_ID_PARAMETERS = ('note_ids', 'destination_time', 'transposition_amount')
 
-def midi_note_to_dict(note):
-    return {'note_id':note.note_id, 
-     'pitch':note.pitch, 
-     'start_time':note.start_time, 
-     'duration':note.duration, 
-     'velocity':note.velocity, 
-     'mute':int(note.mute), 
-     'probability':note.probability, 
-     'velocity_deviation':note.velocity_deviation, 
-     'release_velocity':note.release_velocity}
+def midi_note_to_dict(note, properties_to_return=None):
+
+    def get_note_attr(attr_name):
+        prop = getattr(note, attr_name)
+        if attr_name == 'mute':
+            return int(prop)
+        return prop
+
+    note_dict = {}
+    for attr in MIDI_NOTE_ATTRS:
+        if not properties_to_return is None:
+            if attr in properties_to_return:
+                pass
+        note_dict[attr] = get_note_attr(attr)
+
+    return note_dict
 
 
 def midi_notes_to_notes_dict(notes):

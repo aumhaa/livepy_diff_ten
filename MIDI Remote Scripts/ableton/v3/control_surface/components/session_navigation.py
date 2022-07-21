@@ -5,8 +5,9 @@ from ...base import add_scroll_encoder, depends, skin_scroll_buttons
 class SessionNavigationComponent(SessionNavigationComponentBase):
 
     @depends(session_ring=None)
-    def __init__(self, name='Session_Navigation', session_ring=None, *a, **k):
+    def __init__(self, name='Session_Navigation', session_ring=None, is_private=True, *a, **k):
         (super().__init__)(a, name=name, session_ring=session_ring, **k)
+        self.is_private = is_private
         add_scroll_encoder(self._horizontal_banking)
         add_scroll_encoder(self._vertical_banking)
         for c in (

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import map, zip
-from ...base import EventObject, forward_property, listenable_property, listens
+from ...base import EventObject, forward_property, listenable_property, listens, liveobj_valid
 from .. import Component
 from ..control import ButtonControl, control_list
 
@@ -134,7 +134,7 @@ class ItemListerComponentBase(Component):
         num_slots = min(self._num_visible_items, len(items))
         new_items = []
         if num_slots > 0:
-            new_items = [(self._create_slot)(index, *item) for index, item in enumerate(items[:num_slots]) if item[0] != None]
+            new_items = [(self._create_slot)(index, *item) for index, item in enumerate(items[:num_slots]) if liveobj_valid(item[0])]
         return new_items
 
     def _create_slot(self, index, item, nesting_level):

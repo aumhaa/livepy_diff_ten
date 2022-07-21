@@ -5,7 +5,7 @@ import ableton.v2.control_surface as SessionRingSelectionLinkingBase
 class SessionRingSelectionLinking(SessionRingSelectionLinkingBase):
 
     def __init__(self, selection_changed_notifier=None, *a, **k):
-        (super(SessionRingSelectionLinking, self).__init__)(a, selection_changed_notifier=selection_changed_notifier, **k)
+        (super().__init__)(a, selection_changed_notifier=selection_changed_notifier, **k)
         self._previously_selected_track = None
         self._currently_selected_track = None
         self._SessionRingSelectionLinking__on_selected_track_changed.subject = self._song.view
@@ -24,14 +24,13 @@ class SessionRingSelectionLinking(SessionRingSelectionLinkingBase):
         if not self._does_selection_change_cross_boundary():
             return
         current_offset = self._session_ring.track_offset
-        all_tracks = self._session_ring.tracks_to_use()
         new_offset = clamp(current_offset + self._selection_delta(), 0, len(self._session_ring.tracks_to_use()))
         self._session_ring.set_offsets(new_offset, self._session_ring.scene_offset)
 
     def _link_session_ring_with_minimal_travel(self):
         if not self._does_selection_change_cross_boundary():
             return
-        super(SessionRingSelectionLinking, self)._link_session_ring_with_minimal_travel()
+        super()._link_session_ring_with_minimal_travel()
 
     def _does_selection_change_cross_boundary(self):
 
