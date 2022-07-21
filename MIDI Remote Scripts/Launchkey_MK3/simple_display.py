@@ -11,18 +11,25 @@ as_ascii = partial(as_ascii, ascii_translations=ascii_translations)
 
 class SimpleDisplayElement(NotifyingControlElement):
 
-    def __init__(self, header, tail, *a, **k):
+    def __init__(self, command, tail, *a, **k):
         (super(SimpleDisplayElement, self).__init__)(*a, **k)
-        self._message_header = header
+        self._message_command = command
+        self._message_header = None
         self._message_tail = tail
         self._message_to_send = None
         self._last_sent_message = None
         self._send_message_task = self._tasks.add(task.run(self._send_message))
         self._send_message_task.kill()
+        self._initialized = False
+
+    def initialize(self, header):
+        self._message_header = header + self._message_command
+        self._initialized = True
+        self._request_send_message()
 
     def display_message(self, message):
         if message:
-            self._message_to_send = self._message_header + tuple(as_ascii(message)) + self._message_tail
+            self._message_to_send = tuple(as_ascii(message)) + self._message_tail
             self._request_send_message()
 
     def update(self):
@@ -42,8 +49,9 @@ class SimpleDisplayElement(NotifyingControlElement):
             self._last_sent_message = midi_bytes
 
     def _request_send_message(self):
-        self._send_message_task.restart()
+        if self._initialized:
+            self._send_message_task.restart()
 
     def _send_message(self):
         if self._message_to_send:
-            self.send_midi(self._message_to_send)
+            self.send_midi(self._message_header + self._message_to_send)

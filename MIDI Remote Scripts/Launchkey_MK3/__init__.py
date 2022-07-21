@@ -5,12 +5,13 @@ from .launchkey_mk3 import Launchkey_MK3
 def get_capabilities():
     return {CONTROLLER_ID_KEY: controller_id(vendor_id=4661,
                           product_ids=[
-                         308, 309, 310, 311],
+                         308, 309, 310, 311, 320],
                           model_name=[
                          'Launchkey MK3 25',
                          'Launchkey MK3 37',
                          'Launchkey MK3 49',
-                         'Launchkey MK3 61']), 
+                         'Launchkey MK3 61',
+                         'Launchkey MK3 88']), 
      
      PORTS_KEY: [
                  inport(props=[NOTES_CC, REMOTE]),

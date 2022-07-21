@@ -33,6 +33,7 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
 
     def __init__(self, *a, **k):
         self._is_small_model = False
+        self._is_88_key_model = False
         self._last_pad_layout_byte = midi.PAD_SESSION_LAYOUT
         self._last_pot_layout_byte = None
         self._last_fader_layout_byte = midi.VOLUME_LAYOUT
@@ -319,6 +320,7 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
     def _extract_product_id_bytes(self, midi_bytes):
         id_bytes = super(Launchkey_MK3, self)._extract_product_id_bytes(midi_bytes)
         model_id_byte = id_bytes[3]
+        self._elements.init_display_elements(model_id_byte == midi.LK_MK3_88_ID_BYTE)
         if id_bytes[:3] == sysex.NOVATION_MANUFACTURER_ID:
             if model_id_byte in midi.MODEL_ID_BYTES:
                 if id_bytes[4:] == midi.MODEL_ID_BYTE_SUFFIX:

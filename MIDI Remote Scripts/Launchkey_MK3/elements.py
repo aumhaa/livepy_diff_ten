@@ -14,8 +14,7 @@ def create_rgb_button(identifier, name, msg_type=MIDI_CC_TYPE, **k):
 
 
 def create_display_element(command_bytes, name):
-    return SimpleDisplayElement((midi.DISPLAY_HEADER + command_bytes),
-      (sysex.SYSEX_END_BYTE,), name=name)
+    return SimpleDisplayElement(command_bytes, (sysex.SYSEX_END_BYTE,), name=name)
 
 
 def create_parameter_display_matrix(command_byte, start_index, name):
@@ -64,3 +63,13 @@ class Elements(LaunchkeyElements):
         self.master_fader_parameter_value_display = create_display_element((
          midi.PARAMETER_VALUE_DISPLAY_COMMAND_BYTE,
          midi.MASTER_PARAMETER_DISPLAY_INDEX), 'Master_Fader_Parameter_Value_Display')
+
+    def init_display_elements(self, is_88_key_model):
+        display_header = midi.DISPLAY_HEADER_88_KEY if is_88_key_model else midi.DISPLAY_HEADER
+        for element in vars(self).values():
+            if isinstance(element, SimpleDisplayElement):
+                element.initialize(display_header)
+            if isinstance(element, ButtonMatrixElement):
+                if isinstance(element[0], SimpleDisplayElement):
+                    for sub_element in element:
+                        sub_element.initialize(display_header)
