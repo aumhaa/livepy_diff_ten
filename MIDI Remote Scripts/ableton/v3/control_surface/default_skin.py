@@ -114,6 +114,14 @@ class DefaultColors:
         Playing = BasicColors.ON
         Empty = BasicColors.OFF
 
+    class ClipActions:
+        Delete = BasicColors.OFF
+        DeletePressed = BasicColors.ON
+        Double = BasicColors.OFF
+        DoublePressed = BasicColors.ON
+        Quantize = BasicColors.OFF
+        QuantizedPressed = BasicColors.ON
+
     class Device:
         On = BasicColors.ON
         Off = BasicColors.OFF
@@ -140,6 +148,15 @@ class DefaultColors:
         PadMutedSelected = BasicColors.ON
         PadSoloed = BasicColors.ON
         PadSoloedSelected = BasicColors.ON
+        PadAction = BasicColors.ON
+        ScrollPressed = BasicColors.ON
+        Scroll = BasicColors.ON
+
+    class SlicedSimpler:
+        NoSlice = BasicColors.OFF
+        SliceNotSelected = BasicColors.OFF
+        SliceSelected = BasicColors.ON
+        NextSlice = BasicColors.ON
         PadAction = BasicColors.ON
         ScrollPressed = BasicColors.ON
         Scroll = BasicColors.ON

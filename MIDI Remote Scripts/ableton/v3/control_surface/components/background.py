@@ -13,9 +13,8 @@ class NopControl(InputControl):
 
 class BackgroundComponent(Component):
 
-    def __init__(self, name='Background', control_type=None, is_private=True, *a, **k):
+    def __init__(self, name='Background', control_type=None, *a, **k):
         (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
         self._control_type = control_type or NopControl
 
     def _setup_control_state(self, name, control_state):

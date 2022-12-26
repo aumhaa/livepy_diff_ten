@@ -8,7 +8,8 @@ PADS_PER_ROW = 4
 
 class DrumGroupComponent(NotePadMixin, DrumGroupComponentBase):
 
-    def _filled_color(self, pad):
+    @staticmethod
+    def _filled_color(pad):
         pad_quadrant = MAX_QUADRANT_INDEX
         if pad.note in COMPLETE_QUADRANTS_RANGE:
             pad_quadrant = (pad.note - PADS_PER_ROW) // NUM_PADS

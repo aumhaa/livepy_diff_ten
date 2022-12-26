@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v3.base import is_clip_or_slot, is_drum_chain, liveobj_color_to_midi_rgb_values
 from ableton.v3.control_surface.capabilities import CONTROLLER_ID_KEY, NOTES_CC, PORTS_KEY, SCRIPT, controller_id, inport, outport
-from ableton.v3.control_surface.elements import create_rgb_color
 from universal import UniversalControlSurface, UniversalControlSurfaceSpecification, create_skin
 from .analog_lab import AnalogLabComponent
 from .colors import Rgb, Skin
@@ -11,7 +9,6 @@ from .elements import NUM_SCENES, NUM_TRACKS, Elements
 from .mappings import create_mappings
 from .midi import CONNECTION_MESSAGE, DISCONNECTION_MESSAGE, REQUEST_PROGRAM_MESSAGE, SYSEX_START
 from .transport import TransportComponent
-rgb_function = liveobj_color_to_midi_rgb_values(liveobj_predicate=(lambda x: is_clip_or_slot(x) or is_drum_chain(x)))
 
 def get_capabilities():
     return {CONTROLLER_ID_KEY: controller_id(vendor_id=7285,
@@ -40,7 +37,6 @@ class Specification(UniversalControlSurfaceSpecification):
     create_mappings_function = create_mappings
     hello_messages = (CONNECTION_MESSAGE, REQUEST_PROGRAM_MESSAGE)
     goodbye_messages = (DISCONNECTION_MESSAGE,)
-    color_for_liveobj_function = lambda x: create_rgb_color(rgb_function(x))
     component_map = {'Drum_Group':DrumGroupComponent,  'Transport':TransportComponent}
 
 

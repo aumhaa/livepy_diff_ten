@@ -1,16 +1,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ...base import add_scroll_encoder, skin_scroll_buttons
 from . import Scrollable, ScrollComponent
 NavDirection = Live.Application.Application.View.NavDirection
 
 class SimpleDeviceNavigationComponent(ScrollComponent, Scrollable):
 
-    def __init__(self, name='Device_Navigation', is_private=True, *a, **k):
-        (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
-        add_scroll_encoder(self)
-        skin_scroll_buttons(self, 'Device.Navigation', 'Device.NavigationPressed')
+    def __init__(self, name='Device_Navigation', *a, **k):
+        (super().__init__)(a, name=name, scroll_skin_name='Device.Navigation', **k)
 
     def set_prev_button(self, button):
         self.scroll_up_button.set_control_element(button)

@@ -3,19 +3,19 @@ import Live
 from ...base import const, depends, is_track_armed, listens, liveobj_changed, liveobj_valid
 from .. import Component
 from ..controls import ButtonControl
-from ..skin import OptionalSkinEntry
+from ..skin import LiveObjSkinEntry, OptionalSkinEntry
 
 class ClipSlotComponent(Component):
     launch_button = ButtonControl()
     select_button = ButtonControl(color=None)
     delete_button = ButtonControl(color=None)
     duplicate_button = ButtonControl(color=None)
+    copy_button = ButtonControl(color=None)
 
-    @depends(color_for_liveobj_function=(const(None)))
-    def __init__(self, color_for_liveobj_function=None, is_private=True, *a, **k):
+    @depends(copy_handler=(const(None)))
+    def __init__(self, copy_handler=None, *a, **k):
         (super().__init__)(*a, **k)
-        self.is_private = is_private
-        self._color_for_liveobj_function = color_for_liveobj_function
+        self._copy_handler = copy_handler
         self._clip_slot = None
         self._non_player_track = None
 
@@ -65,15 +65,6 @@ class ClipSlotComponent(Component):
         self.launch_button.set_control_element(button)
         self.update()
 
-    def set_delete_button(self, button):
-        self.delete_button.set_control_element(button)
-
-    def set_select_button(self, button):
-        self.select_button.set_control_element(button)
-
-    def set_duplicate_button(self, button):
-        self.duplicate_button.set_control_element(button)
-
     @launch_button.pressed
     def launch_button(self, _):
         self._on_launch_button_pressed()
@@ -84,6 +75,8 @@ class ClipSlotComponent(Component):
         elif liveobj_valid(self._clip_slot):
             if self.duplicate_button.is_pressed:
                 self._do_duplicate_clip()
+            elif self.copy_button.is_pressed:
+                self._do_copy_or_paste_clip()
             elif self.delete_button.is_pressed:
                 self._do_delete_clip()
             else:
@@ -124,6 +117,10 @@ class ClipSlotComponent(Component):
             except (Live.Base.LimitationError, RuntimeError):
                 pass
 
+    def _do_copy_or_paste_clip(self):
+        if self._copy_handler:
+            self._copy_handler.copy_or_paste(self._clip_slot)
+
     def _show_launched_slot_as_highlighted_slot(self):
         if self.song.select_on_launch:
             self._select_slot_in_song()
@@ -142,7 +139,7 @@ class ClipSlotComponent(Component):
         return liveobj_valid(self._clip_slot) and self._clip_slot.has_clip
 
     def _any_modifier_pressed(self):
-        return self.select_button.is_pressed or self.delete_button.is_pressed or self.duplicate_button.is_pressed
+        return self.select_button.is_pressed or self.delete_button.is_pressed or self.duplicate_button.is_pressed or self.copy_button.is_pressed
 
     def update(self):
         super().update()
@@ -164,13 +161,13 @@ class ClipSlotComponent(Component):
         elif slot_or_clip.is_playing:
             value = 'Session.Clip{}'.format('Recording' if slot_or_clip.is_recording else 'Playing')
         elif is_clip:
-            value = self._stopped_color(slot_or_clip)
+            value = 'Session.ClipStopped'
         elif not self._clip_slot.has_stop_button:
             value = OptionalSkinEntry('Session.SlotLacksStop', 'Session.Slot')
         elif is_track_armed(track):
             if self._clip_slot.has_stop_button:
                 value = 'Session.SlotRecordButton'
-        return value
+        return LiveObjSkinEntry(value, slot_or_clip)
 
     @staticmethod
     def _triggered_color(slot_or_clip, is_clip):
@@ -179,15 +176,6 @@ class ClipSlotComponent(Component):
         if not is_clip:
             return OptionalSkinEntry('Session.Slot{}'.format(rec_or_play), default_value)
         return default_value
-
-    def _stopped_color(self, slot_or_clip):
-        value = None
-        if self._color_for_liveobj_function:
-            if liveobj_valid(slot_or_clip):
-                value = self._color_for_liveobj_function(slot_or_clip)
-        if value is not None:
-            return value
-        return 'Session.ClipStopped'
 
     def _update_clip_property_slots(self, update_launch_button=True):
         clip = self._clip_slot.clip if self._clip_slot else None

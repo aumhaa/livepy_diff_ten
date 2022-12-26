@@ -937,13 +937,15 @@ def cs_base_classes():
     import _Framework.ControlSurfaceComponent as ControlSurfaceComponent
     import ableton.v2.control_surface as ControlSurfaceComponent2
     import ableton.v2.control_surface as ControlElement2
+    import ableton.v3.control_surface as ControlSurfaceComponent3
     return (
      ControlProxy,
      ControlSurfaceWrapper,
      ControlSurfaceComponent,
      ControlElement,
      ControlSurfaceComponent2,
-     ControlElement2)
+     ControlElement2,
+     ControlSurfaceComponent3)
 
 
 def is_control_surface(lom_object):

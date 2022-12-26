@@ -62,31 +62,36 @@ class Elements(ElementsBase):
           channels=9)
         self.add_encoder(34, 'Tempo_Coarse_Control', map_mode=(MapMode.LinearBinaryOffset))
         self.add_encoder(35, 'Tempo_Fine_Control', map_mode=(MapMode.LinearBinaryOffset))
-        self.add_encoder(72, 'Master_Pan_Control')
-        self.add_encoder(73, 'Master_Volume_Control')
+        self.add_encoder(72, 'Master_Pan_Control', is_feedback_enabled=True)
+        self.add_encoder(73, 'Master_Volume_Control', is_feedback_enabled=True)
         self.add_encoder(96, 'Track_Select_Control', resource_type=PrioritizedResource)
-        self.add_encoder_matrix([[i + 16 for i in range(8)]], 'Device_Controls')
+        self.add_encoder_matrix([
+         [i + 16 for i in range(8)]],
+          'Device_Controls', is_feedback_enabled=True)
         self.add_encoder_matrix([
          [
           72] * NUM_TRACKS],
           'Pan_Controls',
           channels=[
          track_channels],
-          needs_takeover=False)
+          needs_takeover=False,
+          is_feedback_enabled=True)
         self.add_encoder_matrix([
          [
           73] * NUM_TRACKS],
           'Volume_Controls',
           channels=[
          track_channels],
-          needs_takeover=False)
+          needs_takeover=False,
+          is_feedback_enabled=True)
         self.add_encoder_matrix([
          [
           74] * NUM_TRACKS, [75] * NUM_TRACKS],
           'Send_Controls',
           channels=[
          track_channels, track_channels],
-          needs_takeover=False)
+          needs_takeover=False,
+          is_feedback_enabled=True)
         for control in self.send_controls_raw:
             control.name = 'Send_{}_Control_{}'.format('A' if control.message_identifier() == 74 else 'B', control.name[0])
 

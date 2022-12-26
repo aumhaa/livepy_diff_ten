@@ -421,6 +421,7 @@ class SimpleControlSurface(EventObject):
             feedback_rule.value_pair_map = feedback_map
         feedback_rule.channel = control.message_channel()
         feedback_rule.delay_in_ms = feedback_delay
+        feedback_rule.enabled = control.is_feedback_enabled
         if control.message_type() == MIDI_NOTE_TYPE:
             success = Live.MidiMap.map_midi_note_with_feedback_map(midi_map_handle, parameter, control.message_channel(), control.message_identifier(), feedback_rule)
         elif control.message_type() == MIDI_CC_TYPE:

@@ -35,8 +35,12 @@ class MappingSensitivity:
 class EncoderElement(EncoderElementBase):
     __events__ = ('parameter', 'parameter_name', 'parameter_value')
 
-    def __init__(self, identifier, channel=0, msg_type=MIDI_CC_TYPE, map_mode=_map_modes.absolute, mapping_sensitivity=DEFAULT_CONTINUOUS_PARAMETER_SENSITIVITY, sensitivity_modifier=None, needs_takeover=True, feedback_delay=0, *a, **k):
-        (super().__init__)(msg_type, channel, identifier, map_mode, *a, **k)
+    def __init__(self, identifier, channel=0, msg_type=MIDI_CC_TYPE, map_mode=_map_modes.absolute, mapping_sensitivity=DEFAULT_CONTINUOUS_PARAMETER_SENSITIVITY, sensitivity_modifier=None, needs_takeover=True, is_feedback_enabled=False, feedback_delay=0, *a, **k):
+        (super().__init__)(
+ msg_type, 
+ channel, 
+ identifier, 
+ map_mode, *a, is_feedback_enabled=is_feedback_enabled, **k)
         self._mapped_object = None
         self._needs_internal_parameter_feedback_delay = feedback_delay >= 0
         self._block_internal_parameter_feedback = False
@@ -45,6 +49,10 @@ class EncoderElement(EncoderElementBase):
         self.set_needs_takeover(needs_takeover)
         self.set_feedback_delay(feedback_delay)
         self._feedback_values = self._mapping_feedback_values()
+
+    def disconnect(self):
+        self._mapped_object = None
+        super().disconnect()
 
     @property
     def parameter(self):
@@ -130,5 +138,5 @@ class EncoderElement(EncoderElementBase):
         self._parameter_value_changed()
 
     @listens('value')
-    def __on_sensitivity_modifier_value(self, value):
-        self._sensitivity.should_use_fine_grain(value > 0)
+    def __on_sensitivity_modifier_value(self, _):
+        self._sensitivity.should_use_fine_grain(self._EncoderElement__on_sensitivity_modifier_value.subject.is_pressed())

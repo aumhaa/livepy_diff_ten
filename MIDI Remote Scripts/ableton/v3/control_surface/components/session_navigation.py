@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-from ...base import add_scroll_encoder, clamp, depends, listens, skin_scroll_buttons
+from ...base import clamp, depends, listens
 from .. import Component
 from . import Scrollable, ScrollComponent
 
@@ -54,14 +54,13 @@ class SessionRingScroller(Scrollable):
 class SessionNavigationComponent(Component):
 
     @depends(session_ring=None)
-    def __init__(self, name='Session_Navigation', session_ring=None, respect_borders=False, is_private=True, *a, **k):
+    def __init__(self, name='Session_Navigation', session_ring=None, respect_borders=False, *a, **k):
         (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
 
         def scroller_factory(**k):
             component = ScrollComponent(SessionRingScroller(session_ring, respect_borders, **k),
-              parent=self)
-            skin_scroll_buttons(component, 'Session.Navigation', 'Session.NavigationPressed')
+              parent=self,
+              scroll_skin_name='Session.Navigation')
             return component
 
         self._vertical_banking = scroller_factory(scroll_scenes=True)
@@ -69,8 +68,6 @@ class SessionNavigationComponent(Component):
         self._vertical_paging = scroller_factory(scroll_scenes=True,
           page_size=(session_ring.num_scenes))
         self._horizontal_paging = scroller_factory(page_size=(session_ring.num_tracks))
-        add_scroll_encoder(self._horizontal_banking)
-        add_scroll_encoder(self._vertical_banking)
         self.register_slot(self.song, self._update_vertical, 'scenes')
         self.register_slot(session_ring, self._update_horizontal, 'tracks')
         self._SessionNavigationComponent__on_offset_changed.subject = session_ring
@@ -100,10 +97,10 @@ class SessionNavigationComponent(Component):
         self._horizontal_paging.set_scroll_down_button(page_right_button)
 
     def set_vertical_encoder(self, control):
-        self._vertical_banking.scroll_encoder.set_control_element(control)
+        self._vertical_banking.set_scroll_encoder(control)
 
     def set_horizontal_encoder(self, control):
-        self._horizontal_banking.scroll_encoder.set_control_element(control)
+        self._horizontal_banking.set_scroll_encoder(control)
 
     def _update_vertical(self):
         if self.is_enabled():

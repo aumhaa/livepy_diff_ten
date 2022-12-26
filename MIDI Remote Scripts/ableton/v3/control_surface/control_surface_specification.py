@@ -28,7 +28,6 @@ class ControlSurfaceSpecification(SimpleNamespace):
     custom_identity_response = None
     identity_request = midi.SYSEX_IDENTITY_REQUEST_MESSAGE
     identity_request_delay = 0.0
-    color_for_liveobj_function = None
     hello_messages = None
     goodbye_messages = None
     display_specification = None

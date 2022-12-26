@@ -8,9 +8,8 @@ class UndoRedoComponent(Component):
     redo_button = ButtonControl(color='UndoRedo.Redo',
       pressed_color='UndoRedo.RedoPressed')
 
-    def __init__(self, name='Undo_Redo', is_private=True, *a, **k):
+    def __init__(self, name='Undo_Redo', *a, **k):
         (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
 
     @undo_button.pressed
     def undo_button(self, _):

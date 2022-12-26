@@ -1,8 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ...base import const, depends, listens, liveobj_changed, liveobj_valid
+from ...base import depends, listens, liveobj_changed, liveobj_valid, scene_index
 from .. import Component
 from ..controls import ButtonControl
+from ..skin import LiveObjSkinEntry
 from . import ClipSlotComponent
 
 class SceneComponent(Component):
@@ -11,11 +12,9 @@ class SceneComponent(Component):
     delete_button = ButtonControl(color=None)
     duplicate_button = ButtonControl(color=None)
 
-    @depends(session_ring=None, color_for_liveobj_function=(const(None)))
-    def __init__(self, session_ring=None, clip_slot_component_type=None, color_for_liveobj_function=None, is_private=True, *a, **k):
+    @depends(session_ring=None)
+    def __init__(self, session_ring=None, clip_slot_component_type=None, *a, **k):
         (super().__init__)(*a, **k)
-        self.is_private = is_private
-        self._color_for_liveobj_function = color_for_liveobj_function
         self._session_ring = session_ring
         self._scene = None
         clip_slot_component_type = clip_slot_component_type or ClipSlotComponent
@@ -39,15 +38,6 @@ class SceneComponent(Component):
     def set_launch_button(self, button):
         self.launch_button.set_control_element(button)
         self.update()
-
-    def set_select_button(self, button):
-        self.select_button.set_control_element(button)
-
-    def set_delete_button(self, button):
-        self.delete_button.set_control_element(button)
-
-    def set_duplicate_button(self, button):
-        self.duplicate_button.set_control_element(button)
 
     @launch_button.pressed
     def launch_button(self, _):
@@ -123,24 +113,11 @@ class SceneComponent(Component):
         value = 'Session.Scene'
         if self._scene.is_triggered:
             value = 'Session.SceneTriggered'
-        else:
-            possible_color = self._idle_color()
-            if possible_color:
-                value = possible_color
-        return value
-
-    def _idle_color(self):
-        value = None
-        if self._color_for_liveobj_function:
-            if liveobj_valid(self._scene):
-                value = self._color_for_liveobj_function(self._scene)
-        if value is not None:
-            return value
-        return 'Session.Scene'
+        return LiveObjSkinEntry(value, self._scene)
 
     def _reassign_clip_slots(self):
         if liveobj_valid(self._scene) and self.is_enabled():
-            scene_offset = list(self.song.scenes).index(self._scene)
+            scene_offset = scene_index(self._scene)
             regular_tracks = self.song.tracks
             for slot_wrapper, track in zip(self._clip_slots, self._session_ring.tracks):
                 if track in regular_tracks:

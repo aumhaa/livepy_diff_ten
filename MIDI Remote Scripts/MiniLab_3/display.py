@@ -7,7 +7,6 @@ NOTIFICATION_DURATION = 1
 
 class DisplayComponent(Component):
     shift_button = ButtonControl()
-    is_private = True
 
     @depends(target_track=None, session_ring=None, send_midi=None)
     def __init__(self, identification, transport, target_track=None, session_ring=None, send_midi=None, *a, **k):

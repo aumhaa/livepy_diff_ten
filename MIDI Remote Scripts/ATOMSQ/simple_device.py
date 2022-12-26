@@ -12,7 +12,7 @@ class SimpleDeviceParameterComponent(DeviceComponent):
         self._device_name_slot = None
         self._display_bank_name_task = None
         (super().__init__)(a, bank_definitions=banked(), **k)
-        self._device_name_slot = self.register_slot(self.device(), self._update_device_name_display, 'name')
+        self._device_name_slot = self.register_slot(self.device, self._update_device_name_display, 'name')
         self._display_bank_name_task = self._tasks.add(task.sequence(task.run(self._display_bank_name), task.wait(BANK_NAME_DISPLAY_DURATION), task.run(self._update_device_name_display)))
         self._display_bank_name_task.kill()
 
@@ -32,8 +32,8 @@ class SimpleDeviceParameterComponent(DeviceComponent):
         self._update_device_name_display()
 
     def _update_device_name_display(self):
-        device = self.device()
+        device = self.device
         self.device_name_display.message = device.name if liveobj_valid(device) else ' - '
 
     def _display_bank_name(self):
-        self.device_name_display.message = self._current_bank_details()[0] if liveobj_valid(self.device()) else ''
+        self.device_name_display.message = self._current_bank_details()[0] if liveobj_valid(self.device) else ''

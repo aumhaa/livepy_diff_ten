@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from functools import partial
 from ableton.v3.control_surface import BasicColors
-from .colors import Rgb
+from .colors import Rgb, create_color_for_liveobj
 
 class Skin:
 
@@ -21,11 +22,12 @@ class Skin:
         Slot = Rgb.BLACK
         SlotRecordButton = Rgb.RED_HALF
         NoSlot = Rgb.BLACK
+        ClipStopped = create_color_for_liveobj
         ClipTriggeredPlay = Rgb.GREEN_BLINK
         ClipTriggeredRecord = Rgb.RED_BLINK
         ClipPlaying = Rgb.GREEN_PULSE
         ClipRecording = Rgb.RED_PULSE
-        Scene = Rgb.GREEN_HALF
+        Scene = partial(create_color_for_liveobj, is_scene=True)
         SceneTriggered = Rgb.GREEN_BLINK
         NoScene = Rgb.BLACK
         StopClipTriggered = Rgb.RED_BLINK
@@ -49,7 +51,6 @@ class Skin:
         PadEmpty = Rgb.BLACK
         PadFilled = Rgb.YELLOW
         PadSelected = Rgb.WHITE
-        PadSelectedNotSoloed = Rgb.LIGHT_BLUE
         PadMuted = Rgb.ORANGE
         PadMutedSelected = Rgb.LIGHT_BLUE
         PadSoloed = Rgb.BLUE

@@ -123,7 +123,7 @@ class InputControlElement(NotifyingControlElement):
     allow_receiving_chunks = False
 
     @depends(request_rebuild_midi_map=(const(nop)))
-    def __init__(self, msg_type=None, channel=None, identifier=None, sysex_identifier=None, request_rebuild_midi_map=None, send_should_depend_on_forwarding=True, *a, **k):
+    def __init__(self, msg_type=None, channel=None, identifier=None, sysex_identifier=None, request_rebuild_midi_map=None, send_should_depend_on_forwarding=True, is_feedback_enabled=True, *a, **k):
         (super(InputControlElement, self).__init__)(*a, **k)
         self._send_depends_on_forwarding = send_should_depend_on_forwarding
         self._request_rebuild = request_rebuild_midi_map
@@ -141,6 +141,7 @@ class InputControlElement(NotifyingControlElement):
         self._mapping_feedback_delay = 0
         self._mapping_sensitivity = 1.0
         self._script_forwarding = ScriptForwarding.exclusive
+        self._is_feedback_enabled = is_feedback_enabled
         self._send_delayed_messages_task = self._tasks.add(task.run(self._send_delayed_messages))
         self._send_delayed_messages_task.kill()
         self._parameter_to_map_to = None
@@ -201,6 +202,10 @@ class InputControlElement(NotifyingControlElement):
         if self._script_forwarding != value:
             self._script_forwarding = value
             self._request_rebuild()
+
+    @property
+    def is_feedback_enabled(self):
+        return self._is_feedback_enabled
 
     def force_next_send(self):
         self._force_next_send = True

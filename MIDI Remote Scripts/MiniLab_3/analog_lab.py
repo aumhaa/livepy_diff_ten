@@ -22,7 +22,6 @@ def track_can_receive_midi(track):
 
 
 class AnalogLabComponent(Component):
-    is_private = True
 
     @depends(send_midi=None)
     def __init__(self, *a, send_midi=None, **k):

@@ -5,7 +5,6 @@ from ableton.v3.control_surface.components import ClipSlotComponent
 from ableton.v3.control_surface.controls import ButtonControl
 
 class LaunchAndStopComponent(Component):
-    is_private = True
     scene_launch_button = ButtonControl(color='DefaultButton.Off',
       pressed_color='DefaultButton.On')
     track_stop_button = ButtonControl()

@@ -1,4 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from ableton.v3.base import liveobj_valid
 from ableton.v3.control_surface import BasicColors
 from ableton.v3.control_surface.elements import ColorPart, ComplexColor, FallbackColor
 from . import midi
@@ -11,6 +12,15 @@ def create_color(red, green, blue, on_value=127):
      ColorPart(green, channel=(midi.GREEN_MIDI_CHANNEL)),
      ColorPart(blue, channel=(midi.BLUE_MIDI_CHANNEL)),
      ColorPart(on_value)))
+
+
+def create_color_for_liveobj(obj, is_scene=False):
+    if liveobj_valid(obj):
+        if obj.color_index is not None:
+            return LIVE_COLOR_INDEX_TO_RGB.get(obj.color_index, 0)
+    if is_scene:
+        return Rgb.GREEN_HALF
+    return Rgb.BLACK
 
 
 class Rgb:

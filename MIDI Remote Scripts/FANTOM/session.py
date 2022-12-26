@@ -25,7 +25,7 @@ class SessionComponent(SessionComponentBase):
                 button.clear_send_cache()
                 self._update_stop_clips_led(index)
         else:
-            self._update_stop_all_clips_button()
+            self.stop_all_clips_button.color = 'DefaultButton.Off'
 
     @stop_all_clips_button.pressed_delayed
     def stop_all_clips_button(self, _):
@@ -42,6 +42,3 @@ class SessionComponent(SessionComponentBase):
     @listens_group('name')
     def __on_scene_name_changed(self, _):
         self._update_scene_name_display()
-
-    def _update_stop_all_clips_button(self):
-        self.stop_all_clips_button.color = 'DefaultButton.Off'

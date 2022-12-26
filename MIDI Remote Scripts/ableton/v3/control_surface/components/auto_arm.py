@@ -9,9 +9,8 @@ def track_can_be_auto_armed(track):
 class AutoArmComponent(Component):
 
     @depends(target_track=None)
-    def __init__(self, name='Auto_Arm', target_track=None, is_private=True, *a, **k):
+    def __init__(self, name='Auto_Arm', target_track=None, *a, **k):
         (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
         self._target_track = target_track
         self._auto_arm_target = None
         self._update_auto_arm_task = self._tasks.add(task.run(self._update_auto_arm))

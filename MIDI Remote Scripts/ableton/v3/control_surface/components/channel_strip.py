@@ -1,8 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from itertools import chain
-from ...base import find_if, is_track_armed, liveobj_changed, liveobj_valid
+from ...base import arm_track, find_if, is_track_armed, liveobj_changed, liveobj_valid
 from .. import Component
 from ..controls import ButtonControl, MappedButtonControl, MappedControl, control_list
+from ..skin import LiveObjSkinEntry
 MAX_NUM_SENDS = 12
 CROSSFADE_COLORS = ('Mixer.CrossfadeA', 'Mixer.CrossfadeOff', 'Mixer.CrossfadeB')
 
@@ -21,9 +22,7 @@ class ChannelStripComponent(Component):
     pan_control = MappedControl()
     send_controls = control_list(MappedControl, control_count=MAX_NUM_SENDS)
     indexed_send_controls = control_list(MappedControl, control_count=MAX_NUM_SENDS)
-    track_select_button = ButtonControl(disabled_color='Mixer.NoTrack',
-      color='Mixer.NotSelected',
-      on_color='Mixer.Selected')
+    track_select_button = ButtonControl(disabled_color='Mixer.NoTrack')
     mute_button = MappedButtonControl(disabled_color='Mixer.NoTrack',
       color='Mixer.MuteOff',
       on_color='Mixer.MuteOn')
@@ -36,9 +35,8 @@ class ChannelStripComponent(Component):
     crossfade_cycle_button = ButtonControl(disabled_color='Mixer.NoTrack')
     shift_button = ButtonControl(color=None)
 
-    def __init__(self, is_private=True, *a, **k):
+    def __init__(self, *a, **k):
         (super().__init__)(*a, **k)
-        self.is_private = is_private
         ChannelStripComponent._active_instances.append(self)
         self._track = None
         self.register_slot(self.song.view, self._update_track_select_button, 'selected_track')
@@ -50,7 +48,8 @@ class ChannelStripComponent(Component):
          make_property_slot('solo', self._update_solo_button),
          make_property_slot('arm', self._update_arm_button),
          make_property_slot('implicit_arm', self._update_arm_button),
-         make_property_slot('input_routing_type', self._update_arm_button)]
+         make_property_slot('input_routing_type', self._update_arm_button),
+         make_property_slot('color', self._update_track_select_button)]
         self._mixer_device_property_slots = [
          make_property_slot('crossfade_assign', self._update_crossfade_cycle_button),
          make_property_slot('sends', self.update)]
@@ -100,15 +99,7 @@ class ChannelStripComponent(Component):
     @arm_button.pressed
     def arm_button(self, _):
         arm_exclusive = self.song.exclusive_arm != self.shift_button.is_pressed and not ChannelStripComponent.other_arm_buttons_pressed(self)
-        new_value = not self._track.arm
-        for track in self.song.tracks:
-            if track.can_be_armed:
-                if not (track == self._track or self._track).is_part_of_selection or track.is_part_of_selection:
-                    track.arm = new_value
-                else:
-                    if arm_exclusive:
-                        if track.arm:
-                            track.arm = False
+        arm_track((self._track), exclusive=arm_exclusive)
 
     @crossfade_cycle_button.pressed
     def crossfade_cycle_button(self, _):
@@ -156,8 +147,11 @@ class ChannelStripComponent(Component):
                 send_control.mapped_parameter = None
 
     def _update_track_select_button(self):
-        self.track_select_button.enabled = liveobj_valid(self._track)
-        self.track_select_button.is_on = self.song.view.selected_track == self._track
+        has_track = liveobj_valid(self._track)
+        self.track_select_button.enabled = has_track
+        if has_track:
+            is_selected = self.song.view.selected_track == self._track
+            self.track_select_button.color = LiveObjSkinEntry('Mixer.{}'.format('Selected' if is_selected else 'NotSelected'), self._track)
 
     def _update_solo_button(self):
         track_valid = liveobj_valid(self._track) and self._track != self.song.master_track

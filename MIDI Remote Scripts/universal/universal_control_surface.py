@@ -50,7 +50,6 @@ class UniversalControlSurface(ControlSurface):
         should_enable = modes_config.pop('enable', True)
         component = ModesComponent(name=name,
           is_enabled=False,
-          enable_skinning=True,
           default_behaviour=(modes_config.pop('default_behaviour', None)),
           support_momentary_mode_cycling=(modes_config.pop('support_momentary_mode_cycling', True)))
         self.component_map[name] = component

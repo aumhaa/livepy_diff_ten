@@ -29,8 +29,8 @@ class SessionRingComponent(Component, Renderable):
     __events__ = ('offset', )
 
     @depends(set_session_highlight=(const(nop)))
-    def __init__(self, name='Session_Ring', num_tracks=0, num_scenes=0, include_returns=False, include_master=False, right_align_non_player_tracks=False, tracks_to_use=None, always_snap_track_offset=False, set_session_highlight=nop, *a, **k):
-        (super().__init__)(a, name=name, **k)
+    def __init__(self, name='Session_Ring', num_tracks=0, num_scenes=0, include_returns=False, include_master=False, right_align_non_player_tracks=False, tracks_to_use=None, always_snap_track_offset=False, set_session_highlight=nop, is_private=False, *a, **k):
+        (super().__init__)(a, name=name, is_private=is_private, **k)
         self._session_ring = SessionRingModel(num_tracks,
           num_scenes,
           include_returns,

@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
 from ableton.v3.control_surface import Component
-from ableton.v3.control_surface.components import DeviceComponent, DrumGroupComponent, MixerComponent, ModifierBackgroundComponent, SessionComponent, SessionNavigationComponent, SessionOverviewComponent, SimpleDeviceNavigationComponent, TranslatingBackgroundComponent, TransportComponent, UndoRedoComponent, ViewControlComponent, ViewToggleComponent
+from ableton.v3.control_surface.components import AccentComponent, ClipActionsComponent, DeviceComponent, DrumGroupComponent, MixerComponent, ModifierBackgroundComponent, SessionComponent, SessionNavigationComponent, SessionOverviewComponent, SimpleDeviceNavigationComponent, SlicedSimplerComponent, TranslatingBackgroundComponent, TransportComponent, UndoRedoComponent, ViewControlComponent, ViewToggleComponent
 
 class ComponentMap(dict):
 
@@ -25,6 +25,8 @@ class ComponentMap(dict):
         return isinstance(super().get(key), Component)
 
     def _create_component_map(self, specification):
+        self['Accent'] = AccentComponent
+        self['Clip_Actions'] = ClipActionsComponent
         self['Device'] = partial(DeviceComponent,
           bank_definitions=(specification.parameter_bank_definitions),
           bank_size=(specification.parameter_bank_size),
@@ -37,6 +39,7 @@ class ComponentMap(dict):
         self['Session'] = SessionComponent
         self['Session_Navigation'] = SessionNavigationComponent
         self['Session_Overview'] = SessionOverviewComponent
+        self['Sliced_Simpler'] = SlicedSimplerComponent
         self['Translating_Background'] = TranslatingBackgroundComponent
         self['Transport'] = TransportComponent
         self['Undo_Redo'] = UndoRedoComponent

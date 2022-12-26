@@ -19,9 +19,8 @@ class MixerComponent(Component):
       disabled_color='Mixer.CycleSendIndexDisabled')
 
     @depends(session_ring=None, target_track=None)
-    def __init__(self, name='Mixer', session_ring=None, target_track=None, channel_strip_component_type=None, target_can_be_master=True, is_private=True, *a, **k):
+    def __init__(self, name='Mixer', session_ring=None, target_track=None, channel_strip_component_type=None, target_can_be_master=True, *a, **k):
         (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
         self._target_track = target_track
         self._provider = session_ring
         self._MixerComponent__on_offset_changed.subject = self._provider

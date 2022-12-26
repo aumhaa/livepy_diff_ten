@@ -3,7 +3,7 @@ from contextlib import contextmanager, nullcontext
 from ableton.v2.control_surface import SimpleControlSurface
 from ..base import const, find_if, inject, is_song_recording, is_track_armed, lazy_attribute, listens, liveobj_valid
 from . import CompoundElement, DeviceBankRegistry, Layer, NotifyingControlElement, PercussionInstrumentFinder
-from .components import BackgroundComponent, DrumGroupComponent, SessionComponent, ViewControlComponent
+from .components import BackgroundComponent, DrumGroupComponent, SessionComponent, SlicedSimplerComponent, ViewControlComponent
 from .consts import M4L_PRIORITY
 from .display import Renderable
 from .identification import IdentificationComponent
@@ -17,16 +17,18 @@ class ControlSurface(SimpleControlSurface):
         self.specification = specification
         self.device_provider = None
         self.device_bank_registry = None
-        self.drum_group_finder = None
+        self.instrument_finder = None
         self.session_ring_selection_linking = None
         self._can_update_controlled_track = False
         self._can_enable_auto_arm = False
         self._deferring_render_and_update_display = nullcontext
         self._drum_group_component = None
+        self._sliced_simpler_component = None
         self._display_injector = inject(render_and_update_display=(const(self._render_and_update_display))).everywhere()
         with inject(skin=(const(specification.control_surface_skin))).everywhere():
             with self._control_surface_injector:
                 self.elements = self._create_elements(specification)
+                self._element_injector = inject(element_container=(const(self.elements))).everywhere()
         with self.component_guard():
             self._on_entering_component_guard()
             self._background = self._create_background(specification.background_priority)
@@ -38,8 +40,8 @@ class ControlSurface(SimpleControlSurface):
                 if is_identifiable:
                     self._auto_arm = specification.auto_arm_component_type(is_enabled=False) if specification.include_auto_arming else None
                     self.setup()
-                    if self._drum_group_component:
-                        self._ControlSurface__on_drum_group_changed()
+                    if self._drum_group_component or (self._sliced_simpler_component):
+                        self._ControlSurface__on_instrument_changed()
                     if specification.display_specification:
                         display_specification = self.register_disconnectable(specification.display_specification)
                         display_specification.initialize(self.renderable_components, self.elements)
@@ -53,9 +55,10 @@ class ControlSurface(SimpleControlSurface):
         self.elements = None
         self.device_provider = None
         self.device_bank_registry = None
-        self.drum_group_finder = None
+        self.instrument_finder = None
         self.session_ring_selection_linking = None
         self._drum_group_component = None
+        self._sliced_simpler_component = None
 
     @property
     def renderable_components(self):
@@ -110,6 +113,9 @@ class ControlSurface(SimpleControlSurface):
     def drum_group_changed(self, drum_group):
         pass
 
+    def sliced_simpler_changed(self, sliced_simpler):
+        pass
+
     def set_can_update_controlled_track(self, can_update):
         self._can_update_controlled_track = can_update
         self._update_controlled_track()
@@ -135,9 +141,8 @@ class ControlSurface(SimpleControlSurface):
     def _should_include_element_in_background(element):
         return True
 
-    @staticmethod
-    def _get_additional_dependencies():
-        return {}
+    def _get_additional_dependencies(self):
+        pass
 
     def _on_entering_component_guard(self):
         pass
@@ -149,9 +154,10 @@ class ControlSurface(SimpleControlSurface):
     @contextmanager
     def _component_guard(self):
         with super()._component_guard():
-            with self._display_injector:
-                with self._deferring_render_and_update_display():
-                    yield
+            with self._element_injector:
+                with self._display_injector:
+                    with self._deferring_render_and_update_display():
+                        yield
 
     @staticmethod
     def _create_elements(specification):
@@ -171,6 +177,12 @@ class ControlSurface(SimpleControlSurface):
           custom_identity_response=(specification.custom_identity_response))
         self._ControlSurface__on_is_identified_changed.subject = identification
         return identification
+
+    def _create_instrument_finder(self):
+        if self.instrument_finder is None:
+            self.instrument_finder = self.register_disconnectable(PercussionInstrumentFinder(device_parent=(self._target_track.target_track)))
+            self._ControlSurface__on_instrument_changed.subject = self.instrument_finder
+        return self.instrument_finder
 
     @lazy_attribute
     def _create_session_ring(self):
@@ -194,15 +206,13 @@ class ControlSurface(SimpleControlSurface):
         return self.device_bank_registry
 
     def _create_extended_injector(self):
-        inject_dict = {'element_container':const(self.elements), 
-         'full_velocity':const(self._c_instance.full_velocity), 
+        inject_dict = {'full_velocity':const(self._c_instance.full_velocity), 
          'target_track':const(self._target_track), 
          'session_ring':lambda: self._create_session_ring, 
          'device_provider':lambda: self._create_device_provider, 
          'device_bank_registry':lambda: self._create_device_bank_registry, 
-         'toggle_lock':const(self._c_instance.toggle_lock), 
-         'color_for_liveobj_function':const(self.specification.color_for_liveobj_function)}
-        inject_dict.update(self._get_additional_dependencies())
+         'toggle_lock':const(self._c_instance.toggle_lock)}
+        inject_dict.update(self._get_additional_dependencies() or {})
         return inject(**inject_dict).everywhere()
 
     def _create_feedback_related_listeners(self):
@@ -213,8 +223,10 @@ class ControlSurface(SimpleControlSurface):
         super()._register_component(component)
         if isinstance(component, DrumGroupComponent):
             self._drum_group_component = component
-            self.drum_group_finder = self.register_disconnectable(PercussionInstrumentFinder(device_parent=(self._target_track.target_track)))
-            self._ControlSurface__on_drum_group_changed.subject = self.drum_group_finder
+            self._create_instrument_finder()
+        if isinstance(component, SlicedSimplerComponent):
+            self._sliced_simpler_component = component
+            self._create_instrument_finder()
         if isinstance(component, ViewControlComponent):
             link_to_tracks = self.specification.link_session_ring_to_track_selection
             link_to_scenes = self.specification.link_session_ring_to_scene_selection
@@ -246,8 +258,8 @@ class ControlSurface(SimpleControlSurface):
         track = self._target_track.target_track
         self._ControlSurface__on_track_arm_changed.subject = track
         self._ControlSurface__on_track_implicit_arm_changed.subject = track
-        if self.drum_group_finder:
-            self.drum_group_finder.device_parent = track
+        if self.instrument_finder:
+            self.instrument_finder.device_parent = track
         self._update_controlled_track()
         self.target_track_changed(track)
 
@@ -260,10 +272,15 @@ class ControlSurface(SimpleControlSurface):
         self._update_feedback_velocity()
 
     @listens('instrument')
-    def __on_drum_group_changed(self):
-        drum_group = self.drum_group_finder.drum_group
-        self._drum_group_component.set_drum_group_device(drum_group)
-        self.drum_group_changed(drum_group)
+    def __on_instrument_changed(self):
+        if self._drum_group_component:
+            drum_group = self.instrument_finder.drum_group
+            self._drum_group_component.set_drum_group_device(drum_group)
+            self.drum_group_changed(drum_group)
+        if self._sliced_simpler_component:
+            sliced_simpler = self.instrument_finder.sliced_simpler
+            self._sliced_simpler_component.set_simpler_device(sliced_simpler)
+            self.sliced_simpler_changed(sliced_simpler)
 
     @listens('is_identified')
     def __on_is_identified_changed(self, is_identified):

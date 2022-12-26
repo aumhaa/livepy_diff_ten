@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ..base import EventObject, depends, index_if, listens
+from ..base import EventObject, depends, index_if, listens, scene_index
 
 class SessionRingSelectionLinking(EventObject):
 
@@ -22,8 +22,7 @@ class SessionRingSelectionLinking(EventObject):
 
     @listens('scene_selection_scrolled')
     def __on_scene_selection_scrolled(self):
-        scene_index = list(self.song.scenes).index(self.song.view.selected_scene)
-        self._link_session_ring_with_minimal_travel('scene', scene_index)
+        self._link_session_ring_with_minimal_travel('scene', scene_index())
 
     def _link_session_ring_with_minimal_travel(self, axis_name, current_index):
         ring_axis_offset = getattr(self._session_ring, '{}_offset'.format(axis_name))

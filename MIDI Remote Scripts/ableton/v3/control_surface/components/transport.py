@@ -50,9 +50,8 @@ class TransportComponent(Component):
     set_cue_button = ButtonControl(color='Transport.SetCue',
       pressed_color='Transport.SetCuePressed')
 
-    def __init__(self, name='Transport', is_private=True, *a, **k):
+    def __init__(self, name='Transport', *a, **k):
         (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
         self._view_based_record_button = None
         self._end_undo_step_task = self._tasks.add(task.sequence(task.wait(1.5), task.run(self.song.end_undo_step)))
         self._end_undo_step_task.kill()
@@ -176,10 +175,10 @@ class TransportComponent(Component):
         self.continue_button.is_on = not is_playing
         self.stop_button.is_on = is_playing
 
-    @listens('is_view_visible', 'Session')
+    @listens('focused_document_view')
     def __on_main_view_changed(self):
         if self._view_based_record_button:
-            if self.application.view.is_view_visible('Session'):
+            if self.application.view.focused_document_view == 'Session':
                 self.arrangement_record_button.set_control_element(None)
                 self.session_record_button.set_control_element(self._view_based_record_button)
                 self._update_session_record_button()

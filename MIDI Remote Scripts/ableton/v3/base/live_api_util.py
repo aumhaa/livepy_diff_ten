@@ -1,7 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
+from sys import maxsize
 import Live
 from ableton.v2.control_surface.components import find_nearest_color
 from . import clamp, find_if, liveobj_valid
+from .util import hex_to_rgb
 TRANSLATED_MIXER_PARAMETER_NAMES = {'Track Volume':'Volume', 
  'Track Panning':'Pan'}
 UNDECLARED_QUANTIZED_PARAMETERS = {'AutoFilter':('LFO Sync Rate', ), 
@@ -20,27 +22,17 @@ UNDECLARED_QUANTIZED_PARAMETERS = {'AutoFilter':('LFO Sync Rate', ),
  'Phaser':('LFO Sync Rate', )}
 _current_song = None
 
-def song(from_test=False, create_new=False, **k):
+def song():
     global _current_song
-    if from_test:
-        k['create_new'] = create_new
-    if not create_new:
-        if liveobj_valid(_current_song):
-            return _current_song
-    _current_song = (Live.Application.get_application().get_document)(**k)
+    if liveobj_valid(_current_song):
+        return _current_song
+    _current_song = Live.Application.get_application().get_document()
     return _current_song
 
 
-def is_clip_or_slot(obj):
-    return isinstance(obj, (Live.Clip.Clip, Live.ClipSlot.ClipSlot))
-
-
-def is_scene(obj):
-    return isinstance(obj, Live.Scene.Scene)
-
-
-def is_drum_chain(obj):
-    return isinstance(obj, Live.DrumChain.DrumChain)
+def set_song(song_obj, from_test=False):
+    global _current_song
+    _current_song = song_obj
 
 
 def is_song_recording():
@@ -55,13 +47,74 @@ def any_track_armed():
     return any((t.can_be_armed and t.arm for t in song().tracks))
 
 
-def scene_index(scene):
+def find_parent_track(liveobj):
+    parent = liveobj.canonical_parent
+    if isinstance(parent, Live.Track.Track):
+        return parent
+    return find_parent_track(parent)
+
+
+def all_visible_tracks():
+    return list(tuple(song().visible_tracks) + tuple(song().return_tracks) + (song().master_track,))
+
+
+def track_index(track=None, track_list=None):
+    track = track or song().view.selected_track
+    track_list = track_list or list(song().tracks)
+    if track in track_list:
+        return track_list.index(track)
+
+
+def scene_index(scene=None):
+    scene = scene or song().view.selected_scene
     return list(song().scenes).index(scene)
 
 
 def scene_display_name(scene, strip_space=True):
     name = scene.name.strip() if strip_space else scene.name
     return name or 'Scene {}'.format(scene_index(scene) + 1)
+
+
+def clip_display_name(clip):
+    return clip.name or '[unnamed]'
+
+
+def clip_slot_display_name(clip_slot):
+    if liveobj_valid(clip_slot.clip):
+        return clip_display_name(clip_slot.clip)
+    return '[empty slot]'
+
+
+def arm_track(track, exclusive=None):
+    if liveobj_valid(track):
+        if track.can_be_armed:
+            exclusive = exclusive if exclusive is not None else song().exclusive_arm
+            new_value = not track.arm
+            for t in song().tracks:
+                if t.can_be_armed:
+                    if not (t == track or track).is_part_of_selection or t.is_part_of_selection:
+                        t.arm = new_value
+                    else:
+                        if exclusive:
+                            if t.arm:
+                                t.arm = False
+
+
+def delete_clip(clip):
+    if liveobj_valid(clip):
+        if clip.is_arrangement_clip:
+            clip.canonical_parent.delete_clip(clip)
+        else:
+            clip.canonical_parent.delete_clip()
+
+
+def delete_notes_with_pitch(clip, pitch):
+    if liveobj_valid(clip):
+        if clip.is_midi_clip:
+            clip.remove_notes_extended(from_time=0,
+              from_pitch=pitch,
+              time_span=maxsize,
+              pitch_span=1)
 
 
 def get_parameter_by_name(name, device):
@@ -110,28 +163,17 @@ def toggle_or_cycle_parameter_value(parameter):
             parameter.value = parameter.max if parameter.value == parameter.min else parameter.min
 
 
-def liveobj_color_to_midi_rgb_values(liveobj_predicate=None):
-
-    def inner(obj):
-        if liveobj_predicate is not None:
-            if not liveobj_predicate(obj):
-                return
-            return (((obj.color & 16711680) >> 16) // 2,
-             ((obj.color & 65280) >> 8) // 2,
-             (obj.color & 255) // 2)
-
-    return inner
+def liveobj_color_to_midi_rgb_values(obj, default_values=(0, 0, 0)):
+    if liveobj_valid(obj):
+        return tuple((i // 2 for i in hex_to_rgb(obj.color)))
+    return default_values
 
 
-def liveobj_color_to_value_from_palette(palette=None, fallback_table=None, liveobj_predicate=None):
-
-    def inner(obj):
-        if liveobj_predicate is not None:
-            if not liveobj_predicate(obj):
-                return
+def liveobj_color_to_value_from_palette(obj, palette=None, fallback_table=None, default_value=0):
+    if liveobj_valid(obj):
         try:
             return palette[obj.color]
         except (KeyError, IndexError):
             return find_nearest_color(fallback_table, obj.color)
 
-    return inner
+        return default_value

@@ -1,5 +1,5 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ...base import depends, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid
+from ...base import MultiSlot, depends, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid, scene_index
 from .. import Component
 from ..controls import ToggleButtonControl
 from ..display import Renderable
@@ -9,21 +9,33 @@ class TargetTrackComponent(Component, Renderable):
       toggled_color='TargetTrack.LockOn')
 
     @depends(show_message=None)
-    def __init__(self, name='Target_Track', show_message=None, *a, **k):
-        (super().__init__)(a, name=name, **k)
+    def __init__(self, name='Target_Track', show_message=None, is_private=False, *a, **k):
+        (super().__init__)(a, name=name, is_private=is_private, **k)
         self._show_message = show_message
         self._target_track = None
+        self._target_clip = None
         self._locked_to_track = False
         self.register_slot(self.song.view, self._selected_track_changed, 'selected_track')
+        self.register_slot(MultiSlot(subject=self,
+          listener=(self._update_target_clip),
+          event_name_list=('target_track', 'arrangement_clips')))
+        self.register_slot(self.application.view, self._update_target_clip, 'focused_document_view')
+        self.register_slot(self.song.view, self._update_target_clip, 'detail_clip')
+        self.register_slot(self.song.view, self._update_target_clip, 'selected_scene')
         self._selected_track_changed()
 
     def disconnect(self):
         self._target_track = None
+        self._target_clip = None
         super().disconnect()
 
     @listenable_property
     def target_track(self):
         return self._target_track
+
+    @listenable_property
+    def target_clip(self):
+        return self._target_clip
 
     @listenable_property
     def is_locked_to_track(self):
@@ -52,6 +64,7 @@ class TargetTrackComponent(Component, Renderable):
             new_target = self._get_new_target_track()
             if liveobj_changed(self._target_track, new_target):
                 self._target_track = new_target
+                self._update_target_clip()
                 self.notify_target_track()
             if self._locked_to_track:
                 self._locked_to_track = False
@@ -60,6 +73,34 @@ class TargetTrackComponent(Component, Renderable):
 
     def _get_new_target_track(self):
         return self.song.view.selected_track
+
+    def _update_target_clip(self):
+        self._TargetTrackComponent__on_target_clip_slot_has_clip_changed.subject = None
+        clip = None
+        if self._target_track in self.song.tracks:
+            if self.application.view.focused_document_view == 'Session':
+                clip = self._target_clip_from_session()
+            else:
+                clip = self._target_clip_from_arrangement()
+        if liveobj_changed(self._target_clip, clip):
+            self._target_clip = clip
+            self.notify_target_clip()
+
+    def _target_clip_from_arrangement(self):
+        clip = self.song.view.detail_clip
+        if liveobj_valid(clip):
+            if clip in self._target_track.arrangement_clips:
+                return clip
+
+    def _target_clip_from_session(self):
+        clip_slot = self._target_track.clip_slots[scene_index()]
+        self._TargetTrackComponent__on_target_clip_slot_has_clip_changed.subject = clip_slot
+        if clip_slot.has_clip:
+            return clip_slot.clip
+
+    @listens('has_clip')
+    def __on_target_clip_slot_has_clip_changed(self):
+        self._update_target_clip()
 
 
 class ArmedTargetTrackComponent(TargetTrackComponent):

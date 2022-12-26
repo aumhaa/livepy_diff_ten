@@ -7,9 +7,8 @@ class SessionOverviewComponent(Component):
     matrix = control_matrix(ButtonControl, color=None)
 
     @depends(session_ring=None)
-    def __init__(self, name='Session_Overview', session_ring=None, is_private=True, *a, **k):
+    def __init__(self, name='Session_Overview', session_ring=None, *a, **k):
         (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
         self._track_bank_offset = 0
         self._scene_bank_offset = 0
         self._track_bank_size = 0

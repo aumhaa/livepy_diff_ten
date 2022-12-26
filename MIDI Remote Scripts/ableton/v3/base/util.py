@@ -19,3 +19,10 @@ def as_ascii(string, ascii_translations=DEFAULT_ASCII_TRANSLATIONS):
             result.append(translated_char)
 
     return result
+
+
+def hex_to_rgb(hex_value):
+    return (
+     (hex_value & 16711680) >> 16,
+     (hex_value & 65280) >> 8,
+     hex_value & 255)

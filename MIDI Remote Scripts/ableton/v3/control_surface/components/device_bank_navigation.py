@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from math import ceil
-from ...base import add_scroll_encoder, depends, listens, skin_scroll_buttons
+from ...base import depends, listens
 from ..controls import FixedRadioButtonGroup
-from . import Scrollable, ScrollComponent
+from .scroll import Scrollable, ScrollComponent
 NUM_BANK_SELECT_BUTTONS = 8
 
 class DeviceBankNavigationComponent(ScrollComponent, Scrollable):
@@ -11,14 +11,11 @@ class DeviceBankNavigationComponent(ScrollComponent, Scrollable):
       checked_color='Device.Bank.Selected')
 
     @depends(device_bank_registry=None)
-    def __init__(self, name='Device_Bank_Navigation', banking_info=None, device_bank_registry=None, is_private=True, *a, **k):
-        (super().__init__)(a, name=name, **k)
-        self.is_private = is_private
+    def __init__(self, name='Device_Bank_Navigation', banking_info=None, device_bank_registry=None, *a, **k):
+        (super().__init__)(a, name=name, scroll_skin_name='Device.Bank.Navigation', **k)
         self._bank_provider = None
         self._banking_info = banking_info
         self._device_bank_registry = device_bank_registry
-        skin_scroll_buttons(self, 'Device.Bank.Navigation', 'Device.Bank.NavigationPressed')
-        add_scroll_encoder(self)
 
     @property
     def bank_provider(self):
@@ -29,10 +26,11 @@ class DeviceBankNavigationComponent(ScrollComponent, Scrollable):
         self._bank_provider = provider
         self._sync_registry()
         self._DeviceBankNavigationComponent__on_provider_bank_changed.subject = provider
+        self._DeviceBankNavigationComponent__on_parameters_changed_in_device.subject = provider.device if provider else None
         self.update()
 
     def set_bank_scroll_encoder(self, encoder):
-        self.scroll_encoder.set_control_element(encoder)
+        self.set_scroll_encoder(encoder)
 
     def set_prev_bank_button(self, button):
         self.set_scroll_down_button(button)
@@ -82,6 +80,10 @@ class DeviceBankNavigationComponent(ScrollComponent, Scrollable):
 
     @listens('parameters')
     def __on_provider_bank_changed(self):
+        self.update()
+
+    @listens('parameters')
+    def __on_parameters_changed_in_device(self):
         self.update()
 
     def update(self):

@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v3.control_surface import BasicColors, Skin, default_skin, merge_skins
-from .colors import Rgb
+from functools import partial
+from .colors import Rgb, create_color_for_liveobj
 
-class Colors:
+class Skin:
 
     class DefaultButton:
         On = Rgb.ON
@@ -23,12 +23,12 @@ class Colors:
         Slot = Rgb.OFF
         SlotRecordButton = Rgb.RED_HALF
         NoSlot = Rgb.OFF
+        ClipStopped = create_color_for_liveobj
         ClipTriggeredPlay = Rgb.GREEN_BLINK
         ClipTriggeredRecord = Rgb.RED_BLINK
-        ClipStopped = BasicColors.ON
         ClipPlaying = Rgb.GREEN_PULSE
         ClipRecording = Rgb.RED_PULSE
-        Scene = Rgb.GREEN_HALF
+        Scene = partial(create_color_for_liveobj, is_scene=True)
         SceneTriggered = Rgb.GREEN_BLINK
         NoScene = Rgb.OFF
         StopClipTriggered = Rgb.RED_BLINK
@@ -45,5 +45,10 @@ class Colors:
         BrowserOn = Rgb.GREEN
         BrowserOff = Rgb.GREEN_HALF
 
+    class LowerPadModes:
 
-skin = merge_skins(default_skin, Skin(Colors))
+        class Select:
+            On = Rgb.RED_HALF
+
+        class Stop:
+            On = Rgb.RED
