@@ -43,6 +43,9 @@ class KeyLabMkII(KeyLabEssential):
             self._create_encoder_modes()
             self._create_session_recording()
 
+    def can_lock_to_devices(self):
+        return True
+
     def _create_controls(self):
         super(KeyLabMkII, self)._create_controls()
 

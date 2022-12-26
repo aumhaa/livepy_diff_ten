@@ -1,8 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v3.control_surface import BasicColors, Skin, default_skin, merge_skins
+from ableton.v3.control_surface import BasicColors
 from .colors import Rgb
 
-class Colors:
+class Skin:
 
     class DefaultButton:
         Disabled = Rgb.BLACK
@@ -10,6 +10,7 @@ class Colors:
     class Mixer:
         ArmOn = Rgb.RED
         ArmOff = Rgb.RED_HALF
+        ImplicitArmOn = Rgb.RED
         SoloOn = Rgb.BLUE
         SoloOff = Rgb.BLUE_HALF
         Selected = Rgb.WHITE
@@ -88,6 +89,3 @@ class Colors:
 
         class Default:
             On = BasicColors.OFF
-
-
-skin = merge_skins(default_skin, Skin(Colors))

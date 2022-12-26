@@ -4,7 +4,7 @@ from functools import partial
 import Live
 from ableton.v2.base import const, inject, listens
 from ableton.v2.control_surface import MIDI_CC_TYPE, BankingInfo, DeviceBankRegistry, DeviceDecoratorFactory, IdentifiableControlSurface, Layer, PercussionInstrumentFinder
-from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, ClipActionsComponent, DrumGroupComponent, RightAlignTracksTrackAssigner, SessionRecordingComponent, SessionRingComponent
+from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, ClipActionsComponent, RightAlignTracksTrackAssigner, SessionRecordingComponent, SessionRingComponent
 from ableton.v2.control_surface.default_bank_definitions import BANK_DEFINITIONS
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode, ModesComponent, NullModes, ReenterBehaviour, SetAttributeMode
 from novation.colors import CLIP_COLOR_TABLE, RGB_COLOR_TABLE, Rgb
@@ -14,6 +14,7 @@ from .actions import ActionsComponent
 from .device import DeviceComponent
 from .device_navigation import NUM_VISIBLE_ITEMS, DisplayingDeviceNavigationComponent
 from .device_parameters import DeviceParameterComponent
+from .drum_group import DrumGroupComponent
 from .elements import SESSION_HEIGHT, SESSION_WIDTH, Elements
 from .message import MessageComponent
 from .midi_message_cache import MidiMessageCache
@@ -383,6 +384,7 @@ class SLMkIII(IdentifiableControlSurface):
         self._main_modes.layer = Layer(options_button='options_button',
           grid_button='grid_button')
         self._main_modes.selected_mode = 'device_control'
+        self._SLMkIII__on_main_modes_changed.subject = self._main_modes
 
     @listens('instrument')
     def __on_drum_group_found(self):
@@ -407,6 +409,11 @@ class SLMkIII(IdentifiableControlSurface):
     @listens('record_mode')
     def __on_record_mode_changed(self):
         self._set_feedback_velocity()
+
+    @listens('selected_mode')
+    def __on_main_modes_changed(self, mode):
+        if mode != 'grid':
+            self.release_controlled_track()
 
     def _select_grid_mode(self):
         if self._main_modes.selected_mode == 'grid':

@@ -1,6 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
+import ableton.v2.control_surface.control as MappedSensitivitySettingControlBase
 from ...base import EventObject, listens, liveobj_valid, toggle_or_cycle_parameter_value
 from . import ButtonControl as ButtonControlBase
+from . import is_internal_parameter
 
 class MappableButton(EventObject):
 
@@ -39,3 +41,14 @@ class MappedButtonControl(ButtonControlBase):
         def _call_listener(self, listener_name, *_):
             if listener_name == 'pressed':
                 toggle_or_cycle_parameter_value(self.mapped_parameter)
+
+
+class MappedSensitivitySettingControl(MappedSensitivitySettingControlBase):
+
+    class State(MappedSensitivitySettingControlBase.State):
+
+        def _update_direct_connection(self):
+            super()._update_direct_connection()
+            if self._control_element:
+                if is_internal_parameter(self.mapped_parameter):
+                    self._control_element.connect_to(self.mapped_parameter)

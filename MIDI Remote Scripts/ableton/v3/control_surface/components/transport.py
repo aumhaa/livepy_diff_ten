@@ -1,22 +1,24 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import Live
-from ...base import listens, move_current_song_time, sign, task
+from ...base import clamp, listens, move_current_song_time, sign, task
 from .. import Component
 from ..controls import ButtonControl, EncoderControl, ToggleButtonControl
 
 class TransportComponent(Component):
+    arrangement_position_encoder = EncoderControl()
+    tempo_coarse_encoder = EncoderControl()
+    tempo_fine_encoder = EncoderControl()
     play_button = ButtonControl(color='Transport.PlayOff', on_color='Transport.PlayOn')
     play_toggle_button = ButtonControl(color='Transport.PlayOff',
       on_color='Transport.PlayOn')
     continue_button = ButtonControl(color='Transport.ContinueOff',
       on_color='Transport.ContinueOn')
     stop_button = ButtonControl(color='Transport.StopOff', on_color='Transport.StopOn')
+    session_record_button = ButtonControl()
     arrangement_record_button = ToggleButtonControl(untoggled_color='Transport.ArrangementRecordingOff',
       toggled_color='Transport.ArrangementRecordingOn')
-    session_record_button = ButtonControl()
     arrangement_overdub_button = ToggleButtonControl(untoggled_color='Transport.OverdubOff',
       toggled_color='Transport.OverdubOn')
-    arrangement_position_encoder = EncoderControl()
     automation_arm_button = ToggleButtonControl(untoggled_color='Transport.AutomationArmOff',
       toggled_color='Transport.AutomationArmOn')
     re_enable_automation_button = ButtonControl(color='Transport.CanReEnableAutomation')
@@ -55,6 +57,10 @@ class TransportComponent(Component):
         self._end_undo_step_task = self._tasks.add(task.sequence(task.wait(1.5), task.run(self.song.end_undo_step)))
         self._end_undo_step_task.kill()
         song = self.song
+        self.tempo_coarse_encoder.connect_property(song,
+          'tempo', transform=(lambda x: clamp(song.tempo + sign(x), 20, 999)))
+        self.tempo_fine_encoder.connect_property(song,
+          'tempo', transform=(lambda x: clamp(song.tempo + sign(x) / 10, 20, 999)))
         self.arrangement_record_button.connect_property(song, 'record_mode')
         self.arrangement_overdub_button.connect_property(song, 'arrangement_overdub')
         self.automation_arm_button.connect_property(song, 'session_automation_record')

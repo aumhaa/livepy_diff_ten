@@ -51,9 +51,10 @@ class ClipSlotComponent(ControlSurfaceComponent):
         self._on_clip_slot_color_changed.subject = clip_slot
         track = clip_slot.canonical_parent if clip_slot else None
         if track:
-            if track.can_be_armed:
+            if track in self.song().tracks:
                 self._on_arm_value_changed.subject = track
                 self._on_implicit_arm_value_changed.subject = track
+                self._on_input_routing_type_changed.subject = track
         self.update()
 
     def set_launch_button(self, button):
@@ -193,6 +194,10 @@ class ClipSlotComponent(ControlSurfaceComponent):
 
     @subject_slot('implicit_arm')
     def _on_implicit_arm_value_changed(self):
+        self.update()
+
+    @subject_slot('input_routing_type')
+    def _on_input_routing_type_changed(self):
         self.update()
 
     @subject_slot('has_stop_button')

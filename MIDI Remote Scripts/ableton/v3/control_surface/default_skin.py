@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from .colors import BasicColors
 from .skin import Skin
 
-class DefaultSkin:
+class DefaultColors:
 
     class DefaultButton:
         On = BasicColors.ON
@@ -73,6 +73,7 @@ class DefaultSkin:
     class Mixer:
         ArmOn = BasicColors.ON
         ArmOff = BasicColors.OFF
+        ImplicitArmOn = BasicColors.ON
         MuteOn = BasicColors.ON
         MuteOff = BasicColors.OFF
         SoloOn = BasicColors.ON
@@ -138,10 +139,7 @@ class DefaultSkin:
         PadMutedSelected = BasicColors.ON
         PadSoloed = BasicColors.ON
         PadSoloedSelected = BasicColors.ON
-        MutePressed = BasicColors.ON
-        Mute = BasicColors.OFF
-        SoloPressed = BasicColors.ON
-        Solo = BasicColors.OFF
+        PadAction = BasicColors.ON
         ScrollPressed = BasicColors.ON
         Scroll = BasicColors.ON
 
@@ -152,4 +150,4 @@ class DefaultSkin:
             NotSelected = BasicColors.OFF
 
 
-default_skin = Skin(DefaultSkin)
+default_skin = Skin(DefaultColors)

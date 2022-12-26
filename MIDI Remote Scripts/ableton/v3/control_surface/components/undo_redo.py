@@ -1,12 +1,23 @@
 from __future__ import absolute_import, print_function, unicode_literals
-import ableton.v2.control_surface.components as UndoRedoComponentBase
+from .. import Component
+from ..controls import ButtonControl
 
-class UndoRedoComponent(UndoRedoComponentBase):
+class UndoRedoComponent(Component):
+    undo_button = ButtonControl(color='UndoRedo.Undo',
+      pressed_color='UndoRedo.UndoPressed')
+    redo_button = ButtonControl(color='UndoRedo.Redo',
+      pressed_color='UndoRedo.RedoPressed')
 
     def __init__(self, name='Undo_Redo', is_private=True, *a, **k):
         (super().__init__)(a, name=name, **k)
         self.is_private = is_private
-        self.undo_button.color = 'UndoRedo.Undo'
-        self.undo_button.pressed_color = 'UndoRedo.UndoPressed'
-        self.redo_button.color = 'UndoRedo.Redo'
-        self.redo_button.pressed_color = 'UndoRedo.RedoPressed'
+
+    @undo_button.pressed
+    def undo_button(self, _):
+        if self.song.can_undo:
+            self.song.undo()
+
+    @redo_button.pressed
+    def redo_button(self, _):
+        if self.song.can_redo:
+            self.song.redo()

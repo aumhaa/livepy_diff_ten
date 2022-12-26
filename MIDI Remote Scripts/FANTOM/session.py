@@ -43,7 +43,7 @@ class SessionComponent(SessionComponentBase):
     def track_select_control(self, value, _):
         if value and value <= self.stop_track_clip_buttons.control_count:
             index = value - 1
-            button = self.stop_track_clip_buttons[index]._control_element
+            button = self.stop_track_clip_buttons[index].control_element
             if button:
                 button.clear_send_cache()
                 self._update_stop_clips_led(index)

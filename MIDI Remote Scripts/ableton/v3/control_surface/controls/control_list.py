@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import ableton.v2.control_surface.control as ControlListBase
 from ...base import mixin
 from . import RadioButtonGroup
-_control_list_types = dict()
+_control_list_types = {}
 
 def control_list(control_type, *a, **k):
     factory = _control_list_types.get(control_type, None)

@@ -88,6 +88,10 @@ class ParameterSlotDescription(EventObject):
         self._add_condition_predicate(lambda p: str(p) == value)
         return self
 
+    def has_value_in(self, values):
+        self._add_condition_predicate(lambda p: str(p) in values)
+        return self
+
     def does_not_have_value(self, value):
         self._add_condition_predicate(lambda p: str(p) != value)
         return self

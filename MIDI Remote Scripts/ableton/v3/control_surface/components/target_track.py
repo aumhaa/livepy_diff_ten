@@ -1,10 +1,10 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ...base import depends, listens, listens_group, liveobj_changed, liveobj_valid
+from ...base import depends, listenable_property, listens, listens_group, liveobj_changed, liveobj_valid
 from .. import Component
 from ..controls import ToggleButtonControl
+from ..display import Renderable
 
-class TargetTrackComponent(Component):
-    __events__ = ('target_track', 'is_locked_to_track')
+class TargetTrackComponent(Component, Renderable):
     lock_button = ToggleButtonControl(untoggled_color='TargetTrack.LockOff',
       toggled_color='TargetTrack.LockOn')
 
@@ -21,11 +21,11 @@ class TargetTrackComponent(Component):
         self._target_track = None
         super().disconnect()
 
-    @property
+    @listenable_property
     def target_track(self):
         return self._target_track
 
-    @property
+    @listenable_property
     def is_locked_to_track(self):
         return self._locked_to_track
 
@@ -74,10 +74,6 @@ class ArmedTargetTrackComponent(TargetTrackComponent):
         self._armed_track_list = None
         super().disconnect()
 
-    @property
-    def tracks(self):
-        return [t for t in self.song.tracks if liveobj_valid(t) if t.can_be_armed]
-
     def _selected_track_changed(self):
         if not self._armed_track_list:
             self._set_target_track()
@@ -89,7 +85,7 @@ class ArmedTargetTrackComponent(TargetTrackComponent):
 
     @listens('visible_tracks')
     def __on_tracks_changed(self):
-        tracks = self.tracks
+        tracks = self._tracks()
         self._ArmedTargetTrackComponent__on_arm_changed.replace_subjects(tracks)
         self._ArmedTargetTrackComponent__on_frozen_state_changed.replace_subjects(tracks)
         self._refresh_armed_track_list()
@@ -103,7 +99,7 @@ class ArmedTargetTrackComponent(TargetTrackComponent):
         self._refresh_armed_track_list()
 
     def _refresh_armed_track_list(self):
-        tracks = self.tracks
+        tracks = self._tracks()
         for track in self._armed_track_list:
             if liveobj_valid(track):
                 if track.arm:
@@ -119,3 +115,6 @@ class ArmedTargetTrackComponent(TargetTrackComponent):
                         self._armed_track_list.append(track)
 
         self._set_target_track()
+
+    def _tracks(self):
+        return [t for t in self.song.tracks if liveobj_valid(t) if t.can_be_armed]

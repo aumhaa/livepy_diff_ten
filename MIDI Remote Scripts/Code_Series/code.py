@@ -1,14 +1,14 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from ableton.v2.base import const, inject
-from ableton.v2.control_surface import ControlSurface, Layer
+from ableton.v2.control_surface import Layer, SimpleControlSurface
 from ableton.v2.control_surface.components import MixerComponent, SessionRingComponent, TransportComponent
 from ableton.v2.control_surface.elements import ButtonMatrixElement
 from .element_utils import make_button, make_encoder, make_slider
 from .mixer_navigation import MixerNavigationComponent
 from .skin_default import make_default_skin
 
-class Code(ControlSurface):
+class Code(SimpleControlSurface):
     mixer_navigation_type = MixerNavigationComponent
 
     def __init__(self, *a, **k):

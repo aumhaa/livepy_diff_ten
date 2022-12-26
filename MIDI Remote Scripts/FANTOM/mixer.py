@@ -27,7 +27,7 @@ class MixerComponent(MixerComponentBase):
 
     def _reassign_tracks(self):
         super()._reassign_tracks()
-        tracks = self._track_assigner.tracks(self._provider)
+        tracks = self._provider.tracks
         self._MixerComponent__on_track_name_changed.replace_subjects(tracks)
         self._MixerComponent__on_track_color_index_changed.replace_subjects(tracks)
         self._MixerComponent__on_track_output_options_changed.replace_subjects(tracks)
@@ -35,7 +35,7 @@ class MixerComponent(MixerComponentBase):
         self._update_track_info_display()
 
     def _update_track_info_display(self):
-        tracks = self._track_assigner.tracks(self._provider)
+        tracks = self._provider.tracks
         self.track_info_display.data = [t for t in tracks if liveobj_valid(t)]
 
     @listens_group('name')

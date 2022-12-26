@@ -25,6 +25,9 @@ class Launchpad_Mini_MK3(NovationBase):
         self._elements.layout_switch.send_value(self._last_layout_byte)
         super(Launchpad_Mini_MK3, self).on_identified(midi_bytes)
 
+    def can_lock_to_devices(self):
+        return False
+
     def _create_components(self):
         super(Launchpad_Mini_MK3, self)._create_components()
         self._create_background()

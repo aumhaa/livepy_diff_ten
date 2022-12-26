@@ -86,6 +86,10 @@ class Control(object):
             self._has_tasks = True
             return self._manager._tasks.add(task.TaskGroup())
 
+        @property
+        def control_element(self):
+            return self._control_element
+
         def set_control_element(self, control_element):
             self._control_element = control_element
             if self._control_element:
@@ -248,8 +252,11 @@ class Connectable(EventObject):
 
     def _register_property_slot(self, subject, property_name):
         if self.requires_listenable_connected_property:
-            return self.register_slot(subject, self.on_connected_property_changed, property_name)
+            return self.register_slot(subject, self._handle_connected_property_changed, property_name)
         return NullSlot()
+
+    def _handle_connected_property_changed(self, value=None):
+        self.on_connected_property_changed(value if value is not None else self._connection.getter())
 
     @property
     def connected_property_value(self):

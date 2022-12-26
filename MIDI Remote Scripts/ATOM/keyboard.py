@@ -28,7 +28,6 @@ class KeyboardComponent(NotePadMixin, PlayableComponent, ScrollComponent):
     def _move_start_note(self, factor):
         self._start_note += factor
         self._update_note_translations()
-        self._release_all_pads()
 
     def _update_button_color(self, button):
         button.color = 'Keyboard.{}'.format('Sharp' if button.index in SHARP_INDICES else 'Natural')
@@ -39,8 +38,3 @@ class KeyboardComponent(NotePadMixin, PlayableComponent, ScrollComponent):
         return (
          inverted_row * self.matrix.width + column + self._start_note,
          self._translation_channel)
-
-    def _release_all_pads(self):
-        for pad in self.matrix:
-            if pad.is_pressed:
-                pad._release_button()

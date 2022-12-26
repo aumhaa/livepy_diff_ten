@@ -64,7 +64,7 @@ OPR_BANKS = (
 OPR_BOBS = OPR_BOB
 OPR_BNK_NAMES = ('Oscillator A', 'Oscillator B', 'Oscillator C', 'Oscillator D', 'LFO',
                  'Filter', 'Pitch Modulation', 'Routing')
-TEN_BOB = ('Excitator Type', 'Exc ForceMassProt', 'String Decay', 'Str Damping', 'Vib Amount',
+TEN_BOB = ('Exciter Type', 'Exc ForceMassProt', 'String Decay', 'Str Damping', 'Vib Amount',
            'Filter Freq', 'Filter Reso', 'Volume')
 TEN_BOBS = TEN_BOB
 ANA_BOB = ('F1 Freq', 'F1 Resonance', 'OSC1 Octave', 'Vib On/Off', 'AEG1 Attack', 'AEG1 Rel',
@@ -286,11 +286,11 @@ UTL_BOBS = (UTL_BANK1,)
 UTL_BANK_NAMES = ('General Controls', 'Low Frequency')
 RVB_BANK1 = ('In Filter Freq', 'In Filter Width', 'PreDelay', 'ER Spin On', 'ER Spin Rate',
              'ER Spin Amount', 'ER Shape', 'DecayTime')
-RVB_BANK2 = ('HiShelf Freq', 'LowShelf Freq', 'Chorus Rate', 'Density', 'HiShelf Gain',
+RVB_BANK2 = ('HiFilter Freq', 'LowShelf Freq', 'Chorus Rate', 'Diffusion', 'HiShelf Gain',
              'LowShelf Gain', 'Chorus Amount', 'Scale')
 RVB_BANK3 = ('DecayTime', 'Freeze On', 'Room Size', 'Stereo Image', 'ER Level', 'Diffuse Level',
-             'Dry/Wet', 'Quality')
-RVB_BOB = ('DecayTime', 'Room Size', 'Chorus Amount', 'In Filter Freq', 'HiShelf Freq',
+             'Dry/Wet', 'Density')
+RVB_BOB = ('DecayTime', 'Room Size', 'Chorus Amount', 'In Filter Freq', 'HiFilter Freq',
            'HiShelf Gain', 'Stereo Image', 'Dry/Wet')
 RVB_BANKS = (
  RVB_BANK1, RVB_BANK2, RVB_BANK3)

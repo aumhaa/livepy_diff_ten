@@ -1,193 +1,84 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from itertools import zip_longest
-from _Generic.Devices import best_of_parameter_bank, parameter_bank_names, parameter_banks
-from ...base import clamp, depends, listens, liveobj_valid
-from .. import Component
-from ..controls import ButtonControl, FixedRadioButtonGroup, MappedButtonControl, MappedControl, ToggleButtonControl, control_list
+import ableton.v2.control_surface.components as DeviceComponentBase
+from ableton.v3.control_surface.parameter_info import ParameterInfo
+from ...base import depends, find_if, listens, liveobj_valid
+from .. import DEFAULT_BANK_SIZE, BankingInfo, create_parameter_bank, legacy_bank_definitions
+from ..controls import MappedButtonControl, ToggleButtonControl
+from ..default_bank_definitions import BANK_DEFINITIONS
+from ..device_decorators import DeviceDecoratorFactory
+from ..parameter_mapping_sensitivities import DEFAULT_CONTINUOUS_PARAMETER_SENSITIVITY, DEFAULT_QUANTIZED_PARAMETER_SENSITIVITY, parameter_mapping_sensitivities
+from .device_bank_navigation import DeviceBankNavigationComponent
+from .device_parameters import DeviceParametersComponent
 
-class DeviceComponent(Component):
-    bank_skin = {'color':'Device.Bank.Navigation', 
-     'pressed_color':'Device.Bank.NavigationPressed'}
-    prev_bank_button = ButtonControl(**bank_skin)
-    next_bank_button = ButtonControl(**bank_skin)
-    bank_select_buttons = FixedRadioButtonGroup(control_count=8,
-      unchecked_color='Device.Bank.NotSelected',
-      checked_color='Device.Bank.Selected')
+def get_on_off_parameter(device):
+    if liveobj_valid(device):
+        return find_if(lambda p: p.original_name.startswith('Device On') and liveobj_valid(p) and p.is_enabled, device.parameters)
+
+
+class DeviceComponent(DeviceComponentBase):
     device_on_off_button = MappedButtonControl(color='Device.Off', on_color='Device.On')
     device_lock_button = ToggleButtonControl(untoggled_color='Device.LockOff',
       toggled_color='Device.LockOn')
-    parameter_controls = control_list(MappedControl, control_count=8)
 
-    @depends(device_provider=None,
-      device_bank_registry=None,
-      toggle_lock=None,
-      show_message=None)
-    def __init__(self, name='Device', device_provider=None, device_bank_registry=None, toggle_lock=None, show_message=None, force_use_parameter_banks=False, is_private=True, *a, **k):
-        (super().__init__)(a, name=name, **k)
+    @depends(device_bank_registry=None, toggle_lock=None, show_message=None)
+    def __init__(self, name='Device', continuous_parameter_sensitivity=DEFAULT_CONTINUOUS_PARAMETER_SENSITIVITY, quantized_parameter_sensitivity=DEFAULT_QUANTIZED_PARAMETER_SENSITIVITY, parameters_component_type=None, bank_size=DEFAULT_BANK_SIZE, bank_definitions=None, bank_navigation_component_type=None, device_bank_registry=None, device_decorator_factory=None, toggle_lock=None, show_message=None, is_private=True, *a, **k):
+        self._parameter_mapping_sensitivities = parameter_mapping_sensitivities(continuous_parameter_sensitivity=continuous_parameter_sensitivity,
+          quantized_parameter_sensitivity=quantized_parameter_sensitivity)
+        parameters_component_type = parameters_component_type or DeviceParametersComponent
+        self._parameters_component = parameters_component_type()
+        self._parameters_component.parameter_provider = self
+        banking_info = BankingInfo((bank_definitions or BANK_DEFINITIONS),
+          bank_size=bank_size)
+        bank_navigation_component_type = bank_navigation_component_type or DeviceBankNavigationComponent
+        self._bank_navigation_component = bank_navigation_component_type(banking_info=banking_info,
+          device_bank_registry=device_bank_registry)
+        (super().__init__)(a, name=name, banking_info=banking_info, device_bank_registry=device_bank_registry, device_decorator_factory=device_decorator_factory or DeviceDecoratorFactory() if bank_definitions not in [legacy_bank_definitions.banked(), legacy_bank_definitions.best_of_banks()] else None, **k)
         self.is_private = is_private
-        self._device_bank_registry = device_bank_registry
-        self._show_message = show_message
         self._toggle_lock = toggle_lock
-        self._use_parameter_banks = force_use_parameter_banks
-        self._has_parameter_controls = False
-        self._device = None
-        self._banks = []
-        self._bank_index = 0
-        self._device_provider = device_provider
-        self._DeviceComponent__on_provided_device_changed.subject = device_provider
-        self._DeviceComponent__on_provided_device_changed()
+        self._show_message = show_message
+        self.add_children(self._parameters_component, self._bank_navigation_component)
         self.register_slot(self._device_provider, self._update_device_lock_button, 'is_locked_to_device')
         self._update_device_lock_button()
 
-    def disconnect(self):
-        self._device = None
-        self._banks = None
-        super().disconnect()
-
     def set_parameter_controls(self, controls):
-        self._has_parameter_controls = controls is not None
-        self.parameter_controls.set_control_element(controls)
-        self._show_device_and_bank_name()
+        self._parameters_component.set_parameter_controls(controls)
 
-    def set_bank_select_buttons(self, buttons):
-        self._on_bank_buttons_set()
-        self.bank_select_buttons.set_control_element(buttons)
-
-    def set_prev_bank_button(self, button):
-        self._on_bank_buttons_set()
-        self.prev_bank_button.set_control_element(button)
-
-    def set_next_bank_button(self, button):
-        self._on_bank_buttons_set()
-        self.next_bank_button.set_control_element(button)
-
-    def _on_bank_buttons_set(self):
-        if not self._use_parameter_banks:
-            self._use_parameter_banks = True
-            self.update()
+    def __getattr__(self, name):
+        if name.startswith('set_'):
+            if 'bank' in name:
+                return getattr(self._bank_navigation_component, name)
+        raise AttributeError
 
     @device_lock_button.toggled
     def device_lock_button(self, *_):
         self._toggle_lock()
 
-    @bank_select_buttons.checked
-    def bank_select_buttons(self, button):
-        self.bank_index = button.index
+    def _create_parameter_info(self, parameter, name):
+        default, fine_grain = self._parameter_mapping_sensitivities(parameter, self.device())
+        return ParameterInfo(parameter=parameter,
+          name=name,
+          default_encoder_sensitivity=default,
+          fine_grain_encoder_sensitivity=fine_grain)
 
-    @prev_bank_button.pressed
-    def prev_bank_button(self, _):
-        self.bank_index = self._bank_index - 1
+    def _set_device(self, device):
+        super()._set_device(device)
+        self.device_on_off_button.mapped_parameter = get_on_off_parameter(device)
 
-    @next_bank_button.pressed
-    def next_bank_button(self, _):
-        self.bank_index = self._bank_index + 1
+    def _setup_bank(self, device, bank_factory=create_parameter_bank):
+        super()._setup_bank(device, bank_factory=bank_factory)
+        self._DeviceComponent__on_provider_bank_changed.subject = self._bank
+        self._bank_navigation_component.bank_provider = self._bank
 
-    @property
-    def bank_index(self):
-        if self._use_parameter_banks:
-            return self._bank_index
-        return 0
+    def _set_bank_index(self, bank):
+        super()._set_bank_index(bank)
+        device = self.device()
+        if liveobj_valid(device):
+            if self._parameters_component.controls[0].control_element:
+                self._show_message('Controlling {}: {}'.format(device.name, self._current_bank_details()[0]))
 
-    @bank_index.setter
-    def bank_index(self, value):
-        self._bank_index = self._clamp_to_bank_size(value)
-        self._device_bank_registry.set_device_bank(self._device, self._bank_index)
-        self.update()
-
-    def _clamp_to_bank_size(self, value):
-        return clamp(value, 0, self.num_banks - 1)
-
-    @property
-    def selected_bank(self):
-        if self.num_banks:
-            return self._banks[(self._bank_index or 0)]
-        return []
-
-    @property
-    def num_banks(self):
-        return len(self._banks)
-
-    @listens('device')
-    def __on_provided_device_changed(self):
-        self._device = self._device_provider.device
-        self._DeviceComponent__on_bank_changed.subject = self._device_bank_registry
-        self._bank_index = self._device_bank_registry.get_device_bank(self._device)
-        self.update()
-
-    @listens('device_bank')
-    def __on_bank_changed(self, device, bank):
-        if device == self._device:
-            self.bank_index = bank
-
-    def update(self):
-        super().update()
-        if self.is_enabled():
-            self._update_parameter_banks()
-            self._update_bank_select_buttons()
-            self._update_bank_navigation_buttons()
-            if liveobj_valid(self._device):
-                self._connect_parameters()
-                self._show_device_and_bank_name()
-            else:
-                self._disconnect_parameters()
-        else:
-            self._disconnect_parameters()
-
-    def _show_device_and_bank_name(self):
-        if self._has_parameter_controls:
-            if liveobj_valid(self._device):
-                self._show_message('Controlling {}: {}'.format(self._device.name, self._get_bank_name()))
-
-    def _get_bank_name(self):
-        bank_name = ''
-        if liveobj_valid(self._device):
-            if self._use_parameter_banks:
-                names = parameter_bank_names(self._device)
-                if self._bank_index < len(names):
-                    bank_name = names[self._bank_index]
-            else:
-                bank_name = 'Best of Parameters'
-        return bank_name
-
-    def _disconnect_parameters(self):
-        for control in self.parameter_controls:
-            control.mapped_parameter = None
-
-        self.device_on_off_button.mapped_parameter = None
-
-    def _connect_parameters(self):
-        for control, parameter in zip_longest(self.parameter_controls, self.selected_bank):
-            control.mapped_parameter = parameter if liveobj_valid(parameter) else None
-
-        self.device_on_off_button.mapped_parameter = self._on_off_parameter()
-
-    def _on_off_parameter(self):
-        if liveobj_valid(self._device):
-            for p in self._device.parameters:
-                if p.name.startswith('Device On'):
-                    if liveobj_valid(p):
-                        if p.is_enabled:
-                            return p
-
-    def _update_parameter_banks(self):
-        if liveobj_valid(self._device):
-            if self._use_parameter_banks:
-                self._banks = parameter_banks(self._device)
-            else:
-                self._banks = [
-                 best_of_parameter_bank(self._device)]
-        else:
-            self._banks = []
-        self._bank_index = self._clamp_to_bank_size(self._bank_index)
+    @listens('parameters')
+    def __on_provider_bank_changed(self):
+        self._device_bank_registry.set_device_bank(self.device(), self._bank.index)
 
     def _update_device_lock_button(self):
         self.device_lock_button.is_toggled = self._device_provider.is_locked_to_device
-
-    def _update_bank_select_buttons(self):
-        self.bank_select_buttons.active_control_count = self.num_banks
-        if self.bank_index < self.num_banks:
-            self.bank_select_buttons[self.bank_index].is_checked = True
-
-    def _update_bank_navigation_buttons(self):
-        self.prev_bank_button.enabled = self.bank_index > 0
-        self.next_bank_button.enabled = self.bank_index < self.num_banks - 1

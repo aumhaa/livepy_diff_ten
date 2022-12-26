@@ -17,6 +17,7 @@ class MappedControl(InputControl):
                 self._control_element.release_parameter()
             super(MappedControl.State, self).set_control_element(control_element)
             self._update_direct_connection()
+            self._update_value_slot()
 
         @property
         def mapped_parameter(self):
@@ -26,6 +27,7 @@ class MappedControl(InputControl):
         def mapped_parameter(self, direct_mapping):
             self._direct_mapping = direct_mapping
             self._update_direct_connection()
+            self._update_value_slot()
 
         def _event_listener_required(self):
             return True
@@ -33,6 +35,8 @@ class MappedControl(InputControl):
         def _update_direct_connection(self):
             if self._control_element:
                 self._control_element.connect_to(self._direct_mapping)
+
+        def _update_value_slot(self):
             self._value_slot.subject = None if liveobj_valid(self._direct_mapping) else self._control_element
 
         def _notifications_enabled(self):

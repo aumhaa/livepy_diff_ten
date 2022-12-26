@@ -7,6 +7,8 @@ from ..compound_element import CompoundElement
 from ..input_control_element import MIDI_CC_TYPE, InputControlElement, InputSignal
 from .combo import WrapperElement
 _map_modes = map_modes = Live.MidiMap.MapMode
+ABSOLUTE_MAP_MODES = (
+ _map_modes.absolute, _map_modes.absolute_14_bit)
 
 def _not_implemented(value):
     raise NotImplementedError
@@ -25,7 +27,15 @@ def signed_bit_delta(value):
 
 SIGNED_BIT_DEFAULT_DELTA = 20.0
 SIGNED_BIT_VALUE_MAP = (1, 2, 3, 4, 5, 8, 10, 20, 50)
-ENCODER_VALUE_NORMALIZER = {_map_modes.relative_smooth_two_compliment: lambda v: v if v <= 64 else v - 128, 
+
+def normalize_two_compliment(value):
+    if value <= 64:
+        return value
+    return value - 128
+
+
+ENCODER_VALUE_NORMALIZER = {_map_modes.relative_two_compliment: normalize_two_compliment, 
+ _map_modes.relative_smooth_two_compliment: normalize_two_compliment, 
  _map_modes.relative_smooth_signed_bit: lambda v: v if v <= 64 else 64 - v, 
  _map_modes.relative_smooth_binary_offset: lambda v: v - 64, 
  _map_modes.relative_signed_bit: signed_bit_delta}
@@ -66,17 +76,27 @@ class EncoderElement(InputControlElement):
             self._map_mode = _map_modes.absolute
         else:
             self._map_mode = map_mode
+        self._last_received_value = None
         self._value_normalizer = ENCODER_VALUE_NORMALIZER.get(map_mode, _not_implemented)
         self._value_accumulator = ENCODER_VALUE_ACCUMULATOR.get(map_mode, None)
+        self._half_value_range = self._max_value / 2
 
     def message_map_mode(self):
         return self._map_mode
 
+    def receive_value(self, value):
+        super().receive_value(value)
+        self._last_received_value = value
+
     def relative_value_to_delta(self, value):
+        if self._map_mode in ABSOLUTE_MAP_MODES:
+            if self._last_received_value is not None:
+                return value - self._last_received_value
+            return 0
         return self._value_normalizer(value)
 
     def normalize_value(self, value):
-        return old_div(self.relative_value_to_delta(value), 64.0) * self.encoder_sensitivity
+        return old_div(self.relative_value_to_delta(value), self._half_value_range) * self.encoder_sensitivity
 
     def notify_value(self, value):
         super(EncoderElement, self).notify_value(value)

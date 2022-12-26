@@ -92,10 +92,11 @@ class ControlElement(Disconnectable):
     _has_task_group = False
 
     @depends(send_midi=None, register_control=None)
-    def __init__(self, name='', resource_type=None, optimized_send_midi=None, send_midi=None, register_control=None, *a, **k):
+    def __init__(self, name='', is_private=False, resource_type=None, optimized_send_midi=None, send_midi=None, register_control=None, *a, **k):
         (super(ControlElement, self).__init__)(*a, **k)
         self._send_midi = send_midi
         self.name = name
+        self.is_private = is_private
         if resource_type is not None:
             self._resource_type = resource_type
         if optimized_send_midi is not None:

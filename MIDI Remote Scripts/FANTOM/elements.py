@@ -1,7 +1,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v3.control_surface import MIDI_NOTE_TYPE, ElementsBase, MapMode, PrioritizedResource, create_matrix_identifiers
 from . import sysex
-from .ringed_encoder import RingedEncoderElement
 from .scene_name_display import SceneNameDisplayElement
 from .simple_display import SimpleDisplayElement
 from .track_info_display import TrackInfoDisplayElement
@@ -66,10 +65,7 @@ class Elements(ElementsBase):
         self.add_encoder(72, 'Master_Pan_Control')
         self.add_encoder(73, 'Master_Volume_Control')
         self.add_encoder(96, 'Track_Select_Control', resource_type=PrioritizedResource)
-        self.add_matrix([
-         [i + 16 for i in range(8)]],
-          'Device_Controls',
-          element_factory=RingedEncoderElement)
+        self.add_encoder_matrix([[i + 16 for i in range(8)]], 'Device_Controls')
         self.add_encoder_matrix([
          [
           72] * NUM_TRACKS],

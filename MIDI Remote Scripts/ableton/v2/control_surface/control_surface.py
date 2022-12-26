@@ -49,7 +49,7 @@ class SimpleControlSurface(EventObject):
         self._pad_translations = None
         self._components = []
         self._displays = []
-        self.controls = []
+        self._controls = []
         self._forwarding_long_identifier_registry = {}
         self._forwarding_registry = {}
         self._is_sending_scheduled_messages = BooleanContext()
@@ -85,6 +85,10 @@ class SimpleControlSurface(EventObject):
     def root_components(self):
         return tuple(filter(lambda comp: comp.is_root and not comp.is_private, self._components))
 
+    @property
+    def controls(self):
+        return self._controls
+
     def _get_tasks(self):
         return self._task_group
 
@@ -103,12 +107,12 @@ class SimpleControlSurface(EventObject):
         self.notify_disconnect(self)
         self._disconnect_and_unregister_all_components()
         with self.component_guard():
-            for control in self.controls:
+            for control in self._controls:
                 control.disconnect()
                 control.canonical_parent = None
 
         self._forwarding_registry = None
-        self.controls = None
+        self._controls = None
         self._displays = None
         self._pad_translations = None
         cs_list = get_control_surfaces()
@@ -122,7 +126,7 @@ class SimpleControlSurface(EventObject):
 
     def suggest_map_mode(self, cc_no, channel):
         suggested_map_mode = -1
-        for control in self.controls:
+        for control in self._controls:
             if isinstance(control, InputControlElement):
                 if control.message_type() == MIDI_CC_TYPE:
                     if control.message_identifier() == cc_no:
@@ -151,7 +155,7 @@ class SimpleControlSurface(EventObject):
         with self._in_build_midi_map():
             self._forwarding_registry.clear()
             self._forwarding_long_identifier_registry.clear()
-            for control in self.controls:
+            for control in self._controls:
                 if isinstance(control, InputControlElement):
                     control.install_connections(self._translate_message, partial(self._install_mapping, midi_map_handle), partial(self._install_forwarding, midi_map_handle))
 
@@ -166,7 +170,7 @@ class SimpleControlSurface(EventObject):
 
     def update(self):
         with self.component_guard():
-            for control in self.controls:
+            for control in self._controls:
                 control.clear_send_cache()
 
             for component in self._components:
@@ -310,7 +314,7 @@ class SimpleControlSurface(EventObject):
         self._c_instance.release_controlled_track()
 
     def _register_control(self, control):
-        self.controls.append(control)
+        self._controls.append(control)
         control.canonical_parent = self
         if isinstance(control, PhysicalDisplayElement):
             self._displays.append(control)
@@ -361,7 +365,7 @@ class SimpleControlSurface(EventObject):
                 self._flush_midi_messages()
 
     def get_control_by_name(self, control_name):
-        return find_if(lambda c: c.name == control_name, self.controls)
+        return find_if(lambda c: c.name == control_name, self._controls)
 
     def get_component_by_name(self, component_name):
         return find_if(lambda c: c.name == component_name, self.components)

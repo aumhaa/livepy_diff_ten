@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface.control import Connectable, Control, ControlManager, EncoderControl, InputControl, MappedControl, PlayableControl, RadioButtonGroup, SendValueMixin, control_matrix
+from ableton.v2.control_surface.control import Connectable, Control, ControlManager, EncoderControl, InputControl, MappedControl, PlayableControl, RadioButtonGroup, SendValueControl, SendValueMixin, ToggleButtonControl, control_matrix, is_internal_parameter
 from .button import ButtonControl
 from .control import SendValueInputControl
 from .control_list import FixedRadioButtonGroup, control_list
-from .mapped_button import MappableButton, MappedButtonControl
-from .toggle_button import ToggleButtonControl
+from .mapped import MappableButton, MappedButtonControl, MappedSensitivitySettingControl
 __all__ = ('ButtonControl', 'Connectable', 'Control', 'ControlManager', 'EncoderControl',
            'FixedRadioButtonGroup', 'InputControl', 'MappableButton', 'MappedButtonControl',
-           'MappedControl', 'PlayableControl', 'RadioButtonGroup', 'SendValueInputControl',
-           'SendValueMixin', 'ToggleButtonControl', 'control_list', 'control_matrix')
+           'MappedControl', 'MappedSensitivitySettingControl', 'PlayableControl',
+           'RadioButtonGroup', 'SendValueControl', 'SendValueInputControl', 'SendValueMixin',
+           'ToggleButtonControl', 'control_list', 'control_matrix', 'is_internal_parameter')

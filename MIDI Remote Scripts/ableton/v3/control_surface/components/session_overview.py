@@ -4,7 +4,7 @@ from .. import Component
 from ..controls import ButtonControl, control_matrix
 
 class SessionOverviewComponent(Component):
-    button_matrix = control_matrix(ButtonControl)
+    matrix = control_matrix(ButtonControl, color=None)
 
     @depends(session_ring=None)
     def __init__(self, name='Session_Overview', session_ring=None, is_private=True, *a, **k):
@@ -18,12 +18,12 @@ class SessionOverviewComponent(Component):
         self.register_slot(self._session_ring, self.update, 'tracks')
         self.register_slot(self.song, self.update, 'scenes')
 
-    def set_button_matrix(self, matrix):
-        self.button_matrix.set_control_element(matrix)
+    def set_matrix(self, matrix):
+        self.matrix.set_control_element(matrix)
         self.update()
 
-    @button_matrix.pressed
-    def button_matrix(self, button):
+    @matrix.pressed
+    def matrix(self, button):
         y, x = button.coordinate
         track_offset = x * self._session_ring.num_tracks + self._track_bank_offset
         scene_offset = y * self._session_ring.num_scenes + self._scene_bank_offset
@@ -37,13 +37,13 @@ class SessionOverviewComponent(Component):
 
     @listens_group('playing_slot_index')
     def __on_playing_slot_index_changed(self, _):
-        self._update_button_matrix()
+        self._update_matrix()
 
     def update(self):
         super().update()
-        if self.is_enabled() and self.button_matrix.control_count:
+        if self.is_enabled() and self.matrix.control_elements:
             self._update_bank_offsets()
-            self._update_button_matrix()
+            self._update_matrix()
             self._SessionOverviewComponent__on_playing_slot_index_changed.replace_subjects(self._session_ring.tracks_to_use()[self._track_bank_offset:self._track_bank_offset + self._track_bank_size])
         else:
             self._SessionOverviewComponent__on_playing_slot_index_changed.replace_subjects([])
@@ -51,35 +51,35 @@ class SessionOverviewComponent(Component):
     def _block_is_within_selection(self, x, y, num_tracks, num_scenes):
         return self._session_ring.track_offset - self._track_bank_offset in range(num_tracks * (x - 1) + 1, num_tracks * (x + 1)) and self._session_ring.scene_offset - self._scene_bank_offset in range(num_scenes * (y - 1) + 1, num_scenes * (y + 1))
 
-    @staticmethod
-    def _block_has_playing_clips(tracks, num_tracks, num_scenes, track_offset, scene_offset):
+    def _block_has_playing_clips(self, tracks, num_tracks, num_scenes, track_offset, scene_offset):
         for track in tracks[track_offset:track_offset + num_tracks]:
-            if track.playing_slot_index in range(scene_offset, scene_offset + num_scenes):
-                return True
+            if track in self.song.tracks:
+                if track.playing_slot_index in range(scene_offset, scene_offset + num_scenes):
+                    return True
 
         return False
 
-    def _update_button_matrix(self):
+    def _update_matrix(self):
         num_tracks = self._session_ring.num_tracks
         num_scenes = self._session_ring.num_scenes
         tracks = self._session_ring.tracks_to_use()
-        for x in range(self.button_matrix.width):
-            for y in range(self.button_matrix.height):
+        for x in range(self.matrix.width):
+            for y in range(self.matrix.height):
                 track_offset = x * num_tracks + self._track_bank_offset
                 scene_offset = y * num_scenes + self._scene_bank_offset
                 if track_offset not in range(len(tracks)) or scene_offset not in range(len(self.song.scenes)):
-                    self.button_matrix.get_control(y, x).color = 'Zooming.Empty'
+                    self.matrix.get_control(y, x).color = 'Zooming.Empty'
                     continue
                 if self._block_is_within_selection(x, y, num_tracks, num_scenes):
-                    self.button_matrix.get_control(y, x).color = 'Zooming.Selected'
+                    self.matrix.get_control(y, x).color = 'Zooming.Selected'
                 else:
                     if self._block_has_playing_clips(tracks, num_tracks, num_scenes, track_offset, scene_offset):
-                        self.button_matrix.get_control(y, x).color = 'Zooming.Playing'
+                        self.matrix.get_control(y, x).color = 'Zooming.Playing'
                     else:
-                        self.button_matrix.get_control(y, x).color = 'Zooming.Stopped'
+                        self.matrix.get_control(y, x).color = 'Zooming.Stopped'
 
     def _update_bank_offsets(self):
-        scene_bank_size = self.button_matrix.height * self._session_ring.num_scenes
+        scene_bank_size = self.matrix.height * self._session_ring.num_scenes
         self._scene_bank_offset = self._session_ring.scene_offset // scene_bank_size * scene_bank_size
-        self._track_bank_size = self.button_matrix.width * self._session_ring.num_tracks
+        self._track_bank_size = self.matrix.width * self._session_ring.num_tracks
         self._track_bank_offset = self._session_ring.track_offset // self._track_bank_size * self._track_bank_size

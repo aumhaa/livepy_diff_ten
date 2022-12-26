@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from functools import partial
 from ableton.v2.base import listens, nop, task
-from ableton.v2.control_surface import ControlSurface, Layer, midi
+from ableton.v2.control_surface import Layer, SimpleControlSurface, midi
 from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, SessionRecordingComponent, SimpleTrackAssigner, UndoRedoComponent
 from ableton.v2.control_surface.elements import ButtonMatrixElement, MultiElement, SysexElement
 from ableton.v2.control_surface.mode import AddLayerMode, EnablingMode, ModesComponent
@@ -23,7 +23,7 @@ def tracks_to_use_from_song(song):
     return tuple(song.visible_tracks) + tuple(song.return_tracks) + (song.master_track,)
 
 
-class KompleteKontrolBase(ControlSurface):
+class KompleteKontrolBase(SimpleControlSurface):
     mixer_component_class = MixerComponent
     channel_strip_component_class = ChannelStripComponent
     is_s_mk2 = False

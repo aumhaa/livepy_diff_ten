@@ -2,13 +2,14 @@ from __future__ import absolute_import, print_function, unicode_literals
 import ableton.v2.control_surface.components as ClipSlotComponentBase
 import ableton.v2.control_surface.components as SceneComponentBase
 import ableton.v2.control_surface.components as SessionComponentBase
-from ...base import depends, liveobj_valid
+from ...base import const, depends, liveobj_valid
 from ..controls import ButtonControl, control_list
 
 class ClipSlotComponent(ClipSlotComponentBase):
 
-    def __init__(self, color_for_obj_function=None, is_private=True, *a, **k):
-        self._color_for_obj_function = color_for_obj_function
+    @depends(color_for_liveobj_function=(const(None)))
+    def __init__(self, color_for_liveobj_function=None, is_private=True, *a, **k):
+        self._color_for_liveobj_function = color_for_liveobj_function
         (super().__init__)(*a, **k)
         self.is_private = is_private
         self._record_button_color = 'Session.ClipRecordButton'
@@ -18,19 +19,22 @@ class ClipSlotComponent(ClipSlotComponentBase):
         return self._clip_slot
 
     def _color_value(self, slot_or_clip):
-        if self._color_for_obj_function:
+        value = None
+        if self._color_for_liveobj_function:
             if liveobj_valid(slot_or_clip):
-                return self._color_for_obj_function(slot_or_clip)
-        return super()._color_value(slot_or_clip)
+                value = self._color_for_liveobj_function(slot_or_clip)
+        if value is not None:
+            return value
+        return self._stopped_value
 
 
 class SceneComponent(SceneComponentBase):
 
-    def __init__(self, clip_slot_component_type=None, color_for_obj_function=None, is_private=True, *a, **k):
-        self._color_for_obj_function = color_for_obj_function
+    @depends(color_for_liveobj_function=(const(None)))
+    def __init__(self, clip_slot_component_type=None, color_for_liveobj_function=None, is_private=True, *a, **k):
+        self._color_for_liveobj_function = color_for_liveobj_function
         clip_slot_component_type = clip_slot_component_type or ClipSlotComponent
-        self._create_clip_slot = lambda: clip_slot_component_type(parent=self,
-          color_for_obj_function=color_for_obj_function)
+        self._create_clip_slot = lambda: clip_slot_component_type(parent=self)
         (super().__init__)(*a, **k)
         self.is_private = is_private
         self._no_scene_color = 'Session.SceneEmpty'
@@ -39,11 +43,20 @@ class SceneComponent(SceneComponentBase):
     def scene(self):
         return self._scene
 
-    def _color_value(self, color):
-        if self._color_for_obj_function:
+    def _color_value(self, _):
+        value = None
+        if self._color_for_liveobj_function:
             if liveobj_valid(self._scene):
-                return self._color_for_obj_function(self._scene)
-        return super()._color_value(color)
+                value = self._color_for_liveobj_function(self._scene)
+        if value is not None:
+            return value
+        return self._scene_color
+
+    def _update_controlled_tracks(self):
+        controlled_tracks = self.song.tracks
+        if controlled_tracks != self._controlled_tracks:
+            self.update()
+            self._controlled_tracks = controlled_tracks
 
 
 class SessionComponent(SessionComponentBase):
@@ -52,12 +65,11 @@ class SessionComponent(SessionComponentBase):
     stop_track_clip_buttons = control_list(ButtonControl)
 
     @depends(session_ring=None)
-    def __init__(self, name='Session', session_ring=None, scene_component_type=None, clip_slot_component_type=None, color_for_obj_function=None, is_private=True, *a, **k):
+    def __init__(self, name='Session', session_ring=None, scene_component_type=None, clip_slot_component_type=None, is_private=True, *a, **k):
         scene_component_type = scene_component_type or SceneComponent
         self._create_scene = lambda: scene_component_type(parent=self,
           session_ring=(self._session_ring),
-          clip_slot_component_type=clip_slot_component_type,
-          color_for_obj_function=color_for_obj_function)
+          clip_slot_component_type=clip_slot_component_type)
         (super().__init__)(a, name=name, session_ring=session_ring, **k)
         self.is_private = is_private
         self.stop_track_clip_buttons.control_count = session_ring.num_tracks

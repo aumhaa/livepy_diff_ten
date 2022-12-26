@@ -5,7 +5,6 @@ from ableton.v2.control_surface import Layer, SessionRingSelectionLinking
 from ableton.v2.control_surface.components import AutoArmComponent, BackgroundComponent, UndoRedoComponent
 from ableton.v2.control_surface.mode import AddLayerMode, LayerMode
 from novation import sysex
-from novation.clip_actions import ClipActionsComponent
 from novation.instrument_control import InstrumentControlMixin
 from novation.launchkey_drum_group import DrumGroupComponent
 from novation.launchkey_elements import SESSION_HEIGHT
@@ -15,6 +14,7 @@ from novation.quantization import QuantizationComponent
 from novation.view_control import NotifyingViewControlComponent
 from . import midi
 from .channel_strip import ChannelStripComponent
+from .clip_actions import ClipActionsComponent
 from .device import DeviceComponent
 from .elements import Elements
 from .mixer import MixerComponent
@@ -288,7 +288,7 @@ class Launchkey_MK3(InstrumentControlMixin, NovationBase):
         self._select_recording_mode()
 
     @listens('selected_mode')
-    def __on_pad_mode_changed(self, mode):
+    def __on_pad_mode_changed(self, _):
         self._select_recording_mode()
         self._update_controlled_track()
 

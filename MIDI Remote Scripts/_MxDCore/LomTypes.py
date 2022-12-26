@@ -522,7 +522,11 @@ EXPOSED_TYPE_PROPERTIES = {Live.Application.Application: (
                     MFLProperty('is_triggered'),
                     MFLProperty('name'),
                     MFLProperty('set_fire_button_state'),
-                    MFLProperty('tempo')), 
+                    MFLProperty('tempo'),
+                    MFLProperty('tempo_enabled'),
+                    MFLProperty('time_signature_numerator'),
+                    MFLProperty('time_signature_denominator'),
+                    MFLProperty('time_signature_enabled')), 
  
  Live.SimplerDevice.SimplerDevice: tuple(_DEVICE_BASE_PROPS + [
                                     MFLProperty('can_warp_as'),

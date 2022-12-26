@@ -19,7 +19,7 @@ def create_display_element(command_bytes, name):
 
 def create_parameter_display_matrix(command_byte, start_index, name):
     return ButtonMatrixElement(rows=[
-     [create_display_element((command_byte, start_index + index), '_Display_{}'.format(name, index)) for index in range(8)]],
+     [create_display_element((command_byte, start_index + index), '{}_Display_{}'.format(name, index)) for index in range(8)]],
       name=('{}_Displays'.format(name)))
 
 

@@ -1,8 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from functools import partial
-from ableton.v3.base import listens
+from ableton.v3.base import is_clip_or_slot, is_scene, listens
 from ableton.v3.control_surface import ControlSurface, ControlSurfaceSpecification, Layer
-from ableton.v3.control_surface.components import MixerComponent, SessionComponent, SessionNavigationComponent, SimpleDeviceNavigationComponent, TranslatingBackgroundComponent, UndoRedoComponent, ViewControlComponent, ViewToggleComponent
+from ableton.v3.control_surface.components import MixerComponent, SessionComponent, SessionNavigationComponent, SimpleDeviceNavigationComponent, TranslatingBackgroundComponent, TransportComponent, UndoRedoComponent, ViewControlComponent, ViewToggleComponent
+from ableton.v3.control_surface.controls import ButtonControl
 from ableton.v3.control_surface.mode import AddLayerMode, ModesComponent
 from . import midi
 from .button_labels import ButtonLabelsComponent
@@ -12,7 +13,6 @@ from .elements import SESSION_HEIGHT, SESSION_WIDTH, Elements
 from .launch_and_stop import LaunchAndStopComponent
 from .simple_device import SimpleDeviceParameterComponent
 from .skin import skin
-from .transport import TransportComponent
 
 class Specification(ControlSurfaceSpecification):
     elements_type = Elements
@@ -21,6 +21,33 @@ class Specification(ControlSurfaceSpecification):
     num_scenes = SESSION_HEIGHT
     link_session_ring_to_track_selection = True
     identity_response_id_bytes = midi.PRODUCT_ID_BYTES
+    hello_messages = (midi.NATIVE_MODE_ON_MESSAGE,)
+    goodbye_messages = (midi.NATIVE_MODE_OFF_MESSAGE,)
+    color_for_liveobj_function = --- This code section failed: ---
+
+ L.  44         0  LOAD_GLOBAL              is_clip_or_slot
+                2  LOAD_FAST                'obj'
+                4  CALL_FUNCTION_1       1  '1 positional argument'
+                6  POP_JUMP_IF_TRUE     16  'to 16'
+                8  LOAD_GLOBAL              is_scene
+               10  LOAD_FAST                'obj'
+               12  CALL_FUNCTION_1       1  '1 positional argument'
+               14  POP_JUMP_IF_FALSE    30  'to 30'
+             16_0  COME_FROM             6  '6'
+               16  LOAD_GLOBAL              LIVE_COLOR_INDEX_TO_RGB
+               18  LOAD_METHOD              get
+               20  LOAD_FAST                'obj'
+               22  LOAD_ATTR                color_index
+               24  LOAD_CONST               0
+               26  CALL_METHOD_2         2  '2 positional arguments'
+               28  RETURN_VALUE_LAMBDA
+             30_0  COME_FROM            14  '14'
+
+ L.  45        30  LOAD_CONST               None
+               32  RETURN_VALUE_LAMBDA
+               -1  LAMBDA_MARKER    
+
+Parse error at or near `None' instruction at offset -1
 
 
 class ATOMSQ(ControlSurface):
@@ -28,7 +55,7 @@ class ATOMSQ(ControlSurface):
     def __init__(self, *a, **k):
         (super().__init__)(a, specification=Specification, **k)
 
-    def _create_control_surface(self):
+    def setup(self):
         self._create_transport()
         self._create_undo()
         self._create_view_toggle()
@@ -43,21 +70,17 @@ class ATOMSQ(ControlSurface):
         self._create_lower_pad_modes()
         self._create_main_modes()
 
-    def disconnect(self):
-        super().disconnect()
-        self._send_midi(midi.NATIVE_MODE_OFF_MESSAGE)
-
     def on_identified(self, response_bytes):
-        self._send_midi(midi.NATIVE_MODE_ON_MESSAGE)
         if self._main_modes.selected_mode == 'instrument':
-            self.schedule_message(1, self._elements.upper_firmware_toggle_switch.send_value, 1)
+            self.schedule_message(1, self.elements.upper_firmware_toggle_switch.send_value, 1)
         if self._main_modes.selected_mode != 'song':
-            self.schedule_message(1, self._elements.lower_firmware_toggle_switch.send_value, 1)
+            self.schedule_message(1, self.elements.lower_firmware_toggle_switch.send_value, 1)
         super().on_identified(response_bytes)
 
     def _create_transport(self):
         self._transport = TransportComponent(is_enabled=False,
-          layer=Layer(scroll_encoder='display_encoder',
+          layer=Layer(arrangement_position_encoder='display_encoder',
+          tempo_coarse_encoder='display_encoder_with_shift',
           play_button='play_button',
           loop_button='play_button_with_shift',
           stop_button='stop_button',
@@ -65,8 +88,9 @@ class ATOMSQ(ControlSurface):
           metronome_button='click_button',
           capture_midi_button='record_button_with_shift',
           prev_cue_button='display_left_button',
-          next_cue_button='display_right_button',
-          shift_button='shift_button'))
+          next_cue_button='display_right_button'))
+        self._transport.add_control('sq_shift_button', ButtonControl(color='DefaultButton.Off', pressed_color='DefaultButton.On'))
+        self._transport.sq_shift_button.set_control_element(self.elements.shift_button)
         self._transport.set_enabled(True)
 
     def _create_undo(self):
@@ -82,8 +106,9 @@ class ATOMSQ(ControlSurface):
           clip_view_toggle_button='bank_h_button'))
 
     def _create_device_parameters(self):
-        self._device_parameters = SimpleDeviceParameterComponent(layer=Layer(device_name_display='device_name_display'),
-          is_enabled=False)
+        self._device_parameters = SimpleDeviceParameterComponent(is_enabled=False,
+          quantized_parameter_sensitivity=0.3,
+          layer=Layer(device_name_display='device_name_display'))
         self._device_parameters.set_enabled(True)
 
     def _create_translating_background(self):
@@ -105,7 +130,6 @@ class ATOMSQ(ControlSurface):
 
     def _create_session(self):
         self._session = SessionComponent(is_enabled=False,
-          color_for_obj_function=(lambda obj: LIVE_COLOR_INDEX_TO_RGB.get(obj.color_index, 0)),
           layer=Layer(clip_launch_buttons='upper_pads',
           scene_0_launch_button='plus_button'))
         self._session_navigation = SessionNavigationComponent(is_enabled=False,
@@ -152,10 +176,10 @@ class ATOMSQ(ControlSurface):
           editor_button='editor_mode_button',
           user_button='user_mode_button'))
         device_params_mode = AddLayerMode(self._device_parameters, Layer(parameter_controls='encoders'))
-        enable_lower_fw_functions = partial(self._elements.lower_firmware_toggle_switch.send_value, 1)
-        disable_upper_fw_functions = partial(self._elements.upper_firmware_toggle_switch.send_value, 0)
+        enable_lower_fw_functions = partial(self.elements.lower_firmware_toggle_switch.send_value, 1)
+        disable_upper_fw_functions = partial(self.elements.upper_firmware_toggle_switch.send_value, 0)
         self._main_modes.add_mode('song', (
-         partial(self._elements.lower_firmware_toggle_switch.send_value, 0),
+         partial(self.elements.lower_firmware_toggle_switch.send_value, 0),
          disable_upper_fw_functions,
          self._view_toggle,
          self._launch_and_stop,
@@ -170,7 +194,7 @@ class ATOMSQ(ControlSurface):
            crossfader_control='touch_strip'))))
         self._main_modes.add_mode('instrument', (
          enable_lower_fw_functions,
-         partial(self._elements.upper_firmware_toggle_switch.send_value, 1),
+         partial(self.elements.upper_firmware_toggle_switch.send_value, 1),
          device_params_mode))
         self._main_modes.add_mode('editor', (
          enable_lower_fw_functions,
@@ -192,5 +216,5 @@ class ATOMSQ(ControlSurface):
     @listens('selected_mode')
     def __on_main_modes_changed(self, mode):
         self._button_labels.show_button_labels_for_mode(mode)
-        self._elements.track_name_display.clear_send_cache()
-        self._elements.device_name_display.clear_send_cache()
+        self.elements.track_name_display.clear_send_cache()
+        self.elements.device_name_display.clear_send_cache()

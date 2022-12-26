@@ -54,9 +54,10 @@ class ClipSlotComponent(Component):
         self._ClipSlotComponent__on_clip_slot_color_changed.subject = clip_slot
         track = clip_slot.canonical_parent if clip_slot else None
         if track:
-            if track.can_be_armed:
+            if track in self.song.tracks:
                 self._ClipSlotComponent__on_arm_value_changed.subject = track
                 self._ClipSlotComponent__on_implicit_arm_value_changed.subject = track
+                self._ClipSlotComponent__on_input_routing_type_changed.subject = track
         self.update()
 
     def set_launch_button(self, button):
@@ -168,6 +169,10 @@ class ClipSlotComponent(Component):
 
     @listens('implicit_arm')
     def __on_implicit_arm_value_changed(self):
+        self._update_launch_button_color()
+
+    @listens('input_routing_type')
+    def __on_input_routing_type_changed(self):
         self._update_launch_button_color()
 
     @listens('has_stop_button')

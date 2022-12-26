@@ -21,10 +21,6 @@ def status_byte_to_msg_type(status_byte):
     return msg_type
 
 
-def is_standard_identity_response(midi_bytes):
-    return midi_bytes[1:PRODUCT_ID_BYTES_START_INDEX] == STANDARD_RESPONSE_BYTES
-
-
 def create_responder(identity_response_id_bytes, custom_identity_response):
     if identity_response_id_bytes is not None:
         return StandardResponder(identity_response_id_bytes)
@@ -81,7 +77,7 @@ class StandardResponder(Responder):
         return SysexElement(sysex_identifier=NON_REALTIME_HEADER)
 
     def is_valid_response(self, response_bytes):
-        if is_standard_identity_response(response_bytes):
+        if response_bytes[1:PRODUCT_ID_BYTES_START_INDEX] == STANDARD_RESPONSE_BYTES:
             product_id_bytes = self._extract_product_id_bytes(response_bytes)
             if product_id_bytes != self._response_bytes:
                 raise IdentityResponseError(expected_bytes=(self._response_bytes),
@@ -96,7 +92,7 @@ class StandardResponder(Responder):
 class IdentityResponseError(Exception):
 
     def __init__(self, expected_bytes=None, actual_bytes=None):
-        super().__init__('MIDI device responded with wrong identity bytes: ({} != {}).'.format(expected_bytes, actual_bytes))
+        super().__init__('Hardware controller responded with wrong identity bytes: ({} != {}).'.format(expected_bytes, actual_bytes))
 
 
 class IdentificationComponent(Component):
@@ -113,6 +109,7 @@ class IdentificationComponent(Component):
         self._responder = create_responder(identity_response_id_bytes, custom_identity_response)
         response_element = self._responder.create_response_element()
         response_element.name = 'identity_control'
+        response_element.is_private = True
         self.identity_response_control.set_control_element(response_element)
         self._request_task = self._tasks.add(task.sequence(task.run(self._send_identity_request), task.wait(identity_request_delay), task.run(self._send_identity_request)))
         self._request_task.kill()

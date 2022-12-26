@@ -1,11 +1,11 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v2.base import listens
-from ableton.v2.control_surface import ControlSurface, Layer
+from ableton.v2.control_surface import Layer, SimpleControlSurface
 from ableton.v2.control_surface.midi import is_sysex
 from .elements import Elements
 from .looper import LooperComponent
 
-class Blackstar_Live_Logic(ControlSurface):
+class Blackstar_Live_Logic(SimpleControlSurface):
 
     def __init__(self, *a, **k):
         (super(Blackstar_Live_Logic, self).__init__)(*a, **k)

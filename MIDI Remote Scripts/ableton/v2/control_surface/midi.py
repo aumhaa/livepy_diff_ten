@@ -25,10 +25,10 @@ def is_valid_channel(channel):
     return 0 <= channel < 16
 
 
-def is_valid_value(value):
+def is_valid_value(value, max_val=128):
     if not isinstance(value, Number):
         return False
-    return 0 <= value < 128
+    return 0 <= value < max_val
 
 
 def is_valid_identifier(identifier):

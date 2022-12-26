@@ -9,7 +9,8 @@ class IndexedDict(OrderedDict):
 
     def __setitem__(self, key, value, *args, **kwds):
         (super(IndexedDict, self).__setitem__)(key, value, *args, **kwds)
-        self._IndexedDict__keys.append(key)
+        if key not in self._IndexedDict__keys:
+            self._IndexedDict__keys.append(key)
 
     def __delitem__(self, key, *args, **kwds):
         (super(IndexedDict, self).__delitem__)(key, *args, **kwds)

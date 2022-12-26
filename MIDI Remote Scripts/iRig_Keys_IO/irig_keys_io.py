@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 import Live
-from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, ControlSurface, Layer
+from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, Layer, SimpleControlSurface
 from ableton.v2.control_surface.components import TransportComponent
 from ableton.v2.control_surface.elements import ButtonElement, ButtonMatrixElement, EncoderElement
 from .mixer import MixerComponent
@@ -11,7 +11,7 @@ from .skin import skin
 PAD_IDS = (36, 38, 40, 42, 46, 43, 47, 49)
 PAD_CHANNEL = 9
 
-class IRigKeysIO(ControlSurface):
+class IRigKeysIO(SimpleControlSurface):
 
     def __init__(self, *a, **k):
         (super(IRigKeysIO, self).__init__)(*a, **k)

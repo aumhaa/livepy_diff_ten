@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from builtins import range
 from functools import partial
 from ableton.v2.base import const, inject
-from ableton.v2.control_surface import MIDI_NOTE_TYPE, ControlSurface, Layer
+from ableton.v2.control_surface import MIDI_NOTE_TYPE, Layer, SimpleControlSurface
 from ableton.v2.control_surface.components import DrumGroupComponent, MixerComponent, SessionRecordingComponent, SessionRingComponent
 from ableton.v2.control_surface.elements import ButtonMatrixElement
 from ableton.v2.control_surface.mode import LayerMode, ModesComponent
@@ -11,7 +11,7 @@ from .navigation import SessionNavigationComponent
 from .skin import make_default_skin
 from .transport import TransportComponent
 
-class FA(ControlSurface):
+class FA(SimpleControlSurface):
 
     def __init__(self, *a, **k):
         (super(FA, self).__init__)(*a, **k)

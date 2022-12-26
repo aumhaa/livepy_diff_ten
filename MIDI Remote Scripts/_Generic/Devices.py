@@ -173,7 +173,7 @@ SIM_BANKS = (
  SIM_BANK1, SIM_BANK2, SIM_BANK3, SIM_BANK4)
 SIM_BOBS = (SIM_BOB,)
 SIM_BNK_NAMES = ('Amplitude', 'Filter', 'LFO', 'Pitch Modifiers')
-TNS_BANK1 = ('Excitator Type', 'String Decay', 'Str Inharmon', 'Str Damping', 'Exc ForceMassProt',
+TNS_BANK1 = ('Exciter Type', 'String Decay', 'Str Inharmon', 'Str Damping', 'Exc ForceMassProt',
              'Exc FricStiff', 'Exc Velocity', 'E Pos')
 TNS_BANK2 = ('Damper On', 'Damper Mass', 'D Stiffness', 'D Velocity', 'Damp Pos', 'D Damping',
              'D Pos < Vel', 'D Pos Abs')
@@ -189,8 +189,8 @@ TNS_BANK7 = ('FEG On/Off', 'FEG Attack', 'FEG Decay', 'FEG Sustain', 'FEG Releas
              'LFO On/Off', 'LFO Shape', 'LFO Speed')
 TNS_BANK8 = ('Unison On/Off', 'Uni Detune', 'Porta On/Off', 'Porta Time', 'Voices',
              'Octave', 'Semitone', 'Volume')
-TNS_BOB = ('Filter Freq', 'Filter Reso', 'Filter Type', 'Excitator Type', 'E Pos',
-           'String Decay', 'Str Damping', 'Volume')
+TNS_BOB = ('Filter Freq', 'Filter Reso', 'Filter Type', 'Exciter Type', 'E Pos', 'String Decay',
+           'Str Damping', 'Volume')
 TNS_BANKS = (
  TNS_BANK1,
  TNS_BANK2,
@@ -202,7 +202,7 @@ TNS_BANKS = (
  TNS_BANK8)
 TNS_BOBS = (
  TNS_BOB,)
-TNS_BNK_NAMES = ('Excitator and String', 'Damper', 'Termination and Pickup', 'Body',
+TNS_BNK_NAMES = ('Exciter and String', 'Damper', 'Termination and Pickup', 'Body',
                  'Vibrato', 'Filter', 'Envelope and LFO', 'Global')
 WVT_BANK1 = ('Osc 1 Transp', 'Osc 1 Detune', 'Osc 1 Pos', 'Osc 1 Effect 1', 'Osc 1 Effect 2',
              'Osc 1 Pan', 'Osc 1 Gain', 'Osc 1 On')
@@ -357,14 +357,17 @@ DTB_BANKS = (
 DTB_BOBS = (DTB_BANK1,)
 ECH_BANK1 = ('L Division', 'R Division', 'L Sync Mode', 'R Sync Mode', 'L 16th', 'R 16th',
              'L Sync', 'R Sync')
-ECH_BANK2 = ('L Time', 'R Time', 'L Offset', 'R Offset', 'Link', 'Channel Mode')
+ECH_BANK2 = ('L Time', 'R Time', 'L Offset', 'R Offset', 'Link', 'Channel Mode', '',
+             '')
 ECH_BANK3 = ('Gate On', 'Gate Thr', 'Gate Release', 'Duck On', 'Duck Thr', 'Duck Release',
-             'Env Mix')
+             'Env Mix', '')
 ECH_BANK4 = ('Noise On', 'Noise Amt', 'Noise Mrph', 'Wobble On', 'Wobble Amt', 'Wobble Mrph',
-             'Repitch')
-ECH_BANK5 = ('Feedback', 'Feedback Inv', 'Input Gain', 'Output Gain', 'Clip Dry', 'Dry Wet')
-ECH_BANK6 = ('Filter On', 'HP Freq', 'HP Res', 'LP Freq', 'LP Res')
-ECH_BANK7 = ('Reverb Level', 'Reverb Decay', 'Reverb Loc', 'Stereo Width')
+             'Repitch', '')
+ECH_BANK5 = ('Feedback', 'Feedback Inv', 'Input Gain', 'Output Gain', 'Clip Dry', 'Dry Wet',
+             '', '')
+ECH_BANK6 = ('Filter On', 'HP Freq', 'HP Res', 'LP Freq', 'LP Res', '', '', '')
+ECH_BANK7 = ('Reverb Level', 'Reverb Decay', 'Reverb Loc', 'Stereo Width', '', '',
+             '', '')
 ECH_BANK8 = ('Mod Wave', 'Mod Sync', 'Mod Rate', 'Mod Freq', 'Mod Phase', 'Dly < Mod',
              'Flt < Mod', 'Mod 4x')
 ECH_BOB = ('L Division', 'R Division', 'L Time', 'R Time', 'Input Gain', 'Feedback',
@@ -525,10 +528,10 @@ RSN_BOBS = (RSN_BOB,)
 RSN_BNK_NAMES = ('General / Mode I', 'Modes II-IV')
 RVB_BANK1 = ('In Filter Freq', 'In Filter Width', 'PreDelay', 'ER Spin On', 'ER Spin Rate',
              'ER Spin Amount', 'ER Shape', 'DecayTime')
-RVB_BANK2 = ('HiShelf Freq', 'LowShelf Freq', 'Chorus Rate', 'Density', 'HiShelf Gain',
+RVB_BANK2 = ('HiFilter Freq', 'LowShelf Freq', 'Chorus Rate', 'Diffusion', 'HiShelf Gain',
              'LowShelf Gain', 'Chorus Amount', 'Scale')
 RVB_BANK3 = ('DecayTime', 'Freeze On', 'Room Size', 'Stereo Image', 'ER Level', 'Diffuse Level',
-             'Dry/Wet', 'Quality')
+             'Dry/Wet', 'Density')
 RVB_BOB = ('DecayTime', 'Room Size', 'PreDelay', 'In Filter Freq', 'ER Level', 'Diffuse Level',
            'Stereo Image', 'Dry/Wet')
 RVB_BANKS = (

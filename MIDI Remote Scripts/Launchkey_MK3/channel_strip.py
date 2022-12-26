@@ -36,7 +36,7 @@ class ChannelStripComponent(ChannelStripComponentBase):
     def update(self):
         super(ChannelStripComponent, self).update()
         mixer = self._track.mixer_device if liveobj_valid(self._track) else None
-        self._ChannelStripComponent__on_send_a_value_changed.subject = mixer.sends[0] if mixer and (len(mixer.sends)) else None
+        self._ChannelStripComponent__on_send_a_value_changed.subject = mixer.sends[0] if mixer and (mixer.sends) else None
         self._ChannelStripComponent__on_send_b_value_changed.subject = mixer.sends[1] if mixer and (len(mixer.sends) > 1) else None
         self._update_send_display(self.send_a_display, 0)
         self._update_send_display(self.send_b_display, 1)

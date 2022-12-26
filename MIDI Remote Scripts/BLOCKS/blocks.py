@@ -4,7 +4,7 @@ from past.utils import old_div
 from functools import partial
 import Live
 from ableton.v2.base import clamp, listens, liveobj_valid, nop
-from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_TYPE, ControlSurface, Layer, PercussionInstrumentFinder
+from ableton.v2.control_surface import MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_TYPE, Layer, PercussionInstrumentFinder, SimpleControlSurface
 from ableton.v2.control_surface.components import DrumGroupComponent, SessionComponent, SessionNavigationComponent, SessionRingComponent
 from ableton.v2.control_surface.elements import ButtonMatrixElement, EncoderElement, SysexElement
 from ableton.v2.control_surface.midi import CC_STATUS
@@ -32,7 +32,7 @@ def is_playable(track):
     return liveobj_valid(track) and track.has_midi_input and not track.is_frozen
 
 
-class Blocks(ControlSurface):
+class Blocks(SimpleControlSurface):
     handle_undo_steps = True
 
     def __init__(self, *a, **k):

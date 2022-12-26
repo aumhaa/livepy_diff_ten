@@ -5,13 +5,13 @@ from ableton.v2.base import liveobj_valid, nop
 class DeviceComponent(DeviceComponentBase):
 
     def __init__(self, *a, **k):
-        (super(DeviceComponent, self).__init__)(*a, **k)
+        (super().__init__)(*a, **k)
         self._num_banks_to_control = 1
         self._empty_control_slots = self.register_slot_manager()
 
     def set_parameter_controls(self, controls):
         self._num_banks_to_control = 2 if controls and (controls.width() > 8) else 1
-        super(DeviceComponent, self).set_parameter_controls(controls)
+        super().set_parameter_controls(controls)
 
     def _bank_up_value(self, value):
         if self.is_enabled():
@@ -54,7 +54,7 @@ class DeviceComponent(DeviceComponentBase):
 
     def update(self):
         self._empty_control_slots.disconnect()
-        super(DeviceComponent, self).update()
+        super().update()
 
     def _assign_parameters(self):
         self._bank_name, bank = self._current_bank_details()

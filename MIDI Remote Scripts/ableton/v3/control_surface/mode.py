@@ -59,6 +59,11 @@ class ModesComponent(ModesComponentBase):
         self.add_control('{}_button'.format(mode_name), button_control)
         self._update_mode_buttons(self.selected_mode)
 
+    @ModesComponentBase.cycle_mode_button.released_delayed
+    def cycle_mode_button(self, _):
+        if self._support_momentary_mode_cycling:
+            self.cycle_mode(-1)
+
     def _get_mode_color_base_name(self, mode_name):
         return '{}.{}'.format(self.name.title().replace('_', ''), mode_name.title().replace('_', ''))
 

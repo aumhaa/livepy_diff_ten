@@ -7,7 +7,7 @@ class Skin:
 
     def __init__(self, colors=None, *a, **k):
         (super().__init__)(*a, **k)
-        self._colors = {}
+        self.colors = {}
         if colors is not None:
             self._fill_colors(colors)
 
@@ -21,17 +21,17 @@ class Skin:
                 if callable(v):
                     self._fill_colors(v, '{}{}.'.format(pathname, k))
                 else:
-                    self._colors['{}{}'.format(pathname, k)] = v
+                    self.colors['{}{}'.format(pathname, k)] = v
 
     def __getitem__(self, key):
-        if key not in self._colors:
+        if key not in self.colors:
             if key.lower().endswith(ON_SUFFIXES):
                 return BasicColors.ON
             return BasicColors.OFF
-        return self._colors[key]
+        return self.colors[key]
 
 
 def merge_skins(*skins):
     skin = Skin()
-    skin._colors = dict(chain(*map(lambda s: s._colors.items(), skins)))
+    skin.colors = dict(chain(*map(lambda s: s.colors.items(), skins)))
     return skin

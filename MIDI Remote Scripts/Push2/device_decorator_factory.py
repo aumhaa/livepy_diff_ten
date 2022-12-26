@@ -12,6 +12,7 @@ from .hybrid_reverb import HybridReverbDeviceDecorator
 from .operator import OperatorDeviceDecorator
 from .phasernew import PhaserNewDeviceDecorator
 from .redux2 import Redux2DeviceDecorator
+from .reverb import ReverbDeviceDecorator
 from .shifter import ShifterDeviceDecorator
 from .simpler import SimplerDeviceDecorator
 from .spectral import SpectralDeviceDecorator
@@ -38,4 +39,5 @@ class DeviceDecoratorFactory(DeviceDecoratorFactoryBase):
      'Shifter':ShifterDeviceDecorator, 
      'Transmute':TransmuteDeviceDecorator, 
      'Delay':DelayDeviceDecorator, 
+     'Reverb':ReverbDeviceDecorator, 
      'Redux2':Redux2DeviceDecorator}

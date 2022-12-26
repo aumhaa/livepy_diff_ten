@@ -14,3 +14,33 @@ class Rgb:
     ORANGE = SimpleColor(14)
     GREEN = SimpleColor(4)
     DARK_BLUE = SimpleColor(63)
+
+
+STOPPED = SimpleColor(4)
+TRIGGERED_PLAY = SimpleColor(7)
+
+class Skin:
+
+    class DefaultButton:
+        Disabled = Basic.DISABLED
+
+    class Session:
+        ClipStopped = STOPPED
+        ClipRecordButton = SimpleColor(2)
+        SlotLacksStop = SimpleColor(5)
+        SlotTriggeredPlay = SimpleColor(1)
+        ClipTriggeredPlay = TRIGGERED_PLAY
+        SlotTriggeredRecord = SimpleColor(3)
+        ClipTriggeredRecord = SimpleColor(9)
+        ClipStarted = SimpleColor(6)
+        ClipRecording = SimpleColor(8)
+        Scene = STOPPED
+        SceneTriggered = TRIGGERED_PLAY
+
+    class DrumGroup:
+        PadFilled = Rgb.YELLOW
+        PadSelected = Rgb.LIGHT_BLUE
+        PadMuted = Rgb.ORANGE
+        PadMutedSelected = Rgb.LIGHT_BLUE
+        PadSoloed = Rgb.DARK_BLUE
+        PadSoloedSelected = Rgb.LIGHT_BLUE

@@ -187,13 +187,13 @@ class ButtonControl(ButtonControlBase):
     class State(ButtonControlBase.State):
         color = control_color('DefaultButton.On')
 
-        def __init__(self, color=None, *a, **k):
+        def __init__(self, color='DefaultButton.On', *a, **k):
             (super(ButtonControl.State, self).__init__)(*a, **k)
-            if color is not None:
-                self.color = color
+            self.color = color
 
         def _send_button_color(self):
-            self._control_element.set_light(self.color)
+            if self.color is not None:
+                self._control_element.set_light(self.color)
 
 
 class PlayableControl(ButtonControl):

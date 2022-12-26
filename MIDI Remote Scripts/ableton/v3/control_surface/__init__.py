@@ -1,19 +1,31 @@
 from __future__ import absolute_import, print_function, unicode_literals
-from ableton.v2.control_surface import DEFAULT_PRIORITY, MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_TYPE, Component, CompoundElement, ControlElement, DeviceBankRegistry, DeviceProvider, InputControlElement, Layer, NotifyingControlElement, PercussionInstrumentFinder, PrioritizedResource
+from ableton.v2.control_surface import BANK_FORMAT, BANK_MAIN_KEY, BANK_PARAMETERS_KEY, MIDI_CC_TYPE, MIDI_NOTE_TYPE, MIDI_PB_TYPE, MIDI_SYSEX_TYPE, Component, CompoundElement, ControlElement, DeviceBankRegistry, DeviceProvider, InputControlElement, Layer, NotifyingControlElement, PercussionInstrumentFinder, PrioritizedResource, all_parameters, find_instrument_devices, find_instrument_meeting_requirement, use
+import ableton.v2.control_surface.default_bank_definitions as V2_BANK_DEFINITIONS
 from . import midi
+from .banking_util import DEFAULT_BANK_SIZE, BankingInfo, create_parameter_bank
 from .colors import STANDARD_COLOR_PALETTE, STANDARD_FALLBACK_COLOR_TABLE, BasicColors
-from .control_surface import HIGH_PRIORITY, LOW_PRIORITY, ControlSurface, ControlSurfaceSpecification
+from .consts import DEFAULT_PRIORITY, HIGH_PRIORITY, LOW_PRIORITY, M4L_PRIORITY
+from .control_surface import ControlSurface
+from .control_surface_specification import ControlSurfaceSpecification
+from .default_bank_definitions import BANK_DEFINITIONS
 from .default_skin import default_skin
-from .elements_base import ElementsBase, MapMode, create_button, create_combo_element, create_encoder, create_matrix_identifiers, create_sysex_element
+from .elements_base import ElementsBase, MapMode, create_button, create_combo_element, create_encoder, create_matrix_identifiers, create_sysex_element, create_sysex_sending_button
 from .identification import IdentificationComponent
+from .parameter_info import ParameterInfo
+from .parameter_mapping_sensitivities import DEFAULT_CONTINUOUS_PARAMETER_SENSITIVITY, DEFAULT_QUANTIZED_PARAMETER_SENSITIVITY, FINE_GRAIN_SENSITIVITY_FACTOR, parameter_mapping_sensitivities
 from .session_ring_selection_linking import SessionRingSelectionLinking
 from .skin import Skin, merge_skins
-__all__ = ('DEFAULT_PRIORITY', 'HIGH_PRIORITY', 'LOW_PRIORITY', 'MIDI_CC_TYPE', 'MIDI_NOTE_TYPE',
-           'MIDI_PB_TYPE', 'STANDARD_COLOR_PALETTE', 'STANDARD_FALLBACK_COLOR_TABLE',
-           'BasicColors', 'Component', 'CompoundElement', 'ControlElement', 'ControlSurface',
-           'ControlSurfaceSpecification', 'DeviceBankRegistry', 'DeviceProvider',
-           'ElementsBase', 'IdentificationComponent', 'InputControlElement', 'Layer',
-           'MapMode', 'NotifyingControlElement', 'PercussionInstrumentFinder', 'PrioritizedResource',
-           'SessionRingSelectionLinking', 'Skin', 'create_button', 'create_combo_element',
-           'create_encoder', 'create_matrix_identifiers', 'create_sysex_element',
-           'default_skin', 'merge_skins', 'midi')
+__all__ = ('BANK_DEFINITIONS', 'BANK_FORMAT', 'BANK_MAIN_KEY', 'BANK_PARAMETERS_KEY',
+           'DEFAULT_BANK_SIZE', 'DEFAULT_CONTINUOUS_PARAMETER_SENSITIVITY', 'DEFAULT_QUANTIZED_PARAMETER_SENSITIVITY',
+           'DEFAULT_PRIORITY', 'FINE_GRAIN_SENSITIVITY_FACTOR', 'HIGH_PRIORITY',
+           'LOW_PRIORITY', 'M4L_PRIORITY', 'MIDI_CC_TYPE', 'MIDI_NOTE_TYPE', 'MIDI_PB_TYPE',
+           'MIDI_SYSEX_TYPE', 'STANDARD_COLOR_PALETTE', 'STANDARD_FALLBACK_COLOR_TABLE',
+           'V2_BANK_DEFINITIONS', 'BankingInfo', 'BasicColors', 'Component', 'CompoundElement',
+           'ControlElement', 'ControlSurface', 'ControlSurfaceSpecification', 'DeviceBankRegistry',
+           'DeviceProvider', 'ElementsBase', 'IdentificationComponent', 'InputControlElement',
+           'Layer', 'MapMode', 'NotifyingControlElement', 'ParameterInfo', 'PercussionInstrumentFinder',
+           'PrioritizedResource', 'SessionRingSelectionLinking', 'Skin', 'all_parameters',
+           'create_button', 'create_combo_element', 'create_encoder', 'create_matrix_identifiers',
+           'create_parameter_bank', 'create_sysex_element', 'create_sysex_sending_button',
+           'default_skin', 'find_instrument_devices', 'find_instrument_meeting_requirement',
+           'merge_skins', 'midi', 'parameter_mapping_sensitivities', 'use')

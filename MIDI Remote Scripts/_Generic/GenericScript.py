@@ -199,8 +199,6 @@ class GenericScript(ControlSurface):
             return DeviceButton(global_channel, (bank_controls[control]), name=name)
 
         if device_controls:
-            device = device_component_class(device_selection_follows_track_selection=True,
-              name='Device_Component')
             layer_specs = {}
             if bank_controls:
                 if has_specification_for('NEXTBANK', bank_controls):
@@ -249,8 +247,11 @@ class GenericScript(ControlSurface):
                 layer_specs['parameter_controls'] = ButtonMatrixElement(rows=[
                  parameter_encoders_raw],
                   name='Device_Parameter_Controls')
-            device.layer = Layer(**layer_specs)
-            self.set_device_component(device)
+            if layer_specs:
+                device = device_component_class(device_selection_follows_track_selection=True,
+                  name='Device_Component')
+                device.layer = Layer(**layer_specs)
+                self.set_device_component(device)
 
     def _init_transport_component(self, transport_controls, global_channel):
 

@@ -148,6 +148,7 @@ class InputControlElement(NotifyingControlElement):
         self._last_sent_message = None
         self._report_input = False
         self._report_output = False
+        self._max_value = pow(2, 14 if self.message_type() == MIDI_PB_TYPE else 7)
 
     @property
     def send_depends_on_forwarding(self):
@@ -385,7 +386,7 @@ class InputControlElement(NotifyingControlElement):
 
     def _verify_value(self, value):
         if self._msg_type < MIDI_SYSEX_TYPE:
-            upper_bound = 16384 if self._msg_type == MIDI_PB_TYPE else 128
+            pass
 
     def _report_value(self, value, is_input):
         self._verify_value(value)

@@ -48,6 +48,9 @@ class KeyLabEssential(ControlSurface):
         super(KeyLabEssential, self).port_settings_changed()
         self._hardware_settings.set_hardware_live_mode_enabled(True)
 
+    def can_lock_to_devices(self):
+        return False
+
     def _create_controls(self):
         self._hardware_live_mode_switch = SysexElement(send_message_generator=(lambda b: sysex.LIVE_MODE_MESSAGE_HEADER + (
          b, sysex.END_BYTE)),

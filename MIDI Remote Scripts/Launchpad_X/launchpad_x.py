@@ -42,6 +42,9 @@ class Launchpad_X(InstrumentControlMixin, NovationBase):
         self.set_feedback_channels([DRUM_FEEDBACK_CHANNEL, SCALE_FEEDBACK_CHANNEL])
         super(Launchpad_X, self).on_identified(midi_bytes)
 
+    def can_lock_to_devices(self):
+        return False
+
     def _create_components(self):
         super(Launchpad_X, self)._create_components()
         self._background = BackgroundComponent(name='Background', add_nop_listeners=True)

@@ -43,10 +43,10 @@ class SimpleDisplayElement(NotifyingControlElement):
     def reset(self):
         self.display_message(' ')
 
-    def send_midi(self, midi_bytes):
-        if midi_bytes != self._last_sent_message:
-            NotifyingControlElement.send_midi(self, midi_bytes)
-            self._last_sent_message = midi_bytes
+    def send_midi(self, message):
+        if message != self._last_sent_message:
+            NotifyingControlElement.send_midi(self, message)
+            self._last_sent_message = message
 
     def _request_send_message(self):
         if self._initialized:

@@ -43,6 +43,8 @@ class Elements(ElementsBase):
         self.add_modified_control(control=(self.record_button), modifier=(self.shift_button))
         self.add_modified_control(control=(self.up_button), modifier=(self.shift_button))
         self.add_modified_control(control=(self.down_button), modifier=(self.shift_button))
+        self.add_modified_control(control=(self.display_encoder),
+          modifier=(self.shift_button))
         self.add_button_matrix([[i + 36 for i in range(6)]], 'Display_Buttons')
         self.add_button_matrix([
          [i + 36 for i in range(SESSION_WIDTH)]],
@@ -56,7 +58,9 @@ class Elements(ElementsBase):
           is_rgb=True)
         self.add_encoder_matrix([
          [i + 14 for i in range(8)]],
-          'Encoders', map_mode=(MapMode.LinearSignedBit))
+          'Encoders',
+          map_mode=(MapMode.LinearSignedBit),
+          sensitivity_modifier=(self.shift_button))
         self.add_matrix([
          [
           0, 1, 2, 11, 12, 13]],

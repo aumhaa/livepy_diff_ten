@@ -15,7 +15,7 @@ class SessionRingSelectionLinking(EventObject):
 
     @listens('track_selection_scrolled')
     def __on_track_selection_scrolled(self):
-        if self.song.view.selected_track == self.song.master_track:
+        if self.song.view.selected_track not in self._session_ring.tracks_to_use():
             return
         track_index = index_if(lambda t: t == self.song.view.selected_track, self._session_ring.tracks_to_use())
         self._link_session_ring_with_minimal_travel('track', track_index)
