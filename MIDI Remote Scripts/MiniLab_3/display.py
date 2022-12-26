@@ -24,7 +24,7 @@ class DisplayComponent(Component):
              'target_track', arg)))
 
         self._session_ring = session_ring
-        self._DisplayComponent__on_scenes_changed.subject = session_ring
+        self._DisplayComponent__on_offset_changed.subject = session_ring
         self._DisplayComponent__on_scene_name_changed.subject = session_ring.scenes[0]
         self.register_slot(self.song, self._on_global_property_changed, 'is_playing')
         self.register_slot(self.song, self._on_global_property_changed, 'record_mode')
@@ -58,8 +58,8 @@ class DisplayComponent(Component):
         if not self._hide_notification_task.is_running:
             self._show_static_display()
 
-    @listens('scenes')
-    def __on_scenes_changed(self):
+    @listens('offset')
+    def __on_offset_changed(self, *_):
         self._DisplayComponent__on_scene_name_changed.subject = self._session_ring.scenes[0]
         self._DisplayComponent__on_scene_name_changed()
 

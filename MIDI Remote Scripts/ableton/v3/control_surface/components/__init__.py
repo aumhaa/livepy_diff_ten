@@ -3,13 +3,15 @@ from ableton.v2.control_surface.components import BasicSceneScroller, BasicTrack
 from .auto_arm import AutoArmComponent
 from .background import BackgroundComponent, ModifierBackgroundComponent, TranslatingBackgroundComponent
 from .channel_strip import ChannelStripComponent
+from .clip_slot import ClipSlotComponent
 from .device import DeviceComponent
 from .device_bank_navigation import DeviceBankNavigationComponent
 from .device_parameters import DeviceParametersComponent
 from .drum_group import DEFAULT_DRUM_TRANSLATION_CHANNEL, DrumGroupComponent
 from .mixer import MixerComponent
 from .playable import PlayableComponent
-from .session import ClipSlotComponent, SceneComponent, SessionComponent
+from .scene import SceneComponent
+from .session import SessionComponent
 from .session_navigation import SessionNavigationComponent
 from .session_overview import SessionOverviewComponent
 from .session_ring import SessionRingComponent

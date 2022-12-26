@@ -1,31 +1,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from ableton.v3.base import listens_group, liveobj_valid
-import ableton.v3.control_surface.components as ClipSlotComponentBase
 import ableton.v3.control_surface.components as SessionComponentBase
 from ableton.v3.control_surface.controls import ButtonControl, InputControl
 from .control import DisplayControl
-
-class ClipSlotComponent(ClipSlotComponentBase):
-
-    def _feedback_value(self, track, slot_or_clip):
-        is_clip = slot_or_clip is not self._clip_slot
-        if slot_or_clip.is_triggered:
-            if slot_or_clip.will_record_on_start:
-                return 'Session.{}TriggeredRecord'.format('Clip' if is_clip else 'Slot')
-            return 'Session.{}TriggeredPlay'.format('Clip' if is_clip else 'Slot')
-        if slot_or_clip.is_playing:
-            if slot_or_clip.is_recording:
-                return 'Session.ClipRecording'
-            return 'Session.ClipStarted'
-        if is_clip:
-            return 'Session.ClipStopped'
-        if not self._clip_slot.has_stop_button:
-            return 'Session.SlotLacksStop'
-        if self._track_is_armed(track):
-            if self._clip_slot.has_stop_button:
-                return 'Session.ClipRecordButton'
-        return 'Session.ClipEmpty'
-
 
 class SessionComponent(SessionComponentBase):
     track_select_control = InputControl()
@@ -34,7 +11,7 @@ class SessionComponent(SessionComponentBase):
       pressed_color='DefaultButton.On')
 
     def __init__(self, *a, **k):
-        (super().__init__)(a, clip_slot_component_type=ClipSlotComponent, **k)
+        (super().__init__)(*a, **k)
 
     def set_stop_all_clips_button(self, button):
         self.stop_all_clips_button.set_control_element(button)

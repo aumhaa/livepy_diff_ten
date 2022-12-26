@@ -83,22 +83,23 @@ class DefaultColors:
         CrossfadeA = BasicColors.ON
         CrossfadeB = BasicColors.ON
         CrossfadeOff = BasicColors.OFF
-        Empty = BasicColors.OFF
         CycleSendIndexPressed = BasicColors.OFF
         CycleSendIndex = BasicColors.ON
         CycleSendIndexDisabled = BasicColors.OFF
+        NoTrack = BasicColors.OFF
 
     class Session:
-        ClipEmpty = BasicColors.OFF
+        Slot = BasicColors.OFF
+        SlotRecordButton = BasicColors.OFF
+        NoSlot = BasicColors.OFF
         ClipStopped = BasicColors.OFF
         ClipTriggeredPlay = BasicColors.ON
         ClipTriggeredRecord = BasicColors.ON
-        ClipStarted = BasicColors.ON
+        ClipPlaying = BasicColors.ON
         ClipRecording = BasicColors.ON
-        ClipRecordButton = BasicColors.OFF
         Scene = BasicColors.OFF
-        SceneEmpty = BasicColors.OFF
         SceneTriggered = BasicColors.ON
+        NoScene = BasicColors.OFF
         StopClipTriggered = BasicColors.ON
         StopClip = BasicColors.OFF
         StopClipDisabled = BasicColors.OFF

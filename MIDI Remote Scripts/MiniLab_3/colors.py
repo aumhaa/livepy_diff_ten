@@ -51,12 +51,13 @@ class Skin:
         SessionRecordingOff = Rgb.RED_HALF
 
     class Session:
-        ClipEmpty = Rgb.OFF
+        Slot = Rgb.OFF
+        SlotRecordButton = Rgb.RED_LOW
+        NoSlot = Rgb.OFF
         ClipTriggeredPlay = Rgb.GREEN_HALF
         ClipTriggeredRecord = Rgb.RED_HALF
-        ClipStarted = Rgb.GREEN
+        ClipPlaying = Rgb.GREEN
         ClipRecording = Rgb.RED
-        ClipRecordButton = Rgb.RED_LOW
         StopClipTriggered = Rgb.RED_HALF
         StopClip = Rgb.RED
         StopClipDisabled = Rgb.OFF

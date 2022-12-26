@@ -20,16 +20,17 @@ class Colors:
         NotSelected = Rgb.OFF
 
     class Session:
-        ClipEmpty = Rgb.OFF
+        Slot = Rgb.OFF
+        SlotRecordButton = Rgb.RED_HALF
+        NoSlot = Rgb.OFF
         ClipTriggeredPlay = Rgb.GREEN_BLINK
         ClipTriggeredRecord = Rgb.RED_BLINK
         ClipStopped = BasicColors.ON
-        ClipStarted = Rgb.GREEN_PULSE
+        ClipPlaying = Rgb.GREEN_PULSE
         ClipRecording = Rgb.RED_PULSE
-        ClipRecordButton = Rgb.RED_HALF
         Scene = Rgb.GREEN_HALF
-        SceneEmpty = Rgb.OFF
         SceneTriggered = Rgb.GREEN_BLINK
+        NoScene = Rgb.OFF
         StopClipTriggered = Rgb.RED_BLINK
         StopClip = Rgb.RED
         StopClipDisabled = Rgb.RED_HALF

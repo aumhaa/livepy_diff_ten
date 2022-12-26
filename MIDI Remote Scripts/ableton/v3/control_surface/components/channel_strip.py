@@ -21,19 +21,19 @@ class ChannelStripComponent(Component):
     pan_control = MappedControl()
     send_controls = control_list(MappedControl, control_count=MAX_NUM_SENDS)
     indexed_send_controls = control_list(MappedControl, control_count=MAX_NUM_SENDS)
-    track_select_button = ButtonControl(disabled_color='Mixer.Empty',
+    track_select_button = ButtonControl(disabled_color='Mixer.NoTrack',
       color='Mixer.NotSelected',
       on_color='Mixer.Selected')
-    mute_button = MappedButtonControl(disabled_color='Mixer.Empty',
+    mute_button = MappedButtonControl(disabled_color='Mixer.NoTrack',
       color='Mixer.MuteOff',
       on_color='Mixer.MuteOn')
-    solo_button = ButtonControl(disabled_color='Mixer.Empty',
+    solo_button = ButtonControl(disabled_color='Mixer.NoTrack',
       color='Mixer.SoloOff',
       on_color='Mixer.SoloOn')
-    arm_button = ButtonControl(disabled_color='Mixer.Empty',
+    arm_button = ButtonControl(disabled_color='Mixer.NoTrack',
       color='Mixer.ArmOff',
       on_color='Mixer.ArmOn')
-    crossfade_cycle_button = ButtonControl(disabled_color='Mixer.Empty')
+    crossfade_cycle_button = ButtonControl(disabled_color='Mixer.NoTrack')
     shift_button = ButtonControl(color=None)
 
     def __init__(self, is_private=True, *a, **k):

@@ -14,7 +14,7 @@ from .identification import IdentificationComponent
 from .parameter_info import ParameterInfo
 from .parameter_mapping_sensitivities import DEFAULT_CONTINUOUS_PARAMETER_SENSITIVITY, DEFAULT_QUANTIZED_PARAMETER_SENSITIVITY, FINE_GRAIN_SENSITIVITY_FACTOR, parameter_mapping_sensitivities
 from .session_ring_selection_linking import SessionRingSelectionLinking
-from .skin import Skin, merge_skins
+from .skin import OptionalSkinEntry, Skin, merge_skins
 __all__ = ('BANK_DEFINITIONS', 'BANK_FORMAT', 'BANK_MAIN_KEY', 'BANK_PARAMETERS_KEY',
            'DEFAULT_BANK_SIZE', 'DEFAULT_CONTINUOUS_PARAMETER_SENSITIVITY', 'DEFAULT_QUANTIZED_PARAMETER_SENSITIVITY',
            'DEFAULT_PRIORITY', 'FINE_GRAIN_SENSITIVITY_FACTOR', 'HIGH_PRIORITY',
@@ -23,9 +23,10 @@ __all__ = ('BANK_DEFINITIONS', 'BANK_FORMAT', 'BANK_MAIN_KEY', 'BANK_PARAMETERS_
            'V2_BANK_DEFINITIONS', 'BankingInfo', 'BasicColors', 'Component', 'CompoundElement',
            'ControlElement', 'ControlSurface', 'ControlSurfaceSpecification', 'DeviceBankRegistry',
            'DeviceProvider', 'ElementsBase', 'IdentificationComponent', 'InputControlElement',
-           'Layer', 'MapMode', 'NotifyingControlElement', 'ParameterInfo', 'PercussionInstrumentFinder',
-           'PrioritizedResource', 'SessionRingSelectionLinking', 'Skin', 'all_parameters',
-           'create_button', 'create_combo_element', 'create_encoder', 'create_matrix_identifiers',
-           'create_parameter_bank', 'create_sysex_element', 'create_sysex_sending_button',
-           'default_skin', 'find_instrument_devices', 'find_instrument_meeting_requirement',
-           'merge_skins', 'midi', 'parameter_mapping_sensitivities', 'use')
+           'Layer', 'MapMode', 'NotifyingControlElement', 'OptionalSkinEntry', 'ParameterInfo',
+           'PercussionInstrumentFinder', 'PrioritizedResource', 'SessionRingSelectionLinking',
+           'Skin', 'all_parameters', 'create_button', 'create_combo_element', 'create_encoder',
+           'create_matrix_identifiers', 'create_parameter_bank', 'create_sysex_element',
+           'create_sysex_sending_button', 'default_skin', 'find_instrument_devices',
+           'find_instrument_meeting_requirement', 'merge_skins', 'midi', 'parameter_mapping_sensitivities',
+           'use')

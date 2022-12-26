@@ -25,14 +25,14 @@ class Skin:
         Disabled = Basic.DISABLED
 
     class Session:
-        ClipStopped = STOPPED
-        ClipRecordButton = SimpleColor(2)
+        SlotRecordButton = SimpleColor(2)
         SlotLacksStop = SimpleColor(5)
         SlotTriggeredPlay = SimpleColor(1)
-        ClipTriggeredPlay = TRIGGERED_PLAY
         SlotTriggeredRecord = SimpleColor(3)
+        ClipStopped = STOPPED
+        ClipTriggeredPlay = TRIGGERED_PLAY
         ClipTriggeredRecord = SimpleColor(9)
-        ClipStarted = SimpleColor(6)
+        ClipPlaying = SimpleColor(6)
         ClipRecording = SimpleColor(8)
         Scene = STOPPED
         SceneTriggered = TRIGGERED_PLAY

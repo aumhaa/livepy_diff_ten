@@ -18,15 +18,16 @@ class Skin:
         Empty = Rgb.BLACK
 
     class Session:
-        ClipEmpty = Rgb.BLACK
+        Slot = Rgb.BLACK
+        SlotRecordButton = Rgb.RED_HALF
+        NoSlot = Rgb.BLACK
         ClipTriggeredPlay = Rgb.GREEN_BLINK
         ClipTriggeredRecord = Rgb.RED_BLINK
-        ClipStarted = Rgb.GREEN_PULSE
+        ClipPlaying = Rgb.GREEN_PULSE
         ClipRecording = Rgb.RED_PULSE
-        ClipRecordButton = Rgb.RED_HALF
         Scene = Rgb.GREEN_HALF
-        SceneEmpty = Rgb.BLACK
         SceneTriggered = Rgb.GREEN_BLINK
+        NoScene = Rgb.BLACK
         StopClipTriggered = Rgb.RED_BLINK
         StopClip = Rgb.RED
         StopClipDisabled = Rgb.RED_HALF
